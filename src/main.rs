@@ -8,11 +8,6 @@ struct ParserObject{
 fn main() {
     let something: &str = "This is a string";
 }
-// def _token(self):
-//  if self.position >= len(self.src):
-//      return ""
-//  return self.src[self.position]
-    
 
 fn token(po: &ParserObject) -> Option<u8> {
     if po.position >= po.source.chars().count() as u32 {
@@ -22,15 +17,9 @@ fn token(po: &ParserObject) -> Option<u8> {
     return Option::Some(s);
 }
 
-#[test]
-fn test_token(){
-    let po = ParserObject{position: 4, source: "Hello there".to_string()};
-    let f: Option<u8> = token(&po);
-    let value: u8 = f.unwrap();
-    println!("{:?}", value as char);
-}
-
 fn terminal(po: &mut ParserObject, arg: u8) -> bool {
+    /* If character at po.position is equal to arg, increment position and return True, else return False */
+
     if arg == token(&po).unwrap() {
         po.position = po.position + 1;
         return true;
@@ -41,7 +30,9 @@ fn terminal(po: &mut ParserObject, arg: u8) -> bool {
 
 }
 
-fn optional_tuple<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
+fn optional<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
+    /* True if matches, False if not. Increments position on a match */
+
     // Fn(&u8), u8
     // Fn(&Fn), Fn
     let temp_position = po.position;
@@ -57,7 +48,9 @@ fn optional_tuple<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T)
     }
 }
 
-fn sequence_tuple<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool, T), rhs:(&dyn Fn(&mut ParserObject, U) -> bool, U)) -> bool {
+fn sequence<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool, T), rhs:(&dyn Fn(&mut ParserObject, U) -> bool, U)) -> bool {
+    /* True if all expressions match, then updates position, else false, no positional update */
+
     let tmp_pos = po.position;
 
     let (lhs_func, lhs_arg) = lhs;
@@ -75,7 +68,9 @@ fn sequence_tuple<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, 
     }
 }
 
-fn ordered_choice_tuple<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool,T), rhs: (&dyn Fn(&mut ParserObject, U) -> bool,U)) -> bool {
+fn ordered_choice<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool,T), rhs: (&dyn Fn(&mut ParserObject, U) -> bool,U)) -> bool {
+    /* True if one expression matches, then updates position, else false, no positional update */
+
     let tmp_pos = po.position;
     let (lhs_func, lhs_arg) = lhs;
     let (rhs_func, rhs_arg) = rhs;
@@ -95,7 +90,9 @@ fn ordered_choice_tuple<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserOb
     return false;
 }
 
-fn zero_or_more_tuple<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
+fn zero_or_more<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
+    /* Always True, increments position each time the expression matches else continues without doing anything */
+
     let mut temp_position = po.position;
     let (func, arg) = pair; // unpack
 
@@ -116,7 +113,9 @@ fn zero_or_more_tuple<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut Parser
     return true;
 }
 
-fn one_or_more_tuple<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
+fn one_or_more<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
+    /* True if matches at least once, increments position each time the expression matches */
+
     let mut temp_position = po.position;
     let (func, arg) = pair; // unpack
 
@@ -142,6 +141,28 @@ fn one_or_more_tuple<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserO
     return true;
 }
 
+fn and<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
+    /* True if the function results in True, never increments position */
+
+    let temp_position = po.position;
+    let (func, arg) = pair; // unpack
+
+    let bool = func(po, arg);
+
+    if bool {
+        po.position = temp_position;
+        return true;
+    } else {
+        po.position = temp_position;
+        return false;
+    }
+}
+
+fn not(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, u8) -> bool, u8)) -> bool {
+    /* True if the function results in False, never increments position */
+
+    return !and(po, pair);
+}
 
 #[test]
 fn more_complex_test(){
@@ -149,7 +170,7 @@ fn more_complex_test(){
     let char1 = "A".as_bytes()[0];
     let char2 = "B".as_bytes()[0];
 
-    let my_bool: bool = sequence_tuple(&mut myobj,  (&one_or_more_tuple, (&terminal, char1)),(&one_or_more_tuple, (&terminal, char2)));
+    let my_bool: bool = sequence(&mut myobj,  (&one_or_more, (&terminal, char1)),(&one_or_more, (&terminal, char2)));
     assert_eq!(true, my_bool);
     assert_eq!(myobj.position, 6)
 }
