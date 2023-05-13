@@ -95,6 +95,24 @@ fn optional<T>(po: &mut ParserObject, func: &dyn Fn(&mut ParserObject, T) -> boo
 //     self.position = tmp_pos
 //     return False
 
+fn sequence_tuple<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool, T), rhs:(&dyn Fn(&mut ParserObject, U) -> bool, U)) -> bool {
+    let tmp_pos = po.position;
+
+    let (lhs_func, lhs_arg) = lhs;
+    let (rhs_func, rhs_arg) = rhs;
+
+    let lhs_bool: bool = lhs_func(po, lhs_arg);
+    let rhs_bool: bool = rhs_func(po, rhs_arg);
+
+    if lhs_bool && rhs_bool {
+        return true;
+    }
+    else {
+        po.position = tmp_pos;
+        return false;
+    }
+}
+
 fn sequence<T, U>(po: &mut ParserObject, lhs_func: &dyn Fn(&mut ParserObject, T) -> bool, lhs_arg: T, rhs_func: &dyn Fn(&mut ParserObject, U) -> bool, rhs_arg: U) -> bool {
 
     let tmp_pos = po.position;
@@ -158,6 +176,8 @@ fn ordered_choice<T, U>(po: &mut ParserObject, lhs_func: &dyn Fn(&mut ParserObje
 //                 break
 //         return True
 
+fn zero_or_more_tuple<T: Co
+
 fn zero_or_more<T: Copy>(po: &mut ParserObject, func: &dyn Fn(&mut ParserObject, T) -> bool, arg: T) -> bool {
     let mut temp_position = po.position;
     let mut bool: bool = true;
@@ -177,6 +197,76 @@ fn zero_or_more<T: Copy>(po: &mut ParserObject, func: &dyn Fn(&mut ParserObject,
     return true;
 }
 
+// #@cache
+//     def _ONE_OR_MORE(self, args):
+//         """True if matches at least once, increments position each time the expression matches"""
+//         temp_position = self.position
+//         func, arg = args
+//         bool = func(arg)
+//         if bool:
+//             temp_position = self.position
+//         else:
+//             self.position = temp_position
+//             return False
+//         while True:
+//             bool = func(arg)
+//             if bool:
+//                 temp_position = self.position
+//                 continue
+//             else:
+//                 self.position = temp_position
+//                 break
+//         return True
+
+fn one_or_more_tuple<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
+    let mut temp_position = po.position;
+    let (func, arg) = pair; // unpack
+
+    let mut bool = func(po, arg);
+
+    if bool {
+        temp_position = po.position;
+    } else {
+        po.position = temp_position;
+        return false;
+    }
+
+    loop {
+        bool = func(po, arg);
+        if bool {
+            temp_position = po.position;
+            continue;
+        } else {
+            po.position = temp_position;
+            break;
+        }
+    }
+    return true;
+}
+
+fn one_or_more<T: Copy>(po: &mut ParserObject, func: &dyn Fn(&mut ParserObject, T) -> bool, arg: T) -> bool {
+    let mut temp_position = po.position;
+    let mut bool = func(po, arg);
+
+    if bool {
+        temp_position = po.position;
+    } else {
+        po.position = temp_position;
+        return false;
+    }
+
+    loop {
+        bool = func(po, arg);
+        if bool {
+            temp_position = po.position;
+            continue;
+        } else {
+            po.position = temp_position;
+            break;
+        }
+    }
+    return true;
+}
 
 #[test]
 fn test_parser_object(){
@@ -230,11 +320,32 @@ fn ordered_choice_test() {
 
 #[test]
 fn zero_or_more_test() {
-    let mut myobj: ParserObject = ParserObject { position: 0, source: "HHHHHelllo".to_string() };
+    let mut myobj: ParserObject = ParserObject { position: 0, source: "fHHHHHelllo".to_string() };
     let char1 = "H".as_bytes()[0];
-    // let char2 = "e".as_bytes()[0];
 
     let my_bool: bool = zero_or_more(&mut myobj, &terminal, char1);
     assert_eq!(true, my_bool);
-    assert_eq!(myobj.position, 5)
+    assert_eq!(myobj.position, 0)
 }
+
+#[test]
+fn one_or_more_test() {
+    let mut myobj: ParserObject = ParserObject { position: 0, source: "fHHHHHelllo".to_string() };
+    let char1 = "H".as_bytes()[0];
+
+    let my_bool: bool = one_or_more(&mut myobj, &terminal, char1);
+    assert_eq!(false, my_bool);
+    assert_eq!(myobj.position, 0)
+}
+
+#[test]
+fn more_complex_test(){
+    let mut myobj: ParserObject = ParserObject { position: 0, source: "AAABBBC".to_string() };
+    let char1 = "A".as_bytes()[0];
+    let char2 = "B".as_bytes()[0];
+
+    let my_bool: bool = sequence_tuple(&mut myobj,  (&one_or_more_tuple, (&terminal, char1)),(&one_or_more_tuple, (&terminal, char2)));
+    assert_eq!(true, my_bool);
+    assert_eq!(myobj.position, 6)
+}
+
