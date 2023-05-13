@@ -126,20 +126,20 @@ fn sequence<T, U>(po: &mut ParserObject, lhs_func: &dyn Fn(&mut ParserObject, T)
 //         self.position = tmp_pos
 //         return False
 
-fn ordered_choice() {
-
+fn ordered_choice<T, U>(po: &mut ParserObject, lhs_func: &dyn Fn(&mut ParserObject, T) -> bool, lhs_arg: T, rhs_func: &dyn Fn(&mut ParserObject, U) -> bool, rhs_arg: U) -> bool {
     let tmp_pos = po.position;
     let lhs_bool: bool = lhs_func(po, lhs_arg);
-    let rhs_bool: bool = rhs_func(po, rhs_arg);
-
     if lhs_bool {
-        po.position = tmp_pos;
-        return true;
-    } else if rhs_bool {
         return true;
     }
-
     po.position = tmp_pos;
+
+    let rhs_bool: bool = rhs_func(po, rhs_arg);
+    if rhs_bool {
+        return true;
+    }
+    po.position = tmp_pos;
+
     return false;
 }
 
@@ -158,11 +158,13 @@ fn ordered_choice() {
 //                 break
 //         return True
 
-fn zero_or_more() {
+fn zero_or_more<T: Copy>(po: &mut ParserObject, func: &dyn Fn(&mut ParserObject, T) -> bool, arg: T) -> bool {
+    let mut temp_position = po.position;
+    let mut bool: bool = true;
 
-    let temp_position = po.position;
     loop {
-        let bool: bool = func(arg);
+        bool = func(po, arg);
+
         if bool {
             temp_position = po.position;
             continue;
@@ -212,4 +214,27 @@ fn sequence_test() {
     let my_bool: bool = sequence(&mut myobj, &terminal, char1, &terminal, char2);
     assert_eq!(true, my_bool);
     assert_eq!(myobj.position, 2)
+}
+
+
+#[test]
+fn ordered_choice_test() {
+    let mut myobj: ParserObject = ParserObject { position: 0, source: "Hello".to_string() };
+    let char1 = "H".as_bytes()[0];
+    let char2 = "e".as_bytes()[0];
+
+    let my_bool: bool = ordered_choice(&mut myobj, &terminal, char1, &terminal, char2);
+    assert_eq!(true, my_bool);
+    assert_eq!(myobj.position, 1)
+}
+
+#[test]
+fn zero_or_more_test() {
+    let mut myobj: ParserObject = ParserObject { position: 0, source: "HHHHHelllo".to_string() };
+    let char1 = "H".as_bytes()[0];
+    // let char2 = "e".as_bytes()[0];
+
+    let my_bool: bool = zero_or_more(&mut myobj, &terminal, char1);
+    assert_eq!(true, my_bool);
+    assert_eq!(myobj.position, 5)
 }
