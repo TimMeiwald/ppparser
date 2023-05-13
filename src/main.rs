@@ -110,6 +110,71 @@ fn sequence<T, U>(po: &mut ParserObject, lhs_func: &dyn Fn(&mut ParserObject, T)
     }
 }
 
+// #@cache
+//     def _ORDERED_CHOICE(self, args):
+//         """True if one expression matches, then updates position, else false, no positional update"""
+//         LHS_func, LHS_arg = args[0]
+//         RHS_func, RHS_arg = args[1]
+//         tmp_pos = self.position
+//         bool = LHS_func(LHS_arg)
+//         if bool:
+//             return True
+//         self.position = tmp_pos
+//         bool = RHS_func(RHS_arg)
+//         if bool:
+//             return True
+//         self.position = tmp_pos
+//         return False
+
+fn ordered_choice() {
+
+    let tmp_pos = po.position;
+    let lhs_bool: bool = lhs_func(po, lhs_arg);
+    let rhs_bool: bool = rhs_func(po, rhs_arg);
+
+    if lhs_bool {
+        po.position = tmp_pos;
+        return true;
+    } else if rhs_bool {
+        return true;
+    }
+
+    po.position = tmp_pos;
+    return false;
+}
+
+// #@cache
+//     def _ZERO_OR_MORE(self, args):
+//         """Always True, increments position each time the expression matches else continues without doing anything"""
+//         temp_position = self.position
+//         func, arg = args
+//         while True:
+//             bool = func(arg)
+//             if bool:
+//                 temp_position = self.position
+//                 continue
+//             else:
+//                 self.position = temp_position
+//                 break
+//         return True
+
+fn zero_or_more() {
+
+    let temp_position = po.position;
+    loop {
+        let bool: bool = func(arg);
+        if bool {
+            temp_position = po.position;
+            continue;
+        }
+        else {
+            po.position = temp_position;
+            break;
+        }
+    }
+    return true;
+}
+
 
 #[test]
 fn test_parser_object(){
