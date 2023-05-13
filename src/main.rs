@@ -68,6 +68,22 @@ fn terminal(po: &mut ParserObject, arg: u8) -> bool {
 //         self.position = temp_position
 //         return False
 
+fn optional_tuple<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
+    // Fn(&u8), u8
+    // Fn(&Fn), Fn
+    let temp_position = po.position;
+    let (func, arg) = pair; // unpack
+    let bool = func(po, arg);
+
+    if bool == true {
+        return true
+    }
+    else{
+        po.position = temp_position;
+        return true;
+    }
+}
+
 fn optional<T>(po: &mut ParserObject, func: &dyn Fn(&mut ParserObject, T) -> bool, arg: T) -> bool{
     // Fn(&u8), u8
     // Fn(&Fn), Fn
@@ -144,6 +160,27 @@ fn sequence<T, U>(po: &mut ParserObject, lhs_func: &dyn Fn(&mut ParserObject, T)
 //         self.position = tmp_pos
 //         return False
 
+
+fn ordered_choice_tuple<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool,T), rhs: (&dyn Fn(&mut ParserObject, U) -> bool,U)) -> bool {
+    let tmp_pos = po.position;
+    let (lhs_func, lhs_arg) = lhs;
+    let (rhs_func, rhs_arg) = rhs;
+
+    let lhs_bool: bool = lhs_func(po, lhs_arg);
+    if lhs_bool {
+        return true;
+    }
+    po.position = tmp_pos;
+
+    let rhs_bool: bool = rhs_func(po, rhs_arg);
+    if rhs_bool {
+        return true;
+    }
+    po.position = tmp_pos;
+
+    return false;
+}
+
 fn ordered_choice<T, U>(po: &mut ParserObject, lhs_func: &dyn Fn(&mut ParserObject, T) -> bool, lhs_arg: T, rhs_func: &dyn Fn(&mut ParserObject, U) -> bool, rhs_arg: U) -> bool {
     let tmp_pos = po.position;
     let lhs_bool: bool = lhs_func(po, lhs_arg);
@@ -176,7 +213,26 @@ fn ordered_choice<T, U>(po: &mut ParserObject, lhs_func: &dyn Fn(&mut ParserObje
 //                 break
 //         return True
 
-fn zero_or_more_tuple<T: Co
+fn zero_or_more_tuple<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
+    let mut temp_position = po.position;
+    let (func, arg) = pair; // unpack
+
+    let mut bool = func(po, arg);
+
+    loop {
+        bool = func(po, arg);
+
+        if bool {
+            temp_position = po.position;
+            continue;
+        }
+        else {
+            po.position = temp_position;
+            break;
+        }
+    }
+    return true;
+}
 
 fn zero_or_more<T: Copy>(po: &mut ParserObject, func: &dyn Fn(&mut ParserObject, T) -> bool, arg: T) -> bool {
     let mut temp_position = po.position;
