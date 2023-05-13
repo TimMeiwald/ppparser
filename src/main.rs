@@ -1,12 +1,9 @@
-use std::io::Empty;
-
 #[derive(Debug)]
 #[derive(PartialEq)]
 struct ParserObject{
     position: u32,
     source: String,
 }
-
 
 fn main() {
     let something: &str = "This is a string";
@@ -33,7 +30,6 @@ fn test_token(){
     println!("{:?}", value as char);
 }
 
-
 fn terminal(po: &mut ParserObject, arg: u8) -> bool {
     if arg == token(&po).unwrap() {
         po.position = po.position + 1;
@@ -44,8 +40,6 @@ fn terminal(po: &mut ParserObject, arg: u8) -> bool {
     }
 
 }
-
-
 
 fn optional_tuple<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
     // Fn(&u8), u8
@@ -62,7 +56,6 @@ fn optional_tuple<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T)
         return true;
     }
 }
-
 
 fn sequence_tuple<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool, T), rhs:(&dyn Fn(&mut ParserObject, U) -> bool, U)) -> bool {
     let tmp_pos = po.position;
@@ -81,7 +74,6 @@ fn sequence_tuple<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, 
         return false;
     }
 }
-
 
 fn ordered_choice_tuple<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool,T), rhs: (&dyn Fn(&mut ParserObject, U) -> bool,U)) -> bool {
     let tmp_pos = po.position;
@@ -124,8 +116,6 @@ fn zero_or_more_tuple<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut Parser
     return true;
 }
 
-
-
 fn one_or_more_tuple<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
     let mut temp_position = po.position;
     let (func, arg) = pair; // unpack
@@ -163,4 +153,3 @@ fn more_complex_test(){
     assert_eq!(true, my_bool);
     assert_eq!(myobj.position, 6)
 }
-
