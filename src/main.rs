@@ -164,6 +164,43 @@ fn not(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, u8) -> bool, u8)
     return !and(po, pair);
 }
 
+fn subexpression(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, u8) -> bool, u8)) -> bool {
+    /* Subexpression is any expression inside a pair of () brackets
+    SUBEXPR essentially does nothing but allows for order of precedent
+    more importantly order of precedence is very restricted because it made my life hard
+    (mostly because I can't find a good definition of what order of precedence is in PEG) so use SUBEXPR
+    to make more complicated rules */
+
+    let (func, arg) = pair;
+    let temp_position = po.position;
+    let bool = func(po, arg);
+
+    if bool {
+        return true;
+    } else {
+        po.position = temp_position;
+        return false;
+    }
+}
+
+
+fn var_name<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool{
+    /* True if called function evaluates to true else false, Is used to call other functions*/
+
+    let (func, arg) = pair;
+    let temp_position = po.position;
+    let bool = func(po, arg);
+
+    if bool {
+        return true;
+    }
+    else {
+        po.position = temp_position;
+        return false;
+    }
+}
+
+
 #[test]
 fn more_complex_test(){
     let mut myobj: ParserObject = ParserObject { position: 0, source: "AAABBBC".to_string() };
