@@ -69,10 +69,11 @@ fn c_sequence<T: Copy, U: Copy>(po: &mut ParserObject, pair: ((&dyn Fn(&mut Pars
     }
 }
 
-fn c_ordered_choice<T: Copy, U: Copy>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool,T), rhs: (&dyn Fn(&mut ParserObject, U) -> bool,U)) -> bool {
+fn c_ordered_choice<T: Copy, U: Copy>(po: &mut ParserObject, pair: ((&dyn Fn(&mut ParserObject, T) -> bool,T), (&dyn Fn(&mut ParserObject, U) -> bool,U))) -> bool{
     /* True if one expression matches, then updates position, else false, no positional update */
 
     let tmp_pos = po.position;
+    let (lhs, rhs) = pair;
     let (lhs_func, lhs_arg) = lhs;
     let (rhs_func, rhs_arg) = rhs;
 
