@@ -9,7 +9,7 @@ fn main() {
     let something: &str = "This is a string";
 }
 
-fn token(po: &ParserObject) -> Option<u8> {
+fn c_token(po: &ParserObject) -> Option<u8> {
     if po.position >= po.source.chars().count() as u32 {
         return Option::None;
     }
@@ -17,20 +17,19 @@ fn token(po: &ParserObject) -> Option<u8> {
     return Option::Some(s);
 }
 
-fn terminal(po: &mut ParserObject, arg: u8) -> bool {
+fn c_terminal(po: &mut ParserObject, arg: u8) -> bool {
     /* If character at po.position is equal to arg, increment position and return True, else return False */
 
-    if arg == token(&po).unwrap() {
+    if arg == c_token(&po).unwrap() {
         po.position = po.position + 1;
         return true;
     }
     else{
         return false;
     }
-
 }
 
-fn optional<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
+fn c_optional<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
     /* True if matches, False if not. Increments position on a match */
 
     // Fn(&u8), u8
@@ -48,11 +47,13 @@ fn optional<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bo
     }
 }
 
-fn sequence<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool, T), rhs:(&dyn Fn(&mut ParserObject, U) -> bool, U)) -> bool {
+
+fn c_sequence<T: Copy, U: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T), &dyn Fn(&mut ParserObject, U))) -> bool{
+//fn c_sequence<T: Copy, U: Copy>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool, T), rhs:(&dyn Fn(&mut ParserObject, U) -> bool, U)) -> bool {
     /* True if all expressions match, then updates position, else false, no positional update */
 
     let tmp_pos = po.position;
-
+    let (lhs, rhs) = pair;
     let (lhs_func, lhs_arg) = lhs;
     let (rhs_func, rhs_arg) = rhs;
 
@@ -68,7 +69,7 @@ fn sequence<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> 
     }
 }
 
-fn ordered_choice<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool,T), rhs: (&dyn Fn(&mut ParserObject, U) -> bool,U)) -> bool {
+fn c_ordered_choice<T: Copy, U: Copy>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool,T), rhs: (&dyn Fn(&mut ParserObject, U) -> bool,U)) -> bool {
     /* True if one expression matches, then updates position, else false, no positional update */
 
     let tmp_pos = po.position;
@@ -90,7 +91,7 @@ fn ordered_choice<T, U>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, 
     return false;
 }
 
-fn zero_or_more<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
+fn c_zero_or_more<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T))-> bool {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
     let mut temp_position = po.position;
@@ -113,7 +114,7 @@ fn zero_or_more<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject
     return true;
 }
 
-fn one_or_more<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
+fn c_one_or_more<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
     /* True if matches at least once, increments position each time the expression matches */
 
     let mut temp_position = po.position;
@@ -141,12 +142,11 @@ fn one_or_more<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject,
     return true;
 }
 
-fn and<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
+fn c_and<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
     /* True if the function results in True, never increments position */
 
     let temp_position = po.position;
     let (func, arg) = pair; // unpack
-
     let bool = func(po, arg);
 
     if bool {
@@ -158,13 +158,13 @@ fn and<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> b
     }
 }
 
-fn not(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, u8) -> bool, u8)) -> bool {
+fn c_not<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
     /* True if the function results in False, never increments position */
 
-    return !and(po, pair);
+    return !c_and(po, pair);
 }
 
-fn subexpression(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, u8) -> bool, u8)) -> bool {
+fn c_subexpression<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool {
     /* Subexpression is any expression inside a pair of () brackets
     SUBEXPR essentially does nothing but allows for order of precedent
     more importantly order of precedence is very restricted because it made my life hard
@@ -184,7 +184,7 @@ fn subexpression(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, u8) ->
 }
 
 
-fn var_name<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool{
+fn c_var_name<T: Copy>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bool, T)) -> bool{
     /* True if called function evaluates to true else false, Is used to call other functions*/
 
     let (func, arg) = pair;
@@ -200,6 +200,16 @@ fn var_name<T>(po: &mut ParserObject, pair: (&dyn Fn(&mut ParserObject, T) -> bo
     }
 }
 
+// fn thing(po: &ParserObject)-> bool{
+//     return c_subexpression(&mut po, (&c_sequence, (&c_sequence, (&c_var_name, (&Left_Bracket, 0)), (&c_var_name, (&RHS, 0))), (&c_var_name, (&Right_Bracket, 0))))
+
+// }
+
+
+
+
+
+
 
 #[test]
 fn more_complex_test(){
@@ -207,7 +217,35 @@ fn more_complex_test(){
     let char1 = "A".as_bytes()[0];
     let char2 = "B".as_bytes()[0];
 
-    let my_bool: bool = sequence(&mut myobj,  (&one_or_more, (&terminal, char1)),(&one_or_more, (&terminal, char2)));
+    let my_bool: bool = c_sequence(&mut myobj,  (&c_one_or_more, (&c_terminal, char1)),(&c_one_or_more, (&c_terminal, char2)));
     assert_eq!(true, my_bool);
     assert_eq!(myobj.position, 6)
 }
+
+
+
+#[test]
+fn more_complex_test2(){
+    let mut myobj: ParserObject = ParserObject { position: 0, source: "eAAABBBC".to_string() };
+    let char1 = "A".as_bytes()[0];
+    let char2 = "B".as_bytes()[0];
+
+    let my_bool: bool = c_optional(&mut myobj, (&c_one_or_more, (&c_terminal, char1)));
+
+    assert_eq!(true, my_bool);
+    assert_eq!(myobj.position, 0)
+}
+
+
+#[test]
+fn more_complex_test3(){
+    let mut myobj: ParserObject = ParserObject { position: 0, source: "eAAABBBC".to_string() };
+    let char1 = "A".as_bytes()[0];
+    let char2 = "B".as_bytes()[0];
+
+    let my_bool: bool = c_sequence(&mut myobj,  (&c_one_or_more, (&c_terminal, char1)),(&c_one_or_more, (&c_terminal, char2)));
+    let my_bool_2: bool = c_one_or_more(&mut myobj, (&c_sequence, ((&c_terminal, char1), (&c_terminal, char1))));
+    assert_eq!(true, my_bool);
+    assert_eq!(myobj.position, 0)
+}
+
