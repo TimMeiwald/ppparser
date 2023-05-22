@@ -1,9 +1,11 @@
+
 #[derive(Debug)]
 #[derive(PartialEq)]
 struct ParserObject{
     position: u32,
     source: String,
 }
+
 
 
 fn c_token(po: &ParserObject) -> Option<u8> {
@@ -45,7 +47,7 @@ fn c_optional<T>(po: &mut ParserObject, pair: (Box<fn(&mut ParserObject, T) -> b
 }
 
 
-fn c_ordered_choice<T, U>(po: &mut ParserObject, pair: ((Box<fn(&mut ParserObject, T) -> bool>,T), (Box<fn(&mut ParserObject, U) -> bool>,U))) -> bool{
+fn c_ordered_choice<T: Copy, U: Copy>(po: &mut ParserObject, pair: ((Box<fn(&mut ParserObject, T) -> bool>,T), (Box<fn(&mut ParserObject, U) -> bool>,U))) -> bool{
     /* True if one expression matches, then updates position, else false, no positional update */
 
     let tmp_pos = po.position;
@@ -70,7 +72,7 @@ fn c_ordered_choice<T, U>(po: &mut ParserObject, pair: ((Box<fn(&mut ParserObjec
 
 
 
-fn c_subexpression<T>(po: &mut ParserObject, pair: (Box<fn(&mut ParserObject, T) -> bool>, T)) -> bool {
+fn c_subexpression<T: Copy>(po: &mut ParserObject, pair: (Box<fn(&mut ParserObject, T) -> bool>, T)) -> bool {
     /* Subexpression is any expression inside a pair of () brackets
     SUBEXPR essentially does nothing but allows for order of precedent
     more importantly order of precedence is very restricted because it made my life hard
@@ -90,12 +92,6 @@ fn c_subexpression<T>(po: &mut ParserObject, pair: (Box<fn(&mut ParserObject, T)
 }
 
 
-fn num(po: &mut ParserObject) -> bool {
-    /*
-    <Num> = "0"/"1"/"2"/"3"/"4"/"5"/"6"/"7"/"8"/"9" ;
-    */
-    return c_subexpression(po, (Box::new(c_ordered_choice), ((Box::new(c_ordered_choice), ((Box::new(c_ordered_choice), ((Box::new(c_ordered_choice), ((Box::new(c_ordered_choice), ((Box::new(c_ordered_choice), ((Box::new(c_ordered_choice), ((Box::new(c_ordered_choice), ((Box::new(c_ordered_choice), ((Box::new(c_terminal), 48), (Box::new(c_terminal), 49))), (Box::new(c_terminal), 50))), (Box::new(c_terminal), 51))), (Box::new(c_terminal), 52))), (Box::new(c_terminal), 53))), (Box::new(c_terminal), 54))), (Box::new(c_terminal), 55))), (Box::new(c_terminal), 56))), (Box::new(c_terminal), 57))));
-}
 
 #[test]
 fn test_ordered_choice(){
@@ -127,7 +123,3 @@ fn test_c_optional_nested(){
     println!("{:?} {:?}", b, po.position)
 }
 
-fn main(){
-    let mut po = ParserObject{position: 0, source: "Hello there".to_string()};
-    let bool = num(&mut po);
-}
