@@ -534,7 +534,7 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32
     }
     
     #[test]
-    fn test_and_predicate_no_increment(){
+    fn test_and_predicate_false(){
         let source = "Hello World";
         let position: u32 = 0;
         let t = Terminal{arg: "f".to_string().as_bytes()[0]};
@@ -546,7 +546,7 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32
     }
 
     #[test]
-    fn test_and_predicate_increment(){
+    fn test_and_predicate_true(){
         let source = "Hello World";
         let position: u32 = 0;
         let t = Terminal{arg: "H".to_string().as_bytes()[0]};
@@ -581,7 +581,7 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32
     
     
     #[test]
-    fn test_not_predicate_no_increment(){
+    fn test_not_predicate_true(){
         let source = "Hello World";
         let position: u32 = 0;
         let t = Terminal{arg: "f".to_string().as_bytes()[0]};
@@ -593,7 +593,7 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32
     }
 
     #[test]
-    fn test_not_predicate_increment(){
+    fn test_not_predicate_false(){
         let source = "Hello World";
         let position: u32 = 0;
         let t = Terminal{arg: "H".to_string().as_bytes()[0]};
