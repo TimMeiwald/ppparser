@@ -23,8 +23,7 @@ trait Resolvable{
     fn resolve(&self, position: u32, source: &str) -> (bool, u32);
 }
 
-#[derive(Clone)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 struct Terminal{
     arg: u8
 }
@@ -75,8 +74,8 @@ fn optional<T: Resolvable>(position: u32, source: &str, args: T)-> (bool, u32) {
     }
 }
 
-#[derive(Clone)]
-#[derive(Copy)]
+
+#[derive(Copy, Clone)]
 struct Optional<T: Resolvable>{
     arg: T,
 }
@@ -144,8 +143,7 @@ fn ordered_choice<T: Resolvable, U: Resolvable>(position: u32, source: &str, arg
     return (false, position);
 }
 
-#[derive(Clone)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 struct OrderedChoice<T: Resolvable, U: Resolvable>{
     arg_lhs: T,
     arg_rhs: U,
@@ -257,8 +255,7 @@ fn sequence<T: Resolvable, U: Resolvable>(position: u32, source: &str, arg_lhs: 
     
 
 
-    #[derive(Clone)]
-    #[derive(Copy)]
+    #[derive(Copy, Clone)]
     struct Sequence<T: Resolvable, U: Resolvable>{
         arg_lhs: T,
         arg_rhs: U,
@@ -366,8 +363,7 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32
         return (true, position);
     }
 
-    #[derive(Clone)]
-    #[derive(Copy)]
+    #[derive(Copy, Clone)]
     struct ZeroOrMore<T: Resolvable>{
         arg: T,
     }
@@ -450,8 +446,7 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32
         return (true, position);
     }
 
-    #[derive(Clone)]
-    #[derive(Copy)]
+    #[derive(Copy, Clone)]
     struct OneOrMore<T: Resolvable>{
         arg: T,
     }
@@ -521,8 +516,7 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32
         }
     }
 
-    #[derive(Clone)]
-    #[derive(Copy)]
+    #[derive(Copy, Clone)]
     struct AndPredicate<T: Resolvable>{
         arg: T,
     }
@@ -563,12 +557,11 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32
     fn not_predicate<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32) {
         /* Always True, increments position each time the expression matches else continues without doing anything */
     
-        let ret = and_predicate(position, source, arg);
-        return (!ret.0, ret.1)
+        let (bool, position) = and_predicate(position, source, arg);
+        return (!bool, position)
     }
 
-    #[derive(Clone)]
-    #[derive(Copy)]
+    #[derive(Copy, Clone)]
     struct NotPredicate<T: Resolvable>{
         arg: T,
     }
@@ -606,26 +599,185 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32
         
 
 
+    fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32) {
+    /* Subexpression is any expression inside a pair of () brackets
+    SUBEXPR essentially does nothing but allows for order of precedent
+    more importantly order of precedence is very restricted because it made my life hard
+    (mostly because I can't find a good definition of what order of precedence is in PEG) so use SUBEXPR
+    to make more complicated rules */
+    
+        
+    let temp_position = position;
+    let (bool, position) = arg.resolve(position, source);
+
+    if bool {
+        return (true, position);
+    } else {
+        return (false, temp_position);
+    }
+}
+
+    #[derive(Copy, Clone)]
+    struct SubExpression<T: Resolvable>{
+        arg: T,
+    }
+    
+    impl <T: Resolvable + Copy> Resolvable for SubExpression<T>{
+        fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+            return subexpression(position, source, self.arg);
+        }
+    }
+
+    #[test]
+    fn test_subexpression_true(){
+        let source = "Hello World";
+        let position: u32 = 0;
+        let t = Terminal{arg: "f".to_string().as_bytes()[0]};
+        let t2 = SubExpression{arg: t};
+        let s = t2.resolve(position, source);
+        println!("{:?} {:?} {:?}", source, s.0, s.1);
+        assert_eq!(s.0, false);
+        assert_eq!(s.1, 0);
+    }
+
+    #[test]
+    fn test_subexpression_false(){
+        let source = "Hello World";
+        let position: u32 = 0;
+        let t = Terminal{arg: "H".to_string().as_bytes()[0]};
+        let t2 = SubExpression{arg: t};
+        let s = t2.resolve(position, source);
+        println!("{:?} {:?} {:?}", source, s.0, s.1);
+        assert_eq!(s.0, true);
+        assert_eq!(s.1, 1);
+    }
+        
 
 
 
 
+    fn var_name<T: Resolvable>(position: u32, source: &str, arg: T)-> (bool, u32) {
+        /* Always True, increments position each time the expression matches else continues without doing anything */
+        // NB: Currently Identical to subexpression but only because an AST isn't being built yet. 
+        
+    let temp_position = position;
+    let (bool, position) = arg.resolve(position, source);
+
+    if bool {
+        return (true, position);
+    } else {
+        return (false, temp_position);
+    }
+}
+
+    #[derive(Copy, Clone)]
+    struct VarName<T: Resolvable>{
+        arg: T,
+    }
+    
+    impl <T: Resolvable + Copy> Resolvable for VarName<T>{
+        fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+            return var_name(position, source, self.arg);
+        }
+    }
 
 
 
 
+    #[test]
+    fn test_var_name_true(){
+        let source = "Hello World";
+        let position: u32 = 0;
+        let t = Terminal{arg: "f".to_string().as_bytes()[0]};
+        let t2 = VarName{arg: t};
+        let s = t2.resolve(position, source);
+        println!("{:?} {:?} {:?}", source, s.0, s.1);
+        assert_eq!(s.0, false);
+        assert_eq!(s.1, 0);
+    }
+
+    #[test]
+    fn test_var_name_false(){
+        let source = "Hello World";
+        let position: u32 = 0;
+        let t = Terminal{arg: "H".to_string().as_bytes()[0]};
+        let t2 = VarName{arg: t};
+        let s = t2.resolve(position, source);
+        println!("{:?} {:?} {:?}", source, s.0, s.1);
+        assert_eq!(s.0, true);
+        assert_eq!(s.1, 1);
+    }
+        
+ 
 
 
+#[cfg(test)]
+mod tests{
+    use super::*;
+    #[derive(Copy, Clone)] // Needed because I copy around position which as a u32 is likely faster than passing a reference, Need's profiling.
+    struct Example; // Top level functions don't require T since they're defined via the primitives used in a given function.
+    #[derive(Copy, Clone)]
+    struct Example2;
+    
+    impl Resolvable for Example{
+        fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+            return example1(position, source); // Define which function to run using impl Resolvable
+        }
+    }
+    
+    impl Resolvable for Example2{
+        fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+            return example2(position, source);
+        }
+    }
 
+    fn example1(position: u32, source: &str) -> (bool, u32) {
+        let t1 = Example2;
+        let t2 = Terminal{arg: "e".to_string().as_bytes()[0]};
+        let t3 = Sequence{arg_lhs: t1, arg_rhs :t2};
+        let s = t3.resolve(position, source); // Each Top Level Rule can still call other Top Level Rules as well as primitives.
+        return s;
+    }
 
+    fn example2(position: u32, source: &str) -> (bool, u32) {
+        let t = Terminal{arg: "H".to_string().as_bytes()[0]};
+        let s = t.resolve(position, source);
+        return s;
+    }
 
+    #[test]
+    fn test_example_true(){
+        let source = "Hello World";
+        let position: u32 = 0;
+        let s = example1(position, source);
+        println!("{:?} {:?} {:?}", source, s.0, s.1);
+        assert_eq!(s.0, true);
+        assert_eq!(s.1, 2);
+    }
 
+    #[test]
+    fn test_example_false(){
+        let source = "Hfllo World";
+        let position: u32 = 0;
+        let s = example1(position, source);
+        println!("{:?} {:?} {:?}", source, s.0, s.1);
+        assert_eq!(s.0, false);
+        assert_eq!(s.1, 0);
+    }
+       
+    #[test]
+    fn test_example_false2(){
+        let source = "fello World";
+        let position: u32 = 0;
+        let s = example1(position, source);
+        println!("{:?} {:?} {:?}", source, s.0, s.1);
+        assert_eq!(s.0, false);
+        assert_eq!(s.1, 0);
+    }
+       
+ 
 
-
-
-
-
-
+}
 
 
 
