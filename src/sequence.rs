@@ -1,4 +1,19 @@
 use crate::Resolvable;
+
+
+#[derive(Copy, Clone)]
+pub struct Sequence<T: Resolvable, U: Resolvable> {
+    pub arg_lhs: T,
+    pub arg_rhs: U,
+}
+
+impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for Sequence<T, U> {
+    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+        return sequence(position, source, self.arg_lhs, self.arg_rhs);
+    }
+}
+
+
 fn sequence<T: Resolvable, U: Resolvable>(
     position: u32,
     source: &str,
@@ -18,18 +33,6 @@ fn sequence<T: Resolvable, U: Resolvable>(
     } else {
         let position = tmp_pos;
         return (false, position);
-    }
-}
-
-#[derive(Copy, Clone)]
-pub struct Sequence<T: Resolvable, U: Resolvable> {
-    pub arg_lhs: T,
-    pub arg_rhs: U,
-}
-
-impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for Sequence<T, U> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return sequence(position, source, self.arg_lhs, self.arg_rhs);
     }
 }
 

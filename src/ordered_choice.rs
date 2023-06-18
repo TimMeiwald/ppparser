@@ -1,5 +1,17 @@
 use crate::Resolvable;
 
+#[derive(Copy, Clone)]
+pub struct OrderedChoice<T: Resolvable, U: Resolvable> {
+    pub arg_lhs: T,
+    pub arg_rhs: U,
+}
+
+impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for OrderedChoice<T, U> {
+    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+        return ordered_choice(position, source, self.arg_lhs, self.arg_rhs);
+    }
+}
+
 fn ordered_choice<T: Resolvable, U: Resolvable>(
     position: u32,
     source: &str,
@@ -24,17 +36,7 @@ fn ordered_choice<T: Resolvable, U: Resolvable>(
     return (false, position);
 }
 
-#[derive(Copy, Clone)]
-pub struct OrderedChoice<T: Resolvable, U: Resolvable> {
-    pub arg_lhs: T,
-    pub arg_rhs: U,
-}
 
-impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for OrderedChoice<T, U> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return ordered_choice(position, source, self.arg_lhs, self.arg_rhs);
-    }
-}
 
 #[cfg(test)]
 mod tests {

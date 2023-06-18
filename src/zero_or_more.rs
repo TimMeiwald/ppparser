@@ -1,5 +1,16 @@
 use crate::Resolvable;
 
+#[derive(Copy, Clone)]
+pub struct ZeroOrMore<T: Resolvable> {
+    pub arg: T,
+}
+
+impl<T: Resolvable + Copy> Resolvable for ZeroOrMore<T> {
+    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+        return zero_or_more(position, source, self.arg);
+    }
+}
+
 fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
@@ -19,17 +30,6 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u3
         }
     }
     return (true, position);
-}
-
-#[derive(Copy, Clone)]
-pub struct ZeroOrMore<T: Resolvable> {
-    pub arg: T,
-}
-
-impl<T: Resolvable + Copy> Resolvable for ZeroOrMore<T> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return zero_or_more(position, source, self.arg);
-    }
 }
 
 #[cfg(test)]

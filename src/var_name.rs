@@ -1,5 +1,18 @@
 use crate::Resolvable;
 
+
+#[derive(Copy, Clone)]
+pub struct VarName<T: Resolvable> {
+    pub arg: T,
+}
+
+impl<T: Resolvable + Copy> Resolvable for VarName<T> {
+    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+        return var_name(position, source, self.arg);
+    }
+}
+
+
 fn var_name<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
     // NB: Currently Identical to subexpression but only because an AST isn't being built yet.
@@ -14,16 +27,7 @@ fn var_name<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
     }
 }
 
-#[derive(Copy, Clone)]
-pub struct VarName<T: Resolvable> {
-    pub arg: T,
-}
 
-impl<T: Resolvable + Copy> Resolvable for VarName<T> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return var_name(position, source, self.arg);
-    }
-}
 
 #[cfg(test)]
 mod tests {

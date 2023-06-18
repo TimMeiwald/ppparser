@@ -10,15 +10,6 @@ pub trait Resolvable {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32);
 }
 
-fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
-    /* If character at po.position is equal to arg, increment position and return True, else return False */
-    if arg == token(position, source).unwrap() {
-        let position = position + 1;
-        return (true, position);
-    } else {
-        return (false, position);
-    }
-}
 #[derive(Copy, Clone)]
 pub struct Terminal {
     pub arg: u8,
@@ -29,6 +20,17 @@ impl Resolvable for Terminal {
         return terminal(position, source, self.arg);
     }
 }
+
+fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
+    /* If character at po.position is equal to arg, increment position and return True, else return False */
+    if arg == token(position, source).unwrap() {
+        let position = position + 1;
+        return (true, position);
+    } else {
+        return (false, position);
+    }
+}
+
 
 #[cfg(test)]
 mod tests {

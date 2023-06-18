@@ -1,5 +1,16 @@
 use crate::Resolvable;
 
+#[derive(Copy, Clone)]
+pub struct SubExpression<T: Resolvable> {
+    pub arg: T,
+}
+
+impl<T: Resolvable + Copy> Resolvable for SubExpression<T> {
+    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+        return subexpression(position, source, self.arg);
+    }
+}
+
 fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Subexpression is any expression inside a pair of () brackets
     SUBEXPR essentially does nothing but allows for order of precedent
@@ -17,16 +28,7 @@ fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u
     }
 }
 
-#[derive(Copy, Clone)]
-pub struct SubExpression<T: Resolvable> {
-    pub arg: T,
-}
 
-impl<T: Resolvable + Copy> Resolvable for SubExpression<T> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return subexpression(position, source, self.arg);
-    }
-}
 #[cfg(test)]
 mod tests {
     use super::*;

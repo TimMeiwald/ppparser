@@ -1,5 +1,16 @@
 use crate::Resolvable;
 
+#[derive(Copy, Clone)]
+pub struct Optional<T: Resolvable> {
+    pub arg: T,
+}
+
+impl<T: Resolvable + Copy> Resolvable for Optional<T> {
+    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+        return optional(position, source, self.arg);
+    }
+}
+
 fn optional<T: Resolvable>(position: u32, source: &str, args: T) -> (bool, u32) {
     /* True if matches, False if not. Increments position on a match */
 
@@ -16,16 +27,9 @@ fn optional<T: Resolvable>(position: u32, source: &str, args: T) -> (bool, u32) 
     }
 }
 
-#[derive(Copy, Clone)]
-pub struct Optional<T: Resolvable> {
-    pub arg: T,
-}
 
-impl<T: Resolvable + Copy> Resolvable for Optional<T> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return optional(position, source, self.arg);
-    }
-}
+
+
 
 #[cfg(test)]
 mod tests {
