@@ -106,6 +106,7 @@ fn main() {
     println!("cargo:rerun-if-changed=src/var_name.rs");
     println!("cargo:rerun-if-changed=src/one_or_more.rs");
     println!("cargo:rerun-if-changed=src/zero_or_more.rs");
+    println!("cargo:rerun-if-changed=src/generated_parser_core.rs");
     // Use the `cc` crate to build a C file and statically link it.
     create_full_code_snapshot();
 }
