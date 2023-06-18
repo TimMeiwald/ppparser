@@ -8,6 +8,7 @@ mod subexpression;
 mod terminal;
 mod var_name;
 mod zero_or_more;
+pub mod utils;
 
 pub use crate::and_predicate::AndPredicate;
 pub use crate::not_predicate::NotPredicate;
