@@ -23,7 +23,7 @@ pub fn and_predicate<T: Resolvable>(position: u32, source: &str, arg: T) -> (boo
     } else {
         return (false, temp_position);
     }
-}
+} 
 
 
 
