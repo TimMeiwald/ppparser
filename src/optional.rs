@@ -27,10 +27,6 @@ fn optional<T: Resolvable>(position: u32, source: &str, args: T) -> (bool, u32) 
     }
 }
 
-
-
-
-
 #[cfg(test)]
 mod tests {
     use super::*;

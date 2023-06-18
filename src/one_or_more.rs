@@ -11,7 +11,6 @@ impl<T: Resolvable + Copy> Resolvable for OneOrMore<T> {
     }
 }
 
-
 fn one_or_more<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 

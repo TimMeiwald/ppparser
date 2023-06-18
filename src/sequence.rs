@@ -1,6 +1,5 @@
 use crate::Resolvable;
 
-
 #[derive(Copy, Clone)]
 pub struct Sequence<T: Resolvable, U: Resolvable> {
     pub arg_lhs: T,
@@ -12,7 +11,6 @@ impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for Sequence<T, U> {
         return sequence(position, source, self.arg_lhs, self.arg_rhs);
     }
 }
-
 
 fn sequence<T: Resolvable, U: Resolvable>(
     position: u32,

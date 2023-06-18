@@ -31,7 +31,6 @@ fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

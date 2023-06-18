@@ -8,7 +8,6 @@ mod subexpression;
 mod terminal;
 mod var_name;
 mod zero_or_more;
-mod utils;
 
 pub use crate::and_predicate::AndPredicate;
 pub use crate::not_predicate::NotPredicate;
@@ -20,14 +19,6 @@ pub use crate::terminal::Resolvable;
 pub use crate::terminal::Terminal;
 pub use crate::var_name::VarName;
 pub use crate::zero_or_more::ZeroOrMore;
-pub use crate::utils::read_input;
-
-
-
-
-
-
-
 
 /* The following is not an integration test. It's an example of the code that need's to be generated for each Rule so that it works with the rest of the codebase. */
 #[cfg(test)]

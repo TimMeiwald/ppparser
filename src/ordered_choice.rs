@@ -36,8 +36,6 @@ fn ordered_choice<T: Resolvable, U: Resolvable>(
     return (false, position);
 }
 
-
-
 #[cfg(test)]
 mod tests {
     use super::*;

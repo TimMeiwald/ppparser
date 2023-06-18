@@ -1,6 +1,5 @@
 use crate::Resolvable;
 
-
 #[derive(Copy, Clone)]
 pub struct VarName<T: Resolvable> {
     pub arg: T,
@@ -11,7 +10,6 @@ impl<T: Resolvable + Copy> Resolvable for VarName<T> {
         return var_name(position, source, self.arg);
     }
 }
-
 
 fn var_name<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
@@ -26,8 +24,6 @@ fn var_name<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
         return (false, temp_position);
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {

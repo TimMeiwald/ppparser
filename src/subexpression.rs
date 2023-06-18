@@ -28,7 +28,6 @@ fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
