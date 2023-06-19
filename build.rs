@@ -14,40 +14,38 @@ pub fn get_code_snapshot(str: &str) -> Vec<String> {
     return content;
 }
 #[test]
-fn test_code_snapshot()->(){
+fn test_code_snapshot() -> () {
     let s = get_code_snapshot("terminal.rs");
-    for i in s{
+    for i in s {
         println!("{:?}", i);
     }
 }
 
-pub fn remove_prefix(arg: Vec<String>) -> Vec<String>{
+pub fn remove_prefix(arg: Vec<String>) -> Vec<String> {
     let mut new_vec: Vec<String> = Vec::new();
     let mut add = false;
-    for i in arg{
-        if i == ""{
+    for i in arg {
+        if i == "" {
             add = true;
         }
-        if add == false{
+        if add == false {
             continue;
-        }
-        else{
+        } else {
             new_vec.push(i);
         }
     }
     return new_vec;
 }
-pub fn remove_suffix(arg: Vec<String>) -> Vec<String>{
+pub fn remove_suffix(arg: Vec<String>) -> Vec<String> {
     let mut new_vec: Vec<String> = Vec::new();
     let mut add = true;
-    for i in arg{
-        if i == "#[cfg(test)]"{
+    for i in arg {
+        if i == "#[cfg(test)]" {
             add = false;
         }
-        if add == false{
+        if add == false {
             continue;
-        }
-        else{
+        } else {
             new_vec.push(i);
         }
     }
@@ -69,7 +67,7 @@ fn create_full_code_snapshot() -> () {
         let content = get_code_snapshot(file);
         let content = remove_prefix(content);
         let content = remove_suffix(content);
-        for line in content{
+        for line in content {
             ret.push(line);
             ret.push("\n".to_string());
         }
@@ -90,9 +88,6 @@ fn test_get_full_code_snapshot() -> () {
     let s = create_full_code_snapshot();
     println!("{:?}", s);
 }
-
-
-
 
 fn main() {
     // Tell Cargo that if the given file changes, to rerun this build script.

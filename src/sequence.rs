@@ -18,7 +18,6 @@ fn sequence<T: Resolvable, U: Resolvable>(
     arg_lhs: T,
     arg_rhs: U,
 ) -> (bool, u32) {
-    //fn c_sequence<T: Copy, U: Copy>(po: &mut ParserObject, lhs: (&dyn Fn(&mut ParserObject, T) -> bool, T), rhs:(&dyn Fn(&mut ParserObject, U) -> bool, U)) -> bool {
     /* True if all expressions match, then updates position, else false, no positional update */
 
     let tmp_pos = position;

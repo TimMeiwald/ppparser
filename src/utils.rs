@@ -1,8 +1,9 @@
 // use std::env::current_dir;
 // use std::fs;
 // use std::path::PathBuf;
+use std::fs;
 use std::include_str;
-
+use std::path::PathBuf;
 
 // fn get_core_code_snapshot(str: &str) -> String {
 //     /*Gets all lines of a file from startline to endline*/
@@ -16,16 +17,23 @@ use std::include_str;
 //     let content: String = content.concat();
 //     return content;
 // }
+pub fn write_parser(path: PathBuf, content: &String) -> Result<(), std::io::Error> {
+    let status = fs::write(path, content);
+    return status;
+}
+pub fn read_grammar(path: PathBuf) -> Result<String, std::io::Error> {
+    let status = fs::read_to_string(path);
+    return status;
+}
 
 pub fn embed_core() -> String {
     //let s = get_core_code_snapshot("generated_parser_core.rs");
     let str = include_str!("generated_parser_core.rs");
-    println!("{:?}", str);
     return str.to_string();
-}   
+}
 
 #[test]
-fn test_embed_core(){
+fn test_embed_core() {
     let s = embed_core();
     println!("{:?}", s);
 }

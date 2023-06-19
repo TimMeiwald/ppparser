@@ -6,9 +6,9 @@ mod ordered_choice;
 mod sequence;
 mod subexpression;
 mod terminal;
+pub mod utils;
 mod var_name;
 mod zero_or_more;
-pub mod utils;
 
 pub use crate::and_predicate::AndPredicate;
 pub use crate::not_predicate::NotPredicate;
