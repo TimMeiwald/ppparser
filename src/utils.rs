@@ -27,7 +27,7 @@ pub fn read_grammar(path: PathBuf) -> Result<String, std::io::Error> {
 }
 
 pub fn embed_core() -> String {
-    //let s = get_core_code_snapshot("generated_parser_core.rs");
+    // Gets embedded at compile time so it can be used to generate the core parser code at runtime.
     let str = include_str!("generated_parser_core.rs");
     return str.to_string();
 }
