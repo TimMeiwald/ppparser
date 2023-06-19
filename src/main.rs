@@ -22,7 +22,7 @@ fn main() {
         Err(error) => {
             println!("Error finding dest file location: {:?}", &args[2]);
             println!("{}", error);
-            std::process::exit(1);
+            std::process::exit(2);
         }
     };
     println!("Destination File: {:?}", dest);
@@ -33,7 +33,7 @@ fn main() {
         Ok(grammar) => grammar,
         Err(_) => {
             println!("Could not read grammar file at destination {:?}", &args[1]);
-            std::process::exit(1);
+            std::process::exit(3);
         }
     };
     // Add the parser generation here to then add into parser write
@@ -42,7 +42,7 @@ fn main() {
         Ok(parser_write) => parser_write,
         Err(_) => {
             println!("Could not write out parser to destination {:?}", &args[2]);
-            std::process::exit(1);
+            std::process::exit(4);
         }
     };
 }
