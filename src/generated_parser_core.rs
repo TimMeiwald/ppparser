@@ -30,7 +30,7 @@ fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
     let t = token(position, source);
     println!("Arg: {:?}, Token: {:?}", std::str::from_utf8(&[arg]), std::str::from_utf8(&[t]));
     if t == 0 {
-        return (true, position);
+        return (false, position);
     }
     if arg == t {
         let position = position + 1;

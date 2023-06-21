@@ -39,7 +39,7 @@ fn main() {
             std::process::exit(3);
         }
     };
-    //println!("{:?}", _grammar);
+    let _grammar = _grammar + "\0";
     let position = 0;
     let (bool, position) = Grammar.resolve(position, &_grammar);
     println!{"{:?}, {:?}", bool, position};
