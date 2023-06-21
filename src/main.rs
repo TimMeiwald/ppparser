@@ -53,4 +53,5 @@ fn main() {
             std::process::exit(4);
         }
     };
+    println!{"Exiting main"}
 }
