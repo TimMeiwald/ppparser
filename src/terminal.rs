@@ -1,3 +1,5 @@
+// Need a newline here so leave this comment because it actually prevents cargo fmt moving token up and therefore not adding it to generated_parser_core
+
 fn token(position: u32, source: &str) -> Option<u8> {
     if position >= source.chars().count() as u32 {
         return Option::None;
@@ -22,8 +24,8 @@ impl Resolvable for _Terminal {
 }
 
 fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
-    /* If character at po.position is equal to arg, increment position and return True, else return False */
-    if arg == token(position, source).unwrap() {
+    let t = token(position, source).unwrap();
+    if arg == t {
         let position = position + 1;
         return (true, position);
     } else {

@@ -9,8 +9,8 @@ mod terminal;
 pub mod utils;
 mod var_name;
 mod zero_or_more;
-mod test;
-
+pub mod parser;
+mod generated_parser_core;
 pub use crate::and_predicate::_AndPredicate;
 pub use crate::not_predicate::_NotPredicate;
 pub use crate::one_or_more::_OneOrMore;
@@ -68,18 +68,22 @@ mod tests {
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let b = _Sequence{arg_lhs: _Sequence{arg_lhs: t, arg_rhs: t}, arg_rhs: t};
+        let b = _Sequence {
+            arg_lhs: _Sequence {
+                arg_lhs: t,
+                arg_rhs: t,
+            },
+            arg_rhs: t,
+        };
         let s = b.resolve(position, source);
         return s;
     }
 
     #[test]
-    fn test_example_3(){
+    fn test_example_3() {
         let a = example3(0, "Hello World!");
         assert_eq!(a.0, false);
     }
-
-
 
     #[test]
     fn test_example_true() {

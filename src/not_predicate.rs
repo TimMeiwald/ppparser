@@ -1,4 +1,4 @@
-use crate::and_predicate;
+use crate::and_predicate::and_predicate;
 use crate::Resolvable; //Solely to just invert and predicate
 
 #[derive(Copy, Clone)]
@@ -15,7 +15,7 @@ impl<T: Resolvable + Copy> Resolvable for _NotPredicate<T> {
 fn not_predicate<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
-    let (bool, position) = and_predicate::and_predicate(position, source, arg);
+    let (bool, position) = and_predicate(position, source, arg);
     return (!bool, position);
 }
 

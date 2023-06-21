@@ -1,9 +1,11 @@
 use ppparser::utils::{embed_core, read_grammar, write_parser};
 use std::env;
 use std::fs;
+use ppparser::parser::Grammar;
+use ppparser::parser::Resolvable;
 fn main() {
     let args: Vec<String> = env::args().collect();
-    //dbg!(&args);
+    dbg!(&args);
 
     let grammar_file = fs::canonicalize(&args[1]);
     let grammar = match grammar_file {
@@ -15,10 +17,9 @@ fn main() {
         }
     };
     println!("Source Grammar File: {:?}", grammar);
-    
 
     // Fails if file does not exist. Need to create file first to prevent it failing.
-    let dest_file =fs::canonicalize( &args[2]);
+    let dest_file = fs::canonicalize(&args[2]);
     let dest = match dest_file {
         Ok(dest_file) => dest_file,
         Err(error) => {
@@ -38,6 +39,11 @@ fn main() {
             std::process::exit(3);
         }
     };
+    println!("{:?}", _grammar);
+    let position = 0;
+    let (bool, position) = Grammar.resolve(position, &_grammar);
+    println!{"{:?}, {:?}", bool, position};
+
     // Add the parser generation here to then add into parser write
     let parser_write = write_parser(dest, &core_parser);
     match parser_write {
