@@ -485,7 +485,7 @@ fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
 }
 
 fn whitespace(position: u32, source: &str) -> (bool, u32) {
-return _ZeroOrMore{arg: _SubExpression{arg:_OrderedChoice{arg_lhs:_Terminal{arg:" ".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"\n".to_string().as_bytes()[0]}}}}.resolve(position, source);}
+return _ZeroOrMore{arg: _SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:" ".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"\n".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"\r".to_string().as_bytes()[0]}}}}.resolve(position, source);}
 
 #[derive(Copy, Clone)]
 pub struct Rhs;
