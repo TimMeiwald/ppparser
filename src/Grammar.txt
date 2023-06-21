@@ -27,8 +27,8 @@
 
 <Subexpression> = <Left_Bracket>,<RHS>,<Right_Bracket>;
 <Epsilon> = <Apostrophe>, <Apostrophe>;
-<LTerminal> = (<Apostrophe>,<ASCII>,<Apostrophe>)/(<Apostrophe>,"\",("n"/"r"/"t"),<Apostrophe>)/<Epsilon>;
-<Nucleus> PASSTHROUGH = (<Subexpression>/<LTerminal>/<Var_Name>), <Whitespace>;
+<Terminal> = (<Apostrophe>,<ASCII>,<Apostrophe>)/(<Apostrophe>,"\",("n"/"r"/"t"),<Apostrophe>)/<Epsilon>;
+<Nucleus> PASSTHROUGH = (<Subexpression>/<Terminal>/<Var_Name>), <Whitespace>;
 <Atom> PASSTHROUGH = (<And_Predicate>/<Not_Predicate>/<One_Or_More>/<Zero_Or_More>/<Optional>/<Nucleus>), <Whitespace>;
 
 <And_Predicate> = <Ampersand>, <Nucleus>;

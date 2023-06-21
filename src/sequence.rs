@@ -23,10 +23,16 @@ fn sequence<T: Resolvable, U: Resolvable>(
     let tmp_pos = position;
 
     let (lhs_bool, position) = arg_lhs.resolve(position, source);
-    let (rhs_bool, position) = arg_rhs.resolve(position, source);
 
-    if lhs_bool && rhs_bool {
-        return (true, position);
+    if lhs_bool {
+        let (rhs_bool, position) = arg_rhs.resolve(position, source);
+        if rhs_bool{
+            return (true, position)
+        }
+        else {
+            let position = tmp_pos;
+            return (false, position);
+        };
     } else {
         let position = tmp_pos;
         return (false, position);

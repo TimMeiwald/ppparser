@@ -1,10 +1,14 @@
 
-fn token(position: u32, source: &str) -> Option<u8> {
-    if position >= source.chars().count() as u32 {
-        return Option::None;
+
+fn token(position: u32, source: &str) -> u8 {
+    if position < source.chars().count() as u32 {
+        let s: u8 = source.as_bytes()[position as usize];
+        return s;
     }
-    let s: u8 = source.as_bytes()[position as usize];
-    return Option::Some(s);
+    else{
+        println!("END OF TOKEN STREAM");
+        return 0;
+    }
 }
 
 pub trait Resolvable {
@@ -23,7 +27,11 @@ impl Resolvable for _Terminal {
 }
 
 fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
-    let t = token(position, source).unwrap();
+    let t = token(position, source);
+    println!("Arg: {:?}, Token: {:?}", std::str::from_utf8(&[arg]), std::str::from_utf8(&[t]));
+    if t == 0 {
+        return (true, position);
+    }
     if arg == t {
         let position = position + 1;
         return (true, position);

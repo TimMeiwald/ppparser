@@ -1,11 +1,15 @@
 // Need a newline here so leave this comment because it actually prevents cargo fmt moving token up and therefore not adding it to generated_parser_core
 
-fn token(position: u32, source: &str) -> Option<u8> {
-    if position >= source.chars().count() as u32 {
-        return Option::None;
+
+fn token(position: u32, source: &str) -> u8 {
+    if position < source.chars().count() as u32 {
+        let s: u8 = source.as_bytes()[position as usize];
+        return s;
     }
-    let s: u8 = source.as_bytes()[position as usize];
-    return Option::Some(s);
+    else{
+        println!("END OF TOKEN STREAM");
+        return 0;
+    }
 }
 
 pub trait Resolvable {
@@ -24,7 +28,11 @@ impl Resolvable for _Terminal {
 }
 
 fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
-    let t = token(position, source).unwrap();
+    let t = token(position, source);
+    println!("Arg: {:?}, Token: {:?}", std::str::from_utf8(&[arg]), std::str::from_utf8(&[t]));
+    if t == 0 {
+        return (true, position);
+    }
     if arg == t {
         let position = position + 1;
         return (true, position);
@@ -55,6 +63,19 @@ mod tests {
         let position: u32 = 0;
         let t = _Terminal {
             arg: "h".to_string().as_bytes()[0],
+        };
+        let s = t.resolve(position, source);
+        println!("{:?} {:?} {:?}", source, s.0, s.1);
+        assert_eq!(s.0, false);
+        assert_eq!(s.1, 0);
+    }
+
+    #[test]
+    fn test_terminal_prevent_overflow_check() {
+        let source = "H";
+        let position: u32 = 3;
+        let t = _Terminal {
+            arg: "H".to_string().as_bytes()[0],
         };
         let s = t.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
