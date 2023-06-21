@@ -1,11 +1,11 @@
 use crate::Resolvable;
 
 #[derive(Copy, Clone)]
-pub struct OneOrMore<T: Resolvable> {
+pub struct _OneOrMore<T: Resolvable> {
     pub arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for OneOrMore<T> {
+impl<T: Resolvable + Copy> Resolvable for _OneOrMore<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return one_or_more(position, source, self.arg);
     }
@@ -40,16 +40,16 @@ fn one_or_more<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Terminal;
+    use crate::_Terminal;
 
     #[test]
     fn test_one_or_more_1() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let t3 = OneOrMore { arg: t };
+        let t3 = _OneOrMore { arg: t };
         let s = t3.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
@@ -60,10 +60,10 @@ mod tests {
     fn test_one_or_more_10() {
         let source = "HHHHHHHHHHello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let t3 = OneOrMore { arg: t };
+        let t3 = _OneOrMore { arg: t };
         let s = t3.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
@@ -74,10 +74,10 @@ mod tests {
     fn test_one_or_more_0() {
         let source = "fello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let t3 = OneOrMore { arg: t };
+        let t3 = _OneOrMore { arg: t };
         let s = t3.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);

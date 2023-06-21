@@ -1,11 +1,11 @@
 use crate::Resolvable;
 
 #[derive(Copy, Clone)]
-pub struct SubExpression<T: Resolvable> {
+pub struct _SubExpression<T: Resolvable> {
     pub arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for SubExpression<T> {
+impl<T: Resolvable + Copy> Resolvable for _SubExpression<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return subexpression(position, source, self.arg);
     }
@@ -31,15 +31,15 @@ fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Terminal;
+    use crate::_Terminal;
     #[test]
     fn test_subexpression_true() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
-        let t2 = SubExpression { arg: t };
+        let t2 = _SubExpression { arg: t };
         let s = t2.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
@@ -50,10 +50,10 @@ mod tests {
     fn test_subexpression_false() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let t2 = SubExpression { arg: t };
+        let t2 = _SubExpression { arg: t };
         let s = t2.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);

@@ -1,11 +1,11 @@
 use crate::Resolvable;
 
 #[derive(Copy, Clone)]
-pub struct VarName<T: Resolvable> {
+pub struct _VarName<T: Resolvable> {
     pub arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for VarName<T> {
+impl<T: Resolvable + Copy> Resolvable for _VarName<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return var_name(position, source, self.arg);
     }
@@ -28,15 +28,15 @@ fn var_name<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Terminal;
+    use crate::_Terminal;
     #[test]
     fn test_var_name_true() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
-        let t2 = VarName { arg: t };
+        let t2 = _VarName { arg: t };
         let s = t2.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
@@ -47,10 +47,10 @@ mod tests {
     fn test_var_name_false() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let t2 = VarName { arg: t };
+        let t2 = _VarName { arg: t };
         let s = t2.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);

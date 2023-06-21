@@ -16,6 +16,8 @@ fn main() {
     };
     println!("Source Grammar File: {:?}", grammar);
     
+
+    // Fails if file does not exist. Need to create file first to prevent it failing.
     let dest_file =fs::canonicalize( &args[2]);
     let dest = match dest_file {
         Ok(dest_file) => dest_file,

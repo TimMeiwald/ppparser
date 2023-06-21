@@ -9,17 +9,18 @@ mod terminal;
 pub mod utils;
 mod var_name;
 mod zero_or_more;
+mod test;
 
-pub use crate::and_predicate::AndPredicate;
-pub use crate::not_predicate::NotPredicate;
-pub use crate::one_or_more::OneOrMore;
-pub use crate::optional::Optional;
-pub use crate::ordered_choice::OrderedChoice;
-pub use crate::sequence::Sequence;
+pub use crate::and_predicate::_AndPredicate;
+pub use crate::not_predicate::_NotPredicate;
+pub use crate::one_or_more::_OneOrMore;
+pub use crate::optional::_Optional;
+pub use crate::ordered_choice::_OrderedChoice;
+pub use crate::sequence::_Sequence;
 pub use crate::terminal::Resolvable;
-pub use crate::terminal::Terminal;
-pub use crate::var_name::VarName;
-pub use crate::zero_or_more::ZeroOrMore;
+pub use crate::terminal::_Terminal;
+pub use crate::var_name::_VarName;
+pub use crate::zero_or_more::_ZeroOrMore;
 
 /* The following is not an integration test. It's an example of the code that need's to be generated for each Rule so that it works with the rest of the codebase. */
 #[cfg(test)]
@@ -44,10 +45,10 @@ mod tests {
 
     fn example1(position: u32, source: &str) -> (bool, u32) {
         let t1 = Example2;
-        let t2 = Terminal {
+        let t2 = _Terminal {
             arg: "e".to_string().as_bytes()[0],
         };
-        let t3 = Sequence {
+        let t3 = _Sequence {
             arg_lhs: t1,
             arg_rhs: t2,
         };
@@ -56,12 +57,29 @@ mod tests {
     }
 
     fn example2(position: u32, source: &str) -> (bool, u32) {
-        let t = Terminal {
+        let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
         let s = t.resolve(position, source);
         return s;
     }
+
+    fn example3(position: u32, source: &str) -> (bool, u32) {
+        let t = _Terminal {
+            arg: "H".to_string().as_bytes()[0],
+        };
+        let b = _Sequence{arg_lhs: _Sequence{arg_lhs: t, arg_rhs: t}, arg_rhs: t};
+        let s = b.resolve(position, source);
+        return s;
+    }
+
+    #[test]
+    fn test_example_3(){
+        let a = example3(0, "Hello World!");
+        assert_eq!(a.0, false);
+    }
+
+
 
     #[test]
     fn test_example_true() {

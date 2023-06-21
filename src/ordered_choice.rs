@@ -1,12 +1,12 @@
 use crate::Resolvable;
 
 #[derive(Copy, Clone)]
-pub struct OrderedChoice<T: Resolvable, U: Resolvable> {
+pub struct _OrderedChoice<T: Resolvable, U: Resolvable> {
     pub arg_lhs: T,
     pub arg_rhs: U,
 }
 
-impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for OrderedChoice<T, U> {
+impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for _OrderedChoice<T, U> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return ordered_choice(position, source, self.arg_lhs, self.arg_rhs);
     }
@@ -39,18 +39,18 @@ fn ordered_choice<T: Resolvable, U: Resolvable>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Terminal;
+    use crate::_Terminal;
     #[test]
     fn test_ordered_choice_true() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
-        let t2 = Terminal {
+        let t2 = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let t3 = OrderedChoice {
+        let t3 = _OrderedChoice {
             arg_lhs: t,
             arg_rhs: t2,
         };
@@ -64,13 +64,13 @@ mod tests {
     fn test_ordered_choice_false() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
-        let t2 = Terminal {
+        let t2 = _Terminal {
             arg: "e".to_string().as_bytes()[0],
         };
-        let t3 = OrderedChoice {
+        let t3 = _OrderedChoice {
             arg_lhs: t,
             arg_rhs: t2,
         };
@@ -84,27 +84,27 @@ mod tests {
     fn test_ordered_choice_nested() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
-        let t2 = Terminal {
+        let t2 = _Terminal {
             arg: "e".to_string().as_bytes()[0],
         };
-        let t3 = Terminal {
+        let t3 = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let t4 = Terminal {
+        let t4 = _Terminal {
             arg: "n".to_string().as_bytes()[0],
         };
-        let t5 = OrderedChoice {
+        let t5 = _OrderedChoice {
             arg_lhs: t,
             arg_rhs: t2,
         };
-        let t6 = OrderedChoice {
+        let t6 = _OrderedChoice {
             arg_lhs: t3,
             arg_rhs: t4,
         };
-        let t7 = OrderedChoice {
+        let t7 = _OrderedChoice {
             arg_lhs: t5,
             arg_rhs: t6,
         };
@@ -117,99 +117,99 @@ mod tests {
         /* The purpose of this test is merely to see if it chokes on deep nesting */
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
-        let t2 = Terminal {
+        let t2 = _Terminal {
             arg: "e".to_string().as_bytes()[0],
         };
-        let t3 = Terminal {
+        let t3 = _Terminal {
             arg: "h".to_string().as_bytes()[0],
         };
-        let t4 = Terminal {
+        let t4 = _Terminal {
             arg: "n".to_string().as_bytes()[0],
         };
-        let t5 = OrderedChoice {
+        let t5 = _OrderedChoice {
             arg_lhs: t,
             arg_rhs: t2,
         };
-        let t6 = OrderedChoice {
+        let t6 = _OrderedChoice {
             arg_lhs: t3,
             arg_rhs: t4,
         };
-        let t7 = OrderedChoice {
+        let t7 = _OrderedChoice {
             arg_lhs: t5,
             arg_rhs: t6,
         };
-        let t8 = OrderedChoice {
+        let t8 = _OrderedChoice {
             arg_lhs: t6,
             arg_rhs: t7,
         };
-        let t9 = OrderedChoice {
+        let t9 = _OrderedChoice {
             arg_lhs: t7,
             arg_rhs: t8,
         };
-        let t10 = OrderedChoice {
+        let t10 = _OrderedChoice {
             arg_lhs: t8,
             arg_rhs: t9,
         };
-        let t11 = OrderedChoice {
+        let t11 = _OrderedChoice {
             arg_lhs: t9,
             arg_rhs: t10,
         };
-        let t12 = OrderedChoice {
+        let t12 = _OrderedChoice {
             arg_lhs: t10,
             arg_rhs: t11,
         };
-        let t13 = OrderedChoice {
+        let t13 = _OrderedChoice {
             arg_lhs: t11,
             arg_rhs: t12,
         };
-        let t14 = OrderedChoice {
+        let t14 = _OrderedChoice {
             arg_lhs: t12,
             arg_rhs: t13,
         };
-        let t15 = OrderedChoice {
+        let t15 = _OrderedChoice {
             arg_lhs: t13,
             arg_rhs: t14,
         };
-        let t16 = OrderedChoice {
+        let t16 = _OrderedChoice {
             arg_lhs: t14,
             arg_rhs: t15,
         };
-        let t17 = OrderedChoice {
+        let t17 = _OrderedChoice {
             arg_lhs: t15,
             arg_rhs: t16,
         };
-        let t18 = OrderedChoice {
+        let t18 = _OrderedChoice {
             arg_lhs: t16,
             arg_rhs: t17,
         };
-        let t19 = OrderedChoice {
+        let t19 = _OrderedChoice {
             arg_lhs: t17,
             arg_rhs: t18,
         };
-        let t20 = OrderedChoice {
+        let t20 = _OrderedChoice {
             arg_lhs: t18,
             arg_rhs: t19,
         };
-        let t21 = OrderedChoice {
+        let t21 = _OrderedChoice {
             arg_lhs: t19,
             arg_rhs: t20,
         };
-        let t22 = OrderedChoice {
+        let t22 = _OrderedChoice {
             arg_lhs: t20,
             arg_rhs: t21,
         };
-        let t23 = OrderedChoice {
+        let t23 = _OrderedChoice {
             arg_lhs: t21,
             arg_rhs: t22,
         };
-        let t24 = OrderedChoice {
+        let t24 = _OrderedChoice {
             arg_lhs: t22,
             arg_rhs: t23,
         };
-        let t25 = OrderedChoice {
+        let t25 = _OrderedChoice {
             arg_lhs: t23,
             arg_rhs: t24,
         };

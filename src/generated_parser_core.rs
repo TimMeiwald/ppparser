@@ -4,11 +4,11 @@ pub trait Resolvable {
 }
 
 #[derive(Copy, Clone)]
-pub struct Terminal {
+pub struct _Terminal {
     pub arg: u8,
 }
 
-impl Resolvable for Terminal {
+impl Resolvable for _Terminal {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return terminal(position, source, self.arg);
     }
@@ -26,11 +26,11 @@ fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
 
 
 #[derive(Copy, Clone)]
-pub struct AndPredicate<T: Resolvable> {
+pub struct _AndPredicate<T: Resolvable> {
     arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for AndPredicate<T> {
+impl<T: Resolvable + Copy> Resolvable for _AndPredicate<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return and_predicate(position, source, self.arg);
     }
@@ -52,11 +52,11 @@ pub fn and_predicate<T: Resolvable>(position: u32, source: &str, arg: T) -> (boo
 
 
 #[derive(Copy, Clone)]
-pub struct NotPredicate<T: Resolvable> {
+pub struct _NotPredicate<T: Resolvable> {
     pub arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for NotPredicate<T> {
+impl<T: Resolvable + Copy> Resolvable for _NotPredicate<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return not_predicate(position, source, self.arg);
     }
@@ -71,11 +71,11 @@ fn not_predicate<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u
 
 
 #[derive(Copy, Clone)]
-pub struct Optional<T: Resolvable> {
+pub struct _Optional<T: Resolvable> {
     pub arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for Optional<T> {
+impl<T: Resolvable + Copy> Resolvable for _Optional<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return optional(position, source, self.arg);
     }
@@ -99,11 +99,11 @@ fn optional<T: Resolvable>(position: u32, source: &str, args: T) -> (bool, u32) 
 
 
 #[derive(Copy, Clone)]
-pub struct SubExpression<T: Resolvable> {
+pub struct _SubExpression<T: Resolvable> {
     pub arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for SubExpression<T> {
+impl<T: Resolvable + Copy> Resolvable for _SubExpression<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return subexpression(position, source, self.arg);
     }
@@ -128,11 +128,11 @@ fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u
 
 
 #[derive(Copy, Clone)]
-pub struct VarName<T: Resolvable> {
+pub struct _VarName<T: Resolvable> {
     pub arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for VarName<T> {
+impl<T: Resolvable + Copy> Resolvable for _VarName<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return var_name(position, source, self.arg);
     }
@@ -154,11 +154,11 @@ fn var_name<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
 
 
 #[derive(Copy, Clone)]
-pub struct ZeroOrMore<T: Resolvable> {
+pub struct _ZeroOrMore<T: Resolvable> {
     pub arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for ZeroOrMore<T> {
+impl<T: Resolvable + Copy> Resolvable for _ZeroOrMore<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return zero_or_more(position, source, self.arg);
     }
@@ -187,11 +187,11 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u3
 
 
 #[derive(Copy, Clone)]
-pub struct OneOrMore<T: Resolvable> {
+pub struct _OneOrMore<T: Resolvable> {
     pub arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for OneOrMore<T> {
+impl<T: Resolvable + Copy> Resolvable for _OneOrMore<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return one_or_more(position, source, self.arg);
     }

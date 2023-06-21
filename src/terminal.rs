@@ -11,11 +11,11 @@ pub trait Resolvable {
 }
 
 #[derive(Copy, Clone)]
-pub struct Terminal {
+pub struct _Terminal {
     pub arg: u8,
 }
 
-impl Resolvable for Terminal {
+impl Resolvable for _Terminal {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return terminal(position, source, self.arg);
     }
@@ -38,7 +38,7 @@ mod tests {
     fn test_terminal_true() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
         let s = t.resolve(position, source);
@@ -51,7 +51,7 @@ mod tests {
     fn test_terminal_false() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "h".to_string().as_bytes()[0],
         };
         let s = t.resolve(position, source);

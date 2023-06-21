@@ -1,11 +1,11 @@
 use crate::Resolvable;
 
 #[derive(Copy, Clone)]
-pub struct AndPredicate<T: Resolvable> {
+pub struct _AndPredicate<T: Resolvable> {
     arg: T,
 }
 
-impl<T: Resolvable + Copy> Resolvable for AndPredicate<T> {
+impl<T: Resolvable + Copy> Resolvable for _AndPredicate<T> {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
         return and_predicate(position, source, self.arg);
     }
@@ -28,16 +28,16 @@ pub fn and_predicate<T: Resolvable>(position: u32, source: &str, arg: T) -> (boo
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Terminal;
+    use crate::_Terminal;
 
     #[test]
     fn test_and_predicate_false() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
-        let t2 = AndPredicate { arg: t };
+        let t2 = _AndPredicate { arg: t };
         let s = t2.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
@@ -48,10 +48,10 @@ mod tests {
     fn test_and_predicate_true() {
         let source = "Hello World";
         let position: u32 = 0;
-        let t = Terminal {
+        let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let t2 = AndPredicate { arg: t };
+        let t2 = _AndPredicate { arg: t };
         let s = t2.resolve(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
