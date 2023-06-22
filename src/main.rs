@@ -1,11 +1,14 @@
 use ppparser::utils::{embed_core, read_grammar, write_parser};
+use std::collections::btree_map::Range;
 use std::env;
 use std::fs;
 use ppparser::parser::Grammar;
 use ppparser::parser::Resolvable;
-fn main() {
+use std::process::ExitCode;
+
+fn amain(){
     let args: Vec<String> = env::args().collect();
-    dbg!(&args);
+    //dbg!(&args);
 
     let grammar_file = fs::canonicalize(&args[1]);
     let grammar = match grammar_file {
@@ -16,7 +19,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    println!("Source Grammar File: {:?}", grammar);
+    //println!("Source Grammar File: {:?}", grammar);
 
     // Fails if file does not exist. Need to create file first to prevent it failing.
     let dest_file = fs::canonicalize(&args[2]);
@@ -28,7 +31,7 @@ fn main() {
             std::process::exit(2);
         }
     };
-    println!("Destination File: {:?}", dest);
+    //println!("Destination File: {:?}", dest);
     let core_parser: String = embed_core();
     let grammar = read_grammar(grammar);
     //  Temp ignore unused code with _grammmar since it's needed on line 39 later
@@ -53,5 +56,14 @@ fn main() {
             std::process::exit(4);
         }
     };
+}
+
+fn main() -> ExitCode {
+    // Ensures scope change kills everything
+    for i in 1..100{
+        amain();
+        //println!("{:?}", i)
+    }
     println!{"Exiting main"}
+    return ExitCode::from(0);
 }

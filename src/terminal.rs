@@ -7,7 +7,7 @@ fn token(position: u32, source: &str) -> u8 {
         return s;
     }
     else{
-        println!("END OF TOKEN STREAM");
+        //println!("END OF TOKEN STREAM");
         return 0;
     }
 }
@@ -29,7 +29,7 @@ impl Resolvable for _Terminal {
 
 fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
     let t = token(position, source);
-    println!("Arg: {:?}, Token: {:?}", std::str::from_utf8(&[arg]), std::str::from_utf8(&[t]));
+    //println!("Arg: {:?}, Token: {:?}", std::str::from_utf8(&[arg]), std::str::from_utf8(&[t]));
     if t == 0 {
         return (false, position);
     }
