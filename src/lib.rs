@@ -6,11 +6,14 @@ mod ordered_choice;
 mod sequence;
 mod subexpression;
 mod terminal;
+mod cache;
 pub mod utils;
 mod var_name;
 mod zero_or_more;
 pub mod parser;
 mod generated_parser_core;
+use std::path::Path;
+
 pub use crate::and_predicate::_AndPredicate;
 pub use crate::not_predicate::_NotPredicate;
 pub use crate::one_or_more::_OneOrMore;
@@ -21,6 +24,16 @@ pub use crate::terminal::Resolvable;
 pub use crate::terminal::_Terminal;
 pub use crate::var_name::_VarName;
 pub use crate::zero_or_more::_ZeroOrMore;
+use std::fs;
+
+
+pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize){
+    let source = fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
+    let size_of_source = source.len(); // For Test purposes but yknow prolly should do that differently, User API is still up in the air a bit
+    let (bool, position) = parser::Grammar.resolve(0, &source);
+    return (bool, position, size_of_source);
+}
+
 
 /* The following is not an integration test. It's an example of the code that need's to be generated for each Rule so that it works with the rest of the codebase. */
 #[cfg(test)]

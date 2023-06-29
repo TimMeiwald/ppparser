@@ -1,16 +1,12 @@
 extern crate ppparser;
-use crate::ppparser::Resolvable;
-use crate::ppparser::_Terminal;
-
+use crate::ppparser::parse;
+use std::path::Path;
 #[test]
-fn test_terminal_true() {
-    let source = "Hello World";
-    let position: u32 = 0;
-    let t = _Terminal {
-        arg: "H".to_string().as_bytes()[0],
-    };
-    let s = t.resolve(position, source);
-    println!("{:?} {:?} {:?}", source, s.0, s.1);
-    assert_eq!(s.0, true);
-    assert_eq!(s.1, 1);
+fn test_parse_grammar_file() {
+    let path = Path::new("./src/Grammar.txt");
+    let (bool, position, usize) = parse(path);
+    println!("{:?}, {:?}", bool, position);
+    assert_eq!(bool, true);
+    assert_eq!(position, usize as u32);
+
 }

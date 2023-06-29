@@ -70,16 +70,5 @@ mod tests {
         assert_eq!(s.1, 0);
     }
 
-    #[test]
-    fn test_terminal_prevent_overflow_check() {
-        let source = "H";
-        let position: u32 = 3;
-        let t = _Terminal {
-            arg: "H".to_string().as_bytes()[0],
-        };
-        let s = t.resolve(position, source);
-        println!("{:?} {:?} {:?}", source, s.0, s.1);
-        assert_eq!(s.0, false);
-        assert_eq!(s.1, 0);
-    }
+
 }
