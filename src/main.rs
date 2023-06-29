@@ -68,13 +68,15 @@ fn main() -> ExitCode {
 
     // No cache debug 346 lines a second on Grammar.txt
     // No cache release 1040 lines a second on Grammar.txt
+    // No cache 2000 los merely by replacing alphabet upper and lower with a more obvious handwritten code
+    // No cache 5600 los merely by replacing alphabet upper and lower with a more obvious handwritten code -> Definitely need's an optimization pass on generation to minimize terminal calls for large terminal option blocks
     for i in 1..100{
         amain();
         //println!("{:?}", i)
     }
     let elapsed = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
-    println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());
+    //println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());
     println!{"Exiting main"}
     return ExitCode::from(0);
 }

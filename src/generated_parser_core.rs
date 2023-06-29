@@ -1,6 +1,6 @@
 
 
-fn token(position: u32, source: &str) -> u8 {
+pub fn token(position: u32, source: &str) -> u8 {
     if position < source.chars().count() as u32 {
         let s: u8 = source.as_bytes()[position as usize];
         return s;

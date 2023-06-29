@@ -1,7 +1,7 @@
 // Need a newline here so leave this comment because it actually prevents cargo fmt moving token up and therefore not adding it to generated_parser_core
 
 
-fn token(position: u32, source: &str) -> u8 {
+pub fn token(position: u32, source: &str) -> u8 {
     if position < source.chars().count() as u32 {
         let s: u8 = source.as_bytes()[position as usize];
         return s;
