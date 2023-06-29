@@ -21,42 +21,60 @@
 //                 print(f"nk: Token: {position}, {func.__name__} -> '{obj.src[position:obj.position]}'")
 //             return bool
 
+use core::num;
 use std::string;
 
 //     return kernel
 use crate::{terminal::Resolvable};
 
-pub struct CacheEntry<'a>{
-    start_position: u32, 
-    argument: &'a dyn Resolvable, 
-    bool: bool,
-    end_position: u32,
+
+// One per Parse
+pub struct Cache{
+    entries: Vec<ArgCache>, // Start Position encoded in the indexing of the Cache
 }
-impl<'a> CacheEntry<'a>{
-    fn represent(&self) -> String{
-        return format!("{:?}, {:?}, {:?}", self.start_position, self.bool, self.end_position).to_string()
+
+impl Cache{
+    fn push(&mut self, position: u32, arg_key: u32, bool: bool, end_position: u32){
+        let arg_cache: &mut ArgCache = &mut self.entries[position as usize];
+        println!("GOT HERE");
+        arg_cache.entries[arg_key as usize] = (bool, end_position);
+        println!("GOT HERE2")
+        
+    }
+    fn check(&self, position: u32, arg_key: u32) -> Option<(bool, u32)>{
+        let ret: (bool, u32) = self.entries[position as usize].entries[arg_key as usize];
+        if ret.1 != u32::MAX{
+            // Result is returned to callee to unwrap
+            println!("Used Cached Value");
+            return Some(ret);
+        }
+        else{
+            // Tells callee to simply run the actual code instead of using cached value since one does not exist.
+            println!("Did not use Cache Value");
+            return None;
+        };
     }
 }
 
-
-// Cache needs to implicitly use Start_Position as it's index into other vectors which then contain every entry for that position to minimize computation.
-
-pub struct Cache<'a>{
-    entries: Vec<CacheEntry<'a>>
+// Create 1 per Position in Cache
+pub struct ArgCache{
+    entries: Vec<(bool, u32)> // Struct type encoded in the position of the entries
 }
 
-impl<'a> Cache<'a>{
-    fn push(&mut self, entry: CacheEntry<'a>){
-        self.entries.push(entry)
-    }
 
-    fn test(&self, start_position: u32, arg: &dyn Resolvable){
-        for i in &self.entries{
-            println!("{:?} {:?} {:?}", i.start_position, i.bool, i.end_position);
+pub fn cache_constructor(size_of_source: u32, number_of_structs: u32) -> Cache {
+    let mut c = Cache{entries: Vec::with_capacity(size_of_source as usize)};
+    for i in 0..size_of_source {
+        // Ensures the Vector in Cache is as large as the input source
+        c.entries.push(ArgCache { entries: Vec::with_capacity(number_of_structs as usize) });
+        for j in 0..number_of_structs{
+            // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
+            c.entries[i as usize].entries.push((false, u32::MAX));
         }
     }
+    return c;
+    // for every arg cache in c set size to <number_of_structs>
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -64,13 +82,30 @@ mod tests {
     use crate::_Terminal;
 
     #[test]
-    fn test_cache_entry() {
-        let t = _Terminal {
-            arg: "H".to_string().as_bytes()[0],
-        };
-        let s: CacheEntry = CacheEntry { start_position: 0, argument: &t, bool: true, end_position: 1 };
-        println!("{}", s.represent())
+    fn test_cache_nothing_cached() {
+        // Simulating what would happen after a rule that consumes one character parses and returns true
+        let arg_key: u32 = 1; 
+        let start_position = 0;
+        let result = true;
+        let end_position = 1;
+        let mut f = cache_constructor(10,10); // 10 just cos it's a test no particular meaning
+        let s: Option<(bool, u32)> = f.check(start_position, arg_key);
+        assert!(s.is_none());
+    }
 
+    #[test]
+    fn test_cache() {
+        // Simulating what would happen after a rule that consumes one character parses and returns true
+        let arg_key: u32 = 1; 
+        let start_position = 0;
+        let result = true;
+        let end_position = 1;
+        let mut f = cache_constructor(10,10); // 10 just cos it's a test no particular meaning
+        f.push(start_position, arg_key, result, end_position);
+        let (b, p) = f.check(start_position, arg_key).unwrap();
+        println!("{:?}, {:?}", b, p);
+        assert_eq!(b, true);
+        assert_eq!(p, 1);
     }
 
 }
