@@ -21,11 +21,6 @@
 //                 print(f"nk: Token: {position}, {func.__name__} -> '{obj.src[position:obj.position]}'")
 //             return bool
 
-use core::num;
-use std::string;
-
-//     return kernel
-use crate::{terminal::Resolvable};
 
 
 // One per Parse
@@ -67,7 +62,7 @@ pub fn cache_constructor(size_of_source: u32, number_of_structs: u32) -> Cache {
     for i in 0..size_of_source {
         // Ensures the Vector in Cache is as large as the input source
         c.entries.push(ArgCache { entries: Vec::with_capacity(number_of_structs as usize) });
-        for j in 0..number_of_structs{
+        for _j in 0..number_of_structs{
             // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
             c.entries[i as usize].entries.push((false, u32::MAX));
         }
@@ -79,16 +74,14 @@ pub fn cache_constructor(size_of_source: u32, number_of_structs: u32) -> Cache {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::_Terminal;
+
 
     #[test]
     fn test_cache_nothing_cached() {
         // Simulating what would happen after a rule that consumes one character parses and returns true
         let arg_key: u32 = 1; 
         let start_position = 0;
-        let result = true;
-        let end_position = 1;
-        let mut f = cache_constructor(10,10); // 10 just cos it's a test no particular meaning
+        let f = cache_constructor(10,10); // 10 just cos it's a test no particular meaning
         let s: Option<(bool, u32)> = f.check(start_position, arg_key);
         assert!(s.is_none());
     }
