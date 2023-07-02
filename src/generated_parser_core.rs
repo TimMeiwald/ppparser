@@ -1,5 +1,4 @@
 
-
 pub fn token(position: u32, source: &str) -> u8 {
     if position < source.chars().count() as u32 {
         let s: u8 = source.as_bytes()[position as usize];
@@ -13,6 +12,7 @@ pub fn token(position: u32, source: &str) -> u8 {
 
 pub trait Resolvable {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32);
+    fn cache_resolve(&self, cache: Cache, position: u32, source: &str) -> (bool, u32);
 }
 
 #[derive(Copy, Clone)]

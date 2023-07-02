@@ -1,5 +1,5 @@
 // Need a newline here so leave this comment because it actually prevents cargo fmt moving token up and therefore not adding it to generated_parser_core
-
+use crate::cache::Cache;
 
 pub fn token(position: u32, source: &str) -> u8 {
     if position < source.chars().count() as u32 {
@@ -14,6 +14,7 @@ pub fn token(position: u32, source: &str) -> u8 {
 
 pub trait Resolvable {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32);
+    fn cache_resolve(&self, cache: Cache, position: u32, source: &str) -> (bool, u32);
 }
 
 #[derive(Copy, Clone)]
