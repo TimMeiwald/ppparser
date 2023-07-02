@@ -128,7 +128,7 @@ mod tests {
     }
 
     #[test]
-    fn test_sample_function(){
+    fn test_sample_struct(){
         let src = "Hello World";
         let position = 0;
         let mut cache = cache_constructor(11, 1);
@@ -144,6 +144,31 @@ mod tests {
         assert_eq!(v.0, true);
         assert_eq!(v.1, 1);
         let ret = cache_struct_wrapper(&mut cache, rule, arg_key, position, src);
+        assert_eq!(ret.0, true);
+        assert_eq!(ret.1, 1);
+
+    }
+
+    #[test]
+    fn test_sample_function(){
+        let src = "Hello World";
+        let position = 0;
+        let mut cache = cache_constructor(11, 1);
+        let arg_key = 0;
+        let s = cache.check(position, arg_key);
+        let rule = _Terminal {
+            arg: "H".to_string().as_bytes()[0],
+        };
+        fn thing(cache: &mut Cache, position:u32, source: &str)-> (bool, u32){
+            return (true, 1)
+        }
+        let ret = cache_fn_wrapper(&mut cache, thing, arg_key, position, src);
+        assert_eq!(ret.0, true);
+        assert_eq!(ret.1, 1);
+        let v = cache.entries[position as usize].entries[arg_key as usize];
+        assert_eq!(v.0, true);
+        assert_eq!(v.1, 1);
+        let ret = cache_fn_wrapper(&mut cache, thing, arg_key, position, src);
         assert_eq!(ret.0, true);
         assert_eq!(ret.1, 1);
 
