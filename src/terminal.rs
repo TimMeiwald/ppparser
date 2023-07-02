@@ -44,6 +44,7 @@ fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cache::cache_constructor;
     #[test]
     fn test_terminal_true() {
         let source = "Hello World";
@@ -51,7 +52,9 @@ mod tests {
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let s = t.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 1);
@@ -64,7 +67,9 @@ mod tests {
         let t = _Terminal {
             arg: "h".to_string().as_bytes()[0],
         };
-        let s = t.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);

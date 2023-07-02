@@ -6,12 +6,12 @@ mod ordered_choice;
 mod sequence;
 mod subexpression;
 mod terminal;
-mod cache;
+pub mod cache;
 pub mod utils;
 mod var_name;
 mod zero_or_more;
 pub mod parser;
-mod generated_parser_core;
+//mod generated_parser_core;
 use std::path::Path;
 
 
@@ -26,13 +26,15 @@ pub use crate::terminal::_Terminal;
 pub use crate::var_name::_VarName;
 pub use crate::zero_or_more::_ZeroOrMore;
 use std::fs;
-use crate::cache::Cache;
+use crate::cache::cache_constructor;
 
 
 pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize){
     let source = fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
     let size_of_source = source.len(); // For Test purposes but yknow prolly should do that differently, User API is still up in the air a bit
-    let (bool, position) = parser::Grammar.resolve(0, &source);
+    let mut cache = cache_constructor(size_of_source as u32 +1, 100); // Will break for anything with more than 100 chars or 100 rules
+
+    let (bool, position) = parser::Grammar.resolve(&mut cache, 0, &source);
     return (bool, position, size_of_source);
 }
 
@@ -68,7 +70,9 @@ mod tests {
             arg_lhs: t1,
             arg_rhs: t2,
         };
-        let s = t3.resolve(position, source); // Each Top Level Rule can still call other Top Level Rules as well as primitives.
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t3.resolve(&mut cache, position, source); // Each Top Level Rule can still call other Top Level Rules as well as primitives.
         return s;
     }
 
@@ -76,7 +80,9 @@ mod tests {
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let s = t.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t.resolve(&mut cache, position, source);
         return s;
     }
 
@@ -91,7 +97,9 @@ mod tests {
             },
             arg_rhs: t,
         };
-        let s = b.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = b.resolve(&mut cache, position, source);
         return s;
     }
 

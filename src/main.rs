@@ -5,6 +5,8 @@ use ppparser::parser::Grammar;
 use ppparser::parser::Resolvable;
 use std::process::ExitCode;
 
+use ppparser::cache::{cache_constructor};
+
 fn amain(){
     //let args: Vec<String> = env::args().collect().;
     //dbg!(&args);
@@ -45,7 +47,9 @@ fn amain(){
     };
     let _grammar = _grammar + "\0";
     let position = 0;
-    let (bool, position) = Grammar.resolve(position, &_grammar);
+    let mut cache = cache_constructor(100, 1); // Will break for anything with more than 100 chars or 1 rule
+
+    let (bool, position) = Grammar.resolve(&mut cache, position, &_grammar);
     //println!{"{:?}, {:?}", bool, position};
 
     // Add the parser generation here to then add into parser write

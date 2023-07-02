@@ -45,6 +45,7 @@ mod tests {
     use super::*;
     use crate::_OrderedChoice;
     use crate::_Terminal;
+    use crate::cache::cache_constructor;
     #[test]
     fn test_sequence_true() {
         let source = "Hello World";
@@ -59,7 +60,9 @@ mod tests {
             arg_lhs: t,
             arg_rhs: t2,
         };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 2);
@@ -79,7 +82,9 @@ mod tests {
             arg_lhs: t,
             arg_rhs: t2,
         };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);
@@ -113,7 +118,9 @@ mod tests {
             arg_lhs: t5,
             arg_rhs: t6,
         };
-        let s = t7.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t7.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 4);
@@ -176,7 +183,9 @@ mod tests {
             arg_lhs: t7,
             arg_rhs: r7,
         };
-        let s = t8.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t8.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 4);

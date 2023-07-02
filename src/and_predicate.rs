@@ -29,7 +29,7 @@ pub fn and_predicate<T: Resolvable>(cache: &mut Cache, position: u32, source: &s
 mod tests {
     use super::*;
     use crate::_Terminal;
-
+    use crate::cache::cache_constructor;
     #[test]
     fn test_and_predicate_false() {
         let source = "Hello World";
@@ -38,7 +38,9 @@ mod tests {
             arg: "f".to_string().as_bytes()[0],
         };
         let t2 = _AndPredicate { arg: t };
-        let s = t2.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t2.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);
@@ -52,7 +54,8 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t2 = _AndPredicate { arg: t };
-        let s = t2.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+        let s = t2.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 0);

@@ -36,6 +36,7 @@ fn zero_or_more<T: Resolvable>(cache: &mut Cache, position: u32,  source: &str, 
 mod tests {
     use super::*;
     use crate::_Terminal;
+    use crate::cache::cache_constructor;
     #[test]
     fn test_zero_or_more_1() {
         let source = "Hello World";
@@ -44,7 +45,9 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t3 = _ZeroOrMore { arg: t };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 1);
@@ -58,7 +61,9 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t3 = _ZeroOrMore { arg: t };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 10);
@@ -72,7 +77,8 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t3 = _ZeroOrMore { arg: t };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 0);

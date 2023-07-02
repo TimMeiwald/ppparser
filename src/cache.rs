@@ -20,7 +20,6 @@
 //             if(func.__name__ in ["And_Predicate", "Not_Predicate", "Optional", "Ordered_Choice", "Sequence", "Var_Name", "_TERMINAL", "many_A"] and bool == True):
 //                 print(f"nk: Token: {position}, {func.__name__} -> '{obj.src[position:obj.position]}'")
 //             return bool
-
 use crate::Resolvable;
 
 
@@ -73,7 +72,7 @@ pub fn cache_constructor(size_of_source: u32, number_of_structs: u32) -> Cache {
     // for every arg cache in c set size to <number_of_structs>
 }
 
-fn cache_wrapper<T: Resolvable>(cache: &mut Cache, rule: T, arg_key: u32, position: u32, source: &str) -> (bool, u32){
+pub fn cache_wrapper<T: Resolvable>(cache: &mut Cache, rule: T, arg_key: u32, position: u32, source: &str) -> (bool, u32){
     let ret = cache.check(position, arg_key);
     if ret != None{
         return ret.unwrap();
