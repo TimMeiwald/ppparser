@@ -46,8 +46,9 @@ fn amain(){
         }
     };
     let _grammar = _grammar + "\0";
+    let _grammar_length = _grammar.len() as u32 + 1;
     let position = 0;
-    let mut cache = cache_constructor(100, 1); // Will break for anything with more than 100 chars or 1 rule
+    let mut cache = cache_constructor(_grammar_length, 100); // Will break for anything with more than 100 chars or 1 rule
 
     let (bool, position) = Grammar.resolve(&mut cache, position, &_grammar);
     //println!{"{:?}, {:?}", bool, position};
@@ -74,6 +75,7 @@ fn main() -> ExitCode {
     // No cache release 1040 lines a second on Grammar.txt
     // No cache 2000 los merely by replacing alphabet upper and lower with a more obvious handwritten code
     // No cache 5600 los merely by replacing alphabet upper and lower with a more obvious handwritten code -> Definitely need's an optimization pass on generation to minimize terminal calls for large terminal option blocks
+    // Cache, No handwritten 8600 los.
     for i in 1..1000{
         amain();
         //println!("{:?}", i)

@@ -32,21 +32,17 @@ pub struct Cache{
 impl Cache{
     fn push(&mut self, position: u32, arg_key: u32, bool: bool, end_position: u32){
         let arg_cache: &mut ArgCache = &mut self.entries[position as usize];
-        println!("GOT HERE");
         arg_cache.entries[arg_key as usize] = (bool, end_position);
-        println!("GOT HERE2")
         
     }
     fn check(&self, position: u32, arg_key: u32) -> Option<(bool, u32)>{
         let ret: (bool, u32) = self.entries[position as usize].entries[arg_key as usize];
         if ret.1 != u32::MAX{
             // Result is returned to callee to unwrap
-            println!("Used Cached Value");
             return Some(ret);
         }
         else{
             // Tells callee to simply run the actual code instead of using cached value since one does not exist.
-            println!("Did not use Cache Value");
             return None;
         };
     }
