@@ -1,21 +1,21 @@
 mod and_predicate;
+pub mod cache;
 mod not_predicate;
 mod one_or_more;
 mod optional;
 mod ordered_choice;
+pub mod parser;
 mod sequence;
 mod subexpression;
 mod terminal;
-pub mod cache;
 pub mod utils;
 mod var_name;
 mod zero_or_more;
-pub mod parser;
 //mod generated_parser_core;
 use std::path::Path;
 
-
 pub use crate::and_predicate::_AndPredicate;
+use crate::cache::cache_constructor;
 pub use crate::not_predicate::_NotPredicate;
 pub use crate::one_or_more::_OneOrMore;
 pub use crate::optional::_Optional;
@@ -26,18 +26,16 @@ pub use crate::terminal::_Terminal;
 pub use crate::var_name::_VarName;
 pub use crate::zero_or_more::_ZeroOrMore;
 use std::fs;
-use crate::cache::cache_constructor;
 
-
-pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize){
-    let source = fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
+pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize) {
+    let source =
+        fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
     let size_of_source = source.len(); // For Test purposes but yknow prolly should do that differently, User API is still up in the air a bit
-    let mut cache = cache_constructor(size_of_source as u32 +1, 43); // Will break for anything with more than 100 chars or 100 rules
+    let mut cache = cache_constructor(size_of_source as u32 + 1, 43); // Will break for anything with more than 100 chars or 100 rules
 
     let (bool, position) = parser::Grammar.resolve(&mut cache, 0, &source);
     return (bool, position, size_of_source);
 }
-
 
 /* The following is not an integration test. It's an example of the code that need's to be generated for each Rule so that it works with the rest of the codebase. */
 #[cfg(test)]
@@ -50,13 +48,13 @@ mod tests {
     struct Example2;
 
     impl Resolvable for Example {
-        fn resolve(&self, cache: &mut Cache,position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
             return example1(position, source); // Define which function to run using impl Resolvable
         }
     }
 
     impl Resolvable for Example2 {
-        fn resolve(&self, cache: &mut Cache,position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
             return example2(position, source);
         }
     }

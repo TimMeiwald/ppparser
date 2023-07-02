@@ -1,17 +1,21 @@
+use ppparser::parser::Grammar;
+use ppparser::parser::Resolvable;
 use ppparser::utils::{embed_core, read_grammar, write_parser};
 use std::env::args;
 use std::fs;
-use ppparser::parser::Grammar;
-use ppparser::parser::Resolvable;
 use std::process::ExitCode;
 
-use ppparser::cache::{cache_constructor};
+use ppparser::cache::cache_constructor;
 
-fn amain(){
+fn amain() {
     //let args: Vec<String> = env::args().collect().;
     //dbg!(&args);
-    let grammar_path: String = args().nth(1).unwrap_or("There is no grammar filepath!".to_string());
-    let dest_path: String = args().nth(2).unwrap_or("There is no destination filepath!".to_string()); 
+    let grammar_path: String = args()
+        .nth(1)
+        .unwrap_or("There is no grammar filepath!".to_string());
+    let dest_path: String = args()
+        .nth(2)
+        .unwrap_or("There is no destination filepath!".to_string());
 
     let grammar_file = fs::canonicalize(&grammar_path);
     let grammar = match grammar_file {
@@ -41,7 +45,10 @@ fn amain(){
     let _grammar = match grammar {
         Ok(grammar) => grammar,
         Err(_) => {
-            println!("Could not read grammar file at destination {:?}", &grammar_path);
+            println!(
+                "Could not read grammar file at destination {:?}",
+                &grammar_path
+            );
             std::process::exit(3);
         }
     };
@@ -65,13 +72,10 @@ fn amain(){
     };
 }
 
-
-
 fn main() -> ExitCode {
     // Ensures scope change kills everything
     use std::time::Instant;
     let now = Instant::now();
-
 
     // Handwritten means that alphabet upper and lower were replaced with obvious handwritten code.
     // No cache debug 346 lines a second on Grammar.txt
@@ -81,13 +85,13 @@ fn main() -> ExitCode {
     // Regular Cache, Debug, No handwritten 1083 los.
     // Regular Cache, No handwritten 9300 los.
     // Regular Cache, handwritten 28000 los(handwritten not cached since 2 comparisons are likely faster than cache access for a single char).
-    for i in 1..1000{
+    for i in 1..1000 {
         amain();
         //println!("{:?}", i)
     }
     let elapsed = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
     //println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());
-    println!{"Exiting main"}
+    println! {"Exiting main"}
     return ExitCode::from(0);
 }

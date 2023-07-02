@@ -1,5 +1,7 @@
-use crate::Resolvable;
 use crate::cache::Cache;
+use crate::Resolvable;
+
+//
 #[derive(Copy, Clone)]
 pub struct _Sequence<T: Resolvable, U: Resolvable> {
     pub arg_lhs: T,
@@ -7,8 +9,8 @@ pub struct _Sequence<T: Resolvable, U: Resolvable> {
 }
 
 impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for _Sequence<T, U> {
-    fn resolve(&self,cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return sequence(cache,position, source, self.arg_lhs, self.arg_rhs);
+    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return sequence(cache, position, source, self.arg_lhs, self.arg_rhs);
     }
 }
 
@@ -27,10 +29,9 @@ fn sequence<T: Resolvable, U: Resolvable>(
 
     if lhs_bool {
         let (rhs_bool, position) = arg_rhs.resolve(cache, position, source);
-        if rhs_bool{
-            return (true, position)
-        }
-        else {
+        if rhs_bool {
+            return (true, position);
+        } else {
             let position = tmp_pos;
             return (false, position);
         };

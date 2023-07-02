@@ -1,5 +1,7 @@
-use crate::Resolvable;
 use crate::cache::Cache;
+use crate::Resolvable;
+
+//
 #[derive(Copy, Clone)]
 pub struct _ZeroOrMore<T: Resolvable> {
     pub arg: T,
@@ -11,7 +13,12 @@ impl<T: Resolvable + Copy> Resolvable for _ZeroOrMore<T> {
     }
 }
 
-fn zero_or_more<T: Resolvable>(cache: &mut Cache, position: u32,  source: &str, arg: T) -> (bool, u32) {
+fn zero_or_more<T: Resolvable>(
+    cache: &mut Cache,
+    position: u32,
+    source: &str,
+    arg: T,
+) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
     let mut temp_position = position;

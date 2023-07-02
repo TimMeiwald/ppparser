@@ -1,5 +1,7 @@
-use crate::Resolvable;
 use crate::cache::Cache;
+use crate::Resolvable;
+
+//
 #[derive(Copy, Clone)]
 pub struct _SubExpression<T: Resolvable> {
     pub arg: T,
@@ -11,7 +13,12 @@ impl<T: Resolvable + Copy> Resolvable for _SubExpression<T> {
     }
 }
 
-fn subexpression<T: Resolvable>(cache: &mut Cache, position: u32, source: &str, arg: T) -> (bool, u32) {
+fn subexpression<T: Resolvable>(
+    cache: &mut Cache,
+    position: u32,
+    source: &str,
+    arg: T,
+) -> (bool, u32) {
     /* Subexpression is any expression inside a pair of () brackets
     SUBEXPR essentially does nothing but allows for order of precedent
     more importantly order of precedence is very restricted because it made my life hard

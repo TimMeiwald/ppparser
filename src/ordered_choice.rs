@@ -1,5 +1,7 @@
-use crate::Resolvable;
 use crate::cache::Cache;
+use crate::Resolvable;
+
+//
 #[derive(Copy, Clone)]
 pub struct _OrderedChoice<T: Resolvable, U: Resolvable> {
     pub arg_lhs: T,

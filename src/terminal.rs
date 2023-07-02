@@ -1,12 +1,11 @@
-// Need a newline here so leave this comment because it actually prevents cargo fmt moving token up and therefore not adding it to generated_parser_core
 use crate::cache::Cache;
+// Need a newline here so leave this comment because it actually prevents cargo fmt moving token up and therefore not adding it to generated_parser_core
 
 pub fn token(position: u32, source: &str) -> u8 {
     if position < source.chars().count() as u32 {
         let s: u8 = source.as_bytes()[position as usize];
         return s;
-    }
-    else{
+    } else {
         //println!("END OF TOKEN STREAM");
         return 0;
     }
@@ -74,6 +73,4 @@ mod tests {
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);
     }
-
-
 }

@@ -8,5 +8,4 @@ fn test_parse_grammar_file() {
     println!("{:?}, {:?}", bool, position);
     assert_eq!(bool, true);
     assert_eq!(position, usize as u32);
-
 }
