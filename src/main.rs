@@ -70,7 +70,7 @@ fn main() -> ExitCode {
     // No cache release 1040 lines a second on Grammar.txt
     // No cache 2000 los merely by replacing alphabet upper and lower with a more obvious handwritten code
     // No cache 5600 los merely by replacing alphabet upper and lower with a more obvious handwritten code -> Definitely need's an optimization pass on generation to minimize terminal calls for large terminal option blocks
-    for i in 1..100{
+    for i in 1..1000{
         amain();
         //println!("{:?}", i)
     }

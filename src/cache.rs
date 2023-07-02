@@ -21,6 +21,8 @@
 //                 print(f"nk: Token: {position}, {func.__name__} -> '{obj.src[position:obj.position]}'")
 //             return bool
 
+use crate::Resolvable;
+
 
 
 // One per Parse
@@ -71,10 +73,23 @@ pub fn cache_constructor(size_of_source: u32, number_of_structs: u32) -> Cache {
     // for every arg cache in c set size to <number_of_structs>
 }
 
+fn cache_wrapper<T: Resolvable>(cache: &mut Cache, rule: T, arg_key: u32, position: u32, source: &str) -> (bool, u32){
+    let ret = cache.check(position, arg_key);
+    if ret != None{
+        return ret.unwrap();
+    }
+    else{
+        let ret = rule.resolve(position, source);
+        cache.push(position, arg_key, ret.0, ret.1);
+        return ret;
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    use crate::_Terminal;
 
     #[test]
     fn test_cache_nothing_cached() {
@@ -100,5 +115,29 @@ mod tests {
         assert_eq!(b, true);
         assert_eq!(p, 1);
     }
+
+    #[test]
+    fn test_sample_function(){
+        let src = "Hello World";
+        let position = 0;
+        let mut cache = cache_constructor(11, 1);
+        let arg_key = 0;
+        let s = cache.check(position, arg_key);
+        let rule = _Terminal {
+            arg: "H".to_string().as_bytes()[0],
+        };
+        let ret = cache_wrapper(&mut cache, rule, arg_key, position, src);
+        assert_eq!(ret.0, true);
+        assert_eq!(ret.1, 1);
+        let v = cache.entries[position as usize].entries[arg_key as usize];
+        assert_eq!(v.0, true);
+        assert_eq!(v.1, 1);
+        let ret = cache_wrapper(&mut cache, rule, arg_key, position, src);
+        assert_eq!(ret.0, true);
+        assert_eq!(ret.1, 1);
+
+    }
+
+    
 
 }

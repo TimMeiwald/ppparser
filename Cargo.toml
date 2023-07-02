@@ -3,13 +3,15 @@ name = "ppparser"
 version = "0.2.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[build]
+profiler = true
 
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 
 
 [profile.release]
 strip = true  # Automatically strip symbols from the binary.
-opt-level = "z"  # Optimize for size.
+opt-level = 3  # Optimize for size.
 lto = true
 codegen-units = 1

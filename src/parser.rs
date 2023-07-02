@@ -10,11 +10,13 @@ pub use crate::terminal::_Terminal;
 use crate::terminal::token;
 pub use crate::var_name::_VarName;
 pub use crate::zero_or_more::_ZeroOrMore;
+use crate::cache;
 
 #[derive(Copy, Clone)]
 pub struct AlphabetUpper;
 impl Resolvable for AlphabetUpper {
     fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+
         let hook = alphabet_upper(position, source);
         return hook;
     }
@@ -65,58 +67,66 @@ impl Resolvable for Num {
         return hook;
     }
 }
-
 fn num(position: u32, source: &str) -> (bool, u32) {
-    return _OrderedChoice {
-        arg_lhs: _OrderedChoice {
-            arg_lhs: _OrderedChoice {
-                arg_lhs: _OrderedChoice {
-                    arg_lhs: _OrderedChoice {
-                        arg_lhs: _OrderedChoice {
-                            arg_lhs: _OrderedChoice {
-                                arg_lhs: _OrderedChoice {
-                                    arg_lhs: _OrderedChoice {
-                                        arg_lhs: _Terminal {
-                                            arg: "0".to_string().as_bytes()[0],
-                                        },
-                                        arg_rhs: _Terminal {
-                                            arg: "1".to_string().as_bytes()[0],
-                                        },
-                                    },
-                                    arg_rhs: _Terminal {
-                                        arg: "2".to_string().as_bytes()[0],
-                                    },
-                                },
-                                arg_rhs: _Terminal {
-                                    arg: "3".to_string().as_bytes()[0],
-                                },
-                            },
-                            arg_rhs: _Terminal {
-                                arg: "4".to_string().as_bytes()[0],
-                            },
-                        },
-                        arg_rhs: _Terminal {
-                            arg: "5".to_string().as_bytes()[0],
-                        },
-                    },
-                    arg_rhs: _Terminal {
-                        arg: "6".to_string().as_bytes()[0],
-                    },
-                },
-                arg_rhs: _Terminal {
-                    arg: "7".to_string().as_bytes()[0],
-                },
-            },
-            arg_rhs: _Terminal {
-                arg: "8".to_string().as_bytes()[0],
-            },
-        },
-        arg_rhs: _Terminal {
-            arg: "9".to_string().as_bytes()[0],
-        },
+    let curr_token = token(position, source);
+    if curr_token >= 48 && curr_token <= 57 {
+        return (true, position+1)
     }
-    .resolve(position, source);
+    else{
+        return (false, position)
+    }
 }
+// fn num(position: u32, source: &str) -> (bool, u32) {
+//     return _OrderedChoice {
+//         arg_lhs: _OrderedChoice {
+//             arg_lhs: _OrderedChoice {
+//                 arg_lhs: _OrderedChoice {
+//                     arg_lhs: _OrderedChoice {
+//                         arg_lhs: _OrderedChoice {
+//                             arg_lhs: _OrderedChoice {
+//                                 arg_lhs: _OrderedChoice {
+//                                     arg_lhs: _OrderedChoice {
+//                                         arg_lhs: _Terminal {
+//                                             arg: "0".to_string().as_bytes()[0],
+//                                         },
+//                                         arg_rhs: _Terminal {
+//                                             arg: "1".to_string().as_bytes()[0],
+//                                         },
+//                                     },
+//                                     arg_rhs: _Terminal {
+//                                         arg: "2".to_string().as_bytes()[0],
+//                                     },
+//                                 },
+//                                 arg_rhs: _Terminal {
+//                                     arg: "3".to_string().as_bytes()[0],
+//                                 },
+//                             },
+//                             arg_rhs: _Terminal {
+//                                 arg: "4".to_string().as_bytes()[0],
+//                             },
+//                         },
+//                         arg_rhs: _Terminal {
+//                             arg: "5".to_string().as_bytes()[0],
+//                         },
+//                     },
+//                     arg_rhs: _Terminal {
+//                         arg: "6".to_string().as_bytes()[0],
+//                     },
+//                 },
+//                 arg_rhs: _Terminal {
+//                     arg: "7".to_string().as_bytes()[0],
+//                 },
+//             },
+//             arg_rhs: _Terminal {
+//                 arg: "8".to_string().as_bytes()[0],
+//             },
+//         },
+//         arg_rhs: _Terminal {
+//             arg: "9".to_string().as_bytes()[0],
+//         },
+//     }
+//     .resolve(position, source);
+// }
 
 #[derive(Copy, Clone)]
 pub struct Spaces;
