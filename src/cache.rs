@@ -68,13 +68,29 @@ pub fn cache_constructor(size_of_source: u32, number_of_structs: u32) -> Cache {
     // for every arg cache in c set size to <number_of_structs>
 }
 
-pub fn cache_wrapper<T: Resolvable>(cache: &mut Cache, rule: T, arg_key: u32, position: u32, source: &str) -> (bool, u32){
+pub fn cache_struct_wrapper<T: Resolvable>(cache: &mut Cache, rule: T, arg_key: u32, position: u32, source: &str) -> (bool, u32){
     let ret = cache.check(position, arg_key);
     if ret != None{
         return ret.unwrap();
     }
     else{
         let ret = rule.resolve(cache, position, source);
+        cache.push(position, arg_key, ret.0, ret.1);
+        return ret;
+    }
+}
+
+pub fn cache_fn_wrapper(cache: &mut Cache, rule_function: fn(&mut Cache, u32, &str)->(bool, u32), arg_key: u32, position: u32, source: &str) -> (bool, u32){
+    /*
+        Use this to wrap functions, i.e if using handwritten functions to improve performance.
+     */
+    let ret = cache.check(position, arg_key);
+    if ret != None{
+        return ret.unwrap();
+    }
+    else{
+        let ret = rule_function(cache, position, source);
+        //let ret = rule.resolve(cache, position, source);
         cache.push(position, arg_key, ret.0, ret.1);
         return ret;
     }
