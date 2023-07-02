@@ -137,13 +137,13 @@ mod tests {
         let rule = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let ret = cache_wrapper(&mut cache, rule, arg_key, position, src);
+        let ret = cache_struct_wrapper(&mut cache, rule, arg_key, position, src);
         assert_eq!(ret.0, true);
         assert_eq!(ret.1, 1);
         let v = cache.entries[position as usize].entries[arg_key as usize];
         assert_eq!(v.0, true);
         assert_eq!(v.1, 1);
-        let ret = cache_wrapper(&mut cache, rule, arg_key, position, src);
+        let ret = cache_struct_wrapper(&mut cache, rule, arg_key, position, src);
         assert_eq!(ret.0, true);
         assert_eq!(ret.1, 1);
 
