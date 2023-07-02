@@ -1,5 +1,5 @@
 use crate::Resolvable;
-
+use crate::cache::Cache;
 #[derive(Copy, Clone)]
 pub struct _OrderedChoice<T: Resolvable, U: Resolvable> {
     pub arg_lhs: T,
@@ -7,12 +7,13 @@ pub struct _OrderedChoice<T: Resolvable, U: Resolvable> {
 }
 
 impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for _OrderedChoice<T, U> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return ordered_choice(position, source, self.arg_lhs, self.arg_rhs);
+    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return ordered_choice(cache, position, source, self.arg_lhs, self.arg_rhs);
     }
 }
 
 fn ordered_choice<T: Resolvable, U: Resolvable>(
+    cache: &mut Cache,
     position: u32,
     source: &str,
     arg_lhs: T,
@@ -21,13 +22,13 @@ fn ordered_choice<T: Resolvable, U: Resolvable>(
     /* True if one expression matches, then updates position, else false, no positional update */
 
     let tmp_pos = position;
-    let (lhs_bool, position) = arg_lhs.resolve(position, source);
+    let (lhs_bool, position) = arg_lhs.resolve(cache, position, source);
     if lhs_bool {
         return (true, position);
     }
     let position = tmp_pos;
 
-    let (rhs_bool, position) = arg_rhs.resolve(position, source);
+    let (rhs_bool, position) = arg_rhs.resolve(cache, position, source);
     if rhs_bool {
         return (true, position);
     }

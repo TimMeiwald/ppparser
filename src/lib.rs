@@ -26,6 +26,7 @@ pub use crate::terminal::_Terminal;
 pub use crate::var_name::_VarName;
 pub use crate::zero_or_more::_ZeroOrMore;
 use std::fs;
+use crate::cache::Cache;
 
 
 pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize){
@@ -40,19 +41,20 @@ pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize){
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cache::Cache;
     #[derive(Copy, Clone)] // Needed because I copy around position which as a u32 is likely faster than passing a reference, Need's profiling.
     struct Example; // Top level functions don't require T since they're defined via the primitives used in a given function.
     #[derive(Copy, Clone)]
     struct Example2;
 
     impl Resolvable for Example {
-        fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, cache: &mut Cache,position: u32, source: &str) -> (bool, u32) {
             return example1(position, source); // Define which function to run using impl Resolvable
         }
     }
 
     impl Resolvable for Example2 {
-        fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, cache: &mut Cache,position: u32, source: &str) -> (bool, u32) {
             return example2(position, source);
         }
     }

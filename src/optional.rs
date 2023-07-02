@@ -1,23 +1,23 @@
 use crate::Resolvable;
-
+use crate::cache::Cache;
 #[derive(Copy, Clone)]
 pub struct _Optional<T: Resolvable> {
     pub arg: T,
 }
 
 impl<T: Resolvable + Copy> Resolvable for _Optional<T> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return optional(position, source, self.arg);
+    fn resolve(&self,cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return optional(cache, position, source, self.arg);
     }
 }
 
-fn optional<T: Resolvable>(position: u32, source: &str, args: T) -> (bool, u32) {
+fn optional<T: Resolvable>(cache: &mut Cache,position: u32, source: &str, args: T) -> (bool, u32) {
     /* True if matches, False if not. Increments position on a match */
 
     // Fn(&u8), u8
     // Fn(&Fn), Fn
     let temp_position = position;
-    let (bool, position) = args.resolve(position, source);
+    let (bool, position) = args.resolve(cache, position, source);
 
     if bool == true {
         return (true, position);

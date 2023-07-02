@@ -79,7 +79,7 @@ fn cache_wrapper<T: Resolvable>(cache: &mut Cache, rule: T, arg_key: u32, positi
         return ret.unwrap();
     }
     else{
-        let ret = rule.resolve(position, source);
+        let ret = rule.resolve(cache, position, source);
         cache.push(position, arg_key, ret.0, ret.1);
         return ret;
     }

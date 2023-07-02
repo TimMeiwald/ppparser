@@ -13,8 +13,7 @@ pub fn token(position: u32, source: &str) -> u8 {
 }
 
 pub trait Resolvable {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32);
-    fn cache_resolve(&self, cache: Cache, position: u32, source: &str) -> (bool, u32);
+    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32);
 }
 
 #[derive(Copy, Clone)]
@@ -23,7 +22,7 @@ pub struct _Terminal {
 }
 
 impl Resolvable for _Terminal {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
         return terminal(position, source, self.arg);
     }
 }

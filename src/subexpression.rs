@@ -1,17 +1,17 @@
 use crate::Resolvable;
-
+use crate::cache::Cache;
 #[derive(Copy, Clone)]
 pub struct _SubExpression<T: Resolvable> {
     pub arg: T,
 }
 
 impl<T: Resolvable + Copy> Resolvable for _SubExpression<T> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return subexpression(position, source, self.arg);
+    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return subexpression(cache, position, source, self.arg);
     }
 }
 
-fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
+fn subexpression<T: Resolvable>(cache: &mut Cache, position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Subexpression is any expression inside a pair of () brackets
     SUBEXPR essentially does nothing but allows for order of precedent
     more importantly order of precedence is very restricted because it made my life hard
@@ -19,7 +19,7 @@ fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u
     to make more complicated rules */
 
     let temp_position = position;
-    let (bool, position) = arg.resolve(position, source);
+    let (bool, position) = arg.resolve(cache, position, source);
 
     if bool {
         return (true, position);
