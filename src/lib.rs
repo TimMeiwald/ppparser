@@ -32,7 +32,7 @@ use crate::cache::cache_constructor;
 pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize){
     let source = fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
     let size_of_source = source.len(); // For Test purposes but yknow prolly should do that differently, User API is still up in the air a bit
-    let mut cache = cache_constructor(size_of_source as u32 +1, 100); // Will break for anything with more than 100 chars or 100 rules
+    let mut cache = cache_constructor(size_of_source as u32 +1, 43); // Will break for anything with more than 100 chars or 100 rules
 
     let (bool, position) = parser::Grammar.resolve(&mut cache, 0, &source);
     return (bool, position, size_of_source);

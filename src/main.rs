@@ -48,7 +48,7 @@ fn amain(){
     let _grammar = _grammar + "\0";
     let _grammar_length = _grammar.len() as u32 + 1;
     let position = 0;
-    let mut cache = cache_constructor(_grammar_length, 100); // Will break for anything with more than 100 chars or 1 rule
+    let mut cache = cache_constructor(_grammar_length, 43); // Will break for anything with more than 100 chars or 1 rule
 
     let (bool, position) = Grammar.resolve(&mut cache, position, &_grammar);
     //println!{"{:?}, {:?}", bool, position};
