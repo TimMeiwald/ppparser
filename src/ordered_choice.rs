@@ -1,5 +1,5 @@
 use crate::Resolvable;
-
+use crate::cache::Cache;
 #[derive(Copy, Clone)]
 pub struct _OrderedChoice<T: Resolvable, U: Resolvable> {
     pub arg_lhs: T,
@@ -7,12 +7,13 @@ pub struct _OrderedChoice<T: Resolvable, U: Resolvable> {
 }
 
 impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for _OrderedChoice<T, U> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return ordered_choice(position, source, self.arg_lhs, self.arg_rhs);
+    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return ordered_choice(cache, position, source, self.arg_lhs, self.arg_rhs);
     }
 }
 
 fn ordered_choice<T: Resolvable, U: Resolvable>(
+    cache: &mut Cache,
     position: u32,
     source: &str,
     arg_lhs: T,
@@ -21,13 +22,13 @@ fn ordered_choice<T: Resolvable, U: Resolvable>(
     /* True if one expression matches, then updates position, else false, no positional update */
 
     let tmp_pos = position;
-    let (lhs_bool, position) = arg_lhs.resolve(position, source);
+    let (lhs_bool, position) = arg_lhs.resolve(cache, position, source);
     if lhs_bool {
         return (true, position);
     }
     let position = tmp_pos;
 
-    let (rhs_bool, position) = arg_rhs.resolve(position, source);
+    let (rhs_bool, position) = arg_rhs.resolve(cache, position, source);
     if rhs_bool {
         return (true, position);
     }
@@ -40,6 +41,7 @@ fn ordered_choice<T: Resolvable, U: Resolvable>(
 mod tests {
     use super::*;
     use crate::_Terminal;
+    use crate::cache::cache_constructor;
     #[test]
     fn test_ordered_choice_true() {
         let source = "Hello World";
@@ -54,7 +56,9 @@ mod tests {
             arg_lhs: t,
             arg_rhs: t2,
         };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 1);
@@ -74,7 +78,9 @@ mod tests {
             arg_lhs: t,
             arg_rhs: t2,
         };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);
@@ -108,7 +114,9 @@ mod tests {
             arg_lhs: t5,
             arg_rhs: t6,
         };
-        let s = t7.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t7.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1)
     }
 
@@ -213,7 +221,9 @@ mod tests {
             arg_lhs: t23,
             arg_rhs: t24,
         };
-        let s = t25.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t25.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1)
     }
 }

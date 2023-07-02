@@ -1,17 +1,17 @@
 use crate::Resolvable;
-
+use crate::cache::Cache;
 #[derive(Copy, Clone)]
 pub struct _SubExpression<T: Resolvable> {
     pub arg: T,
 }
 
 impl<T: Resolvable + Copy> Resolvable for _SubExpression<T> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return subexpression(position, source, self.arg);
+    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return subexpression(cache, position, source, self.arg);
     }
 }
 
-fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
+fn subexpression<T: Resolvable>(cache: &mut Cache, position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Subexpression is any expression inside a pair of () brackets
     SUBEXPR essentially does nothing but allows for order of precedent
     more importantly order of precedence is very restricted because it made my life hard
@@ -19,7 +19,7 @@ fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u
     to make more complicated rules */
 
     let temp_position = position;
-    let (bool, position) = arg.resolve(position, source);
+    let (bool, position) = arg.resolve(cache, position, source);
 
     if bool {
         return (true, position);
@@ -32,6 +32,7 @@ fn subexpression<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u
 mod tests {
     use super::*;
     use crate::_Terminal;
+    use crate::cache::cache_constructor;
     #[test]
     fn test_subexpression_true() {
         let source = "Hello World";
@@ -40,7 +41,9 @@ mod tests {
             arg: "f".to_string().as_bytes()[0],
         };
         let t2 = _SubExpression { arg: t };
-        let s = t2.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t2.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);
@@ -54,7 +57,8 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t2 = _SubExpression { arg: t };
-        let s = t2.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+        let s = t2.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 1);

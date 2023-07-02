@@ -62,6 +62,7 @@ fn create_full_code_snapshot() -> () {
     code.push("var_name.rs");
     code.push("zero_or_more.rs");
     code.push("one_or_more.rs");
+    code.push("cache.rs");
     let mut ret: Vec<String> = Vec::new();
     for file in code {
         let content = get_code_snapshot(file);

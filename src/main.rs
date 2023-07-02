@@ -5,6 +5,8 @@ use ppparser::parser::Grammar;
 use ppparser::parser::Resolvable;
 use std::process::ExitCode;
 
+use ppparser::cache::{cache_constructor};
+
 fn amain(){
     //let args: Vec<String> = env::args().collect().;
     //dbg!(&args);
@@ -44,8 +46,12 @@ fn amain(){
         }
     };
     let _grammar = _grammar + "\0";
+    let _grammar_length = _grammar.len() as u32 + 1;
     let position = 0;
-    let (bool, position) = Grammar.resolve(position, &_grammar);
+    let mut cache = cache_constructor(_grammar_length, 43); // Will break for anything with more than 100 chars or 1 rule
+
+    let (bool, position) = Grammar.resolve(&mut cache, position, &_grammar);
+    //println!("{bool}, {position}");
     //println!{"{:?}, {:?}", bool, position};
 
     // Add the parser generation here to then add into parser write
@@ -66,11 +72,16 @@ fn main() -> ExitCode {
     use std::time::Instant;
     let now = Instant::now();
 
+
+    // Handwritten means that alphabet upper and lower were replaced with obvious handwritten code.
     // No cache debug 346 lines a second on Grammar.txt
     // No cache release 1040 lines a second on Grammar.txt
     // No cache 2000 los merely by replacing alphabet upper and lower with a more obvious handwritten code
     // No cache 5600 los merely by replacing alphabet upper and lower with a more obvious handwritten code -> Definitely need's an optimization pass on generation to minimize terminal calls for large terminal option blocks
-    for i in 1..100{
+    // Regular Cache, Debug, No handwritten 1083 los.
+    // Regular Cache, No handwritten 9300 los.
+    // Regular Cache, handwritten 28000 los(handwritten not cached since 2 comparisons are likely faster than cache access for a single char).
+    for i in 1..1000{
         amain();
         //println!("{:?}", i)
     }

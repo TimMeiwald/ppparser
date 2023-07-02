@@ -1,24 +1,24 @@
 use crate::Resolvable;
-
+use crate::cache::Cache;
 #[derive(Copy, Clone)]
 pub struct _ZeroOrMore<T: Resolvable> {
     pub arg: T,
 }
 
 impl<T: Resolvable + Copy> Resolvable for _ZeroOrMore<T> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return zero_or_more(position, source, self.arg);
+    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return zero_or_more(cache, position, source, self.arg);
     }
 }
 
-fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
+fn zero_or_more<T: Resolvable>(cache: &mut Cache, position: u32,  source: &str, arg: T) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
     let mut temp_position = position;
     let mut bool;
     let mut position = position;
     loop {
-        let ret = arg.resolve(position, source);
+        let ret = arg.resolve(cache, position, source);
         bool = ret.0;
         position = ret.1;
         if bool {
@@ -36,6 +36,7 @@ fn zero_or_more<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u3
 mod tests {
     use super::*;
     use crate::_Terminal;
+    use crate::cache::cache_constructor;
     #[test]
     fn test_zero_or_more_1() {
         let source = "Hello World";
@@ -44,7 +45,9 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t3 = _ZeroOrMore { arg: t };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 1);
@@ -58,7 +61,9 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t3 = _ZeroOrMore { arg: t };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 10);
@@ -72,7 +77,8 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t3 = _ZeroOrMore { arg: t };
-        let s = t3.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+        let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 0);

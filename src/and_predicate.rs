@@ -1,22 +1,22 @@
 use crate::Resolvable;
-
+use crate::cache::Cache;
 #[derive(Copy, Clone)]
 pub struct _AndPredicate<T: Resolvable> {
     arg: T,
 }
 
 impl<T: Resolvable + Copy> Resolvable for _AndPredicate<T> {
-    fn resolve(&self, position: u32, source: &str) -> (bool, u32) {
-        return and_predicate(position, source, self.arg);
+    fn resolve(&self,cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return and_predicate(cache, position, source, self.arg);
     }
 }
 
-pub fn and_predicate<T: Resolvable>(position: u32, source: &str, arg: T) -> (bool, u32) {
+pub fn and_predicate<T: Resolvable>(cache: &mut Cache, position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
     // Only public so Not Predicate can use it since it just inverts it.
 
     let temp_position = position;
-    let ret = arg.resolve(position, source);
+    let ret = arg.resolve(cache, position, source);
     let bool = ret.0;
     if bool {
         return (true, temp_position);
@@ -29,7 +29,7 @@ pub fn and_predicate<T: Resolvable>(position: u32, source: &str, arg: T) -> (boo
 mod tests {
     use super::*;
     use crate::_Terminal;
-
+    use crate::cache::cache_constructor;
     #[test]
     fn test_and_predicate_false() {
         let source = "Hello World";
@@ -38,7 +38,9 @@ mod tests {
             arg: "f".to_string().as_bytes()[0],
         };
         let t2 = _AndPredicate { arg: t };
-        let s = t2.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+
+        let s = t2.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);
@@ -52,7 +54,8 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t2 = _AndPredicate { arg: t };
-        let s = t2.resolve(position, source);
+        let mut cache = cache_constructor(100, 1);
+        let s = t2.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 0);
