@@ -142,6 +142,7 @@ mod tests {
         let mut cache = cache_constructor(11, 1);
         let arg_key = 0;
         let s = cache.check(position, arg_key);
+        assert_eq!(s, None);
         let rule = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -163,10 +164,8 @@ mod tests {
         let mut cache = cache_constructor(11, 1);
         let arg_key = 0;
         let s = cache.check(position, arg_key);
-        let rule = _Terminal {
-            arg: "H".to_string().as_bytes()[0],
-        };
-        fn thing(cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        assert_eq!(s, None);
+        fn thing(_cache: &mut Cache, _position: u32, _source: &str) -> (bool, u32) {
             return (true, 1);
         }
         let ret = cache_fn_wrapper(&mut cache, thing, arg_key, position, src);

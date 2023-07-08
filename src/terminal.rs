@@ -21,7 +21,7 @@ pub struct _Terminal {
 }
 
 impl Resolvable for _Terminal {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
         return terminal(position, source, self.arg);
     }
 }
