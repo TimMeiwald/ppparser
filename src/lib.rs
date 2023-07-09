@@ -8,6 +8,7 @@ pub mod parser;
 mod sequence;
 mod subexpression;
 mod terminal;
+mod output_stack;
 pub mod utils;
 mod var_name;
 mod zero_or_more;

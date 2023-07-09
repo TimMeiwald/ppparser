@@ -276,6 +276,9 @@ pub struct Cache {
 }
 
 impl Cache {
+    
+
+
     fn push(&mut self, position: u32, arg_key: u32, bool: bool, end_position: u32) {
         let arg_cache: &mut ArgCache = &mut self.entries[position as usize];
         arg_cache.entries[arg_key as usize] = (bool, end_position);

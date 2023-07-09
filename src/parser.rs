@@ -66,6 +66,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"A".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"B".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"C".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"D".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"E".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"F".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"G".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"H".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"I".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"J".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"K".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"L".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"M".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"N".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"O".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"P".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"Q".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"R".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"S".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"T".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"U".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"V".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"W".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"X".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"Y".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"Z".to_string().as_bytes()[0]}};
             let hook = cache_struct_wrapper(cache, rule, Rules::AlphabetUpper as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::AlphabetUpper as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -77,6 +82,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"a".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"b".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"c".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"d".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"e".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"f".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"g".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"h".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"i".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"j".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"k".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"l".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"m".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"n".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"o".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"p".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"q".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"r".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"s".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"t".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"u".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"v".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"w".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"x".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"y".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"z".to_string().as_bytes()[0]}};
             let hook = cache_struct_wrapper(cache, rule, Rules::AlphabetLower as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::AlphabetLower as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -88,6 +98,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"0".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"1".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"2".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"3".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"4".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"5".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"6".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"7".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"8".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"9".to_string().as_bytes()[0]}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Num as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Num as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -99,6 +114,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"\n".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"\t".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"\r".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:" ".to_string().as_bytes()[0]}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Spaces as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Spaces as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -110,6 +130,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"+".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"*".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"-".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"&".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"!".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"?".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"<".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:">".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:'"'.to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"(".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:")".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"_".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:",".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"/".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:";".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"=".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:'\\'.to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"#".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:":".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"|".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:".".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"{".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"}".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"[".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"]".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"%".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"'".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"^".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"~".to_string().as_bytes()[0]}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Specials as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Specials as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -121,6 +146,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:AlphabetLower}, arg_rhs:_VarName{arg:AlphabetUpper}}, arg_rhs:_VarName{arg:Num}}, arg_rhs:_VarName{arg:Spaces}}, arg_rhs:_VarName{arg:Specials}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Ascii as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Ascii as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -132,6 +162,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:'"'.to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::Apostrophe as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Apostrophe as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -143,6 +178,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:"<".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::LeftAngleBracket as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::LeftAngleBracket as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -154,6 +194,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:">".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::RightAngleBracket as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::RightAngleBracket as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -165,6 +210,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:"(".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::LeftBracket as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::LeftBracket as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -176,6 +226,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:")".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::RightBracket as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::RightBracket as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -187,6 +242,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:"=".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::Assignment as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Assignment as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -198,6 +258,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:";".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::EndRule as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::EndRule as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -209,6 +274,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:"&".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::Ampersand as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Ampersand as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -220,6 +290,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:"!".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::ExclamationMark as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::ExclamationMark as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -231,6 +306,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:"+".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::Plus as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Plus as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -242,6 +322,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:"*".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::Star as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Star as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -253,6 +338,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:"?".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::QuestionMark as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::QuestionMark as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -264,6 +354,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:",".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::Comma as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Comma as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -275,6 +370,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Terminal{arg:"/".to_string().as_bytes()[0]};
             let hook = cache_struct_wrapper(cache, rule, Rules::Backslash as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Backslash as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -286,6 +386,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:LeftAngleBracket}, arg_rhs:_SubExpression{arg:_OrderedChoice{arg_lhs:_VarName{arg:AlphabetLower}, arg_rhs:_VarName{arg:AlphabetUpper}}}}, arg_rhs:_ZeroOrMore{arg: _SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:AlphabetLower}, arg_rhs:_VarName{arg:AlphabetUpper}}, arg_rhs:_Terminal{arg:"_".to_string().as_bytes()[0]}}}}}, arg_rhs:_VarName{arg:RightAngleBracket}};
             let hook = cache_struct_wrapper(cache, rule, Rules::VarName as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::VarName as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -297,6 +402,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:LeftBracket}, arg_rhs:_VarName{arg:Rhs}}, arg_rhs:_VarName{arg:RightBracket}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Subexpression as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Subexpression as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -308,6 +418,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_VarName{arg:Apostrophe}, arg_rhs:_VarName{arg:Apostrophe}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Epsilon as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Epsilon as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -319,6 +434,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_SubExpression{arg:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Apostrophe}, arg_rhs:_VarName{arg:Ascii}}, arg_rhs:_VarName{arg:Apostrophe}}}, arg_rhs:_SubExpression{arg:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Apostrophe}, arg_rhs:_Terminal{arg:'\\'.to_string().as_bytes()[0]}}, arg_rhs:_SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"n".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"r".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"t".to_string().as_bytes()[0]}}}}, arg_rhs:_VarName{arg:Apostrophe}}}}, arg_rhs:_VarName{arg:Epsilon}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Lterminal as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Lterminal as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -330,6 +450,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:Subexpression}, arg_rhs:_VarName{arg:Lterminal}}, arg_rhs:_VarName{arg:VarName}}}, arg_rhs:_VarName{arg:Whitespace}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Nucleus as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Nucleus as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -341,6 +466,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:AndPredicate}, arg_rhs:_VarName{arg:NotPredicate}}, arg_rhs:_VarName{arg:OneOrMore}}, arg_rhs:_VarName{arg:ZeroOrMore}}, arg_rhs:_VarName{arg:Optional}}, arg_rhs:_VarName{arg:Nucleus}}}, arg_rhs:_VarName{arg:Whitespace}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Atom as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Atom as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -352,6 +482,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_VarName{arg:Ampersand}, arg_rhs:_VarName{arg:Nucleus}};
             let hook = cache_struct_wrapper(cache, rule, Rules::AndPredicate as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::AndPredicate as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -363,6 +498,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_VarName{arg:ExclamationMark}, arg_rhs:_VarName{arg:Nucleus}};
             let hook = cache_struct_wrapper(cache, rule, Rules::NotPredicate as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::NotPredicate as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -374,6 +514,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Atom}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Comma}}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Atom}}, arg_rhs:_ZeroOrMore{arg: _SubExpression{arg:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Comma}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Atom}}}}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Sequence as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Sequence as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -385,6 +530,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Atom}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Backslash}}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Atom}}, arg_rhs:_ZeroOrMore{arg: _SubExpression{arg:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Backslash}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Atom}}}}};
             let hook = cache_struct_wrapper(cache, rule, Rules::OrderedChoice as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::OrderedChoice as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -396,6 +546,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Nucleus}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Plus}};
             let hook = cache_struct_wrapper(cache, rule, Rules::OneOrMore as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::OneOrMore as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -407,6 +562,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Nucleus}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Star}};
             let hook = cache_struct_wrapper(cache, rule, Rules::ZeroOrMore as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::ZeroOrMore as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -418,6 +578,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Nucleus}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:QuestionMark}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Optional as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Optional as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -429,6 +594,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _ZeroOrMore{arg: _SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:" ".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"\n".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"\r".to_string().as_bytes()[0]}}}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Whitespace as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Whitespace as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -440,6 +610,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:Sequence}, arg_rhs:_VarName{arg:OrderedChoice}}, arg_rhs:_VarName{arg:Atom}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Rhs as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Rhs as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -451,6 +626,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_VarName{arg:VarName}, arg_rhs:_Optional{arg: _SubExpression{arg:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Whitespace}, arg_rhs:_VarName{arg:SemanticInstructions}}, arg_rhs:_VarName{arg:Whitespace}}}}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Lhs as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Lhs as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -462,6 +642,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Lhs}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Assignment}}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Rhs}}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:EndRule}}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_ZeroOrMore{arg: _VarName{arg:Comment}}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Rule as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Rule as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -473,6 +658,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_OneOrMore{arg: _VarName{arg:Rule}}, arg_rhs:_VarName{arg:Whitespace}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Grammar as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Grammar as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -484,6 +674,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Whitespace}, arg_rhs:_Terminal{arg:"#".to_string().as_bytes()[0]}}, arg_rhs:_ZeroOrMore{arg: _SubExpression{arg:_Sequence{arg_lhs:_NotPredicate{arg: _Terminal{arg:"#".to_string().as_bytes()[0]}}, arg_rhs:_VarName{arg:Ascii}}}}}, arg_rhs:_Terminal{arg:"#".to_string().as_bytes()[0]}}, arg_rhs:_VarName{arg:Whitespace}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Comment as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Comment as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -495,6 +690,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:Delete}, arg_rhs:_VarName{arg:Passthrough}}, arg_rhs:_VarName{arg:Collect}};
             let hook = cache_struct_wrapper(cache, rule, Rules::SemanticInstructions as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::SemanticInstructions as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -506,6 +706,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Terminal{arg:"D".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"E".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"L".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"E".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"T".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"E".to_string().as_bytes()[0]}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Delete as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Delete as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -517,6 +722,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Terminal{arg:"P".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"A".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"S".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"S".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"T".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"H".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"R".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"O".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"U".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"G".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"H".to_string().as_bytes()[0]}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Passthrough as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Passthrough as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }
@@ -528,6 +738,11 @@ enum Rules{AlphabetUpper,
         fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
             let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Sequence{arg_lhs:_Terminal{arg:"C".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"O".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"L".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"L".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"E".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"C".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"T".to_string().as_bytes()[0]}};
             let hook = cache_struct_wrapper(cache, rule, Rules::Collect as u32, position, source);
+            if hook.0 == true { 
+                if position != hook.1 {
+                    println!("{}, {}, {}, {}", Rules::Collect as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
+                    };
+                };
             return hook;
             }
         }

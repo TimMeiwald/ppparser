@@ -55,7 +55,7 @@ fn amain() {
     let _grammar = _grammar + "\0";
     let _grammar_length = _grammar.len() as u32 + 1;
     let position = 0;
-    let mut cache = cache_constructor(_grammar_length, 43); 
+    let mut cache = cache_constructor(_grammar_length, 43);
 
     let (_bool, _position) = Grammar.resolve(&mut cache, position, &_grammar);
     //println!("{bool}, {position}");
@@ -85,10 +85,10 @@ fn main() -> ExitCode {
     // Regular Cache, Debug, No handwritten 1083 los.
     // Regular Cache, No handwritten 9300 los.
     // Regular Cache, handwritten 28000 los(handwritten not cached since 2 comparisons are likely faster than cache access for a single char). ?? What did I change -> May well have failed to parse hence being "fast"
-    for _i in 1..1000 {
-        amain();
-        //println!("{:?}", i)
-    }
+    //for _i in 1..1000 {
+    amain();
+    //println!("{:?}", i)
+    //}
     let elapsed = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
     //println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());
