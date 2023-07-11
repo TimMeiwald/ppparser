@@ -1,5 +1,6 @@
 use crate::cache::Cache;
 use crate::Resolvable;
+use crate::output_stack::Stack;
 
 //
 #[derive(Copy, Clone)]
@@ -9,12 +10,13 @@ pub struct _OrderedChoice<T: Resolvable, U: Resolvable> {
 }
 
 impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for _OrderedChoice<T, U> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return ordered_choice(cache, position, source, self.arg_lhs, self.arg_rhs);
+    fn resolve(&self, stack: &mut Stack,  cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return ordered_choice(stack, cache, position, source, self.arg_lhs, self.arg_rhs);
     }
 }
 
 fn ordered_choice<T: Resolvable, U: Resolvable>(
+    stack: &mut Stack,
     cache: &mut Cache,
     position: u32,
     source: &str,
@@ -24,13 +26,13 @@ fn ordered_choice<T: Resolvable, U: Resolvable>(
     /* True if one expression matches, then updates position, else false, no positional update */
 
     let tmp_pos = position;
-    let (lhs_bool, position) = arg_lhs.resolve(cache, position, source);
+    let (lhs_bool, position) = arg_lhs.resolve(stack, cache, position, source);
     if lhs_bool {
         return (true, position);
     }
     let position = tmp_pos;
 
-    let (rhs_bool, position) = arg_rhs.resolve(cache, position, source);
+    let (rhs_bool, position) = arg_rhs.resolve(stack, cache, position, source);
     if rhs_bool {
         return (true, position);
     }
@@ -59,8 +61,9 @@ mod tests {
             arg_rhs: t2,
         };
         let mut cache = Cache::new(100, 1);
+        let mut stack = Stack::new(100,100);
 
-        let s = t3.resolve(&mut cache, position, source);
+        let s = t3.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 1);
@@ -81,8 +84,9 @@ mod tests {
             arg_rhs: t2,
         };
         let mut cache = Cache::new(100, 1);
+        let mut stack = Stack::new(100,100);
 
-        let s = t3.resolve(&mut cache, position, source);
+        let s = t3.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);
@@ -117,8 +121,9 @@ mod tests {
             arg_rhs: t6,
         };
         let mut cache = Cache::new(100, 1);
+        let mut stack = Stack::new(100,100);
 
-        let s = t7.resolve(&mut cache, position, source);
+        let s = t7.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1)
     }
 
@@ -224,8 +229,9 @@ mod tests {
             arg_rhs: t24,
         };
         let mut cache = Cache::new(100, 1);
+        let mut stack = Stack::new(100,100);
 
-        let s = t25.resolve(&mut cache, position, source);
+        let s = t25.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1)
     }
 }

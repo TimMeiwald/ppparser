@@ -1,4 +1,5 @@
 use crate::cache::Cache;
+use crate::output_stack::Stack;
 // Need a newline here so leave this comment because it actually prevents cargo fmt moving token up and therefore not adding it to generated_parser_core
 
 pub fn token(position: u32, source: &str) -> u8 {
@@ -12,7 +13,7 @@ pub fn token(position: u32, source: &str) -> u8 {
 }
 
 pub trait Resolvable {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32);
+    fn resolve(&self, output: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32);
 }
 
 #[derive(Copy, Clone)]
@@ -21,7 +22,7 @@ pub struct _Terminal {
 }
 
 impl Resolvable for _Terminal {
-    fn resolve(&self, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, _output: &mut Stack, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
         return terminal(position, source, self.arg);
     }
 }
@@ -44,6 +45,7 @@ fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
 mod tests {
     use super::*;
     use crate::cache::Cache;
+    use crate::output_stack::Stack;
     #[test]
     fn test_terminal_true() {
         let source = "Hello World";
@@ -52,8 +54,8 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let mut cache = Cache::new(100, 1);
-
-        let s = t.resolve(&mut cache, position, source);
+        let mut stack = Stack::new(100,100);
+        let s = t.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 1);
@@ -67,8 +69,8 @@ mod tests {
             arg: "h".to_string().as_bytes()[0],
         };
         let mut cache = Cache::new(100, 1);
-
-        let s = t.resolve(&mut cache, position, source);
+        let mut stack = Stack::new(100,100);
+        let s = t.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);

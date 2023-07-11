@@ -1,26 +1,26 @@
 //
 
-struct StackEntry{
-    rule: u32,
-    start_position: u32,
-    end_position: u32,
+pub struct StackEntry{
+    pub rule: u32,
+    pub start_position: u32,
+    pub end_position: u32,
 }
 
-struct Stack{
+pub struct Stack{
     entries: Vec<StackEntry>
 }
 impl Stack{
-    fn new(size_of_source: u32, number_of_structs: u32) -> Self {
+    pub fn new(size_of_source: u32, number_of_structs: u32) -> Self {
         let size_of_stack: usize = ((size_of_source*number_of_structs)/10).try_into().unwrap(); // /10 is a heuristic 
         // Heuristic should be modified to match grammar profiling since some will use more stack and some less depending on language complexity.
         // TODO: Fundamentally Vec can grow so still need to catch unwrap above but it's merely about minimizing allocation rather than causing a break
         return Stack { entries: Vec::with_capacity(size_of_stack)};
     }
-    fn push(&mut self, entry: StackEntry){
+    pub fn push(&mut self, entry: StackEntry){
         self.entries.push(entry);
 
     }
-    fn pop(&mut self) -> Option<StackEntry> {
+    pub fn pop(&mut self) -> Option<StackEntry> {
         return self.entries.pop();
     }
 }

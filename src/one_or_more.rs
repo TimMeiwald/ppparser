@@ -1,5 +1,6 @@
 use crate::cache::Cache;
 use crate::Resolvable;
+use crate::output_stack::Stack;
 
 //
 #[derive(Copy, Clone)]
@@ -8,12 +9,13 @@ pub struct _OneOrMore<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _OneOrMore<T> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return one_or_more(cache, position, source, self.arg);
+    fn resolve(&self,stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return one_or_more(stack, cache, position, source, self.arg);
     }
 }
 
 fn one_or_more<T: Resolvable>(
+    stack: &mut Stack, 
     cache: &mut Cache,
     position: u32,
     source: &str,
@@ -22,7 +24,7 @@ fn one_or_more<T: Resolvable>(
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
     let mut temp_position = position;
-    let (mut bool, mut position) = arg.resolve(cache, position, source);
+    let (mut bool, mut position) = arg.resolve(stack, cache, position, source);
     if bool {
         temp_position = position;
     } else {
@@ -30,7 +32,7 @@ fn one_or_more<T: Resolvable>(
         return (false, position);
     }
     loop {
-        let ret = arg.resolve(cache, position, source);
+        let ret = arg.resolve(stack, cache, position, source);
         bool = ret.0;
         position = ret.1;
         if bool {
@@ -58,8 +60,9 @@ mod tests {
         };
         let t3 = _OneOrMore { arg: t };
         let mut cache = Cache::new(100, 1);
+        let mut stack = Stack::new(100,100);
 
-        let s = t3.resolve(&mut cache, position, source);
+        let s = t3.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 1);
@@ -74,8 +77,8 @@ mod tests {
         };
         let t3 = _OneOrMore { arg: t };
         let mut cache = Cache::new(100, 1);
-
-        let s = t3.resolve(&mut cache, position, source);
+        let mut stack = Stack::new(100,100);
+        let s = t3.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 10);
@@ -90,8 +93,8 @@ mod tests {
         };
         let t3 = _OneOrMore { arg: t };
         let mut cache = Cache::new(100, 1);
-
-        let s = t3.resolve(&mut cache, position, source);
+        let mut stack = Stack::new(100,100);
+        let s = t3.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);

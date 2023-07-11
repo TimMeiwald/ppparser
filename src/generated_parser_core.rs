@@ -10,7 +10,7 @@ pub fn token(position: u32, source: &str) -> u8 {
 }
 
 pub trait Resolvable {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32);
+    fn resolve(&self, output: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32);
 }
 
 #[derive(Copy, Clone)]
@@ -19,7 +19,7 @@ pub struct _Terminal {
 }
 
 impl Resolvable for _Terminal {
-    fn resolve(&self, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, _output: &mut Stack, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
         return terminal(position, source, self.arg);
     }
 }
@@ -39,19 +39,14 @@ fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
 }
 
 
-//
-#[derive(Copy, Clone)]
-pub struct _AndPredicate<T: Resolvable> {
-    arg: T,
-}
-
 impl<T: Resolvable + Copy> Resolvable for _AndPredicate<T> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return and_predicate(cache, position, source, self.arg);
+    fn resolve(&self, stack: &mut Stack,  cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return and_predicate(stack, cache, position, source, self.arg);
     }
 }
 
 pub fn and_predicate<T: Resolvable>(
+    stack: &mut Stack,
     cache: &mut Cache,
     position: u32,
     source: &str,
@@ -61,7 +56,7 @@ pub fn and_predicate<T: Resolvable>(
     // Only public so Not Predicate can use it since it just inverts it.
 
     let temp_position = position;
-    let ret = arg.resolve(cache, position, source);
+    let ret = arg.resolve(stack, cache, position, source);
     let bool = ret.0;
     if bool {
         return (true, temp_position);
@@ -78,12 +73,13 @@ pub struct _NotPredicate<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _NotPredicate<T> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return not_predicate(cache, position, source, self.arg);
+    fn resolve(&self,stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return not_predicate(stack, cache, position, source, self.arg);
     }
 }
 
 fn not_predicate<T: Resolvable>(
+    stack: &mut Stack, 
     cache: &mut Cache,
     position: u32,
     source: &str,
@@ -91,7 +87,7 @@ fn not_predicate<T: Resolvable>(
 ) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
-    let (bool, position) = and_predicate(cache, position, source, arg);
+    let (bool, position) = and_predicate(stack, cache, position, source, arg);
     return (!bool, position);
 }
 
@@ -103,18 +99,18 @@ pub struct _Optional<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _Optional<T> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return optional(cache, position, source, self.arg);
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return optional(stack, cache, position, source, self.arg);
     }
 }
 
-fn optional<T: Resolvable>(cache: &mut Cache, position: u32, source: &str, args: T) -> (bool, u32) {
+fn optional<T: Resolvable>(stack: &mut Stack, cache: &mut Cache, position: u32, source: &str, args: T) -> (bool, u32) {
     /* True if matches, False if not. Increments position on a match */
 
     // Fn(&u8), u8
     // Fn(&Fn), Fn
     let temp_position = position;
-    let (bool, position) = args.resolve(cache, position, source);
+    let (bool, position) = args.resolve(stack, cache, position, source);
 
     if bool == true {
         return (true, position);
@@ -132,12 +128,13 @@ pub struct _SubExpression<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _SubExpression<T> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return subexpression(cache, position, source, self.arg);
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return subexpression(stack, cache, position, source, self.arg);
     }
 }
 
 fn subexpression<T: Resolvable>(
+    stack: &mut Stack,
     cache: &mut Cache,
     position: u32,
     source: &str,
@@ -150,7 +147,7 @@ fn subexpression<T: Resolvable>(
     to make more complicated rules */
 
     let temp_position = position;
-    let (bool, position) = arg.resolve(cache, position, source);
+    let (bool, position) = arg.resolve(stack, cache, position, source);
 
     if bool {
         return (true, position);
@@ -167,17 +164,17 @@ pub struct _VarName<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _VarName<T> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return var_name(cache, position, source, self.arg);
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return var_name(stack, cache, position, source, self.arg);
     }
 }
 
-fn var_name<T: Resolvable>(cache: &mut Cache, position: u32, source: &str, arg: T) -> (bool, u32) {
+fn var_name<T: Resolvable>(stack: &mut Stack, cache: &mut Cache, position: u32, source: &str, arg: T) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
     // NB: Currently Identical to subexpression but only because an AST isn't being built yet.
 
     let temp_position = position;
-    let (bool, position) = arg.resolve(cache, position, source);
+    let (bool, position) = arg.resolve(stack, cache, position, source);
 
     if bool {
         return (true, position);
@@ -194,12 +191,13 @@ pub struct _ZeroOrMore<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _ZeroOrMore<T> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return zero_or_more(cache, position, source, self.arg);
+    fn resolve(&self, stack: &mut Stack,  cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return zero_or_more(stack, cache, position, source, self.arg);
     }
 }
 
 fn zero_or_more<T: Resolvable>(
+    stack: &mut Stack,
     cache: &mut Cache,
     position: u32,
     source: &str,
@@ -211,7 +209,7 @@ fn zero_or_more<T: Resolvable>(
     let mut bool;
     let mut position = position;
     loop {
-        let ret = arg.resolve(cache, position, source);
+        let ret = arg.resolve(stack, cache, position, source);
         bool = ret.0;
         position = ret.1;
         if bool {
@@ -233,12 +231,13 @@ pub struct _OneOrMore<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _OneOrMore<T> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return one_or_more(cache, position, source, self.arg);
+    fn resolve(&self,stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return one_or_more(stack, cache, position, source, self.arg);
     }
 }
 
 fn one_or_more<T: Resolvable>(
+    stack: &mut Stack, 
     cache: &mut Cache,
     position: u32,
     source: &str,
@@ -247,7 +246,7 @@ fn one_or_more<T: Resolvable>(
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
     let mut temp_position = position;
-    let (mut bool, mut position) = arg.resolve(cache, position, source);
+    let (mut bool, mut position) = arg.resolve(stack, cache, position, source);
     if bool {
         temp_position = position;
     } else {
@@ -255,7 +254,7 @@ fn one_or_more<T: Resolvable>(
         return (false, position);
     }
     loop {
-        let ret = arg.resolve(cache, position, source);
+        let ret = arg.resolve(stack, cache, position, source);
         bool = ret.0;
         position = ret.1;
         if bool {
@@ -319,6 +318,7 @@ pub struct ArgCache {
 
 
 pub fn cache_struct_wrapper<T: Resolvable>(
+    stack: &mut Stack,
     cache: &mut Cache,
     rule: T,
     arg_key: u32,
@@ -329,15 +329,16 @@ pub fn cache_struct_wrapper<T: Resolvable>(
     if ret != None {
         return ret.unwrap();
     } else {
-        let ret = rule.resolve(cache, position, source);
+        let ret = rule.resolve(stack, cache, position, source);
         cache.push(position, arg_key, ret.0, ret.1);
         return ret;
     }
 }
 
 pub fn cache_fn_wrapper(
+    stack: &mut Stack,
     cache: &mut Cache,
-    rule_function: fn(&mut Cache, u32, &str) -> (bool, u32),
+    rule_function: fn(&mut Stack, &mut Cache, u32, &str) -> (bool, u32),
     arg_key: u32,
     position: u32,
     source: &str,
@@ -349,7 +350,7 @@ pub fn cache_fn_wrapper(
     if ret != None {
         return ret.unwrap();
     } else {
-        let ret = rule_function(cache, position, source);
+        let ret = rule_function(stack, cache, position, source);
         //let ret = rule.resolve(cache, position, source);
         cache.push(position, arg_key, ret.0, ret.1);
         return ret;

@@ -26,6 +26,7 @@ pub use crate::terminal::Resolvable;
 pub use crate::terminal::_Terminal;
 pub use crate::var_name::_VarName;
 pub use crate::zero_or_more::_ZeroOrMore;
+use crate::output_stack::Stack;
 use std::fs;
 
 pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize) {
@@ -33,8 +34,9 @@ pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize) {
         fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
     let size_of_source = source.len(); // For Test purposes but yknow prolly should do that differently, User API is still up in the air a bit
     let mut cache = Cache::new(size_of_source as u32 + 1, 43); // Will break for anything with more than 100 chars or 100 rules
+    let mut stack = Stack::new(100,100);
 
-    let (bool, position) = parser::Grammar.resolve(&mut cache, 0, &source);
+    let (bool, position) = parser::Grammar.resolve(&mut stack, &mut cache, 0, &source);
     return (bool, position, size_of_source);
 }
 
@@ -49,13 +51,13 @@ mod tests {
     struct Example2;
 
     impl Resolvable for Example {
-        fn resolve(&self, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, stack: &mut Stack,  _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
             return example1(position, source); // Define which function to run using impl Resolvable
         }
     }
 
     impl Resolvable for Example2 {
-        fn resolve(&self, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, stack: &mut Stack,  _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
             return example2(position, source);
         }
     }
@@ -70,8 +72,9 @@ mod tests {
             arg_rhs: t2,
         };
         let mut cache = Cache::new(100, 1);
+        let mut stack = Stack::new(100,100);
 
-        let s = t3.resolve(&mut cache, position, source); // Each Top Level Rule can still call other Top Level Rules as well as primitives.
+        let s = t3.resolve(&mut stack, &mut cache, position, source); // Each Top Level Rule can still call other Top Level Rules as well as primitives.
         return s;
     }
 
@@ -80,8 +83,9 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let mut cache = Cache::new(100, 1);
+        let mut stack = Stack::new(100,100);
 
-        let s = t.resolve(&mut cache, position, source);
+        let s = t.resolve(&mut stack, &mut cache, position, source);
         return s;
     }
 
@@ -97,8 +101,9 @@ mod tests {
             arg_rhs: t,
         };
         let mut cache = Cache::new(100, 1);
+        let mut stack = Stack::new(100,100);
 
-        let s = b.resolve(&mut cache, position, source);
+        let s = b.resolve(&mut stack, &mut cache, position, source);
         return s;
     }
 

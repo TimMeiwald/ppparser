@@ -4,7 +4,7 @@ use ppparser::utils::{embed_core, read_grammar, write_parser};
 use std::env::args;
 use std::fs;
 use std::process::ExitCode;
-
+use ppparser::output_stack::Stack;
 use ppparser::cache::Cache;
 
 fn amain() {
@@ -56,8 +56,9 @@ fn amain() {
     let _grammar_length = _grammar.len() as u32 + 1;
     let position = 0;
     let mut cache = Cache::new(_grammar_length, 43);
+    let mut stack = Stack::new(100,100);
 
-    let (_bool, _position) = Grammar.resolve(&mut cache, position, &_grammar);
+    let (_bool, _position) = Grammar.resolve(&mut stack, &mut cache, position, &_grammar);
     //println!("{bool}, {position}");
     //println!{"{:?}, {:?}", bool, position};
 

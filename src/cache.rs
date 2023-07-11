@@ -20,7 +20,7 @@
 //             if(func.__name__ in ["And_Predicate", "Not_Predicate", "Optional", "Ordered_Choice", "Sequence", "Var_Name", "_TERMINAL", "many_A"] and bool == True):
 //                 print(f"nk: Token: {position}, {func.__name__} -> '{obj.src[position:obj.position]}'")
 //             return bool
-use crate::Resolvable;
+use crate::{Resolvable, output_stack::Stack};
 
 // One per Parse
 pub struct Cache {
@@ -71,6 +71,7 @@ pub struct ArgCache {
 
 
 pub fn cache_struct_wrapper<T: Resolvable>(
+    stack: &mut Stack,
     cache: &mut Cache,
     rule: T,
     arg_key: u32,
@@ -81,15 +82,16 @@ pub fn cache_struct_wrapper<T: Resolvable>(
     if ret != None {
         return ret.unwrap();
     } else {
-        let ret = rule.resolve(cache, position, source);
+        let ret = rule.resolve(stack, cache, position, source);
         cache.push(position, arg_key, ret.0, ret.1);
         return ret;
     }
 }
 
 pub fn cache_fn_wrapper(
+    stack: &mut Stack,
     cache: &mut Cache,
-    rule_function: fn(&mut Cache, u32, &str) -> (bool, u32),
+    rule_function: fn(&mut Stack, &mut Cache, u32, &str) -> (bool, u32),
     arg_key: u32,
     position: u32,
     source: &str,
@@ -101,7 +103,7 @@ pub fn cache_fn_wrapper(
     if ret != None {
         return ret.unwrap();
     } else {
-        let ret = rule_function(cache, position, source);
+        let ret = rule_function(stack, cache, position, source);
         //let ret = rule.resolve(cache, position, source);
         cache.push(position, arg_key, ret.0, ret.1);
         return ret;
@@ -149,13 +151,14 @@ mod tests {
         let rule = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let ret = cache_struct_wrapper(&mut cache, rule, arg_key, position, src);
+        let mut stack = Stack::new(100,100);
+        let ret = cache_struct_wrapper(&mut stack , &mut cache, rule, arg_key, position, src);
         assert_eq!(ret.0, true);
         assert_eq!(ret.1, 1);
         let v = cache.entries[position as usize].entries[arg_key as usize];
         assert_eq!(v.0, true);
         assert_eq!(v.1, 1);
-        let ret = cache_struct_wrapper(&mut cache, rule, arg_key, position, src);
+        let ret = cache_struct_wrapper(&mut stack, &mut cache, rule, arg_key, position, src);
         assert_eq!(ret.0, true);
         assert_eq!(ret.1, 1);
     }
@@ -168,16 +171,17 @@ mod tests {
         let arg_key = 0;
         let s = cache.check(position, arg_key);
         assert_eq!(s, None);
-        fn thing(_cache: &mut Cache, _position: u32, _source: &str) -> (bool, u32) {
+        fn thing(_stack: &mut Stack, _cache: &mut Cache, _position: u32, _source: &str) -> (bool, u32) {
             return (true, 1);
         }
-        let ret = cache_fn_wrapper(&mut cache, thing, arg_key, position, src);
+        let mut stack = Stack::new(100,100);
+        let ret = cache_fn_wrapper(&mut stack, &mut cache, thing, arg_key, position, src);
         assert_eq!(ret.0, true);
         assert_eq!(ret.1, 1);
         let v = cache.entries[position as usize].entries[arg_key as usize];
         assert_eq!(v.0, true);
         assert_eq!(v.1, 1);
-        let ret = cache_fn_wrapper(&mut cache, thing, arg_key, position, src);
+        let ret = cache_fn_wrapper(&mut stack, &mut cache, thing, arg_key, position, src);
         assert_eq!(ret.0, true);
         assert_eq!(ret.1, 1);
     }

@@ -1,6 +1,7 @@
 use crate::and_predicate::and_predicate;
 use crate::cache::Cache;
 use crate::Resolvable; //Solely to just invert and predicate
+use crate::output_stack::Stack;
 
 //
 #[derive(Copy, Clone)]
@@ -9,12 +10,13 @@ pub struct _NotPredicate<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _NotPredicate<T> {
-    fn resolve(&self, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
-        return not_predicate(cache, position, source, self.arg);
+    fn resolve(&self,stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        return not_predicate(stack, cache, position, source, self.arg);
     }
 }
 
 fn not_predicate<T: Resolvable>(
+    stack: &mut Stack, 
     cache: &mut Cache,
     position: u32,
     source: &str,
@@ -22,7 +24,7 @@ fn not_predicate<T: Resolvable>(
 ) -> (bool, u32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
-    let (bool, position) = and_predicate(cache, position, source, arg);
+    let (bool, position) = and_predicate(stack, cache, position, source, arg);
     return (!bool, position);
 }
 
@@ -40,7 +42,8 @@ mod tests {
         };
         let t2 = _NotPredicate { arg: t };
         let mut cache = Cache::new(100, 1);
-        let s = t2.resolve(&mut cache, position, source);
+        let mut stack = Stack::new(100,100);
+        let s = t2.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
         assert_eq!(s.1, 0);
@@ -55,8 +58,8 @@ mod tests {
         };
         let t2 = _NotPredicate { arg: t };
         let mut cache = Cache::new(100, 1);
-
-        let s = t2.resolve(&mut cache, position, source);
+        let mut stack = Stack::new(100,100);
+        let s = t2.resolve(&mut stack, &mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
         assert_eq!(s.1, 0);
