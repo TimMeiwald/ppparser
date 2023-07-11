@@ -8,7 +8,7 @@ pub mod parser;
 mod sequence;
 mod subexpression;
 mod terminal;
-mod output_stack;
+pub mod output_stack;
 pub mod utils;
 mod var_name;
 mod zero_or_more;
@@ -16,7 +16,7 @@ mod zero_or_more;
 use std::path::Path;
 
 pub use crate::and_predicate::_AndPredicate;
-use crate::cache::cache_constructor;
+use crate::cache::Cache;
 pub use crate::not_predicate::_NotPredicate;
 pub use crate::one_or_more::_OneOrMore;
 pub use crate::optional::_Optional;
@@ -32,7 +32,7 @@ pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize) {
     let source =
         fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
     let size_of_source = source.len(); // For Test purposes but yknow prolly should do that differently, User API is still up in the air a bit
-    let mut cache = cache_constructor(size_of_source as u32 + 1, 43); // Will break for anything with more than 100 chars or 100 rules
+    let mut cache = Cache::new(size_of_source as u32 + 1, 43); // Will break for anything with more than 100 chars or 100 rules
 
     let (bool, position) = parser::Grammar.resolve(&mut cache, 0, &source);
     return (bool, position, size_of_source);
@@ -69,7 +69,7 @@ mod tests {
             arg_lhs: t1,
             arg_rhs: t2,
         };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = t3.resolve(&mut cache, position, source); // Each Top Level Rule can still call other Top Level Rules as well as primitives.
         return s;
@@ -79,7 +79,7 @@ mod tests {
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = t.resolve(&mut cache, position, source);
         return s;
@@ -96,7 +96,7 @@ mod tests {
             },
             arg_rhs: t,
         };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = b.resolve(&mut cache, position, source);
         return s;

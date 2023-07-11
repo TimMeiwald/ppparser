@@ -277,7 +277,23 @@ pub struct Cache {
 
 impl Cache {
     
-
+    pub fn new(size_of_source: u32, number_of_structs: u32) -> Self {
+        let mut c = Cache {
+            entries: Vec::with_capacity(size_of_source as usize),
+        };
+        for i in 0..size_of_source {
+            // Ensures the Vector in Cache is as large as the input source
+            c.entries.push(ArgCache {
+                entries: Vec::with_capacity(number_of_structs as usize),
+            });
+            for _j in 0..number_of_structs {
+                // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
+                c.entries[i as usize].entries.push((false, u32::MAX));
+            }
+        }
+        return c;
+        // for every arg cache in c set size to <number_of_structs>
+    }
 
     fn push(&mut self, position: u32, arg_key: u32, bool: bool, end_position: u32) {
         let arg_cache: &mut ArgCache = &mut self.entries[position as usize];
@@ -300,23 +316,7 @@ pub struct ArgCache {
     entries: Vec<(bool, u32)>, // Struct type encoded in the position of the entries
 }
 
-pub fn cache_constructor(size_of_source: u32, number_of_structs: u32) -> Cache {
-    let mut c = Cache {
-        entries: Vec::with_capacity(size_of_source as usize),
-    };
-    for i in 0..size_of_source {
-        // Ensures the Vector in Cache is as large as the input source
-        c.entries.push(ArgCache {
-            entries: Vec::with_capacity(number_of_structs as usize),
-        });
-        for _j in 0..number_of_structs {
-            // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
-            c.entries[i as usize].entries.push((false, u32::MAX));
-        }
-    }
-    return c;
-    // for every arg cache in c set size to <number_of_structs>
-}
+
 
 pub fn cache_struct_wrapper<T: Resolvable>(
     cache: &mut Cache,

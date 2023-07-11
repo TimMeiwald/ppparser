@@ -29,7 +29,23 @@ pub struct Cache {
 
 impl Cache {
     
-
+    pub fn new(size_of_source: u32, number_of_structs: u32) -> Self {
+        let mut c = Cache {
+            entries: Vec::with_capacity(size_of_source as usize),
+        };
+        for i in 0..size_of_source {
+            // Ensures the Vector in Cache is as large as the input source
+            c.entries.push(ArgCache {
+                entries: Vec::with_capacity(number_of_structs as usize),
+            });
+            for _j in 0..number_of_structs {
+                // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
+                c.entries[i as usize].entries.push((false, u32::MAX));
+            }
+        }
+        return c;
+        // for every arg cache in c set size to <number_of_structs>
+    }
 
     fn push(&mut self, position: u32, arg_key: u32, bool: bool, end_position: u32) {
         let arg_cache: &mut ArgCache = &mut self.entries[position as usize];
@@ -52,23 +68,7 @@ pub struct ArgCache {
     entries: Vec<(bool, u32)>, // Struct type encoded in the position of the entries
 }
 
-pub fn cache_constructor(size_of_source: u32, number_of_structs: u32) -> Cache {
-    let mut c = Cache {
-        entries: Vec::with_capacity(size_of_source as usize),
-    };
-    for i in 0..size_of_source {
-        // Ensures the Vector in Cache is as large as the input source
-        c.entries.push(ArgCache {
-            entries: Vec::with_capacity(number_of_structs as usize),
-        });
-        for _j in 0..number_of_structs {
-            // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
-            c.entries[i as usize].entries.push((false, u32::MAX));
-        }
-    }
-    return c;
-    // for every arg cache in c set size to <number_of_structs>
-}
+
 
 pub fn cache_struct_wrapper<T: Resolvable>(
     cache: &mut Cache,
@@ -118,7 +118,7 @@ mod tests {
         // Simulating what would happen after a rule that consumes one character parses and returns true
         let arg_key: u32 = 1;
         let start_position = 0;
-        let f = cache_constructor(10, 10); // 10 just cos it's a test no particular meaning
+        let f = Cache::new(10, 10); // 10 just cos it's a test no particular meaning
         let s: Option<(bool, u32)> = f.check(start_position, arg_key);
         assert!(s.is_none());
     }
@@ -130,7 +130,7 @@ mod tests {
         let start_position = 0;
         let result = true;
         let end_position = 1;
-        let mut f = cache_constructor(10, 10); // 10 just cos it's a test no particular meaning
+        let mut f = Cache::new(10, 10); // 10 just cos it's a test no particular meaning
         f.push(start_position, arg_key, result, end_position);
         let (b, p) = f.check(start_position, arg_key).unwrap();
         println!("{:?}, {:?}", b, p);
@@ -142,7 +142,7 @@ mod tests {
     fn test_sample_struct() {
         let src = "Hello World";
         let position = 0;
-        let mut cache = cache_constructor(11, 1);
+        let mut cache = Cache::new(11, 1);
         let arg_key = 0;
         let s = cache.check(position, arg_key);
         assert_eq!(s, None);
@@ -164,7 +164,7 @@ mod tests {
     fn test_sample_function() {
         let src = "Hello World";
         let position = 0;
-        let mut cache = cache_constructor(11, 1);
+        let mut cache = Cache::new(11, 1);
         let arg_key = 0;
         let s = cache.check(position, arg_key);
         assert_eq!(s, None);

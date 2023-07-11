@@ -43,7 +43,7 @@ fn ordered_choice<T: Resolvable, U: Resolvable>(
 mod tests {
     use super::*;
     use crate::_Terminal;
-    use crate::cache::cache_constructor;
+    use crate::cache::Cache;
     #[test]
     fn test_ordered_choice_true() {
         let source = "Hello World";
@@ -58,7 +58,7 @@ mod tests {
             arg_lhs: t,
             arg_rhs: t2,
         };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
@@ -80,7 +80,7 @@ mod tests {
             arg_lhs: t,
             arg_rhs: t2,
         };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
@@ -116,7 +116,7 @@ mod tests {
             arg_lhs: t5,
             arg_rhs: t6,
         };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = t7.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1)
@@ -223,7 +223,7 @@ mod tests {
             arg_lhs: t23,
             arg_rhs: t24,
         };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = t25.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1)

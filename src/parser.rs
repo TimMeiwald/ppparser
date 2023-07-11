@@ -13,6 +13,7 @@ pub use crate::terminal::_Terminal;
 use crate::terminal::token;
 pub use crate::var_name::_VarName;
 pub use crate::zero_or_more::_ZeroOrMore;
+pub use crate:: output_stack;
 
 enum Rules{AlphabetUpper,
     AlphabetLower,

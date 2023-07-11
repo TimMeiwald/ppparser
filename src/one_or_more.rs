@@ -48,7 +48,7 @@ fn one_or_more<T: Resolvable>(
 mod tests {
     use super::*;
     use crate::_Terminal;
-    use crate::cache::cache_constructor;
+    use crate::cache::Cache;
     #[test]
     fn test_one_or_more_1() {
         let source = "Hello World";
@@ -57,7 +57,7 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t3 = _OneOrMore { arg: t };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
@@ -73,7 +73,7 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t3 = _OneOrMore { arg: t };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
@@ -89,7 +89,7 @@ mod tests {
             arg: "H".to_string().as_bytes()[0],
         };
         let t3 = _OneOrMore { arg: t };
-        let mut cache = cache_constructor(100, 1);
+        let mut cache = Cache::new(100, 1);
 
         let s = t3.resolve(&mut cache, position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
