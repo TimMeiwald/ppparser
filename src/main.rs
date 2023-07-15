@@ -59,6 +59,18 @@ fn amain() {
     let mut stack = Stack::new(100,100);
 
     let (_bool, _position) = Grammar.resolve(&mut stack, &mut cache, position, &_grammar);
+    loop {
+        let s = stack.pop();
+        if s.is_some() {
+            let s = s.unwrap();
+            println!("{}, {}, {}, {}", s.rule, s.start_position, s.end_position, &_grammar[s.start_position as usize..s.end_position as usize])
+        }
+        else{
+            break;
+        }
+        
+    }
+
     //println!("{bool}, {position}");
     //println!{"{:?}, {:?}", bool, position};
 

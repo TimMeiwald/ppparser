@@ -51,13 +51,13 @@ mod tests {
     struct Example2;
 
     impl Resolvable for Example {
-        fn resolve(&self, stack: &mut Stack,  _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, _stack: &mut Stack,  _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
             return example1(position, source); // Define which function to run using impl Resolvable
         }
     }
 
     impl Resolvable for Example2 {
-        fn resolve(&self, stack: &mut Stack,  _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, _stack: &mut Stack,  _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
             return example2(position, source);
         }
     }

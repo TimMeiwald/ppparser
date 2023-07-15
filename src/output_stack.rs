@@ -1,5 +1,7 @@
 //
 
+use std::array::IntoIter;
+
 pub struct StackEntry{
     pub rule: u32,
     pub start_position: u32,
@@ -24,6 +26,9 @@ impl Stack{
         return self.entries.pop();
     }
 }
+
+
+
 
 
 #[cfg(test)]

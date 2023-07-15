@@ -15,6 +15,8 @@ pub use crate::var_name::_VarName;
 pub use crate::zero_or_more::_ZeroOrMore;
 pub use crate:: output_stack::{Stack, StackEntry};
 
+
+
 enum Rules{AlphabetUpper,
     AlphabetLower,
     Num,
@@ -65,34 +67,53 @@ enum Rules{AlphabetUpper,
         pub struct AlphabetUpper;
         impl Resolvable for AlphabetUpper {
         fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
-            let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"A".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"B".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"C".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"D".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"E".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"F".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"G".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"H".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"I".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"J".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"K".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"L".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"M".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"N".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"O".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"P".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"Q".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"R".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"S".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"T".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"U".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"V".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"W".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"X".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"Y".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"Z".to_string().as_bytes()[0]}};
-            let hook = cache_struct_wrapper(stack, cache, rule, Rules::AlphabetUpper as u32, position, source);
+            //let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"A".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"B".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"C".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"D".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"E".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"F".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"G".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"H".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"I".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"J".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"K".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"L".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"M".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"N".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"O".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"P".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"Q".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"R".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"S".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"T".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"U".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"V".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"W".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"X".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"Y".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"Z".to_string().as_bytes()[0]}};
+            //let hook = cache_struct_wrapper(stack, cache, rule, Rules::AlphabetUpper as u32, position, source);
+            let hook = cache_fn_wrapper(stack, cache, alphabet_upper, Rules::AlphabetUpper as u32, position, source);
             if hook.0 == true { 
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::AlphabetUpper as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::AlphabetUpper as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
             }
         }
         
-    
+        
+
+        fn alphabet_upper(_stack: &mut Stack, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+            let curr_token = token(position, source);
+            if curr_token >= 65 && curr_token <= 90 {
+                return (true, position + 1);
+            } else {
+                return (false, position);
+            }
+        }
+
         #[derive(Copy, Clone)]
         pub struct AlphabetLower;
         impl Resolvable for AlphabetLower {
         fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
-            let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"a".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"b".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"c".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"d".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"e".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"f".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"g".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"h".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"i".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"j".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"k".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"l".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"m".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"n".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"o".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"p".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"q".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"r".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"s".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"t".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"u".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"v".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"w".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"x".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"y".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"z".to_string().as_bytes()[0]}};
-            let hook = cache_struct_wrapper(stack, cache, rule, Rules::AlphabetLower as u32, position, source);
+            //let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"a".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"b".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"c".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"d".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"e".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"f".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"g".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"h".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"i".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"j".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"k".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"l".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"m".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"n".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"o".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"p".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"q".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"r".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"s".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"t".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"u".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"v".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"w".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"x".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"y".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"z".to_string().as_bytes()[0]}};
+            //let hook = cache_struct_wrapper(stack, cache, rule, Rules::AlphabetLower as u32, position, source);
+            let hook = cache_fn_wrapper(stack, cache, alphabet_lower, Rules::AlphabetLower as u32, position, source);
             if hook.0 == true { 
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::AlphabetLower as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::AlphabetLower as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
+            }
+        }
+
+        fn alphabet_lower(_stack: &mut Stack, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+            let curr_token = token(position, source);
+            if curr_token >= 97 && curr_token <= 122 {
+                return (true, position + 1);
+            } else {
+                return (false, position);
             }
         }
         
@@ -101,16 +122,25 @@ enum Rules{AlphabetUpper,
         pub struct Num;
         impl Resolvable for Num {
         fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
-            let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"0".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"1".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"2".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"3".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"4".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"5".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"6".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"7".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"8".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"9".to_string().as_bytes()[0]}};
-            let hook = cache_struct_wrapper(stack, cache, rule, Rules::Num as u32, position, source);
+            //let rule = _OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_Terminal{arg:"0".to_string().as_bytes()[0]}, arg_rhs:_Terminal{arg:"1".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"2".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"3".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"4".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"5".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"6".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"7".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"8".to_string().as_bytes()[0]}}, arg_rhs:_Terminal{arg:"9".to_string().as_bytes()[0]}};
+            //let hook = cache_struct_wrapper(stack, cache, rule, Rules::Num as u32, position, source);
+            let hook = cache_fn_wrapper(stack, cache, num, Rules::Num as u32, position, source);
             if hook.0 == true { 
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Num as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Num as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
+            }
+        }
+
+        fn num(_stack: &mut Stack, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+            let curr_token = token(position, source);
+            if curr_token >= 48 && curr_token <= 57 {
+                return (true, position + 1);
+            } else {
+                return (false, position);
             }
         }
         
@@ -125,7 +155,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Spaces as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Spaces as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -143,7 +172,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Specials as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Specials as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -161,7 +189,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Ascii as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Ascii as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -179,7 +206,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Apostrophe as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Apostrophe as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -197,7 +223,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::LeftAngleBracket as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::LeftAngleBracket as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -215,7 +240,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::RightAngleBracket as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::RightAngleBracket as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -233,7 +257,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::LeftBracket as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::LeftBracket as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -251,7 +274,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::RightBracket as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::RightBracket as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -269,7 +291,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Assignment as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Assignment as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -287,7 +308,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::EndRule as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::EndRule as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -305,7 +325,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Ampersand as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Ampersand as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -323,7 +342,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::ExclamationMark as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::ExclamationMark as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -341,7 +359,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Plus as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Plus as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -359,7 +376,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Star as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Star as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -377,7 +393,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::QuestionMark as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::QuestionMark as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -395,7 +410,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Comma as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Comma as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -413,7 +427,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Backslash as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Backslash as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -431,7 +444,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::VarName as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::VarName as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -449,7 +461,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Subexpression as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Subexpression as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -467,7 +478,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Epsilon as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Epsilon as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -485,7 +495,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Lterminal as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Lterminal as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -503,7 +512,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Nucleus as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Nucleus as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -521,7 +529,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Atom as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Atom as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -539,7 +546,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::AndPredicate as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::AndPredicate as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -557,7 +563,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::NotPredicate as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::NotPredicate as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -575,7 +580,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Sequence as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Sequence as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -593,7 +597,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::OrderedChoice as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::OrderedChoice as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -611,7 +614,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::OneOrMore as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::OneOrMore as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -629,7 +631,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::ZeroOrMore as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::ZeroOrMore as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -647,7 +648,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Optional as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Optional as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -665,7 +665,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Whitespace as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Whitespace as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -683,7 +682,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Rhs as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Rhs as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -701,7 +699,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Lhs as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Lhs as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -719,7 +716,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Rule as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Rule as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -737,7 +733,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Grammar as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Grammar as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -755,7 +750,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Comment as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Comment as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -773,7 +767,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::SemanticInstructions as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::SemanticInstructions as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -791,7 +784,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Delete as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Delete as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -809,7 +801,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Passthrough as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Passthrough as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
@@ -827,7 +818,6 @@ enum Rules{AlphabetUpper,
                 if position != hook.1 {
                     let e: StackEntry = StackEntry{rule: Rules::Collect as u32, start_position: position, end_position: hook.1};
                     stack.push(e);
-                    println!("{}, {}, {}, {}", Rules::Collect as u32, position, hook.1, &source[position as usize..hook.1 as usize]); 
                     };
                 };
             return hook;
