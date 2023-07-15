@@ -28,7 +28,12 @@ impl Stack{
 }
 
 
-
+impl Iterator for Stack{
+    type Item = StackEntry;
+    fn next(&mut self) -> Option<Self::Item> {
+        return self.pop();
+    }
+}
 
 
 #[cfg(test)]
