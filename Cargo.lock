@@ -3,5 +3,12 @@
 version = 3
 
 [[package]]
-name = "ppparser"
+name = "generator"
+version = "0.1.0"
+dependencies = [
+ "parser",
+]
+
+[[package]]
+name = "parser"
 version = "0.4.0"
