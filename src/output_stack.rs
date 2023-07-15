@@ -30,6 +30,20 @@ impl Stack{
         let entry = self.entries.get(position);
         return entry;
     }
+
+    pub fn print_with_strings(&self, source: &str){
+        let stack_iterator = self.into_iter();
+        for entry in stack_iterator{
+            println!("{}, {}, {}, {}", entry.rule, entry.start_position, entry.end_position, &source[entry.start_position as usize..entry.end_position as usize])
+        }
+    }
+
+    pub fn print(&self){
+        let stack_iterator = self.into_iter();
+        for entry in stack_iterator{
+            println!("{}, {}, {}", entry.rule, entry.start_position, entry.end_position)
+        }
+    }
 }
 
 impl<'a> IntoIterator for &'a Stack{

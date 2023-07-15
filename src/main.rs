@@ -59,35 +59,9 @@ fn amain() {
     let mut stack = Stack::new(100,100);
 
     let (_bool, _position) = Grammar.resolve(&mut stack, &mut cache, position, &_grammar);
-    // loop {
-    //     let s = stack.pop();
-    //     if s.is_some() {
-    //         let s = s.unwrap();
-    //         println!("{}, {}, {}, {}", s.rule, s.start_position, s.end_position, &_grammar[s.start_position as usize..s.end_position as usize])
-    //     }
-    //     else{
-    //         break;
-    //     }
-    //
-    // let mut count: usize = 0;
-    // loop {
-    //     let s = stack.read(count);
-    //     if s.is_none(){
-    //         break
-    //     }
-    //     let s = s.unwrap();
-    //     println!("{}, {}, {}, {}", s.rule, s.start_position, s.end_position, &_grammar[s.start_position as usize..s.end_position as usize]);
-    //     count+=1;
-    // }
+    
 
-    //}
-    for s in &stack {
-        println!("{}, {}, {}, {}", s.rule, s.start_position, s.end_position, &_grammar[s.start_position as usize..s.end_position as usize])
-    }
-
-    //println!("{bool}, {position}");
-    //println!{"{:?}, {:?}", bool, position};
-
+    stack.print_with_strings(&_grammar);
     // Add the parser generation here to then add into parser write
     let parser_write = write_parser(dest, &core_parser);
     match parser_write {
