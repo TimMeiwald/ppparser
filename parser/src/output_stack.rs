@@ -36,6 +36,7 @@ impl Stack{
     }
 
     pub fn pop(&mut self) -> Option<StackEntry> {
+        println!("Current Len {}", self.entries.len());
         return self.entries.pop();
     }
 

@@ -17,6 +17,7 @@ pub use crate:: output_stack::{Stack, StackEntry};
 
 
 
+
 #[derive(Debug)]
 pub enum Rules{AlphabetUpper,
 AlphabetLower,
@@ -48,7 +49,7 @@ AndPredicate,
 NotPredicate,
 Sequence,
 OrderedChoice,
-OneOrMore,
+LoneOrMore,
 ZeroOrMore,
 Optional,
 Whitespace,
@@ -73,17 +74,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::AlphabetUpper as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -98,17 +91,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::AlphabetLower as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -123,17 +108,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Num as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -148,17 +125,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Spaces as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -173,17 +142,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Specials as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -198,17 +159,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Ascii as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -223,17 +176,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Apostrophe as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -248,17 +193,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::LeftAngleBracket as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -273,17 +210,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::RightAngleBracket as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -298,17 +227,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::LeftBracket as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -323,17 +244,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::RightBracket as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -348,17 +261,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Assignment as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -373,17 +278,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::EndRule as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -398,17 +295,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Ampersand as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -423,17 +312,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::ExclamationMark as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -448,17 +329,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Plus as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -473,17 +346,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Star as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -498,17 +363,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::QuestionMark as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -523,17 +380,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Comma as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -548,17 +397,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Backslash as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -573,17 +414,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::VarName as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -598,17 +431,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Subexpression as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -623,17 +448,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Epsilon as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -648,17 +465,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Lterminal as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -673,17 +482,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Nucleus as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -693,22 +494,14 @@ Collect,
     pub struct Atom;
     impl Resolvable for Atom {
     fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
-        let rule = _Sequence{arg_lhs:_SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:AndPredicate}, arg_rhs:_VarName{arg:NotPredicate}}, arg_rhs:_VarName{arg:OneOrMore}}, arg_rhs:_VarName{arg:ZeroOrMore}}, arg_rhs:_VarName{arg:Optional}}, arg_rhs:_VarName{arg:Nucleus}}}, arg_rhs:_VarName{arg:Whitespace}};
+        let rule = _Sequence{arg_lhs:_SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:AndPredicate}, arg_rhs:_VarName{arg:NotPredicate}}, arg_rhs:_VarName{arg:LoneOrMore}}, arg_rhs:_VarName{arg:ZeroOrMore}}, arg_rhs:_VarName{arg:Optional}}, arg_rhs:_VarName{arg:Nucleus}}}, arg_rhs:_VarName{arg:Whitespace}};
         let e: StackEntry = StackEntry{rule: Rules::Atom, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Atom as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -723,17 +516,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::AndPredicate as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -748,17 +533,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::NotPredicate as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -773,17 +550,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Sequence as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -798,41 +567,39 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::OrderedChoice as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
     
 
     #[derive(Copy, Clone)]
-    pub struct OneOrMore;
-    impl Resolvable for OneOrMore {
+    pub struct LoneOrMore;
+    impl Resolvable for LoneOrMore {
     fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
         let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Nucleus}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Plus}};
-        let e: StackEntry = StackEntry{rule: Rules::OneOrMore, start_position: position, end_position: 0};
+        let e: StackEntry = StackEntry{rule: Rules::LoneOrMore, start_position: position, end_position: 0};
         let e_position = stack.push(e);
-        let hook = cache_struct_wrapper(stack, cache, rule, Rules::OneOrMore as u32, position, source);
+        let hook = cache_struct_wrapper(stack, cache, rule, Rules::LoneOrMore as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
+        println!("Deets, {}, {}, {}", hook.0, position, hook.1);
+        if hook.0 == false { 
+            println!("Popping");
+            println!("Should be popping {}", e_position);
+            let s = stack.pop().unwrap();
+            println!("Popped Entry, {:?}, {}, {}", s.rule, s.start_position, s.end_position);
+
+        }
+        else if position == hook.1 {
+            let s = stack.pop().unwrap();
+            println!("Popped Entry, {:?}, {}, {}", s.rule, s.start_position, s.end_position);
+
+        }
         else{
-            stack.pop();
+            println!("Not popping");
+
         };
         return hook;
         }
@@ -848,17 +615,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::ZeroOrMore as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -873,17 +632,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Optional as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -898,17 +649,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Whitespace as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -923,17 +666,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Rhs as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -948,17 +683,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Lhs as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -973,17 +700,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Rule as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -998,17 +717,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Grammar as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -1023,17 +734,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Comment as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -1048,17 +751,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::SemanticInstructions as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -1073,17 +768,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Delete as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -1098,17 +785,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Passthrough as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
@@ -1123,17 +802,9 @@ Collect,
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Collect as u32, position, source);
         stack.update(e_position, hook.1);
-        if hook.0 == true { 
-            if position != hook.1 {
-                stack.update(e_position, hook.1);
-                }
-            else{
-                stack.pop();
-            }
-            }
-        else{
+        if hook.0 == false || position == hook.1 { 
             stack.pop();
-        };
+        }
         return hook;
         }
     }
