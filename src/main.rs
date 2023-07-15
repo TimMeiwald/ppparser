@@ -69,8 +69,19 @@ fn amain() {
     //         break;
     //     }
     //
+    // let mut count: usize = 0;
+    // loop {
+    //     let s = stack.read(count);
+    //     if s.is_none(){
+    //         break
+    //     }
+    //     let s = s.unwrap();
+    //     println!("{}, {}, {}, {}", s.rule, s.start_position, s.end_position, &_grammar[s.start_position as usize..s.end_position as usize]);
+    //     count+=1;
+    // }
+
     //}
-    for s in stack{
+    for s in &stack {
         println!("{}, {}, {}, {}", s.rule, s.start_position, s.end_position, &_grammar[s.start_position as usize..s.end_position as usize])
     }
 

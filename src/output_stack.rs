@@ -25,15 +25,36 @@ impl Stack{
     pub fn pop(&mut self) -> Option<StackEntry> {
         return self.entries.pop();
     }
-}
 
-
-impl Iterator for Stack{
-    type Item = StackEntry;
-    fn next(&mut self) -> Option<Self::Item> {
-        return self.pop();
+    pub fn read(&self, position: usize) -> Option<&StackEntry> {
+        let entry = self.entries.get(position);
+        return entry;
     }
 }
+
+impl<'a> IntoIterator for &'a Stack{
+    type Item = &'a StackEntry;
+    type IntoIter = StackIter<'a>;
+    fn into_iter(self) -> Self::IntoIter{
+        StackIter{stack: &self, count: 0}
+    }
+}
+
+pub struct StackIter<'a>{
+    count: usize,
+    stack: &'a Stack,
+}
+
+impl<'a>  Iterator for StackIter<'a>{
+    type Item = &'a StackEntry;
+    fn next(&mut self) -> Option<&'a StackEntry>{
+        let entry = self.stack.read(self.count);
+        self.count += 1;
+        return entry;
+    }
+}
+
+
 
 
 #[cfg(test)]
