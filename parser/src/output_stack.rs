@@ -22,10 +22,19 @@ impl Stack{
         // TODO: Fundamentally Vec can grow so still need to catch unwrap above but it's merely about minimizing allocation rather than causing a break
         return Stack { entries: Vec::with_capacity(size_of_stack)};
     }
-    pub fn push(&mut self, entry: StackEntry){
+    pub fn push(&mut self, entry: StackEntry) -> usize {
+        let position = self.entries.len();
         self.entries.push(entry);
+        return position;
 
     }
+
+    pub fn update(&mut self, position: usize, end_position: u32){
+        self.entries[position].end_position = end_position;
+        //println!("{:?}, {}, {}",self.entries[position].rule, self.entries[position].start_position,  self.entries[position].end_position);
+
+    }
+
     pub fn pop(&mut self) -> Option<StackEntry> {
         return self.entries.pop();
     }

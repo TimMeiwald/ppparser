@@ -8,6 +8,7 @@ pub fn generate(source: String, ast: Stack){
 
 fn match_rule(source: String, ast: Stack){
     for entry in &ast{
+        println!("{:?}, {}, {}", entry.rule, entry.start_position, entry.end_position);
         match entry.rule {
             Rules::Grammar => {println!("{:?}, {}, {}", entry.rule, entry.start_position, entry.end_position)}
             Rules::Rule => {println!("{:?}, {}, {}, {}", entry.rule, entry.start_position, entry.end_position, &source[entry.start_position as usize..entry.end_position as usize])}
