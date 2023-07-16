@@ -49,7 +49,7 @@ AndPredicate,
 NotPredicate,
 Sequence,
 OrderedChoice,
-LoneOrMore,
+OneOrMore,
 ZeroOrMore,
 Optional,
 Whitespace,
@@ -73,9 +73,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::AlphabetUpper, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::AlphabetUpper as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -90,9 +102,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::AlphabetLower, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::AlphabetLower as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -107,9 +131,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Num, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Num as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -124,9 +160,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Spaces, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Spaces as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -141,9 +189,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Specials, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Specials as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -158,9 +218,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Ascii, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Ascii as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -175,9 +247,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Apostrophe, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Apostrophe as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -192,9 +276,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::LeftAngleBracket, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::LeftAngleBracket as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -209,9 +305,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::RightAngleBracket, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::RightAngleBracket as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -226,9 +334,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::LeftBracket, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::LeftBracket as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -243,9 +363,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::RightBracket, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::RightBracket as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -260,9 +392,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Assignment, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Assignment as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -277,9 +421,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::EndRule, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::EndRule as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -294,9 +450,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Ampersand, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Ampersand as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -311,9 +479,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::ExclamationMark, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::ExclamationMark as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -328,9 +508,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Plus, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Plus as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -345,9 +537,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Star, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Star as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -362,9 +566,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::QuestionMark, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::QuestionMark as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -379,9 +595,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Comma, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Comma as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -396,9 +624,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Backslash, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Backslash as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -413,9 +653,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::VarName, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::VarName as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -430,9 +682,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Subexpression, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Subexpression as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -447,9 +711,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Epsilon, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Epsilon as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -464,9 +740,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Lterminal, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Lterminal as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -481,9 +769,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Nucleus, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Nucleus as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -494,13 +794,25 @@ Collect,
     pub struct Atom;
     impl Resolvable for Atom {
     fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
-        let rule = _Sequence{arg_lhs:_SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:AndPredicate}, arg_rhs:_VarName{arg:NotPredicate}}, arg_rhs:_VarName{arg:LoneOrMore}}, arg_rhs:_VarName{arg:ZeroOrMore}}, arg_rhs:_VarName{arg:Optional}}, arg_rhs:_VarName{arg:Nucleus}}}, arg_rhs:_VarName{arg:Whitespace}};
+        let rule = _Sequence{arg_lhs:_SubExpression{arg:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_OrderedChoice{arg_lhs:_VarName{arg:AndPredicate}, arg_rhs:_VarName{arg:NotPredicate}}, arg_rhs:_VarName{arg:OneOrMore}}, arg_rhs:_VarName{arg:ZeroOrMore}}, arg_rhs:_VarName{arg:Optional}}, arg_rhs:_VarName{arg:Nucleus}}}, arg_rhs:_VarName{arg:Whitespace}};
         let e: StackEntry = StackEntry{rule: Rules::Atom, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Atom as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -515,9 +827,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::AndPredicate, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::AndPredicate as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -532,9 +856,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::NotPredicate, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::NotPredicate as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -549,9 +885,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Sequence, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Sequence as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -566,9 +914,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::OrderedChoice, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::OrderedChoice as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -576,31 +936,29 @@ Collect,
     
 
     #[derive(Copy, Clone)]
-    pub struct LoneOrMore;
-    impl Resolvable for LoneOrMore {
+    pub struct OneOrMore;
+    impl Resolvable for OneOrMore {
     fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
         let rule = _Sequence{arg_lhs:_Sequence{arg_lhs:_VarName{arg:Nucleus}, arg_rhs:_VarName{arg:Whitespace}}, arg_rhs:_VarName{arg:Plus}};
-        let e: StackEntry = StackEntry{rule: Rules::LoneOrMore, start_position: position, end_position: 0};
+        let e: StackEntry = StackEntry{rule: Rules::OneOrMore, start_position: position, end_position: 0};
         let e_position = stack.push(e);
-        let hook = cache_struct_wrapper(stack, cache, rule, Rules::LoneOrMore as u32, position, source);
-        stack.update(e_position, hook.1);
-        println!("Deets, {}, {}, {}", hook.0, position, hook.1);
-        if hook.0 == false { 
-            println!("Popping");
-            println!("Should be popping {}", e_position);
-            let s = stack.pop().unwrap();
-            println!("Popped Entry, {:?}, {}, {}", s.rule, s.start_position, s.end_position);
-
-        }
-        else if position == hook.1 {
-            let s = stack.pop().unwrap();
-            println!("Popped Entry, {:?}, {}, {}", s.rule, s.start_position, s.end_position);
-
+        let hook = cache_struct_wrapper(stack, cache, rule, Rules::OneOrMore as u32, position, source);
+        if hook.0 == false || position == hook.1 { 
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
         }
         else{
-            println!("Not popping");
-
-        };
+            stack.update(e_position, hook.1);
+        }
         return hook;
         }
     }
@@ -614,9 +972,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::ZeroOrMore, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::ZeroOrMore as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -631,9 +1001,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Optional, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Optional as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -648,9 +1030,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Whitespace, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Whitespace as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -665,9 +1059,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Rhs, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Rhs as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -682,9 +1088,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Lhs, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Lhs as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -699,9 +1117,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Rule, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Rule as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -716,9 +1146,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Grammar, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Grammar as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -733,9 +1175,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Comment, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Comment as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -750,9 +1204,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::SemanticInstructions, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::SemanticInstructions as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -767,9 +1233,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Delete, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Delete as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -784,9 +1262,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Passthrough, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Passthrough as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }
@@ -801,9 +1291,21 @@ Collect,
         let e: StackEntry = StackEntry{rule: Rules::Collect, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Collect as u32, position, source);
-        stack.update(e_position, hook.1);
         if hook.0 == false || position == hook.1 { 
-            stack.pop();
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = stack.len();
+                if stack_length > e_position{
+                    stack.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            stack.update(e_position, hook.1);
         }
         return hook;
         }

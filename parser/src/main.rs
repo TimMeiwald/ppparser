@@ -60,7 +60,7 @@ fn amain() {
 
     let (_bool, _position) = Grammar.resolve(&mut stack, &mut cache, position, &grammar);
     
-    //stack.print();
+    stack.print();
     //stack.print_with_strings(&grammar);
     // Add the parser generation here to then add into parser write
     let parser_write = write_parser(dest, &core_parser);

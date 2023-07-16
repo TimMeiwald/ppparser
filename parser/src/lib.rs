@@ -37,6 +37,10 @@ pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize, String, Stack) {
     let mut stack = Stack::new(size_of_source as u32,43);
 
     let (bool, position) = parser::Grammar.resolve(&mut stack, &mut cache, 0, &source);
+
+    if !bool{
+        println!("FAILED\n\nFAILED")
+    }
     return (bool, position, size_of_source, source, stack);
 }
 

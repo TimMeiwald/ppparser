@@ -34,9 +34,12 @@ impl Stack{
         //println!("{:?}, {}, {}",self.entries[position].rule, self.entries[position].start_position,  self.entries[position].end_position);
 
     }
+    pub fn len(&self) -> usize{
+        self.entries.len()
+    }
 
     pub fn pop(&mut self) -> Option<StackEntry> {
-        println!("Current Len {}", self.entries.len());
+        //println!("Current Len {}", self.entries.len());
         return self.entries.pop();
     }
 
@@ -55,7 +58,7 @@ impl Stack{
             print_vec.push(s);
         }
         // Mostly only so I don't need to implement double ended iterators TODO make this less crap
-        for string in print_vec.iter(){
+        for string in print_vec.iter().rev(){
             println!("{}", string);
         }
     }
@@ -69,7 +72,7 @@ impl Stack{
             let s: String = format!("{:?}, {}, {}", entry.rule, entry.start_position, entry.end_position);
             print_vec.push(s);
         }
-        for string in print_vec.iter(){
+        for string in print_vec.iter().rev(){
             println!("{}", string);
         }
     }
@@ -86,22 +89,22 @@ impl<'a> IntoIterator for &'a Stack{
             exit(-1);
         }
         let count = count.unwrap() as u32;
-        StackIter{stack: &self, count: count as usize}
+        StackIter{stack: &self, count: count as isize}
         //StackIter{stack: &self, count: 0}
 
     }
 }
 
 pub struct StackIter<'a>{
-    count: usize,
+    count: isize,
     stack: &'a Stack,
 }
 
 impl<'a>  Iterator for StackIter<'a>{
     type Item = &'a StackEntry;
     fn next(&mut self) -> Option<&'a StackEntry>{
-        let entry = self.stack.read(self.count);
-        if self.count == 0 {
+        let entry = self.stack.read(self.count as usize);
+        if self.count < 0 {
             return None
         }
         self.count -= 1;
