@@ -62,6 +62,7 @@ SemanticInstructions,
 Delete,
 Passthrough,
 Collect,
+Lr,
 }
 
 
@@ -666,3 +667,16 @@ Collect,
         }
     }
     
+    #[derive(Copy, Clone)]
+    pub struct Lr;
+    impl Resolvable for Lr {
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) { 
+        let rule = _OrderedChoice{arg_lhs:_SubExpression{arg:_Sequence{arg_lhs:_VarName{arg:Lr}, arg_rhs:_Terminal{arg:"A".to_string().as_bytes()[0]}}}, arg_rhs:_Terminal{arg:"B".to_string().as_bytes()[0]}};
+        let e: StackEntry = StackEntry{rule: Rules::Lr, start_position: position, end_position: 0};
+        let e_position = stack.push(e);
+        let hook = cache_struct_wrapper(stack, cache, rule, Rules::Lr as u32, position, source);
+        stack.unravel(hook.0, position, hook.1, e_position);
+        return hook;
+        }
+    }
+

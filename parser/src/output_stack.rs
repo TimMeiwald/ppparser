@@ -68,30 +68,20 @@ impl Stack{
     pub fn print_with_strings(&self, source: &str)
     {
         let stack_iterator = self.into_iter();
-        let mut print_vec: Vec<String> = Vec::new();
-        // Invert order because terminal appears inverted because of push down
         for entry in stack_iterator{
             let s: String = format!("{:?}, {}, {}, {}", entry.rule, entry.start_position, entry.end_position, &source[entry.start_position as usize..entry.end_position as usize]);
-            print_vec.push(s);
-        }
-        // Mostly only so I don't need to implement double ended iterators TODO make this less crap
-        for string in print_vec.iter().rev(){
-            println!("{}", string);
+            println!("{}", s);
         }
     }
 
 
     pub fn print(&self){
         let stack_iterator = self.into_iter();
-        let mut print_vec: Vec<String> = Vec::new();
-        // Invert order because terminal appears inverted because of push down
         for entry in stack_iterator{
             let s: String = format!("{:?}, {}, {}", entry.rule, entry.start_position, entry.end_position);
-            print_vec.push(s);
+            println!("{}", s);
         }
-        for string in print_vec.iter().rev(){
-            println!("{}", string);
-        }
+
     }
 }
 
@@ -99,14 +89,6 @@ impl<'a> IntoIterator for &'a Stack{
     type Item = &'a StackEntry;
     type IntoIter = StackIter<'a>;
     fn into_iter(self) -> Self::IntoIter{
-        //let vec_size = self.entries.len() as u32;
-        // let count = vec_size.checked_sub(1);
-        // if count.is_none() {
-        //     println!("Error: Stack has no contents");
-        //     exit(-1);
-        // }
-        //let count = count.unwrap() as u32;
-        //StackIter{stack: &self, count: count as isize}
         StackIter{stack: &self, count: 0}
 
     }
@@ -121,10 +103,6 @@ impl<'a>  Iterator for StackIter<'a>{
     type Item = &'a StackEntry;
     fn next(&mut self) -> Option<&'a StackEntry>{
         let entry = self.stack.read(self.count as usize);
-        // if self.count < 0 {
-        //     return None
-        // }
-        // self.count -= 1;
         self.count += 1;
         return entry;
     }

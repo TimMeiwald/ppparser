@@ -55,15 +55,14 @@ fn amain() {
     let grammar = grammar + "\0";
     let grammar_length = grammar.len() as u32 + 1;
     let position = 0;
-    use std::time::Instant;
-    let now = Instant::now();
     let mut cache = Cache::new(grammar_length, 43);
     let mut stack = Stack::new(grammar_length,43);
-
+    use std::time::Instant;
+    let now = Instant::now();
     let (_bool, _position) = Grammar.resolve(&mut stack, &mut cache, position, &grammar);
     let elapsed = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
-    stack.print_with_strings(&grammar);
+    //stack.print_with_strings(&grammar);
     //stack.print_with_strings(&grammar);
     // Add the parser generation here to then add into parser write
     let parser_write = write_parser(dest, &core_parser);
