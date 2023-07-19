@@ -55,12 +55,15 @@ fn amain() {
     let grammar = grammar + "\0";
     let grammar_length = grammar.len() as u32 + 1;
     let position = 0;
+    use std::time::Instant;
+    let now = Instant::now();
     let mut cache = Cache::new(grammar_length, 43);
     let mut stack = Stack::new(grammar_length,43);
 
     let (_bool, _position) = Grammar.resolve(&mut stack, &mut cache, position, &grammar);
-    
-    stack.print();
+    let elapsed = now.elapsed();
+    println!("Elapsed: {:.2?}", elapsed);
+    stack.print_with_strings(&grammar);
     //stack.print_with_strings(&grammar);
     // Add the parser generation here to then add into parser write
     let parser_write = write_parser(dest, &core_parser);
@@ -75,9 +78,9 @@ fn amain() {
 
 fn main() -> ExitCode {
     // Ensures scope change kills everything
+
     use std::time::Instant;
     let now = Instant::now();
-
     // Handwritten means that alphabet upper and lower were replaced with obvious handwritten code.
     // No cache debug 346 lines a second on Grammar.txt
     // No cache release 1040 lines a second on Grammar.txt
@@ -91,7 +94,7 @@ fn main() -> ExitCode {
     //println!("{:?}", i)
     //}
     let elapsed = now.elapsed();
-    println!("Elapsed: {:.2?}", elapsed);
+    println!("Elapsed with file read: {:.2?}", elapsed);
     //println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());
     println! {"Exiting main"}
     return ExitCode::from(0);

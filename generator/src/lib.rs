@@ -7,6 +7,7 @@ pub fn generate(source: String, ast: Stack){
 }
 
 fn match_rule(source: String, ast: Stack){
+    let mut count = 0;
     for entry in &ast{
         //println!("{:?}, {}, {}", entry.rule, entry.start_position, entry.end_position);
         match entry.rule {
@@ -22,9 +23,12 @@ fn match_rule(source: String, ast: Stack){
             Rules::NotPredicate => {println!("{:?}, {}, {}, {}", entry.rule, entry.start_position, entry.end_position, &source[entry.start_position as usize..entry.end_position as usize])}
             Rules::Subexpression => {println!("{:?}, {}, {}, {}", entry.rule, entry.start_position, entry.end_position, &source[entry.start_position as usize..entry.end_position as usize])}
             Rules::VarName => {println!("{:?}, {}, {}, {}", entry.rule, entry.start_position, entry.end_position, &source[entry.start_position as usize..entry.end_position as usize])}
-            //Rules::Lterminal => {println!("{:?}, {}, {}, {}", entry.rule, entry.start_position, entry.end_position, &source[entry.start_position as usize..entry.end_position as usize])}
+            Rules::Lterminal => {println!("{:?}, {}, {}, {}", entry.rule, entry.start_position, entry.end_position, &source[entry.start_position as usize..entry.end_position as usize])}
             _ => {}
         }
+        //println!("{}", count);
+
+        count += 1;   
     }
 
 }

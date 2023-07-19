@@ -37,7 +37,24 @@ impl Stack{
     pub fn len(&self) -> usize{
         self.entries.len()
     }
-
+    pub fn unravel(&mut self, result_bool: bool, start_position: u32, end_position: u32, entry_position: usize){
+        if result_bool == false || start_position == end_position { 
+            //println!("Popping");
+            //println!("Should be popping {}", e_position);
+            loop {
+                let stack_length = self.len();
+                if stack_length > entry_position{
+                    self.pop();
+                }
+                else{
+                    break;
+                }
+            }
+        }
+        else{
+            self.update(entry_position, end_position);
+        }
+    }
     pub fn pop(&mut self) -> Option<StackEntry> {
         //println!("Current Len {}", self.entries.len());
         return self.entries.pop();
@@ -82,15 +99,15 @@ impl<'a> IntoIterator for &'a Stack{
     type Item = &'a StackEntry;
     type IntoIter = StackIter<'a>;
     fn into_iter(self) -> Self::IntoIter{
-        let vec_size = self.entries.len() as u32;
-        let count = vec_size.checked_sub(1);
-        if count.is_none() {
-            println!("Error: Stack has no contents");
-            exit(-1);
-        }
-        let count = count.unwrap() as u32;
-        StackIter{stack: &self, count: count as isize}
-        //StackIter{stack: &self, count: 0}
+        //let vec_size = self.entries.len() as u32;
+        // let count = vec_size.checked_sub(1);
+        // if count.is_none() {
+        //     println!("Error: Stack has no contents");
+        //     exit(-1);
+        // }
+        //let count = count.unwrap() as u32;
+        //StackIter{stack: &self, count: count as isize}
+        StackIter{stack: &self, count: 0}
 
     }
 }
@@ -104,11 +121,11 @@ impl<'a>  Iterator for StackIter<'a>{
     type Item = &'a StackEntry;
     fn next(&mut self) -> Option<&'a StackEntry>{
         let entry = self.stack.read(self.count as usize);
-        if self.count < 0 {
-            return None
-        }
-        self.count -= 1;
-        //self.count += 1;
+        // if self.count < 0 {
+        //     return None
+        // }
+        // self.count -= 1;
+        self.count += 1;
         return entry;
     }
 }
