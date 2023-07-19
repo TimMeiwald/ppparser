@@ -8,15 +8,15 @@ use crate::parser::Rules;
 
 pub struct StackEntry{
     pub rule: Rules,
-    pub start_position: u32,
-    pub end_position: u32,
+    pub start_position: i32,
+    pub end_position: i32,
 }
 
 pub struct Stack{
     entries: Vec<StackEntry>
 }
 impl Stack{
-    pub fn new(size_of_source: u32, number_of_structs: u32) -> Self {
+    pub fn new(size_of_source: i32, number_of_structs: i32) -> Self {
         let size_of_stack: usize = ((3*size_of_source*number_of_structs)).try_into().unwrap(); // /10 is a heuristic 
         // Heuristic should be modified to match grammar profiling since some will use more stack and some less depending on language complexity.
         // TODO: Fundamentally Vec can grow so still need to catch unwrap above but it's merely about minimizing allocation rather than causing a break
@@ -29,7 +29,7 @@ impl Stack{
 
     }
 
-    pub fn update(&mut self, position: usize, end_position: u32){
+    pub fn update(&mut self, position: usize, end_position: i32){
         self.entries[position].end_position = end_position;
         //println!("{:?}, {}, {}",self.entries[position].rule, self.entries[position].start_position,  self.entries[position].end_position);
 
@@ -37,7 +37,7 @@ impl Stack{
     pub fn len(&self) -> usize{
         self.entries.len()
     }
-    pub fn unravel(&mut self, result_bool: bool, start_position: u32, end_position: u32, entry_position: usize){
+    pub fn unravel(&mut self, result_bool: bool, start_position: i32, end_position: i32, entry_position: usize){
         if result_bool == false || start_position == end_position { 
             //println!("Popping");
             //println!("Should be popping {}", e_position);
@@ -122,7 +122,7 @@ mod tests {
         let mut s = Stack::new(100, 20);
         s.push(se);
         let r = s.pop().unwrap();
-        assert_eq!(r.rule as u32, 1);
+        assert_eq!(r.rule as i32, 1);
         assert_eq!(r.start_position, 5);
         assert_eq!(r.end_position, 10);
 

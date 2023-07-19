@@ -9,12 +9,12 @@ pub struct _Optional<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _Optional<T> {
-    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
         return optional(stack, cache, position, source, self.arg);
     }
 }
 
-fn optional<T: Resolvable>(stack: &mut Stack, cache: &mut Cache, position: u32, source: &str, args: T) -> (bool, u32) {
+fn optional<T: Resolvable>(stack: &mut Stack, cache: &mut Cache, position: i32, source: &str, args: T) -> (bool, i32) {
     /* True if matches, False if not. Increments position on a match */
 
     // Fn(&u8), u8
@@ -38,7 +38,7 @@ mod tests {
     #[test]
     fn test_optional_no_increment() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
@@ -55,7 +55,7 @@ mod tests {
     #[test]
     fn test_optional_increment() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -72,7 +72,7 @@ mod tests {
     #[test]
     fn test_optional_nested() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };

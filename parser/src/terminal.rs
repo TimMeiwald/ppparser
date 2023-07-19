@@ -2,8 +2,8 @@ use crate::cache::Cache;
 use crate::output_stack::Stack;
 // Need a newline here so leave this comment because it actually prevents cargo fmt moving token up and therefore not adding it to generated_parser_core
 
-pub fn token(position: u32, source: &str) -> u8 {
-    if position < source.chars().count() as u32 {
+pub fn token(position: i32, source: &str) -> u8 {
+    if position < source.chars().count() as i32 {
         let s: u8 = source.as_bytes()[position as usize];
         return s;
     } else {
@@ -13,7 +13,7 @@ pub fn token(position: u32, source: &str) -> u8 {
 }
 
 pub trait Resolvable {
-    fn resolve(&self, output: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32);
+    fn resolve(&self, output: &mut Stack, cache: &mut Cache, position: i32, source: &str) -> (bool, i32);
 }
 
 #[derive(Copy, Clone)]
@@ -22,12 +22,12 @@ pub struct _Terminal {
 }
 
 impl Resolvable for _Terminal {
-    fn resolve(&self, _output: &mut Stack, _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, _output: &mut Stack, _cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
         return terminal(position, source, self.arg);
     }
 }
 
-fn terminal(position: u32, source: &str, arg: u8) -> (bool, u32) {
+fn terminal(position: i32, source: &str, arg: u8) -> (bool, i32) {
     let t = token(position, source);
     //println!("Arg: {:?}, Token: {:?}", std::str::from_utf8(&[arg]), std::str::from_utf8(&[t]));
     if t == 0 {
@@ -49,7 +49,7 @@ mod tests {
     #[test]
     fn test_terminal_true() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -64,7 +64,7 @@ mod tests {
     #[test]
     fn test_terminal_false() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "h".to_string().as_bytes()[0],
         };

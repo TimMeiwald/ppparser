@@ -29,7 +29,7 @@ pub struct Cache {
 
 impl Cache {
     
-    pub fn new(size_of_source: u32, number_of_structs: u32) -> Self {
+    pub fn new(size_of_source: i32, number_of_structs: i32) -> Self {
         let mut c = Cache {
             entries: Vec::with_capacity(size_of_source as usize),
         };
@@ -40,20 +40,20 @@ impl Cache {
             });
             for _j in 0..number_of_structs {
                 // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
-                c.entries[i as usize].entries.push((false, u32::MAX));
+                c.entries[i as usize].entries.push((false, i32::MAX));
             }
         }
         return c;
         // for every arg cache in c set size to <number_of_structs>
     }
 
-    fn push(&mut self, position: u32, arg_key: u32, bool: bool, end_position: u32) {
+    fn push(&mut self, position: i32, arg_key: i32, bool: bool, end_position: i32) {
         let arg_cache: &mut ArgCache = &mut self.entries[position as usize];
         arg_cache.entries[arg_key as usize] = (bool, end_position);
     }
-    fn check(&self, position: u32, arg_key: u32) -> Option<(bool, u32)> {
-        let ret: (bool, u32) = self.entries[position as usize].entries[arg_key as usize];
-        if ret.1 != u32::MAX {
+    fn check(&self, position: i32, arg_key: i32) -> Option<(bool, i32)> {
+        let ret: (bool, i32) = self.entries[position as usize].entries[arg_key as usize];
+        if ret.1 != i32::MAX {
             // Result is returned to callee to unwrap
             return Some(ret);
         } else {
@@ -65,7 +65,7 @@ impl Cache {
 
 // Create 1 per Position in Cache
 pub struct ArgCache {
-    entries: Vec<(bool, u32)>, // Struct type encoded in the position of the entries
+    entries: Vec<(bool, i32)>, // Struct type encoded in the position of the entries
 }
 
 
@@ -74,13 +74,20 @@ pub fn cache_struct_wrapper<T: Resolvable>(
     stack: &mut Stack,
     cache: &mut Cache,
     rule: T,
-    arg_key: u32,
-    position: u32,
+    arg_key: i32,
+    position: i32,
     source: &str,
-) -> (bool, u32) {
+) -> (bool, i32) {
     let ret = cache.check(position, arg_key);
     if ret != None {
-        return ret.unwrap();
+        let ret = ret.unwrap();
+        if ret.0 == false && ret.1 == 0 {
+            cache.push(position, arg_key, false, 1);
+            let ret = rule.resolve(stack, cache, position, source);
+            cache.push(position, arg_key, ret.0, ret.1);
+            return ret;
+        }
+        return ret;
     } else {
         cache.push(position, arg_key, false, 0);
         let ret = rule.resolve(stack, cache, position, source);
@@ -92,17 +99,19 @@ pub fn cache_struct_wrapper<T: Resolvable>(
 pub fn cache_fn_wrapper(
     stack: &mut Stack,
     cache: &mut Cache,
-    rule_function: fn(&mut Stack, &mut Cache, u32, &str) -> (bool, u32),
-    arg_key: u32,
-    position: u32,
+    rule_function: fn(&mut Stack, &mut Cache, i32, &str) -> (bool, i32),
+    arg_key: i32,
+    position: i32,
     source: &str,
-) -> (bool, u32) {
+) -> (bool, i32) {
     /*
        Use this to wrap functions, i.e if using handwritten functions to improve performance.
     */
     let ret = cache.check(position, arg_key);
     if ret != None {
-        return ret.unwrap();
+        let ret = ret.unwrap();
+        // HERE
+        return ret;
     } else {
         cache.push(position, arg_key, false, 0);
         let ret = rule_function(stack, cache, position, source);
@@ -119,17 +128,17 @@ mod tests {
     #[test]
     fn test_cache_nothing_cached() {
         // Simulating what would happen after a rule that consumes one character parses and returns true
-        let arg_key: u32 = 1;
+        let arg_key: i32 = 1;
         let start_position = 0;
         let f = Cache::new(10, 10); // 10 just cos it's a test no particular meaning
-        let s: Option<(bool, u32)> = f.check(start_position, arg_key);
+        let s: Option<(bool, i32)> = f.check(start_position, arg_key);
         assert!(s.is_none());
     }
 
     #[test]
     fn test_cache() {
         // Simulating what would happen after a rule that consumes one character parses and returns true
-        let arg_key: u32 = 1;
+        let arg_key: i32 = 1;
         let start_position = 0;
         let result = true;
         let end_position = 1;
@@ -172,7 +181,7 @@ mod tests {
         let arg_key = 0;
         let s = cache.check(position, arg_key);
         assert_eq!(s, None);
-        fn thing(_stack: &mut Stack, _cache: &mut Cache, _position: u32, _source: &str) -> (bool, u32) {
+        fn thing(_stack: &mut Stack, _cache: &mut Cache, _position: i32, _source: &str) -> (bool, i32) {
             return (true, 1);
         }
         let mut stack = Stack::new(100,100);

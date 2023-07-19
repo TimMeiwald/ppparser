@@ -53,7 +53,7 @@ fn amain() {
         }
     };
     let grammar = grammar + "\0";
-    let grammar_length = grammar.len() as u32 + 1;
+    let grammar_length = grammar.len() as i32 + 1;
     let position = 0;
     let mut cache = Cache::new(grammar_length, 43);
     let mut stack = Stack::new(grammar_length,43);

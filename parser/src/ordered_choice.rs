@@ -10,7 +10,7 @@ pub struct _OrderedChoice<T: Resolvable, U: Resolvable> {
 }
 
 impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for _OrderedChoice<T, U> {
-    fn resolve(&self, stack: &mut Stack,  cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, stack: &mut Stack,  cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
         return ordered_choice(stack, cache, position, source, self.arg_lhs, self.arg_rhs);
     }
 }
@@ -18,11 +18,11 @@ impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for _OrderedChoice<T
 fn ordered_choice<T: Resolvable, U: Resolvable>(
     stack: &mut Stack,
     cache: &mut Cache,
-    position: u32,
+    position: i32,
     source: &str,
     arg_lhs: T,
     arg_rhs: U,
-) -> (bool, u32) {
+) -> (bool, i32) {
     /* True if one expression matches, then updates position, else false, no positional update */
 
     let tmp_pos = position;
@@ -49,7 +49,7 @@ mod tests {
     #[test]
     fn test_ordered_choice_true() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
@@ -72,7 +72,7 @@ mod tests {
     #[test]
     fn test_ordered_choice_false() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
@@ -95,7 +95,7 @@ mod tests {
     #[test]
     fn test_ordered_choice_nested() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
@@ -131,7 +131,7 @@ mod tests {
     fn test_ordered_choice_deep_nested() {
         /* The purpose of this test is merely to see if it chokes on deep nesting */
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };

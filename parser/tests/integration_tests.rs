@@ -9,7 +9,7 @@ fn test_parse_grammar_file() {
     let (bool, position, usize, _source, _stack) = parse(path);
     println!("{:?}, {:?}", bool, position);
     assert_eq!(bool, true);
-    assert_eq!(position, usize as u32);
+    assert_eq!(position, usize as i32);
 }
 
 

@@ -29,12 +29,12 @@ pub use crate::zero_or_more::_ZeroOrMore;
 use crate::output_stack::Stack;
 use std::fs;
 
-pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize, String, Stack) {
+pub fn parse(grammar_filepath: &Path) -> (bool, i32, usize, String, Stack) {
     let source =
         fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
     let size_of_source = source.len(); // For Test purposes but yknow prolly should do that differently, User API is still up in the air a bit
-    let mut cache = Cache::new(size_of_source as u32 + 1, 44); // Will break for anything with more than 100 chars or 100 rules
-    let mut stack = Stack::new(size_of_source as u32,44);
+    let mut cache = Cache::new(size_of_source as i32 + 1, 44); // Will break for anything with more than 100 chars or 100 rules
+    let mut stack = Stack::new(size_of_source as i32,44);
 
     let (bool, position) = parser::Grammar.resolve(&mut stack, &mut cache, 0, &source);
 
@@ -44,10 +44,10 @@ pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize, String, Stack) {
     return (bool, position, size_of_source, source, stack);
 }
 
-pub fn parse_string(source: String, arg: &dyn Resolvable) -> (bool, u32) {
+pub fn parse_string(source: String, arg: &dyn Resolvable) -> (bool, i32) {
     let size_of_source = source.len();
-    let mut cache = Cache::new(size_of_source as u32 + 1, 44); // Will break for anything with more than 100 chars or 100 rules
-    let mut stack = Stack::new(size_of_source as u32,44);
+    let mut cache = Cache::new(size_of_source as i32 + 1, 44); // Will break for anything with more than 100 chars or 100 rules
+    let mut stack = Stack::new(size_of_source as i32,44);
     let (bool, position) = arg.resolve(&mut stack, &mut cache, 0, &source);
     return (bool, position);
 }
@@ -58,24 +58,24 @@ pub fn parse_string(source: String, arg: &dyn Resolvable) -> (bool, u32) {
 mod tests {
     use super::*;
     use crate::cache::Cache;
-    #[derive(Copy, Clone)] // Needed because I copy around position which as a u32 is likely faster than passing a reference, Need's profiling.
+    #[derive(Copy, Clone)] // Needed because I copy around position which as a i32 is likely faster than passing a reference, Need's profiling.
     struct Example; // Top level functions don't require T since they're defined via the primitives used in a given function.
     #[derive(Copy, Clone)]
     struct Example2;
 
     impl Resolvable for Example {
-        fn resolve(&self, _stack: &mut Stack,  _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, _stack: &mut Stack,  _cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
             return example1(position, source); // Define which function to run using impl Resolvable
         }
     }
 
     impl Resolvable for Example2 {
-        fn resolve(&self, _stack: &mut Stack,  _cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+        fn resolve(&self, _stack: &mut Stack,  _cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
             return example2(position, source);
         }
     }
 
-    fn example1(position: u32, source: &str) -> (bool, u32) {
+    fn example1(position: i32, source: &str) -> (bool, i32) {
         let t1 = Example2;
         let t2 = _Terminal {
             arg: "e".to_string().as_bytes()[0],
@@ -91,7 +91,7 @@ mod tests {
         return s;
     }
 
-    fn example2(position: u32, source: &str) -> (bool, u32) {
+    fn example2(position: i32, source: &str) -> (bool, i32) {
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -102,7 +102,7 @@ mod tests {
         return s;
     }
 
-    fn example3(position: u32, source: &str) -> (bool, u32) {
+    fn example3(position: i32, source: &str) -> (bool, i32) {
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -129,7 +129,7 @@ mod tests {
     #[test]
     fn test_example_true() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let s = example1(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, true);
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn test_example_false() {
         let source = "Hfllo World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let s = example1(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);
@@ -149,7 +149,7 @@ mod tests {
     #[test]
     fn test_example_false2() {
         let source = "fello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let s = example1(position, source);
         println!("{:?} {:?} {:?}", source, s.0, s.1);
         assert_eq!(s.0, false);

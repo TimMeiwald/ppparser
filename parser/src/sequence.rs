@@ -10,7 +10,7 @@ pub struct _Sequence<T: Resolvable, U: Resolvable> {
 }
 
 impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for _Sequence<T, U> {
-    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
         return sequence(stack, cache, position, source, self.arg_lhs, self.arg_rhs);
     }
 }
@@ -18,11 +18,11 @@ impl<T: Resolvable + Copy, U: Resolvable + Copy> Resolvable for _Sequence<T, U> 
 fn sequence<T: Resolvable, U: Resolvable>(
     stack: &mut Stack, 
     cache: &mut Cache,
-    position: u32,
+    position: i32,
     source: &str,
     arg_lhs: T,
     arg_rhs: U,
-) -> (bool, u32) {
+) -> (bool, i32) {
     /* True if all expressions match, then updates position, else false, no positional update */
 
     let tmp_pos = position;
@@ -52,7 +52,7 @@ mod tests {
     #[test]
     fn test_sequence_true() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -75,7 +75,7 @@ mod tests {
     #[test]
     fn test_sequence_false() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -98,7 +98,7 @@ mod tests {
     #[test]
     fn test_sequence_nested() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -135,7 +135,7 @@ mod tests {
     #[test]
     fn test_mixed_sequence_ordered_choice() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };

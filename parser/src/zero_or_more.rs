@@ -9,7 +9,7 @@ pub struct _ZeroOrMore<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _ZeroOrMore<T> {
-    fn resolve(&self, stack: &mut Stack,  cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, stack: &mut Stack,  cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
         return zero_or_more(stack, cache, position, source, self.arg);
     }
 }
@@ -17,10 +17,10 @@ impl<T: Resolvable + Copy> Resolvable for _ZeroOrMore<T> {
 fn zero_or_more<T: Resolvable>(
     stack: &mut Stack,
     cache: &mut Cache,
-    position: u32,
+    position: i32,
     source: &str,
     arg: T,
-) -> (bool, u32) {
+) -> (bool, i32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
     let mut temp_position = position;
@@ -49,7 +49,7 @@ mod tests {
     #[test]
     fn test_zero_or_more_1() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -66,7 +66,7 @@ mod tests {
     #[test]
     fn test_zero_or_more_10() {
         let source = "HHHHHHHHHHello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
@@ -83,7 +83,7 @@ mod tests {
     #[test]
     fn test_zero_or_more_0() {
         let source = "fello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
