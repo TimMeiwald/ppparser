@@ -329,6 +329,7 @@ pub fn cache_struct_wrapper<T: Resolvable>(
     if ret != None {
         return ret.unwrap();
     } else {
+        cache.push(position, arg_key, false, 0);
         let ret = rule.resolve(stack, cache, position, source);
         cache.push(position, arg_key, ret.0, ret.1);
         return ret;
@@ -350,8 +351,8 @@ pub fn cache_fn_wrapper(
     if ret != None {
         return ret.unwrap();
     } else {
+        cache.push(position, arg_key, false, 0);
         let ret = rule_function(stack, cache, position, source);
-        //let ret = rule.resolve(cache, position, source);
         cache.push(position, arg_key, ret.0, ret.1);
         return ret;
     }
