@@ -63,6 +63,7 @@ fn create_full_code_snapshot() -> () {
     code.push("zero_or_more.rs");
     code.push("one_or_more.rs");
     code.push("cache.rs");
+    code.push("output_stack.rs");
     let mut ret: Vec<String> = Vec::new();
     for file in code {
         let content = get_code_snapshot(file);
@@ -103,6 +104,7 @@ fn main() {
     println!("cargo:rerun-if-changed=src/one_or_more.rs");
     println!("cargo:rerun-if-changed=src/zero_or_more.rs");
     println!("cargo:rerun-if-changed=src/generated_parser_core.rs");
-    // Use the `cc` crate to build a C file and statically link it.
+    println!("cargo:rerun-if-changed=src/cache.rs");
+    println!("cargo:rerun-if-changed=src/output_stack.rs");
     create_full_code_snapshot();
 }

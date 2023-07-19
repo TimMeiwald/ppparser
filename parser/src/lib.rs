@@ -29,16 +29,29 @@ pub use crate::zero_or_more::_ZeroOrMore;
 use crate::output_stack::Stack;
 use std::fs;
 
-pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize) {
+pub fn parse(grammar_filepath: &Path) -> (bool, u32, usize, String, Stack) {
     let source =
         fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
     let size_of_source = source.len(); // For Test purposes but yknow prolly should do that differently, User API is still up in the air a bit
-    let mut cache = Cache::new(size_of_source as u32 + 1, 43); // Will break for anything with more than 100 chars or 100 rules
-    let mut stack = Stack::new(100,100);
+    let mut cache = Cache::new(size_of_source as u32 + 1, 44); // Will break for anything with more than 100 chars or 100 rules
+    let mut stack = Stack::new(size_of_source as u32,44);
 
     let (bool, position) = parser::Grammar.resolve(&mut stack, &mut cache, 0, &source);
-    return (bool, position, size_of_source);
+
+    if !bool{
+        println!("FAILED\n\nFAILED")
+    }
+    return (bool, position, size_of_source, source, stack);
 }
+
+pub fn parse_string(source: String, arg: &dyn Resolvable) -> (bool, u32) {
+    let size_of_source = source.len();
+    let mut cache = Cache::new(size_of_source as u32 + 1, 44); // Will break for anything with more than 100 chars or 100 rules
+    let mut stack = Stack::new(size_of_source as u32,44);
+    let (bool, position) = arg.resolve(&mut stack, &mut cache, 0, &source);
+    return (bool, position);
+}
+
 
 /* The following is not an integration test. It's an example of the code that need's to be generated for each Rule so that it works with the rest of the codebase. */
 #[cfg(test)]
