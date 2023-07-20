@@ -1,5 +1,5 @@
 extern crate parser;
-use parser::parser::Lr;
+use parser::parser::{Lr, B};
 
 use crate::parser::*;
 use std::path::Path;
@@ -15,10 +15,53 @@ fn test_parse_grammar_file() {
 
 
 #[test]
-fn test_left_recursion(){
-    let source = "AAB".to_string();
+fn test_direct_left_recursion_single_char(){
+    let source = "A".to_string();
     let (bool, position) = parse_string(source, &Lr);
     println!("{:?}, {:?}", bool, position);
     assert_eq!(bool, true);
     assert_eq!(position, 3);
+}
+#[test]
+fn test_direct_left_recursion(){
+    let source = "AA".to_string();
+    let (bool, position) = parse_string(source, &Lr);
+    println!("{:?}, {:?}", bool, position);
+    assert_eq!(bool, true);
+    assert_eq!(position, 4);
+}
+#[test]
+fn test_direct_left_recursion_many_chars(){
+    let source = "AAAAAA".to_string();
+    let (bool, position) = parse_string(source, &Lr);
+    println!("{:?}, {:?}", bool, position);
+    assert_eq!(bool, true);
+    assert_eq!(position, 6);
+}
+
+
+
+#[test]
+fn test_indirect_left_recursion_single_char(){
+    let source = "a".to_string();
+    let (bool, position) = parse_string(source, &B);
+    println!("{:?}, {:?}", bool, position);
+    assert_eq!(bool, true);
+    assert_eq!(position, 3);
+}
+#[test]
+fn test_indirect_left_recursion(){
+    let source = "aba".to_string();
+    let (bool, position) = parse_string(source, &B);
+    println!("{:?}, {:?}", bool, position);
+    assert_eq!(bool, true);
+    assert_eq!(position, 4);
+}
+#[test]
+fn test_indirect_left_recursion_many_chars(){
+    let source = "ababa".to_string();
+    let (bool, position) = parse_string(source, &B);
+    println!("{:?}, {:?}", bool, position);
+    assert_eq!(bool, true);
+    assert_eq!(position, 6);
 }

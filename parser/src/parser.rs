@@ -17,7 +17,6 @@ pub use crate:: output_stack::{Stack, StackEntry};
 
 
 
-
 #[derive(Debug)]
 pub enum Rules{AlphabetUpper,
 AlphabetLower,
@@ -63,6 +62,8 @@ Delete,
 Passthrough,
 Collect,
 Lr,
+A,
+B,
 }
 
 
@@ -667,11 +668,12 @@ Lr,
         }
     }
     
+
     #[derive(Copy, Clone)]
     pub struct Lr;
     impl Resolvable for Lr {
     fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: i32, source: &str) -> (bool, i32) { 
-        let rule = _OrderedChoice{arg_lhs:_SubExpression{arg:_Sequence{arg_lhs:_VarName{arg:Lr}, arg_rhs:_Terminal{arg:"A".to_string().as_bytes()[0]}}}, arg_rhs:_Terminal{arg:"B".to_string().as_bytes()[0]}};
+        let rule = _Sequence{arg_lhs:_VarName{arg:Lr}, arg_rhs:_Terminal{arg:"A".to_string().as_bytes()[0]}};
         let e: StackEntry = StackEntry{rule: Rules::Lr, start_position: position, end_position: 0};
         let e_position = stack.push(e);
         let hook = cache_struct_wrapper(stack, cache, rule, Rules::Lr as i32, position, source);
@@ -679,4 +681,32 @@ Lr,
         return hook;
         }
     }
+    
 
+    #[derive(Copy, Clone)]
+    pub struct A;
+    impl Resolvable for A {
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: i32, source: &str) -> (bool, i32) { 
+        let rule = _Sequence{arg_lhs:_SubExpression{arg:_Sequence{arg_lhs:_VarName{arg:B}, arg_rhs:_Terminal{arg:"a".to_string().as_bytes()[0]}}}, arg_rhs:_Terminal{arg:"b".to_string().as_bytes()[0]}};
+        let e: StackEntry = StackEntry{rule: Rules::A, start_position: position, end_position: 0};
+        let e_position = stack.push(e);
+        let hook = cache_struct_wrapper(stack, cache, rule, Rules::A as i32, position, source);
+        stack.unravel(hook.0, position, hook.1, e_position);
+        return hook;
+        }
+    }
+    
+
+    #[derive(Copy, Clone)]
+    pub struct B;
+    impl Resolvable for B {
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: i32, source: &str) -> (bool, i32) { 
+        let rule = _Sequence{arg_lhs:_SubExpression{arg:_Sequence{arg_lhs:_VarName{arg:A}, arg_rhs:_Terminal{arg:"b".to_string().as_bytes()[0]}}}, arg_rhs:_Terminal{arg:"a".to_string().as_bytes()[0]}};
+        let e: StackEntry = StackEntry{rule: Rules::B, start_position: position, end_position: 0};
+        let e_position = stack.push(e);
+        let hook = cache_struct_wrapper(stack, cache, rule, Rules::B as i32, position, source);
+        stack.unravel(hook.0, position, hook.1, e_position);
+        return hook;
+        }
+    }
+    

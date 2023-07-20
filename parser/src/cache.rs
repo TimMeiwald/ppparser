@@ -68,7 +68,25 @@ pub struct ArgCache {
     entries: Vec<(bool, i32)>, // Struct type encoded in the position of the entries
 }
 
+fn grow_lr<T: Resolvable>( stack: &mut Stack,
+    cache: &mut Cache,
+    rule: T,
+    arg_key: i32,
+    position: i32,
+    source: &str)-> (bool, i32)
+    {
+    loop{
+        let loop_position = position;
+        let ans = rule.resolve(stack, cache, position, source);
+        if ans.0 == false || loop_position <= ans.1{
+            break;
+        }
+        cache.push(loop_position, arg_key, ans.0, ans.1)
+    }
+    let ans = cache.check(position, arg_key);
+    return ans.unwrap();
 
+}
 
 pub fn cache_struct_wrapper<T: Resolvable>(
     stack: &mut Stack,
@@ -78,22 +96,54 @@ pub fn cache_struct_wrapper<T: Resolvable>(
     position: i32,
     source: &str,
 ) -> (bool, i32) {
-    let ret = cache.check(position, arg_key);
-    if ret != None {
-        let ret = ret.unwrap();
-        if ret.0 == false && ret.1 == -1 {
-            cache.push(position, arg_key, false, ret.1-1);
-            let ret = rule.resolve(stack, cache, position, source);
-            cache.push(position, arg_key, ret.0, ret.1);
-            return ret;
+    let m = cache.check(position, arg_key);
+    if m.is_none(){
+        cache.push(position, arg_key, false, -1); // AKA Set to LR
+        let ans = rule.resolve(stack, cache, position, source);
+        cache.push(position, arg_key, ans.0, ans.1); // AKA Set to LR
+        if ans.0 == false && ans.1 == -1{
+            return grow_lr(stack, cache, rule, arg_key, position, source);
         }
-        return ret;
-    } else {
-        cache.push(position, arg_key, false, -1);
-        let ret = rule.resolve(stack, cache, position, source);
-        cache.push(position, arg_key, ret.0, ret.1);
-        return ret;
+        else{
+            return ans;
+        }
     }
+    else{
+        let m = m.unwrap();
+        if m.0 == false && m.1 == -1{
+            return (false, -1)
+        }
+        return m;
+    }
+    // if ret != None {
+    //     let ret = ret.unwrap();
+    //     if ret.0 == false && ret.1 == -1 {
+    //         // AKA LR
+    //         loop {
+    //             let loop_position = position;
+    //             println!("1 {}, {}, {}", loop_position, ret.0, ret.1);
+
+    //             let ret = rule.resolve(stack, cache, loop_position, source);
+    //             println!("2{}, {}, {}", loop_position, ret.0, ret.1);
+    //             if ret.0 == false && loop_position <= ret.1  {
+    //                 break;
+    //             }
+    //             println!(" 3{}, {}, {}", loop_position, ret.0, ret.1);
+    //             cache.push(position, arg_key, ret.0, ret.1);
+
+                
+    //         }
+    //         let ret = cache.check(position, arg_key).unwrap();
+    //         println!("{}, {}", ret.0, ret.1);
+    //         return ret;
+    //     }
+    //     return ret;
+    // } else {
+    //     cache.push(position, arg_key, false, -1); // AKA Set to LR
+    //     let ret = rule.resolve(stack, cache, position, source);
+    //     cache.push(position, arg_key, ret.0, ret.1);
+    //     return ret;
+    // }
 }
 
 pub fn cache_fn_wrapper(

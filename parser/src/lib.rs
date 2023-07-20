@@ -33,8 +33,8 @@ pub fn parse(grammar_filepath: &Path) -> (bool, i32, usize, String, Stack) {
     let source =
         fs::read_to_string(grammar_filepath).unwrap_or("There is no grammar filepath!".to_string());
     let size_of_source = source.len(); // For Test purposes but yknow prolly should do that differently, User API is still up in the air a bit
-    let mut cache = Cache::new(size_of_source as i32 + 1, 44); // Will break for anything with more than 100 chars or 100 rules
-    let mut stack = Stack::new(size_of_source as i32,44);
+    let mut cache = Cache::new(size_of_source as i32 + 1, 46); // Will break for anything with more than 100 chars or 100 rules
+    let mut stack = Stack::new(size_of_source as i32,46);
 
     let (bool, position) = parser::Grammar.resolve(&mut stack, &mut cache, 0, &source);
 
@@ -46,8 +46,8 @@ pub fn parse(grammar_filepath: &Path) -> (bool, i32, usize, String, Stack) {
 
 pub fn parse_string(source: String, arg: &dyn Resolvable) -> (bool, i32) {
     let size_of_source = source.len();
-    let mut cache = Cache::new(size_of_source as i32 + 1, 44); // Will break for anything with more than 100 chars or 100 rules
-    let mut stack = Stack::new(size_of_source as i32,44);
+    let mut cache = Cache::new(size_of_source as i32 + 1, 46); // Will break for anything with more than 100 chars or 100 rules
+    let mut stack = Stack::new(size_of_source as i32,46);
     let (bool, position) = arg.resolve(&mut stack, &mut cache, 0, &source);
     return (bool, position);
 }

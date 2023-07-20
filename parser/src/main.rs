@@ -55,8 +55,8 @@ fn amain() {
     let grammar = grammar + "\0";
     let grammar_length = grammar.len() as i32 + 1;
     let position = 0;
-    let mut cache = Cache::new(grammar_length, 43);
-    let mut stack = Stack::new(grammar_length,43);
+    let mut cache = Cache::new(grammar_length, 46);
+    let mut stack = Stack::new(grammar_length,46);
     use std::time::Instant;
     let now = Instant::now();
     let (_bool, _position) = Grammar.resolve(&mut stack, &mut cache, position, &grammar);
