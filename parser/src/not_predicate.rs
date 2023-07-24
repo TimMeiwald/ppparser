@@ -10,7 +10,7 @@ pub struct _NotPredicate<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _NotPredicate<T> {
-    fn resolve(&self,stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self,stack: &mut Stack, cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
         return not_predicate(stack, cache, position, source, self.arg);
     }
 }
@@ -18,10 +18,10 @@ impl<T: Resolvable + Copy> Resolvable for _NotPredicate<T> {
 fn not_predicate<T: Resolvable>(
     stack: &mut Stack, 
     cache: &mut Cache,
-    position: u32,
+    position: i32,
     source: &str,
     arg: T,
-) -> (bool, u32) {
+) -> (bool, i32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
 
     let (bool, position) = and_predicate(stack, cache, position, source, arg);
@@ -36,7 +36,7 @@ mod tests {
     #[test]
     fn test_not_predicate_true() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
@@ -52,7 +52,7 @@ mod tests {
     #[test]
     fn test_not_predicate_false() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };

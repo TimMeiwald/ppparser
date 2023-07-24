@@ -53,17 +53,27 @@ fn amain() {
         }
     };
     let grammar = grammar + "\0";
-    let grammar_length = grammar.len() as u32 + 1;
+    let grammar_length = grammar.len() as i32 + 1;
     let position = 0;
-    let mut cache = Cache::new(grammar_length, 43);
-    let mut stack = Stack::new(grammar_length,43);
+    let mut cache = Cache::new(grammar_length, 46);
+    let mut stack = Stack::new(grammar_length,46);
     use std::time::Instant;
     let now = Instant::now();
-    let (_bool, _position) = Grammar.resolve(&mut stack, &mut cache, position, &grammar);
+    let (bool, position) = Grammar.resolve(&mut stack, &mut cache, position, &grammar);
     let elapsed = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
+
+    if !bool{
+        println!("Failed to parse, result was false");
+        std::process::exit(5);
+    }
+    if position != (grammar_length-2) {
+        println!("Failed to parse, Source file length is {}, Parser only reached {}.", grammar_length-2, position);
+        std::process::exit(6);
+    }
     //stack.print_with_strings(&grammar);
-    //stack.print_with_strings(&grammar);
+    //stack.print();
+
     // Add the parser generation here to then add into parser write
     let parser_write = write_parser(dest, &core_parser);
     match parser_write {

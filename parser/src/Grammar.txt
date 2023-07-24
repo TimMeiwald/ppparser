@@ -50,3 +50,7 @@
 <Delete> COLLECT = "D","E","L","E","T","E";
 <Passthrough> COLLECT = "P", "A", "S", "S", "T", "H", "R", "O", "U", "G", "H";
 <Collect> COLLECT = "C", "O", "L", "L", "E", "C", "T"; #Comment#
+
+<lr> = <lr>, "A";
+<A> = (<B>,"a"),"b";
+<B> = (<A>,"b"),"a";

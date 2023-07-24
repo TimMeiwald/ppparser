@@ -9,12 +9,12 @@ pub struct _VarName<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _VarName<T> {
-    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
         return var_name(stack, cache, position, source, self.arg);
     }
 }
 
-fn var_name<T: Resolvable>(stack: &mut Stack, cache: &mut Cache, position: u32, source: &str, arg: T) -> (bool, u32) {
+fn var_name<T: Resolvable>(stack: &mut Stack, cache: &mut Cache, position: i32, source: &str, arg: T) -> (bool, i32) {
     /* Always True, increments position each time the expression matches else continues without doing anything */
     // NB: Currently Identical to subexpression but only because an AST isn't being built yet.
 
@@ -36,7 +36,7 @@ mod tests {
     #[test]
     fn test_var_name_true() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
@@ -53,7 +53,7 @@ mod tests {
     #[test]
     fn test_var_name_false() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };

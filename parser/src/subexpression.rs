@@ -9,7 +9,7 @@ pub struct _SubExpression<T: Resolvable> {
 }
 
 impl<T: Resolvable + Copy> Resolvable for _SubExpression<T> {
-    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: u32, source: &str) -> (bool, u32) {
+    fn resolve(&self, stack: &mut Stack, cache: &mut Cache, position: i32, source: &str) -> (bool, i32) {
         return subexpression(stack, cache, position, source, self.arg);
     }
 }
@@ -17,10 +17,10 @@ impl<T: Resolvable + Copy> Resolvable for _SubExpression<T> {
 fn subexpression<T: Resolvable>(
     stack: &mut Stack,
     cache: &mut Cache,
-    position: u32,
+    position: i32,
     source: &str,
     arg: T,
-) -> (bool, u32) {
+) -> (bool, i32) {
     /* Subexpression is any expression inside a pair of () brackets
     SUBEXPR essentially does nothing but allows for order of precedent
     more importantly order of precedence is very restricted because it made my life hard
@@ -45,7 +45,7 @@ mod tests {
     #[test]
     fn test_subexpression_true() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "f".to_string().as_bytes()[0],
         };
@@ -62,7 +62,7 @@ mod tests {
     #[test]
     fn test_subexpression_false() {
         let source = "Hello World";
-        let position: u32 = 0;
+        let position: i32 = 0;
         let t = _Terminal {
             arg: "H".to_string().as_bytes()[0],
         };
