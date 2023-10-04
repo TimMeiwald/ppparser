@@ -16,7 +16,7 @@ pub fn _terminal(chr: u8) -> impl Fn(&Source, u32) -> (bool, u32) {
 
 #[cfg(test)]
 mod tests {
-    use crate::terminal::{_terminal};
+    use crate::terminal::_terminal;
     use crate::source::Source;
 
 
@@ -28,39 +28,11 @@ mod tests {
         assert_eq!(c(&s, 0), (true, 1));
     }   
 
-
-
-
-
-
-    // #[test]
-    // fn test_terminal() {
-    //     let s = "aaa".to_string();
-    //     let s = Source::new(s);
-    //     let mut s = Context{source:s, position:0};
-    //     assert_eq!(_terminal(&mut s, "a".to_string().as_bytes()[0]), true);
-    //     assert_eq!(s.position, 1);
-    //     assert_eq!(_terminal(&mut s, "b".to_string().as_bytes()[0]), false);
-    //     assert_eq!(s.position, 1);
-
-    // }   
-
-    // #[test]
-    // fn test_terminal_end() {
-    //     let s = "aaa".to_string();
-    //     let s = Source::new(s);
-    //     let mut s = Context{source:s, position:2};
-    //     assert_eq!(_terminal(&mut s,"a".to_string().as_bytes()[0]), true);
-    //     assert_eq!(s.position, 3);
-    // }
-
-    // #[test]
-    // fn test_terminal_overrun() {
-    //     let s = "aaa".to_string();
-    //     let s = Source::new(s);
-    //     let mut s = Context{source:s, position:3};
-    //     assert_eq!(_terminal(&mut s, "a".to_string().as_bytes()[0]), false);
-    //     assert_eq!(s.position, 3);
-
-    // }
+    #[test]
+    fn test_terminal_closure_fail() {
+        let s = "aaa".to_string();
+        let s = Source::new(s);
+        let c = _terminal("a".to_string().as_bytes()[0]);
+        assert_eq!(c(&s, 3), (false, 3));
+    }   
 }

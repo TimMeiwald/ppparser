@@ -1,30 +1,32 @@
-// use crate::context::Context;
-// pub fn _var_name<F>(context: &mut Context, func: F) -> bool 
-//     where F: Fn(&mut Context, u8) -> bool{
-//     if func(context, 97){
-//         return true
-//     }
-//     else{
-//         return false
-//     }
-// }
+use crate::source::Source;
+
+pub fn _var_name_kernel(source: &Source, position: u32, func: fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
+{
+    return func(source, position);
+}
+pub fn _var_name(func: fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) {
+    return move |source: &Source, position: u32| _var_name_kernel(source, position, func);
+}
 
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::terminal::_terminal;
-//     use crate::source::Source;
-//     use crate::context::Context;
-//     use crate::var_name::_var_name;
-//     #[test]
-//     fn test_var_name() {
-//         let s = "aaa".to_string();
-//         let s = Source::new(s);
-//         let mut s = Context{source:s, position:0};
-//         let valid = _var_name(&mut s, _terminal);
-//         println!("{:?}, {:?}", s.position, valid);
-//         assert_eq!(valid, true);
-//         assert_eq!(s.position, 1);
-//     }   
 
-// }
+
+#[cfg(test)]
+mod tests {
+    use super::_var_name;
+    use crate::source::Source;
+    use crate::terminal::_terminal;
+    fn test_func(source: &Source, position: u32) -> (bool, u32){
+        let x = _terminal("a".to_string().as_bytes()[0]);
+        return x(source, position)
+    }
+    #[test]
+    fn test_var_name() {
+        let s = "aaa".to_string();
+        let s = Source::new(s);
+        let func = _var_name(test_func);
+        let x = func(&s, 0); 
+        assert_eq!(x, (true, 1));
+
+    }   
+}

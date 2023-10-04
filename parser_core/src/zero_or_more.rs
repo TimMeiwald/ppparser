@@ -1,95 +1,55 @@
-// use crate::source::Source;
-// use crate::context::Context;
-// pub fn _zero_or_more<F>(func: F, context: &mut Context, arg: u8) -> bool
-//     where F: Fn(&mut Context, u8) -> bool  {
-//         loop{
-//             let valid = func(context, arg);
-//             if valid == false {
-//                 break;
-//             }
-//         }
-//         // Always true but may consume zero positions
-//         return true;
-//     }
-
-// pub fn _one_or_more<F>(func: F, context: &mut Context, arg: u8) -> bool
-//     where F: Fn(&mut Context, u8) -> bool  {
-//         let valid = func(context, arg);
-//         if !valid{
-//             return false;
-//         }
-//         loop{
-//             let valid = func(context, arg);
-//             if !valid {
-//                 break;
-//             }
-//         }
-//         // Always true but may consume zero positions
-//         return true;
-//     }
+use crate::source::Source;
 
 
 
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::source::Source;
-//     use crate::terminal::_terminal;
-//     use super::_one_or_more;
-//     use super::_zero_or_more;
 
-//     use crate::context::Context;
-//     #[test]
-//     fn test_zero_or_more() {
-//         let string = "aaa".to_string();
-//         let source = Source::new(string);
-//         let mut s = Context{source, position:0};
-//         let x = _zero_or_more(_terminal, &mut s, "a".to_string().as_bytes()[0]);
-//         println!("{:?}", x);
-//         assert_eq!(x, true);
-//         assert_eq!(s.position, 3);
-//      }
-//     #[test]
-//     fn test_one_or_more_true(){
-//         let string = "a".to_string();
-//         let source = Source::new(string);
-//         let mut s = Context{source, position:0};
-//         let x = _one_or_more(_terminal, &mut s,"a".to_string().as_bytes()[0]);
-//         println!("{:?}", x);
-//         assert_eq!(x, true);
-//         assert_eq!(s.position, 1);
-//     }
-//     #[test]
-//     fn test_one_or_more_multiple(){
-//         let string = "aaab".to_string();
-//         let source = Source::new(string);
-//         let mut s = Context{source, position:0};
-//         let x = _one_or_more(_terminal, &mut s, "a".to_string().as_bytes()[0]);
-//         println!("{:?}", x);
-//         assert_eq!(x, true);
-//         assert_eq!(s.position, 3);
-//     }
-//     #[test]
-//     fn test_one_or_more_false(){
-//         let string = "".to_string();
-//         let source = Source::new(string);
-//         let mut s = Context{source, position:0};
-//         let x = _one_or_more(_terminal, &mut s, "a".to_string().as_bytes()[0]);
-//         println!("{:?}", x);
-//         assert_eq!(x, false);
-//         assert_eq!(s.position, 0);
 
-//     }
-//     #[test]
-//     fn test_composition(){
-//         let string = "".to_string();
-//         let source = Source::new(string);
-//         let mut s = Context{source, position:0};
+pub fn _zero_or_more_kernel<F>(source: &Source, position: u32, func: F) -> (bool, u32)
+    where F: Fn(&Source, u32) -> (bool, u32)  {
+        let mut temp_position = position;
+        loop{
+            let (valid, position) = func(source, temp_position);
+            println!("{:?}, {:?}", valid, position);
+            if valid == false {
+                break;
+            }
+            temp_position = position;
+        }
+        // Always true but may consume zero positions
+        return (true, temp_position);
+    }
 
-//         let x = _zero_or_more(_one_or_more, &mut s, "a".to_string().as_bytes()[0]);
-//         println!("{:?}", x);
-//         assert_eq!(x, false);
-//         assert_eq!(s.position, 1);
-//     }
+    pub fn _zero_or_more(func: fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) {
+        return move |source: &Source, position: u32| _zero_or_more_kernel(source, position, func);
+    }
 
-// }
+    #[cfg(test)]
+    mod tests {
+        use crate::source::Source;
+        use crate::terminal::_terminal;
+        use crate::zero_or_more::{_zero_or_more, _zero_or_more_kernel};
+        fn test_func(source: &Source, position: u32) -> (bool, u32){
+            let x = _terminal("a".to_string().as_bytes()[0]);
+            return x(source, position)
+        }
+        #[test]
+        fn test_zero_or_more_kernel() {
+            let s = "aaa".to_string();
+            let s = Source::new(s);
+            let x = _zero_or_more_kernel(&s, 0, test_func);
+            assert_eq!(x, (true, 3));
+    
+        }   
+        #[test]
+        fn test_var_name() {
+            let s = "aaa".to_string();
+            let s = Source::new(s);
+            let func = _zero_or_more(test_func);
+            let x = func(&s, 0); 
+            assert_eq!(x, (true, 3));
+    
+        }   
+    }
+
+
