@@ -5,7 +5,6 @@ mod not_predicate;
 mod one_or_more;
 mod subexpression;
 mod and_predicate;
-mod context;
 mod optional;
 mod var_name;
 mod ordered_choice;
