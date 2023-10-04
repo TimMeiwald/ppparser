@@ -8,19 +8,19 @@ where
     loop {
         let (valid, position) = func(source, temp_position);
         println!("{:?}, {:?}", valid, position);
-        if valid == false {
+        if !valid {
             break;
         }
         temp_position = position;
     }
     // Always true but may consume zero positions
-    return (true, temp_position);
+    (true, temp_position)
 }
 
 pub fn _zero_or_more(
     func: fn(&Source, u32) -> (bool, u32),
 ) -> impl Fn(&Source, u32) -> (bool, u32) {
-    return move |source: &Source, position: u32| _zero_or_more_kernel(source, position, func);
+    move |source: &Source, position: u32| _zero_or_more_kernel(source, position, func)
 }
 
 #[cfg(test)]

@@ -6,7 +6,7 @@ pub struct Source {
 impl Source {
     pub fn new(source: String) -> Source {
         let source_len = source.len() as u32;
-        return Source { source, source_len };
+        Source { source, source_len }
     }
 
     pub fn get_char(&self, position: u32) -> Option<u8> {

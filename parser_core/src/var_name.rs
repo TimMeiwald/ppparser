@@ -5,10 +5,10 @@ pub fn _var_name_kernel(
     position: u32,
     func: fn(&Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
-    return func(source, position);
+    func(source, position)
 }
 pub fn _var_name(func: fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) {
-    return move |source: &Source, position: u32| _var_name_kernel(source, position, func);
+    move |source: &Source, position: u32| _var_name_kernel(source, position, func)
 }
 
 #[cfg(test)]
@@ -18,7 +18,7 @@ mod tests {
     use crate::terminal::_terminal;
     fn test_func(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
-        return x(source, position);
+        x(source, position)
     }
     #[test]
     fn test_var_name() {

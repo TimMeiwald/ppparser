@@ -1,4 +1,3 @@
-mod context;
 pub mod source;
 mod terminal;
 mod var_name;

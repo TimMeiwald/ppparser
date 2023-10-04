@@ -3,14 +3,14 @@
 use crate::source::Source;
 pub fn _terminal_kernel(source: &Source, position: u32, chr: u8) -> (bool, u32) {
     if source.get_char(position) == Some(chr) {
-        return (true, position + 1);
+        (true, position + 1)
     } else {
-        return (false, position);
+        (false, position)
     }
 }
 
 pub fn _terminal(chr: u8) -> impl Fn(&Source, u32) -> (bool, u32) {
-    return move |source: &Source, position: u32| _terminal_kernel(source, position, chr);
+    move |source: &Source, position: u32| _terminal_kernel(source, position, chr)
 }
 
 #[cfg(test)]
