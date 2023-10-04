@@ -1,8 +1,7 @@
 [workspace]
 
 members = [
-    "parser",
-    "generator"
+    "parser_core",
 ]
 
 [profile.release]
