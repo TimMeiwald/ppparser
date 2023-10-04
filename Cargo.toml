@@ -9,3 +9,6 @@ strip = true  # Automatically strip symbols from the binary.
 opt-level = 3  
 lto = "fat"
 codegen-units = 1
+panic = "abort"
+[profile.dev]
+profiler = true
