@@ -3,8 +3,8 @@
 use crate::source::Source;
 pub fn _terminal_kernel(source: &Source, position: u32, chr: u8) -> (bool, u32) {
     let char = source.get_char(position);
-    let char = char.expect("This error only happens with invalid grammar. E.g **. This should be disallowed at generation time!!");
-    if char == chr {
+    //let char = char.expect("\nThis error only happens with invalid grammar. E.g **. This should be disallowed at generation time!!\n");
+    if char == Some(chr) {
         return (true, position + 1);
     }
     else{
