@@ -72,14 +72,14 @@ mod tests {
         assert_eq!(z(&s, 0), (true, 1));
     }
 
-    // Unfortunately the below does not work which will make generation more painful than anticipated.
+    //Unfortunately the below does not work which will make generation more painful than anticipated.
     // #[test]
     // fn test_ordered_choice_nested_directly() {
     //     let s = "ccc".to_string();
     //     let s = Source::new(s);
     //     let x = _ordered_choice(&test_func1, &test_func2);
     //     //let y = _ordered_choice(&test_func3, &test_func2);
-    //     let z = _ordered_choice( &x, &_ordered_choice(&test_func3, &test_func2));
+    //     let z = _ordered_choice( &x, &{_ordered_choice(&test_func3, &test_func2)});
     //     assert_eq!(z(&s, 0), (true, 1));
     // }
 
