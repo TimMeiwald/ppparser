@@ -1,9 +1,9 @@
-mod terminal;
-mod zero_or_more;
-mod var_name;
 mod context;
 pub mod source;
-// Parser must accept a reference to a string. It must then return whether it's validly parsed or not. 
+mod terminal;
+mod var_name;
+mod zero_or_more;
+// Parser must accept a reference to a string. It must then return whether it's validly parsed or not.
 // It should have primitives of _Terminal, _OrderedChoice, _Sequence, _OneOrMore, _ZeroOrMore, _NotPredicate, _AndPredicate, _Subexpression, _VarName, _Optional and they should be composable
 // Stretch goal 1 -> also return a stack containing a list of references to the string and the start and end positions of each valid token
 // Stretch goal 2 -> Use a cache to implement packrat parsing
