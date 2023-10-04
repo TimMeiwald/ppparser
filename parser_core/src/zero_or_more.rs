@@ -1,13 +1,10 @@
 use crate::source::Source;
 
-pub fn _zero_or_more_kernel<F>(source: &Source, position: u32, func: F) -> (bool, u32)
-where
-    F: Fn(&Source, u32) -> (bool, u32),
+pub fn _zero_or_more_kernel(source: &Source, position: u32, func: &dyn Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
 {
     let mut temp_position = position;
     loop {
         let (valid, position) = func(source, temp_position);
-        println!("{:?}, {:?}", valid, position);
         if !valid {
             break;
         }
@@ -17,9 +14,7 @@ where
     (true, temp_position)
 }
 
-pub fn _zero_or_more(
-    func: fn(&Source, u32) -> (bool, u32),
-) -> impl Fn(&Source, u32) -> (bool, u32) {
+pub fn _zero_or_more(func: &dyn Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
     move |source: &Source, position: u32| _zero_or_more_kernel(source, position, func)
 }
 
@@ -36,14 +31,24 @@ mod tests {
     fn test_zero_or_more_kernel() {
         let s = "aaa".to_string();
         let s = Source::new(s);
-        let x = _zero_or_more_kernel(&s, 0, test_func);
+        let x = _zero_or_more_kernel(&s, 0, &test_func);
         assert_eq!(x, (true, 3));
     }
     #[test]
-    fn test_var_name() {
+    fn test_zero_or_more() {
         let s = "aaa".to_string();
         let s = Source::new(s);
-        let func = _zero_or_more(test_func);
+        let func = _zero_or_more(&test_func);
+        let x = func(&s, 0);
+        assert_eq!(x, (true, 3));
+    }
+    #[test]
+    #[should_panic]
+    fn test_zero_or_more_nested() {
+        let s = "aaa".to_string();
+        let s = Source::new(s);
+        let func = _zero_or_more(&test_func);
+        let func = _zero_or_more(&func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 3));
     }

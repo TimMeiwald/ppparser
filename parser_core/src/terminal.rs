@@ -2,11 +2,15 @@
 // u8 because ascii could be modified for utf-8 eventually.
 use crate::source::Source;
 pub fn _terminal_kernel(source: &Source, position: u32, chr: u8) -> (bool, u32) {
-    if source.get_char(position) == Some(chr) {
-        (true, position + 1)
-    } else {
-        (false, position)
+    let char = source.get_char(position);
+    let char = char.expect("This error only happens with invalid grammar. E.g **. This should be disallowed at generation time!!");
+    if char == chr {
+        return (true, position + 1);
     }
+    else{
+        return (false, position);
+    }
+
 }
 
 pub fn _terminal(chr: u8) -> impl Fn(&Source, u32) -> (bool, u32) {

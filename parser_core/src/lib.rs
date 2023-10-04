@@ -1,6 +1,7 @@
 pub mod source;
 mod terminal;
 mod var_name;
+mod ordered_choice;
 mod zero_or_more;
 // Parser must accept a reference to a string. It must then return whether it's validly parsed or not.
 // It should have primitives of _Terminal, _OrderedChoice, _Sequence, _OneOrMore, _ZeroOrMore, _NotPredicate, _AndPredicate, _Subexpression, _VarName, _Optional and they should be composable
