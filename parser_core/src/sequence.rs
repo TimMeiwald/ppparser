@@ -6,15 +6,12 @@ pub fn _sequence_kernel(source: &Source, position: u32, func_lhs: &dyn Fn(&Sourc
     let temp_position = position;
 
     let (lhs_bool, position) = func_lhs(source, position);
-    println!("Start: {:?}, {:?}",lhs_bool, position);
     if lhs_bool {
         let (rhs_bool, position) = func_rhs(source, position);
-        println!("Start: {:?}, {:?}",rhs_bool, position);
         if rhs_bool {
             return (true, position);
         } 
     }
-    println!("False: {:?}", position);
     (false, temp_position)
 }
 
