@@ -4,7 +4,7 @@ use parser_core::_ordered_choice;
 
 pub fn alphabet_lower(source: &Source, position: u32) -> (bool, u32){
     let t1 = _terminal('a' as u8);
-    let t2 = _terminal('c' as u8);
+    let t2 = _terminal('b' as u8);
     let oc1 = _ordered_choice(&t1, &t2);
     
     let t1 = _terminal('c' as u8);

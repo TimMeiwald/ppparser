@@ -50,3 +50,5 @@ use semantic_instructions::*;
 use comment::comment;
 use lhs::lhs;
 use rule::rule;
+pub use grammar::grammar;
+pub use parser_core::Source;

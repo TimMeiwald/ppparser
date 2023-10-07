@@ -4,7 +4,9 @@ pub fn _var_name_kernel(
     position: u32,
     func: fn(&Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
-    func(source, position)
+    let result = func(source, position);
+    //println!("{:?}, {:?}", result.0, result.1);
+    result
 }
 pub fn _var_name(func: fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) {
     move |source: &Source, position: u32| _var_name_kernel(source, position, func)
@@ -27,4 +29,5 @@ mod tests {
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
     }
+    
 }

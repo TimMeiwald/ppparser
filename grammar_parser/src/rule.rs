@@ -23,3 +23,80 @@ pub fn rule(source: &Source, position: u32) -> (bool, u32){
 
     s8(source, position)
 }
+
+#[cfg(test)]
+mod tests {
+use parser_core::Source;
+use super::*;
+
+#[test]
+fn test_rule_true() {
+    let string = "<Alphabet_Upper> PASSTHROUGH = \"A\"/\"B\"/\"C\"/\"D\"/\"E\"/\"F\"/\"G\"/\"H\"/\"I\"/\"J\"/\"K\"/\"L\"/\"M\"/\"N\"/\"O\"/\"P\"/\"Q\"/\"R\"/\"S\"/\"T\"/\"U\"/\"V\"/\"W\"/\"X\"/\"Y\"/\"Z\"; #We all love commments#".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = rule(&source, position);
+    assert_eq!(result, (true, str_len));
+}
+
+
+#[test]
+fn test_rule_true2() {
+    let string = "<Spaces> PASSTHROUGH = \"\n\"/\"\t\"/\"\r\"/\" \";".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = rule(&source, position);
+    assert_eq!(result, (true, str_len));
+}
+
+#[test]
+fn test_rule_true3() {
+    let string = "<Specials> PASSTHROUGH = \"+\"/\"*\"/\"-\"/\"&\"/\"!\"/\"?\"/\"<\"/\">\"/\"\"\"/\"(\"/\")\"/\"_\"/\",\"/\"/\"/\";\"/\"=\"/\"\\\"/\"#\"/\":\"/\"|\"/\".\"/\"{\"/\"}\"/\"[\"/\"]\"/\"%\"/\"'\"/\"^\"/\"~\";".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = rule(&source, position);
+    assert_eq!(result, (true, str_len));
+}
+
+#[test]
+fn test_rule_true4() {
+    let string = "<ASCII> PASSTHROUGH = <Alphabet_Lower>/<Alphabet_Upper>/<Num>/<Spaces>/<Specials>;".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = rule(&source, position);
+    assert_eq!(result, (true, str_len));
+}
+
+#[test]
+fn test_rule_true5() {
+    let string = "<RHS> PASSTHROUGH = <Sequence>/<Ordered_Choice>/<Atom>;
+    ".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = rule(&source, position);
+    assert_eq!(result, (true, str_len));
+}
+#[test]
+fn test_rule_true6() {
+    let string = "<LHS> = <Var_Name>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
+    ".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = rule(&source, position);
+    assert_eq!(result, (true, str_len));
+}
+#[test]
+fn test_rule_true7() {
+    let string = "<Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = rule(&source, position);
+    assert_eq!(result, (true, str_len));
+}
+}

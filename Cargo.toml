@@ -3,6 +3,7 @@
 members = [
     "parser_core",
     "grammar_parser",
+    "grammar_runner",
 ]
 
 [profile.release]

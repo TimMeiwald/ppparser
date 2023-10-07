@@ -1,4 +1,4 @@
-use parser_core::{Source, _var_name, _sequence, _subexpression, _zero_or_more};
+use parser_core::{Source, _var_name, _sequence, _subexpression, _zero_or_more, _ordered_choice};
 
 use crate::{symbols::{question_mark, comma, backslash}, nucleus, whitespace, atom, sequence, ordered_choice};
 
@@ -6,7 +6,26 @@ pub fn rhs(source: &Source, position: u32) -> (bool, u32){
     let v1 = _var_name(sequence);
     let v2 = _var_name(ordered_choice);
     let v3 = _var_name(atom);
-    let s1 = _sequence(&v1, &v2);
-    let s2 = _sequence(&s1, &v3);
+    let s1 = _ordered_choice(&v1, &v2);
+    let s2 = _ordered_choice(&s1, &v3);
     s2(source, position)
+}
+#[cfg(test)]
+mod tests {
+use parser_core::Source;
+use super::*;
+
+#[test]
+fn test_rhs_true() {
+    let string = "\"A\"/\"B\"/\"C\"/\"D\"/\"E\"/\"F\"/\"G\"/\"H\"/\"I\"/\"J\"/\"K\"/\"L\"/\"M\"/\"N\"/\"O\"/\"P\"/\"Q\"/\"R\"/\"S\"/\"T\"/\"U\"/\"V\"/\"W\"/\"X\"/\"Y\"/\"Z\"".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = rhs(&source, position);
+    assert_eq!(result, (true, str_len));
+}
+
+
+
+
 }

@@ -47,5 +47,14 @@ fn test_num_true() {
     let result = var_name(&source, position);
     assert_eq!(result, (true, 26));
 }
+#[test]
+fn test_num_true2() {
+    let string = "<Alphabet_Upper>".to_string();
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = var_name(&source, position);
+    assert_eq!(result, (true, 26));
+}
+
 
 }

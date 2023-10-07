@@ -1,0 +1,6 @@
+[package]
+name = "grammar_runner"
+version = "0.5.0"
+edition = "2021"
+[dependencies]
+grammar_parser = { path = "../grammar_parser" }

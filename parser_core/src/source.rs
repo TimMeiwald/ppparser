@@ -17,6 +17,9 @@ impl Source {
             None
         }
     }
+    pub fn get_len(&self) -> u32{
+        self.source_len
+    }
 }
 
 #[cfg(test)]

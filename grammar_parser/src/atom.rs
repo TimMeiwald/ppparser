@@ -20,8 +20,28 @@ pub fn atom(source: &Source, position: u32) -> (bool, u32){
     let sub1 = _subexpression(&oc5);
 
     let v7 = _var_name(whitespace);
-    let oc6 = _ordered_choice(&oc5, &v7);
+    let oc6 = _ordered_choice(&sub1, &v7);
 
     oc6(source, position)
+
+}
+
+#[cfg(test)]
+mod tests {
+use parser_core::Source;
+use super::*;
+
+#[test]
+fn test_atom_true() {
+    let string = "\"A\"/\"B\"/\"C\"/\"D\"/\"E\"/\"F\"/\"G\"/\"H\"/\"I\"/\"J\"/\"K\"/\"L\"/\"M\"/\"N\"/\"O\"/\"P\"/\"Q\"/\"R\"/\"S\"/\"T\"/\"U\"/\"V\"/\"W\"/\"X\"/\"Y\"/\"Z\"".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let result = atom(&source, position);
+    assert_eq!(result, (true, str_len));
+}
+
+
+
 
 }

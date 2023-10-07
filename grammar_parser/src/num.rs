@@ -46,7 +46,7 @@ fn test_num_false() {
 }
 #[test]
 fn test_num_true() {
-    let string = "111".to_string();
+    let string = "511".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
     let result = num(&source, position);
