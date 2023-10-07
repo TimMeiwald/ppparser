@@ -1,6 +1,6 @@
 use crate::source::Source;
 
-pub fn _ordered_choice_kernel(source: &Source, position: u32, func_lhs: &dyn Fn(&Source, u32) -> (bool, u32), func_rhs: &dyn Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
+pub fn _ordered_choice_kernel(source: &Source, position: u32, func_lhs: impl Fn(&Source, u32) -> (bool, u32), func_rhs: impl Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
 {
     let temp_position = position;
     let (valid, position) = func_lhs(source, position);

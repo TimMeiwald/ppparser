@@ -1,6 +1,6 @@
 use crate::source::Source;
 
-pub fn _not_predicate_kernel(source: &Source, position: u32, func: &dyn Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
+pub fn _not_predicate_kernel(source: &Source, position: u32, func: impl Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
 {
     let temp_position = position;
     let (valid, _position) = func(source, temp_position);

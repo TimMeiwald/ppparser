@@ -1,6 +1,6 @@
 use crate::source::Source;
 
-pub fn _one_or_more_kernel(source: &Source, position: u32, func: &dyn Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
+pub fn _one_or_more_kernel(source: &Source, position: u32, func: impl Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
 {
     let mut temp_position = position;
     let (valid, position) = func(source, temp_position);
