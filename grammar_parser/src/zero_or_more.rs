@@ -1,3 +1,4 @@
+use cache::Cache;
 use parser_core::{Source, _var_name, _sequence};
 
 use crate::{symbols::{plus, star}, nucleus, whitespace};

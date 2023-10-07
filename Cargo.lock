@@ -3,9 +3,14 @@
 version = 3
 
 [[package]]
+name = "cache"
+version = "0.5.0"
+
+[[package]]
 name = "grammar_parser"
 version = "0.5.0"
 dependencies = [
+ "cache",
  "parser_core",
 ]
 
@@ -19,3 +24,6 @@ dependencies = [
 [[package]]
 name = "parser_core"
 version = "0.5.0"
+dependencies = [
+ "cache",
+]

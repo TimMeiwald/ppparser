@@ -32,7 +32,7 @@ mod tests {
 use parser_core::Source;
 use super::*;
 #[test]
-fn test_num_false() {
+fn test_var_name_false() {
     let string = "_this_is_not_a_valid_var_name".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
@@ -40,7 +40,7 @@ fn test_num_false() {
     assert_eq!(result, (false, 0));
 }
 #[test]
-fn test_num_true() {
+fn test_var_name_true() {
     let string = "<this_is_a_valid_var_name>".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
@@ -48,12 +48,14 @@ fn test_num_true() {
     assert_eq!(result, (true, 26));
 }
 #[test]
-fn test_num_true2() {
+fn test_var_name_true2() {
     let string = "<Alphabet_Upper>".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
     let result = var_name(&source, position);
-    assert_eq!(result, (true, 26));
+    assert_eq!(result, (true, src_len));
 }
 
 

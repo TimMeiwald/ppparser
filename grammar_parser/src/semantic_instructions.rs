@@ -1,3 +1,4 @@
+use cache::Cache;
 use parser_core::{Source, _var_name, _sequence, _subexpression, _zero_or_more, _terminal, _ordered_choice};
 
 use crate::{symbols::{question_mark, comma, backslash}, nucleus, whitespace, atom, sequence, ordered_choice};

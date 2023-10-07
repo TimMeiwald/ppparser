@@ -127,7 +127,7 @@ fn main() -> ExitCode {
         let (bol, _position) = grammar(&source, position);
         assert_eq!(bol, true); //-> To test it actually parsed correctly
         assert_eq!(_position, src_len); //
-        //println!("{:?}, {:?}", bol, _position);
+        println!("{:?}, {:?}", bol, _position);
 
     //println!("{:?}", i)
     }

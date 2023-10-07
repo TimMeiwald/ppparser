@@ -74,10 +74,11 @@ fn test_ordered_choice_true4() {
 #[test]
 fn test_ordered_choice_true5() {
     let string = "\"\n\"/\"\t\"/\"\r\"/\" \"".to_string();
+    let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
     let result = ordered_choice(&source, position);
-    assert_eq!(result, (true, 11));
+    assert_eq!(result, (true, src_len));
 }
 
 }
