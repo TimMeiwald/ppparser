@@ -10,7 +10,7 @@ pub fn _and_predicate_kernel(source: &Source, position: u32, func: impl Fn(&Sour
     (true, temp_position)
 }
 
-pub fn _and_predicate(func: &dyn Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
+pub fn _and_predicate(func: &impl Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
     move |source: &Source, position: u32| _and_predicate_kernel(source, position, func)
 }
 

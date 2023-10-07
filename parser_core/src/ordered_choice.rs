@@ -18,7 +18,7 @@ pub fn _ordered_choice_kernel(source: &Source, position: u32, func_lhs: impl Fn(
 
 }
 
-pub fn _ordered_choice<'a>(func_lhs: &'a dyn  Fn(&Source, u32) -> (bool, u32), func_rhs: &'a dyn Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + 'a{
+pub fn _ordered_choice<'a>(func_lhs: &'a impl  Fn(&Source, u32) -> (bool, u32), func_rhs: &'a impl Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + 'a{
     move |source: &Source, position: u32| _ordered_choice_kernel(source, position, func_lhs, func_rhs)
 }
 

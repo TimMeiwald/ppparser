@@ -10,7 +10,7 @@ pub fn _not_predicate_kernel(source: &Source, position: u32, func: impl Fn(&Sour
     (false, temp_position)
 }
 
-pub fn _not_predicate(func: &dyn Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
+pub fn _not_predicate(func: &impl Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
     move |source: &Source, position: u32| _not_predicate_kernel(source, position, func)
 }
 

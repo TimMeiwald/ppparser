@@ -10,7 +10,7 @@ pub fn _optional_kernel(source: &Source, position: u32, func: impl Fn(&Source, u
     (true, position)
 }
 
-pub fn _optional(func: &dyn Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
+pub fn _optional(func: &impl Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
     move |source: &Source, position: u32| _optional_kernel(source, position, func)
 }
 

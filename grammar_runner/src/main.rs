@@ -128,6 +128,7 @@ fn main() -> ExitCode {
     //println!("{:?}", i)
     }
     //34567 lines per second no impl
+    //34355 lines per second impl in Kernels
     let elapsed = now.elapsed();
     println!("Elapsed with file read: {:.2?}", elapsed);
     //println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());
