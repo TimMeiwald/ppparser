@@ -14,7 +14,7 @@ pub fn _zero_or_more_kernel(source: &Source, position: u32, func: impl Fn(&Sourc
     (true, temp_position)
 }
 
-pub fn _zero_or_more<'a>(func: &impl Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
+pub fn _zero_or_more(func: &impl Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
     move |source: &Source, position: u32| _zero_or_more_kernel(source, position, func)
 }
 

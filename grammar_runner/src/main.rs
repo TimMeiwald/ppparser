@@ -121,14 +121,25 @@ fn main() -> ExitCode {
     use std::time::Instant;
     let now = Instant::now();
     let position = 0;
+    let src_len = grammar_string.len() as u32;
     let source = Source::new(grammar_string);
     for _i in 1..1000 {
-        let (_bool, _position) = grammar(&source, position);
+        let (bol, _position) = grammar(&source, position);
+        assert_eq!(bol, true); //-> To test it actually parsed correctly
+        assert_eq!(_position, src_len); //
+        //println!("{:?}, {:?}", bol, _position);
 
     //println!("{:?}", i)
     }
+    // let (bol, _position) = grammar(&source, position);
+    // assert_eq!(bol, true); //-> To test it actually parsed correctly
+    // assert_eq!(_position, src_len); //
+    // println!("{:?}, {:?}", bol, _position);
+
+    
     //34567 lines per second no impl
     //34355 lines per second impl in Kernels
+    //98245 lines per second impl everywhere
     let elapsed = now.elapsed();
     println!("Elapsed with file read: {:.2?}", elapsed);
     //println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());
