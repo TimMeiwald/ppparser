@@ -70,7 +70,7 @@ mod tests {
         let cache = Rc::new(RefCell::new(BTreeCache::new(0,0)));
         let context = Context{cache};
 
-        let mut func = _var_name(Rules::AlphabetLower, &context, test_func);
+        let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
     }

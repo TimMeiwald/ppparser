@@ -1,12 +1,13 @@
 use parser_core::{Source, _subexpression, _zero_or_more, _not_predicate, _sequence, _var_name, _terminal};
+use parser_core::{Context, Rules};
 
 use crate::{whitespace, ascii, subexpression::subexpression};
 
 
 
-pub fn comment(source: &Source, position: u32) -> (bool, u32){
-    let v1 = _var_name(whitespace);
-    let v2 = _var_name(ascii);
+pub fn comment(context: &Context,source: &Source, position: u32) -> (bool, u32){
+    let v1 = _var_name(Rules::Whitespace, &context,whitespace);
+    let v2 = _var_name(Rules::Ascii, &context,ascii);
     let t1 = _terminal('#' as u8);
 
     let not1 = _not_predicate(&t1);

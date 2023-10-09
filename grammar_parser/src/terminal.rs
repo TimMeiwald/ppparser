@@ -1,10 +1,11 @@
 use super::*;
 use parser_core::{Source, _var_name, _subexpression, _ordered_choice, _terminal, _sequence};
+use parser_core::{Context, Rules};
 
 
-pub fn terminal(source: &Source, position: u32) -> (bool, u32){
-    let apostrophe = _var_name(apostrophe);
-    let ascii = _var_name(ascii);
+pub fn terminal(context: &Context,source: &Source, position: u32) -> (bool, u32){
+    let apostrophe = _var_name(Rules::Apostrophe, &context,apostrophe);
+    let ascii = _var_name(Rules::Ascii, &context,ascii);
     let s1 = _sequence(&apostrophe, &ascii);
     let s2 = _sequence(&s1, &apostrophe);
     let sub1 = _subexpression(&s2);
@@ -25,7 +26,7 @@ pub fn terminal(source: &Source, position: u32) -> (bool, u32){
     let sub3 = _subexpression(&s5);
 
     let s6 = _ordered_choice(&sub1, &sub3);
-    let epsilon = _var_name(epsilon);
+    let epsilon = _var_name(Rules::Epsilon, &context,epsilon);
     let s7 = _ordered_choice(&s6, &epsilon);
 
     s7(source, position)
@@ -40,7 +41,9 @@ fn test_terminal_false() {
     let string = "\"a".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = terminal(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = terminal(&context, &source, position);
     assert_eq!(result, (false, 0));
 }
 #[test]
@@ -48,7 +51,9 @@ fn test_terminal_true() {
     let string = "\"a\"".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = terminal(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
 }
 #[test]
@@ -56,7 +61,9 @@ fn test_terminal_true1() {
     let string = "\"\n\"".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = terminal(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
 }
 #[test]
@@ -64,7 +71,9 @@ fn test_terminal_true2() {
     let string = "\"\t\"".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = terminal(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
 }
 #[test]
@@ -72,7 +81,9 @@ fn test_terminal_true3() {
     let string = "\"\r\"".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = terminal(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
 }
 
@@ -81,7 +92,9 @@ fn test_terminal_true4() {
     let string = "\" \"".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = terminal(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
 }
 

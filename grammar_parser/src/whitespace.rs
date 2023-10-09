@@ -1,6 +1,7 @@
 use parser_core::{Source, _terminal, _ordered_choice, _subexpression, _zero_or_more};
+use parser_core::{Context, Rules};
 
-pub fn whitespace(source: &Source, position: u32) -> (bool, u32){
+pub fn whitespace(context: &Context,source: &Source, position: u32) -> (bool, u32){
     let t1 = _terminal(' ' as u8);
     let t2 = _terminal('\n' as u8);
     let t3 = _terminal('\r' as u8);

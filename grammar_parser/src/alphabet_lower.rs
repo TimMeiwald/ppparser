@@ -1,8 +1,9 @@
 use parser_core::_terminal;
 use parser_core::Source;
 use parser_core::_ordered_choice;
+use parser_core::{Context, Rules};
 
-pub fn alphabet_lower(source: &Source, position: u32) -> (bool, u32){
+pub fn alphabet_lower(context: &Context,source: &Source, position: u32) -> (bool, u32){
     let t1 = _terminal('a' as u8);
     let t2 = _terminal('b' as u8);
     let oc1 = _ordered_choice(&t1, &t2);
@@ -82,7 +83,9 @@ fn test_alphabet_lower_false() {
     let string = "AAA".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = alphabet_lower(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = alphabet_lower(&context, &source, position);
     assert_eq!(result, (false, 0));
 }
 #[test]
@@ -90,7 +93,9 @@ fn test_alphabet_lower_true() {
     let string = "aaa".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = alphabet_lower(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = alphabet_lower(&context, &source, position);
     assert_eq!(result, (true, 1));
 }
 #[test]
@@ -98,7 +103,9 @@ fn test_alphabet_lower_true2() {
     let string = "zzz".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = alphabet_lower(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = alphabet_lower(&context, &source, position);
     assert_eq!(result, (true, 1));
 }
 }

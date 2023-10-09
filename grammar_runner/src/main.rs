@@ -1,8 +1,10 @@
 mod utils;
-use grammar_parser::{grammar, Source};
+use grammar_parser::{grammar, Source, Context};
+use std::cell::RefCell;
 use std::env::args;
 use std::fs;
 use std::process::ExitCode;
+use std::rc::Rc;
 
 use utils::*;
 // use parser::output_stack::Stack;
@@ -123,8 +125,11 @@ fn main() -> ExitCode {
     let position = 0;
     let src_len = grammar_string.len() as u32;
     let source = Source::new(grammar_string);
+    //let cache = Rc::new(RefCell::new(BTreeCache::new(0,0)));
+    let context = Context::new(0, 0);
+
     for _i in 1..1000 {
-        let (bol, _position) = grammar(&source, position);
+        let (bol, _position) = grammar(&context, &source, position);
         assert_eq!(bol, true); //-> To test it actually parsed correctly
         assert_eq!(_position, src_len); //
         //println!("{:?}, {:?}", bol, _position);

@@ -3,6 +3,7 @@ use parser_core::Context;
 use parser_core::{Source, _var_name, _sequence, _subexpression, _zero_or_more, _terminal, _ordered_choice};
 use parser_core::Rules;
 
+
 pub fn semantic_instructions(context: &Context, source: &Source, position: u32) -> (bool, u32){
     let v1 = _var_name(Rules::Delete, &context, delete);
     let v2 = _var_name(Rules::Passthrough, &context, passthrough);

@@ -1,8 +1,9 @@
 use parser_core::_terminal;
 use parser_core::Source;
 use parser_core::_ordered_choice;
+use parser_core::{Context, Rules};
 
-pub fn alphabet_upper(source: &Source, position: u32) -> (bool, u32){
+pub fn alphabet_upper(context: &Context,source: &Source, position: u32) -> (bool, u32){
     let t1 = _terminal('A' as u8);
     let t2 = _terminal('B' as u8);
     let oc1 = _ordered_choice(&t1, &t2);
@@ -83,7 +84,9 @@ fn test_alphabet_upper_false() {
     let string = "aaa".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = alphabet_upper(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = alphabet_upper(&context, &source, position);
     assert_eq!(result, (false, 0));
 }
 #[test]
@@ -91,7 +94,9 @@ fn test_alphabet_upper_true() {
     let string = "AAA".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = alphabet_upper(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = alphabet_upper(&context, &source, position);
     assert_eq!(result, (true, 1));
 }
 #[test]
@@ -99,7 +104,9 @@ fn test_alphabet_upper_true_with_var_name() {
     let string = "AAA".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let var_name_closure = _var_name(alphabet_upper);
+    let context = Context::new(0, 0);
+
+    let var_name_closure = _var_name(Rules::AlphabetUpper, &context, alphabet_upper);
     let result = var_name_closure(&source, position);
     assert_eq!(result, (true, 1));
 }

@@ -1,11 +1,12 @@
 use parser_core::{Source, _var_name, _sequence, _subexpression, _zero_or_more};
+use parser_core::{Context, Rules};
 
 use crate::{symbols::{question_mark, comma, backslash}, nucleus, whitespace, atom};
 
-pub fn ordered_choice(source: &Source, position: u32) -> (bool, u32){
-    let v1 = _var_name(atom);
-    let v2 = _var_name(whitespace);
-    let v3 = _var_name(backslash);
+pub fn ordered_choice(context: &Context,source: &Source, position: u32) -> (bool, u32){
+    let v1 = _var_name(Rules::Atom, &context,atom);
+    let v2 = _var_name(Rules::Whitespace, &context,whitespace);
+    let v3 = _var_name(Rules::Backslash, &context,backslash);
     let s1 = _sequence(&v1, &v2);
     let s2 = _sequence(&s1, &v3);
     let s3 = _sequence(&s2, &v2);
@@ -30,7 +31,9 @@ fn test_ordered_choice_false() {
     let string = "<this_is_a_valid_var_name>".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = ordered_choice(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (false, 0));
 }
 #[test]
@@ -38,7 +41,9 @@ fn test_ordered_choice_true() {
     let string = "\"A\"/\"B\"".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = ordered_choice(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, 7));
 }
 
@@ -48,7 +53,9 @@ fn test_ordered_choice_true2() {
     let string = "\"A\"/\"B\"/\"C\"".to_string();
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = ordered_choice(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, 11));
 }
 
@@ -58,7 +65,9 @@ fn test_ordered_choice_true3() {
     let str_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = ordered_choice(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, str_len));
 }
 #[test]
@@ -67,7 +76,9 @@ fn test_ordered_choice_true4() {
     let str_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = ordered_choice(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, str_len));
 }
 
@@ -77,7 +88,9 @@ fn test_ordered_choice_true5() {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let result = ordered_choice(&source, position);
+    let context = Context::new(0, 0);
+
+    let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, src_len));
 }
 
