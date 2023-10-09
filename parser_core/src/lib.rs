@@ -9,6 +9,7 @@ mod optional;
 mod var_name;
 mod ordered_choice;
 mod zero_or_more;
+mod context;
 
 pub use terminal::_terminal;
 pub use source::Source;
@@ -21,6 +22,7 @@ pub use zero_or_more::_zero_or_more;
 pub use one_or_more::_one_or_more;
 pub use optional::_optional;
 pub use subexpression::_subexpression;
+pub use context::Context;
 // Parser must accept a reference to a string. It must then return whether it's validly parsed or not.
 // It should have primitives of _Terminal, _OrderedChoice, _Sequence, _OneOrMore, _ZeroOrMore, _NotPredicate, _AndPredicate, _Subexpression, _VarName, _Optional and they should be composable
 // Stretch goal 1 -> also return a stack containing a list of references to the string and the start and end positions of each valid token

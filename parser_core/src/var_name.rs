@@ -1,16 +1,6 @@
+use crate::Context;
 use cache::Cache;
-
 use crate::source::Source;
-pub fn _var_name_kernel(
-    source: &Source,
-    position: u32,
-    func: fn(&Source, u32) -> (bool, u32),
-) -> (bool, u32) {
-    let result = func(source, position);
-    result
-
-}
-
 // pub fn _var_name_kernel(
 //     source: &Source,
 //     position: u32,
@@ -36,8 +26,22 @@ pub fn _var_name_kernel(
 // pub fn _var_name(func: fn(&Source, u32) -> (bool, u32), cache: &mut impl Cache) -> impl FnMut(&Source, u32) -> (bool, u32) + '_ {
 //     move |source: &Source, position: u32| _var_name_kernel(source, position, func, cache)
 // }
-pub fn _var_name(func: fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32){
-    move |source: &Source, position: u32| _var_name_kernel(source, position, func)
+pub fn _var_name_kernel<T: Cache>(
+    context: &Context<T>,
+    source: &Source,
+    position: u32,
+    func: fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
+    let result = func(source, position);
+    let cache = &mut *(context.cache).borrow_mut();
+    cache.push(0, true, 0, 0);
+    result
+
+}
+
+
+pub fn _var_name<T: Cache>(context: &Context<T>, func: fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Context<T>, &Source, u32) -> (bool, u32) {
+    move |context: &Context<T>, source: &Source, position: u32| _var_name_kernel(context, source, position, func)
 }
 
 #[cfg(test)]

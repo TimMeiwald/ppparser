@@ -1,12 +1,13 @@
 use cache::Cache;
+use parser_core::Context;
 use parser_core::{Source, _var_name, _sequence, _subexpression, _zero_or_more, _terminal, _ordered_choice};
 
 use crate::{symbols::{question_mark, comma, backslash}, nucleus, whitespace, atom, sequence, ordered_choice};
 
-pub fn semantic_instructions(source: &Source, position: u32) -> (bool, u32){
-    let v1 = _var_name(delete);
-    let v2 = _var_name(passthrough);
-    let v3 = _var_name(collect);
+pub fn semantic_instructions<T: Cache>(context: Context<T>, source: &Source, position: u32) -> (bool, u32){
+    let v1 = _var_name(&context, delete,);
+    let v2 = _var_name(&context, passthrough);
+    let v3 = _var_name(&context, collect);
     let s1 = _ordered_choice(&v1, &v2);
     let s2 = _ordered_choice(&s1, &v3);
     s2(source, position)

@@ -5,6 +5,10 @@ pub trait Cache{
     fn check(&mut self, rule: u32, start_position: u32) -> Option<&(bool, u32)>;
 }
 
+
+
+
+
 pub struct BTreeCache{
     cache: BTreeMap<(u32, u32), (bool, u32)>
 }
