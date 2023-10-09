@@ -1,7 +1,7 @@
 use std::{cell::RefCell, rc::Rc};
 
-use cache::Cache;
+use cache::{Cache, BTreeCache};
 
-pub struct Context<T: Cache>{
-    pub cache: Rc<RefCell<T>>
+pub struct Context{
+    pub cache: Rc<RefCell<BTreeCache>>
 }

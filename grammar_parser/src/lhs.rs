@@ -1,12 +1,12 @@
-use parser_core::{Source, _ordered_choice, _var_name, _optional, _sequence, _subexpression};
-
+use parser_core::{Context, Source, _ordered_choice, _var_name, _optional, _sequence, _subexpression};
+use cache::Cache;
 use crate::{var_name, whitespace, semantic_instructions};
 
 
-pub fn lhs(source: &Source, position: u32) -> (bool, u32){
-    let v1 = _var_name(var_name);
-    let v2 = _var_name(whitespace);
-    let v3 = _var_name(semantic_instructions);
+pub fn lhs<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32){
+    let v1 = _var_name(&context, var_name);
+    let v2 = _var_name(&context, whitespace);
+    let v3 = _var_name(&context, semantic_instructions);
 
     let oc1 = _sequence(&v2, &v3);
     let oc2 = _sequence(&oc1, &v2);

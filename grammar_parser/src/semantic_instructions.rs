@@ -1,19 +1,18 @@
 use cache::Cache;
 use parser_core::Context;
 use parser_core::{Source, _var_name, _sequence, _subexpression, _zero_or_more, _terminal, _ordered_choice};
+use parser_core::Rules;
 
-use crate::{symbols::{question_mark, comma, backslash}, nucleus, whitespace, atom, sequence, ordered_choice};
-
-pub fn semantic_instructions<T: Cache>(context: Context<T>, source: &Source, position: u32) -> (bool, u32){
-    let v1 = _var_name(&context, delete,);
-    let v2 = _var_name(&context, passthrough);
-    let v3 = _var_name(&context, collect);
+pub fn semantic_instructions(context: &Context, source: &Source, position: u32) -> (bool, u32){
+    let v1 = _var_name(Rules::Delete, &context, delete);
+    let v2 = _var_name(Rules::Passthrough, &context, passthrough);
+    let v3 = _var_name(Rules::Collect, &context, collect);
     let s1 = _ordered_choice(&v1, &v2);
     let s2 = _ordered_choice(&s1, &v3);
     s2(source, position)
 }
 
-pub fn collect(source: &Source, position: u32) -> (bool, u32){
+pub fn collect(context: &Context, source: &Source, position: u32) -> (bool, u32){
     let t1 = _terminal('C' as u8);
     let t2 = _terminal('O' as u8);
     let t3 = _terminal('L' as u8);
@@ -30,7 +29,7 @@ pub fn collect(source: &Source, position: u32) -> (bool, u32){
     s6(source, position)
 }
 
-pub fn delete(source: &Source, position: u32) -> (bool, u32){
+pub fn delete(context: &Context, source: &Source, position: u32) -> (bool, u32){
     let t1 = _terminal('D' as u8);
     let t2 = _terminal('E' as u8);
     let t3 = _terminal('L' as u8);
@@ -45,7 +44,7 @@ pub fn delete(source: &Source, position: u32) -> (bool, u32){
     s5(source, position)
 }
 
-pub fn passthrough(source: &Source, position: u32) -> (bool, u32){
+pub fn passthrough(context: &Context,source: &Source, position: u32) -> (bool, u32){
     let t1 = _terminal('P' as u8);
     let t2 = _terminal('A' as u8);
     let t3 = _terminal('S' as u8);
@@ -68,4 +67,42 @@ pub fn passthrough(source: &Source, position: u32) -> (bool, u32){
     let s9 = _sequence(&s8, &t10);
     let s10 = _sequence(&s9, &t11);
     s10(source, position)
+}
+
+#[cfg(test)]
+mod tests {
+use std::{rc::Rc, cell::RefCell};
+
+use parser_core::Source;
+use super::*;
+use cache::{Cache, BTreeCache};
+
+#[test]
+fn test_semantic_instruction_true() {
+    let string = "PASSTHROUGH".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let cache = Rc::new(RefCell::new(BTreeCache::new(0,0)));
+    let context = Context{cache};
+    let result = semantic_instructions(&context,&source, position);
+    assert_eq!(result, (true, str_len));
+}
+#[test]
+fn test_semantic_instruction_true_cache() {
+    let string = "PASSTHROUGH".to_string();
+    let str_len =string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let cache = Rc::new(RefCell::new(BTreeCache::new(0,0)));
+    let context = Context{cache};
+    let result = semantic_instructions(&context,&source, position);
+    assert_eq!(result, (true, str_len), "1");
+    let result = semantic_instructions(&context,&source, position);
+    println!("{:?}, {:?}", result.0, result.1);
+    assert_eq!(result, (true, str_len), "2");
+}
+
+
+
 }

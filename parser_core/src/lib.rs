@@ -10,7 +10,9 @@ mod var_name;
 mod ordered_choice;
 mod zero_or_more;
 mod context;
+mod rules;
 
+pub use rules::Rules;
 pub use terminal::_terminal;
 pub use source::Source;
 pub use ordered_choice::_ordered_choice;
