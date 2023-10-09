@@ -9,18 +9,23 @@ pub fn _var_name_kernel(
     position: u32,
     func: fn(&Context, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
-    let cache = &mut *(context.cache).borrow_mut();
-    println!("{:?}", rule);
-    let cached_val = cache.check(rule as u32, position);
+    let cached_val: Option<(bool, u32)>;
+    {
+        let res = &mut *(context.cache).borrow_mut();
+        cached_val = res.check(rule as u32, position);
+    };
     match cached_val{
         Some(cached_val) => {
-            println!("Cached");
-            return *cached_val;
+            //println!("Cached");
+            return cached_val;
         },
         None => {
-            println!("Not cached");
+            //println!("Not cached");
             let result = func(context, source, position);
-            cache.push(rule as u32, result.0, position, result.1);
+            {
+                let cache = &mut *(context.cache).borrow_mut();
+                cache.push(rule as u32, result.0, position, result.1);
+            }
             return result
         }
     }

@@ -126,9 +126,10 @@ fn main() -> ExitCode {
     let src_len = grammar_string.len() as u32;
     let source = Source::new(grammar_string);
     //let cache = Rc::new(RefCell::new(BTreeCache::new(0,0)));
-    let context = Context::new(0, 0);
+    //let context = Context::new(0, 0);
 
     for _i in 1..1000 {
+        let context = Context::new(0, 0);
         let (bol, _position) = grammar(&context, &source, position);
         assert_eq!(bol, true); //-> To test it actually parsed correctly
         assert_eq!(_position, src_len); //
@@ -136,7 +137,7 @@ fn main() -> ExitCode {
 
     //println!("{:?}", i)
     }
-    // let (bol, _position) = grammar(&source, position);
+    // let (bol, _position) = grammar(&context, &source, position);
     // assert_eq!(bol, true); //-> To test it actually parsed correctly
     // assert_eq!(_position, src_len); //
     // println!("{:?}, {:?}", bol, _position);
