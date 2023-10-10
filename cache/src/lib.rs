@@ -170,9 +170,10 @@ impl Cache for MyCache2 {
     }
     fn reinitialize(&mut self) {
         for i in &mut self.entries {
-            for j in  0..i.is_true.len(){
-                i.end_position[j] = u32::MAX
-            }
+            // for j in  0..i.is_true.len(){
+            //     i.end_position[j] = u32::MAX
+            // }
+            i.end_position.fill_with(||{u32::MAX})
         }
 
 

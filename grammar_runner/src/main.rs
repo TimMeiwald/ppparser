@@ -160,7 +160,9 @@ fn main() -> ExitCode {
     //35K with btreemap cache
     //10K with MyCache1 but allocating after timer
     //260K with MyCache1 but allocating before timer // Really drops off with larger cache sizes unsuprisingly. Cannot use LRU though if I want to support Left Recursion.
-    //210K MyCache2 maybe due to less easily simd.
+    //210K MyCache2 maybe due to less easily simd. - May have just been one off 
+    //243K with new change. Which is odd. 
+    // 310K using map instead of for loop on MyCache2
     let elapsed = total.elapsed();
     println!("Elapsed with file read: {:.2?}", elapsed);
     //println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());
