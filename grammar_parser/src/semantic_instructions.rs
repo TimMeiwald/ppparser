@@ -84,8 +84,7 @@ fn test_semantic_instruction_true() {
     let str_len =string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let cache = Rc::new(RefCell::new(BTreeCache::new(0,0)));
-    let context = Context{cache};
+    let context = Context::new(0, 0);
     let result = semantic_instructions(&context,&source, position);
     assert_eq!(result, (true, str_len));
 }
@@ -95,8 +94,7 @@ fn test_semantic_instruction_true_cache() {
     let str_len =string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let cache = Rc::new(RefCell::new(BTreeCache::new(0,0)));
-    let context = Context{cache};
+    let context = Context::new(0, 0);
     let result = semantic_instructions(&context,&source, position);
     assert_eq!(result, (true, str_len), "1");
     let result = semantic_instructions(&context,&source, position);

@@ -15,7 +15,7 @@ impl Cache {
             c.entries.push(ArgCache {
                 entries: Vec::with_capacity(number_of_structs as usize),
             });
-            for _j in 0..number_of_structs {
+            for _j in 1..number_of_structs {
                 // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
                 c.entries[i as usize].entries.push((false, i32::MAX));
             }
@@ -43,4 +43,5 @@ impl Cache {
 // Create 1 per Position in Cache
 pub struct ArgCache {
     entries: Vec<(bool, i32)>, // Struct type encoded in the position of the entries
+    
 }

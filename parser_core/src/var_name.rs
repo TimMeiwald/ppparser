@@ -17,6 +17,9 @@ pub fn _var_name_kernel(
     match cached_val{
         Some(cached_val) => {
             //println!("Cached");
+            // if cached_val.0 == true{
+            //     println!("{:?} {:?} {:?}", rule, position, cached_val.1);
+            // }
             return cached_val;
         },
         None => {
@@ -26,6 +29,9 @@ pub fn _var_name_kernel(
                 let cache = &mut *(context.cache).borrow_mut();
                 cache.push(rule as u32, result.0, position, result.1);
             }
+            // if result.0 == true{
+            //     println!("{:?} {:?} {:?}", rule, position, result.1);
+            // }
             return result
         }
     }
@@ -72,9 +78,7 @@ mod tests {
     fn test_var_name() {
         let s = "aaa".to_string();
         let s = Source::new(s);
-        let cache = Rc::new(RefCell::new(BTreeCache::new(0,0)));
-        let context = Context{cache};
-
+        let context = Context::new(0, 0);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
@@ -85,8 +89,7 @@ mod tests {
         let s = "aaa".to_string();
         let s = Source::new(s);
         //let mut c = BTreeCache::new(0,0);
-        let cache = Rc::new(RefCell::new(BTreeCache::new(0,0)));
-        let context = Context{cache};
+        let context = Context::new(0, 0);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));

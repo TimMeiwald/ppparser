@@ -26,7 +26,7 @@ fn test_grammar_true() {
     let str_len =string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(str_len, 42);
 
     let result = grammar(&context, &source, position);
     assert_eq!(result, (true, str_len));

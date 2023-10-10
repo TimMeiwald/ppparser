@@ -36,9 +36,12 @@ use super::*;
 #[test]
 fn test_ordered_choice_false() {
     let string = "<this_is_a_valid_var_name>".to_string();
+    let str_len = string.len() as u32;
+
     let source = Source::new(string);
+    
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(str_len, 42);
 
     let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (false, 0));
@@ -46,9 +49,10 @@ fn test_ordered_choice_false() {
 #[test]
 fn test_ordered_choice_true() {
     let string = "\"A\"/\"B\"".to_string();
+    let str_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(str_len, 42);
 
     let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, 7));
@@ -58,10 +62,10 @@ fn test_ordered_choice_true() {
 #[test]
 fn test_ordered_choice_true2() {
     let string = "\"A\"/\"B\"/\"C\"".to_string();
+    let str_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
-
+    let context = Context::new(str_len, 42);
     let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, 11));
 }
@@ -72,7 +76,7 @@ fn test_ordered_choice_true3() {
     let str_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(str_len, 42);
 
     let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, str_len));
@@ -83,7 +87,7 @@ fn test_ordered_choice_true4() {
     let str_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(str_len, 42);
 
     let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, str_len));
@@ -95,7 +99,7 @@ fn test_ordered_choice_true5() {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = ordered_choice(&context, &source, position);
     assert_eq!(result, (true, src_len));
