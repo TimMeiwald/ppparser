@@ -125,7 +125,7 @@ fn main() -> ExitCode {
     let src_len = grammar_string.len() as u32;
     let total = Instant::now();
 
-    let mut now = Instant::now();
+    //let mut now = Instant::now();
     let context = Context::new(src_len, 42);
 
     let position = 0;
@@ -138,9 +138,9 @@ fn main() -> ExitCode {
         assert_eq!(bol, true); //-> To test it actually parsed correctly
         assert_eq!(_position, src_len); //
         context.clear_cache();
-        let elapsed = now.elapsed();
-        println!("Elapsed with file read: {:.2?}", elapsed);
-        now = Instant::now();
+        //let elapsed = now.elapsed();
+        //println!("Elapsed with file read: {:.2?}", elapsed);
+        //now = Instant::now();
 
 
         //println!("{:?}, {:?}", bol, _position);
