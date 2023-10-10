@@ -126,13 +126,13 @@ fn main() -> ExitCode {
     let total = Instant::now();
 
     //let mut now = Instant::now();
-    let context = Context::new(src_len, 42);
+    let context = Context::new(src_len*100, 42);
 
     let position = 0;
 
     let source = Source::new(grammar_string);
 
-    for _i in 1..100000 {
+    for _i in 1..1000 {
         let (bol, _position) = grammar(&context, &source, position);
 
         assert_eq!(bol, true); //-> To test it actually parsed correctly
