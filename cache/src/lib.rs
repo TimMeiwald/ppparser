@@ -130,6 +130,10 @@ impl Cache for MyCache2 {
             for _j in 0..number_of_structs+1 {
                 // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
                 c.entries[i as usize].is_true.push(false);
+
+            }
+            for _j in 0..number_of_structs+1 {
+                // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
                 c.entries[i as usize].end_position.push(u32::MAX);
 
             }
