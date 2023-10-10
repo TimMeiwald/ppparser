@@ -61,8 +61,7 @@ pub fn _var_name(rule: Rules, context: &Context, func: fn(&Context, &Source, u32
 
 #[cfg(test)]
 mod tests {
-    use std::cell::RefCell;
-    use std::rc::Rc;
+
 
     use cache::{Cache, BTreeCache};
     use crate::context::{Context, self};
@@ -77,8 +76,9 @@ mod tests {
     #[test]
     fn test_var_name() {
         let s = "aaa".to_string();
+        let src_len: u32 = s.len() as u32;
         let s = Source::new(s);
-        let context = Context::new(0, 0);
+        let context = Context::new(src_len, 42);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
@@ -87,9 +87,11 @@ mod tests {
     #[test]
     fn test_var_name_caching() {
         let s = "aaa".to_string();
+        let src_len: u32 = s.len() as u32;
+
         let s = Source::new(s);
         //let mut c = BTreeCache::new(0,0);
-        let context = Context::new(0, 0);
+        let context = Context::new(src_len, 42);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));

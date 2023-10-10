@@ -126,18 +126,22 @@ fn main() -> ExitCode {
     let total = Instant::now();
 
     //let mut now = Instant::now();
-    let context = Context::new(src_len*100, 42);
+    let context = Context::new(src_len, 42);
 
     let position = 0;
 
     let source = Source::new(grammar_string);
 
     for _i in 1..1000 {
+        //let parse_time = Instant::now();
         let (bol, _position) = grammar(&context, &source, position);
+        //println!("Parse time elapsed: {:.2?}", parse_time.elapsed());
 
         assert_eq!(bol, true); //-> To test it actually parsed correctly
         assert_eq!(_position, src_len); //
+        //let cache_time = Instant::now();
         context.clear_cache();
+        //println!("Cache time elapsed: {:.2?}", cache_time.elapsed())
         //let elapsed = now.elapsed();
         //println!("Elapsed with file read: {:.2?}", elapsed);
         //now = Instant::now();

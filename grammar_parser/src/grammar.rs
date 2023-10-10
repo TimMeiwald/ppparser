@@ -23,24 +23,24 @@ use std::str;
 #[test]
 fn test_grammar_true() {
     let string = "<Spaces> PASSTHROUGH = \"\n\"/\"\t\"/\"\r\"/\" \";".to_string();
-    let str_len =string.len() as u32;
+    let src_len =string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(str_len, 42);
+    let context = Context::new(src_len, 42);
 
     let result = grammar(&context, &source, position);
-    assert_eq!(result, (true, str_len));
+    assert_eq!(result, (true, src_len));
 }
 #[test]
 fn test_grammar_true2() {
     let string = "<Specials> PASSTHROUGH = \"+\"/\"*\"/\"-\"/\"&\"/\"!\"/\"?\"/\"<\"/\">\"/\"\"\"/\"(\"/\")\"/\"_\"/\",\"/\"/\"/\";\"/\"=\"/\"\\\"/\"#\"/\":\"/\"|\"/\".\"/\"{\"/\"}\"/\"[\"/\"]\"/\"%\"/\"'\"/\"^\"/\"~\";".to_string();
-    let str_len =string.len() as u32;
+    let src_len =string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = rule(&context, &source, position);
-    assert_eq!(result, (true, str_len));
+    assert_eq!(result, (true, src_len));
 }
 #[test]
 fn test_grammar_true3() {
@@ -49,12 +49,12 @@ fn test_grammar_true3() {
     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
     let string = read_to_string(pathbuf).expect("If it's moved change the string above");
 
-    let str_len = string.len() as u32;
+    let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = grammar(&context, &source, position);
-    assert_eq!(result, (true, str_len));
+    assert_eq!(result, (true, src_len));
 }
 }

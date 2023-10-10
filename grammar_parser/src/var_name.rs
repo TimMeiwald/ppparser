@@ -35,9 +35,11 @@ use super::*;
 #[test]
 fn test_var_name_false() {
     let string = "_this_is_not_a_valid_var_name".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = var_name(&context, &source, position);
     assert_eq!(result, (false, 0));
@@ -45,9 +47,11 @@ fn test_var_name_false() {
 #[test]
 fn test_var_name_true() {
     let string = "<this_is_a_valid_var_name>".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = var_name(&context, &source, position);
     assert_eq!(result, (true, 26));
@@ -56,7 +60,9 @@ fn test_var_name_true() {
 fn test_var_name_true2() {
     let string = "<Alphabet_Upper>".to_string();
     let src_len = string.len() as u32;
-    let context = Context::new(0, 0);
+
+    let src_len = string.len() as u32;
+    let context = Context::new(src_len, 42);
 
     let source = Source::new(string);
     let position: u32 = 0;

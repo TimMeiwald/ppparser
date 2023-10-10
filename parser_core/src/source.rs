@@ -8,7 +8,7 @@ impl Source {
         let source_len = source.len() as u32;
         Source { source, source_len }
     }
-
+    
     pub fn get_char(&self, position: u32) -> Option<u8> {
         if position < self.source_len {
             let src_chr = self.source.as_bytes()[position as usize];

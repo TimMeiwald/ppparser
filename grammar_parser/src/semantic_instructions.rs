@@ -81,25 +81,25 @@ use cache::{Cache, BTreeCache};
 #[test]
 fn test_semantic_instruction_true() {
     let string = "PASSTHROUGH".to_string();
-    let str_len =string.len() as u32;
+    let src_len =string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
     let result = semantic_instructions(&context,&source, position);
-    assert_eq!(result, (true, str_len));
+    assert_eq!(result, (true, src_len));
 }
 #[test]
 fn test_semantic_instruction_true_cache() {
     let string = "PASSTHROUGH".to_string();
-    let str_len =string.len() as u32;
+    let src_len =string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
     let result = semantic_instructions(&context,&source, position);
-    assert_eq!(result, (true, str_len), "1");
+    assert_eq!(result, (true, src_len), "1");
     let result = semantic_instructions(&context,&source, position);
     println!("{:?}, {:?}", result.0, result.1);
-    assert_eq!(result, (true, str_len), "2");
+    assert_eq!(result, (true, src_len), "2");
 }
 
 

@@ -39,9 +39,11 @@ use super::*;
 #[test]
 fn test_terminal_false() {
     let string = "\"a".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (false, 0));
@@ -49,9 +51,11 @@ fn test_terminal_false() {
 #[test]
 fn test_terminal_true() {
     let string = "\"a\"".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
@@ -59,9 +63,11 @@ fn test_terminal_true() {
 #[test]
 fn test_terminal_true1() {
     let string = "\"\n\"".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
@@ -69,9 +75,11 @@ fn test_terminal_true1() {
 #[test]
 fn test_terminal_true2() {
     let string = "\"\t\"".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
@@ -79,9 +87,11 @@ fn test_terminal_true2() {
 #[test]
 fn test_terminal_true3() {
     let string = "\"\r\"".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
@@ -90,9 +100,11 @@ fn test_terminal_true3() {
 #[test]
 fn test_terminal_true4() {
     let string = "\" \"".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));

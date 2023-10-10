@@ -40,9 +40,11 @@ use super::*;
 #[test]
 fn test_num_false() {
     let string = "aaa".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = num(&context, &source, position);
     assert_eq!(result, (false, 0));
@@ -50,9 +52,11 @@ fn test_num_false() {
 #[test]
 fn test_num_true() {
     let string = "511".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(src_len, 42);
 
     let result = num(&context, &source, position);
     assert_eq!(result, (true, 1));

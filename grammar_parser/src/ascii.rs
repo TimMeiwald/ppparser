@@ -30,9 +30,11 @@ use super::*;
 #[test]
 fn test_ascii_true() {
     let string = "aaa".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(0, 42);
 
     let result = ascii(&context, &source, position);
     assert_eq!(result, (true, 1));
@@ -40,9 +42,11 @@ fn test_ascii_true() {
 #[test]
 fn test_ascii_true2() {
     let string = "~".to_string();
+    let src_len = string.len() as u32;
+
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::new(0, 0);
+    let context = Context::new(0, 42);
 
     let result = ascii(&context, &source, position);
     assert_eq!(result, (true, 1));
