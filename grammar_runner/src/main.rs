@@ -141,7 +141,7 @@ fn main() -> ExitCode {
         //let elapsed = now.elapsed();
         //println!("Elapsed with file read: {:.2?}", elapsed);
         //now = Instant::now();
-
+        
 
         //println!("{:?}, {:?}", bol, _position);
 
@@ -160,7 +160,7 @@ fn main() -> ExitCode {
     //35K with btreemap cache
     //10K with MyCache1 but allocating after timer
     //260K with MyCache1 but allocating before timer // Really drops off with larger cache sizes unsuprisingly. Cannot use LRU though if I want to support Left Recursion.
-
+    //210K MyCache2 maybe due to less easily simd.
     let elapsed = total.elapsed();
     println!("Elapsed with file read: {:.2?}", elapsed);
     //println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());

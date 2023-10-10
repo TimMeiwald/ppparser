@@ -1,3 +1,4 @@
+use core::num;
 use std::collections::BTreeMap;
 pub trait Cache{
     fn new(size_of_source: u32, number_of_structs:u32) -> Self;
@@ -116,18 +117,21 @@ pub struct MyCache2 {
 impl Cache for MyCache2 {
     
     fn new(size_of_source: u32, number_of_structs: u32) -> MyCache2 {
-        let mut c = MyCache1 {
+        let mut c = MyCache2 {
             entries: Vec::with_capacity(size_of_source as usize),
         };
         for i in 0..size_of_source+1 {
             // Ensures the Vector in Cache is as large as the input source
-            c.entries.push(ArgCache {
-                entries: Vec::with_capacity(number_of_structs as usize),
+            c.entries.push(ArgCache2 {
+                is_true: Vec::with_capacity(number_of_structs as usize), 
+                end_position: Vec::with_capacity(number_of_structs as usize)
             });
 
             for _j in 0..number_of_structs+1 {
                 // Ensures the Vector in ArgCache is as large as the number of structs(Aka possible arguments since each struct implements resolvable, which is known at parser generation time)
-                c.entries[i as usize].entries.push((false, u32::MAX));
+                c.entries[i as usize].is_true.push(false);
+                c.entries[i as usize].end_position.push(u32::MAX);
+
             }
         }
         
