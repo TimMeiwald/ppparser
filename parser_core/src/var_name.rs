@@ -70,7 +70,7 @@ mod tests {
     use crate::source::Source;
     use crate::terminal::_terminal;
     use crate::Rules;
-    fn test_func(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+    fn test_func(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         x(source, position)
     }
