@@ -5,6 +5,7 @@ members = [
     "grammar_parser",
     "grammar_runner",
     "cache",
+    "left_recursion_testing",
 ]
 
 [profile.release]

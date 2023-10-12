@@ -50,3 +50,16 @@
 <Delete> COLLECT = "D","E","L","E","T","E";
 <Passthrough> COLLECT = "P", "A", "S", "S", "T", "H", "R", "O", "U", "G", "H";
 <Collect> COLLECT = "C", "O", "L", "L", "E", "C", "T"; #Comment#
+
+
+
+
+
+
+#expr ::= <expr> "-" <num> / <num> , Example of direct left recursion in warths paper#
+<num> = "0"/"1"/"2"/"3"/"4"/"5"/"6"/"7"/"8"/"9"; #Num is only a single integer because good enough for testing.#
+<expr> = (<expr>, "-", <num>) / <num>
+
+# These 3 are not part of the actual grammar but I need them to test left recursion. Do? Can just handwrite I guess if I generate eventually I need it#
+<A> = (<B>,"a"),"b";
+<B> = (<A>,"b"),"a";

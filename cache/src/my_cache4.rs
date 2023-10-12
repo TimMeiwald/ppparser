@@ -20,7 +20,9 @@ impl Cache for MyCache4 {
         for _i in 0..capacity {
             // Ensures the Vector in Cache is as large as the input source
             c.is_true.push(false);
-            c.end_position.push(0);
+        }
+        for _i in 0..capacity{
+            c.end_position.push(0); // Might be faster? Maybe compiler inlines it? Can't exactly tell needs better performance profiling vs one loop
         }
         c
         // for every arg cache in c set size to <number_of_structs>
