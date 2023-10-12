@@ -1,8 +1,11 @@
 use crate::source::Source;
 
-pub fn _sequence_kernel(source: &Source, position: u32, func_lhs: impl Fn(&Source, u32) -> (bool, u32), func_rhs: impl Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
-{
-
+pub fn _sequence_kernel(
+    source: &Source,
+    position: u32,
+    func_lhs: impl Fn(&Source, u32) -> (bool, u32),
+    func_rhs: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let temp_position = position;
 
     let (lhs_bool, position) = func_lhs(source, position);
@@ -10,21 +13,21 @@ pub fn _sequence_kernel(source: &Source, position: u32, func_lhs: impl Fn(&Sourc
         let (rhs_bool, position) = func_rhs(source, position);
         if rhs_bool {
             return (true, position);
-        } 
+        }
     }
     (false, temp_position)
 }
 
-
-
-pub fn _sequence<'a>(func_lhs: &'a impl  Fn(&Source, u32) -> (bool, u32), func_rhs: &'a impl Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + 'a{
+pub fn _sequence<'a>(
+    func_lhs: &'a impl Fn(&Source, u32) -> (bool, u32),
+    func_rhs: &'a impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + 'a {
     move |source: &Source, position: u32| _sequence_kernel(source, position, func_lhs, func_rhs)
 }
 
-
 #[cfg(test)]
 mod tests {
-    use crate::sequence::{_sequence_kernel, _sequence};
+    use crate::sequence::{_sequence, _sequence_kernel};
     use crate::source::Source;
     use crate::terminal::_terminal;
     fn test_func1(source: &Source, position: u32) -> (bool, u32) {
@@ -67,10 +70,7 @@ mod tests {
         let s = Source::new(s);
         let x = _sequence(&test_func1, &test_func2);
         let y = _sequence(&test_func3, &test_func2);
-        let z = _sequence( &x, &y);
+        let z = _sequence(&x, &y);
         assert_eq!(z(&s, 0), (false, 0));
     }
-
-
-    
 }

@@ -1,5 +1,6 @@
 #[derive(Clone, Copy, Debug)]
-pub enum Rules{AlphabetUpper,
+pub enum Rules {
+    AlphabetUpper,
     AlphabetLower,
     Num,
     Spaces,

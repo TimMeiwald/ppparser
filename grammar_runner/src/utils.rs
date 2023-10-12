@@ -2,7 +2,7 @@
 // use std::fs;
 // use std::path::PathBuf;
 use std::fs;
-use std::include_str;
+// use std::include_str;
 use std::path::PathBuf;
 
 // fn get_core_code_snapshot(str: &str) -> String {
@@ -17,13 +17,12 @@ use std::path::PathBuf;
 //     let content: String = content.concat();
 //     return content;
 // }
-pub fn write_parser(path: PathBuf, content: &String) -> Result<(), std::io::Error> {
-    let status = fs::write(path, content);
-    return status;
-}
+// pub fn write_parser(path: PathBuf, content: &String) -> Result<(), std::io::Error> {
+//     let status = fs::write(path, content);
+//     return status;
+// }
 pub fn read_grammar(path: PathBuf) -> Result<String, std::io::Error> {
-    let status = fs::read_to_string(path);
-    return status;
+    fs::read_to_string(path)
 }
 
 // pub fn embed_core() -> String {

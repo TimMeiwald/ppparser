@@ -1,10 +1,8 @@
 mod utils;
-use grammar_parser::{grammar, Source, Context};
-use std::cell::RefCell;
+use grammar_parser::{grammar, Context, Source};
 use std::env::args;
 use std::fs;
 use std::process::ExitCode;
-use std::rc::Rc;
 
 use utils::*;
 // use parser::output_stack::Stack;
@@ -75,7 +73,6 @@ use utils::*;
 //     }
 // }
 
-
 fn main() -> ExitCode {
     // Ensures scope change kills everything
 
@@ -87,14 +84,12 @@ fn main() -> ExitCode {
     // Regular Cache, Debug, No handwritten 1083 los.
     // Regular Cache, No handwritten 9300 los.
     // Regular Cache, handwritten 28000 los(handwritten not cached since 2 comparisons are likely faster than cache access for a single char). ?? What did I change -> May well have failed to parse hence being "fast"
-        //let args: Vec<String> = env::args().collect().;
+    //let args: Vec<String> = env::args().collect().;
     //dbg!(&args);
-    let grammar_path: String = args()
-        .nth(1)
-        .unwrap_or("There is no grammar filepath!".to_string());
-    let dest_path: String = args()
-        .nth(2)
-        .unwrap_or("There is no destination filepath!".to_string());
+    let grammar_path: String = args().nth(1).expect("There is no grammar filepath!");
+    // let _dest_path: String = args()
+    //     .nth(2)
+    //     .unwrap_or("There is no destination filepath!".to_string());
 
     let grammar_file = fs::canonicalize(&grammar_path);
     let grammar_string = match grammar_file {
@@ -106,7 +101,7 @@ fn main() -> ExitCode {
         }
     };
 
-        //let core_parser: String = embed_core();
+    //let core_parser: String = embed_core();
     let grammar_string = read_grammar(grammar_string);
     //  Temp ignore unused code with _grammmar since it's needed on line 39 later
     let grammar_string = match grammar_string {
@@ -133,23 +128,22 @@ fn main() -> ExitCode {
     let source = Source::new(grammar_string);
 
     for _i in 0..1000 {
-        //let parse_time = Instant::now();
+        let parse_time = Instant::now();
         let (bol, _position) = grammar(&context, &source, position);
-        //println!("Parse time elapsed: {:.2?}", parse_time.elapsed());
+        println!("Parse time elapsed: {:.2?}", parse_time.elapsed());
 
-        assert_eq!(bol, true); //-> To test it actually parsed correctly
+        assert!(bol); //-> To test it actually parsed correctly
         assert_eq!(_position, src_len); //
-        //let cache_time = Instant::now();
+        let cache_time = Instant::now();
         context.clear_cache();
-        //println!("Cache time elapsed: {:.2?}", cache_time.elapsed())
+        println!("Cache time elapsed: {:.2?}", cache_time.elapsed())
         //let elapsed = now.elapsed();
         //println!("Elapsed with file read: {:.2?}", elapsed);
         //now = Instant::now();
-        
 
         //println!("{:?}, {:?}", bol, _position);
 
-    //println!("{:?}", i)
+        //println!("{:?}", i)
     }
     // let (bol, _position) = grammar(&context, &source, position);
     // println!("{:?}, {:?}", bol, _position);
@@ -157,19 +151,18 @@ fn main() -> ExitCode {
     // assert_eq!(bol, true); //-> To test it actually parsed correctly
     // assert_eq!(_position, src_len); //
 
-    
     //34567 lines per second no impl
     //34355 lines per second impl in Kernels
     //98245 lines per second impl everywhere
     //35K with btreemap cache
     //10K with MyCache1 but allocating after timer
     //260K with MyCache1 but allocating before timer // Really drops off with larger cache sizes unsuprisingly. Cannot use LRU though if I want to support Left Recursion.
-    //210K MyCache2 maybe due to less easily simd. - May have just been one off 
-    //243K with new change. Which is odd. 
+    //210K MyCache2 maybe due to less easily simd. - May have just been one off
+    //243K with new change. Which is odd.
     // 310K using map instead of for loop on MyCache2
     let elapsed = total.elapsed();
     println!("Elapsed with file read: {:.2?}", elapsed);
     //println!("Lines a Second: {:?}", (52*100)/elapsed.as_secs());
     println! {"Exiting main"}
-    return ExitCode::from(0);
+    ExitCode::from(0)
 }

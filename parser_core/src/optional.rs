@@ -1,24 +1,29 @@
 use crate::source::Source;
 
-pub fn _optional_kernel(source: &Source, position: u32, func: impl Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
-{
+pub fn _optional_kernel(
+    source: &Source,
+    position: u32,
+    func: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let temp_position = position;
     let (valid, position) = func(source, temp_position);
-    if !valid{
+    if !valid {
         return (true, temp_position);
     }
     (true, position)
 }
 
-pub fn _optional(func: &impl Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
+pub fn _optional(
+    func: &impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _optional_kernel(source, position, func)
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::optional::{_optional, _optional_kernel};
     use crate::source::Source;
     use crate::terminal::_terminal;
-    use crate::optional::{_optional, _optional_kernel};
     fn test_func(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         return x(source, position);

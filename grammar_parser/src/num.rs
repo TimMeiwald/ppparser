@@ -1,65 +1,62 @@
-use parser_core::_terminal;
+use parser_core::Context;
 use parser_core::Source;
 use parser_core::_ordered_choice;
-use parser_core::{Context, Rules};
+use parser_core::_terminal;
 
-pub fn num(context: &Context,source: &Source, position: u32) -> (bool, u32){
-    let t1 = _terminal('0' as u8);
-    let t2 = _terminal('1' as u8);
+pub fn num(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+    let t1 = _terminal(b'0');
+    let t2 = _terminal(b'1');
     let oc1 = _ordered_choice(&t1, &t2);
-    
-    let t1 = _terminal('2' as u8);
-    let t2 = _terminal('3' as u8);
+
+    let t1 = _terminal(b'2');
+    let t2 = _terminal(b'3');
     let oc2 = _ordered_choice(&t1, &t2);
     let hoc = _ordered_choice(&oc1, &oc2);
 
-    let t1 = _terminal('4' as u8);
-    let t2 = _terminal('5' as u8);
+    let t1 = _terminal(b'4');
+    let t2 = _terminal(b'5');
     let oc3 = _ordered_choice(&t1, &t2);
     let hoc = _ordered_choice(&hoc, &oc3);
 
-    let t1 = _terminal('6' as u8);
-    let t2 = _terminal('7' as u8);
+    let t1 = _terminal(b'6');
+    let t2 = _terminal(b'7');
     let oc4 = _ordered_choice(&t1, &t2);
     let hoc = _ordered_choice(&hoc, &oc4);
 
-    let t1 = _terminal('8' as u8);
-    let t2 = _terminal('9' as u8);
+    let t1 = _terminal(b'8');
+    let t2 = _terminal(b'9');
     let oc5 = _ordered_choice(&t1, &t2);
     let hoc = _ordered_choice(&hoc, &oc5);
 
     hoc(source, position)
-
 }
-
 
 #[cfg(test)]
 mod tests {
-use parser_core::Source;
-use super::*;
-#[test]
-fn test_num_false() {
-    let string = "aaa".to_string();
-    let src_len = string.len() as u32;
+    use super::*;
+    use parser_core::Source;
+    #[test]
+    fn test_num_false() {
+        let string = "aaa".to_string();
+        let src_len = string.len() as u32;
 
-    let source = Source::new(string);
-    let position: u32 = 0;
-    let context = Context::new(src_len, 42);
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::new(src_len, 42);
 
-    let result = num(&context, &source, position);
-    assert_eq!(result, (false, 0));
-}
-#[test]
-fn test_num_true() {
-    let string = "511".to_string();
-    let src_len = string.len() as u32;
+        let result = num(&context, &source, position);
+        assert_eq!(result, (false, 0));
+    }
+    #[test]
+    fn test_num_true() {
+        let string = "511".to_string();
+        let src_len = string.len() as u32;
 
-    let source = Source::new(string);
-    let position: u32 = 0;
-    let context = Context::new(src_len, 42);
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::new(src_len, 42);
 
-    let result = num(&context, &source, position);
-    assert_eq!(result, (true, 1));
-}
-
+        let result = num(&context, &source, position);
+        assert_eq!(result, (true, 1));
+    }
 }

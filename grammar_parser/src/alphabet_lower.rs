@@ -1,127 +1,123 @@
-use parser_core::_terminal;
+//use parser_core::_terminal;
 use parser_core::Source;
-use parser_core::_ordered_choice;
-use parser_core::{Context, Rules};
+//use parser_core::_ordered_choice;
+use parser_core::Context;
 //Example of possible substiution optimization.
-pub fn alphabet_lower(context: &Context,source: &Source, position: u32) -> (bool, u32) {
+pub fn alphabet_lower(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
     let char = source.get_char(position);
-    if char > Some(95) && char < Some(123){
-        return (true, position+1)
-    }
-    else{
-        return (false, position)
+    if char > Some(95) && char < Some(123) {
+        (true, position + 1)
+    } else {
+        (false, position)
     }
 }
 
-
 // pub fn alphabet_lower(context: &Context,source: &Source, position: u32) -> (bool, u32){
-//     let t1 = _terminal('a' as u8);
-//     let t2 = _terminal('b' as u8);
+//     let t1 = _terminal(b'a' );
+//     let t2 = _terminal(b'b' );
 //     let oc1 = _ordered_choice(&t1, &t2);
-    
-//     let t1 = _terminal('c' as u8);
-//     let t2 = _terminal('d' as u8);
+
+//     let t1 = _terminal(b'c' );
+//     let t2 = _terminal(b'd' );
 //     let oc2 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&oc1, &oc2);
 
-//     let t1 = _terminal('e' as u8);
-//     let t2 = _terminal('f' as u8);
+//     let t1 = _terminal(b'e' );
+//     let t2 = _terminal(b'f' );
 //     let oc3 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc3);
 
-//     let t1 = _terminal('g' as u8);
-//     let t2 = _terminal('h' as u8);
+//     let t1 = _terminal(b'g' );
+//     let t2 = _terminal(b'h' );
 //     let oc4 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc4);
 
-//     let t1 = _terminal('i' as u8);
-//     let t2 = _terminal('j' as u8);
+//     let t1 = _terminal(b'i' );
+//     let t2 = _terminal(b'j' );
 //     let oc5 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc5);
 
-//     let t1 = _terminal('k' as u8);
-//     let t2 = _terminal('l' as u8);
+//     let t1 = _terminal(b'k' );
+//     let t2 = _terminal(b'l' );
 //     let oc6 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc6);
 
-//     let t1 = _terminal('m' as u8);
-//     let t2 = _terminal('n' as u8);
+//     let t1 = _terminal(b'm' );
+//     let t2 = _terminal(b'n' );
 //     let oc7 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc7);
 
-//     let t1 = _terminal('o' as u8);
-//     let t2 = _terminal('p' as u8);
+//     let t1 = _terminal(b'o' );
+//     let t2 = _terminal(b'p' );
 //     let oc8 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc8);
 
-//     let t1 = _terminal('q' as u8);
-//     let t2 = _terminal('r' as u8);
+//     let t1 = _terminal(b'q' );
+//     let t2 = _terminal(b'r' );
 //     let oc9 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc9);
 
-//     let t1 = _terminal('s' as u8);
-//     let t2 = _terminal('t' as u8);
+//     let t1 = _terminal(b's' );
+//     let t2 = _terminal(b't' );
 //     let oc10 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc10);
 
-//     let t1 = _terminal('u' as u8);
-//     let t2 = _terminal('v' as u8);
+//     let t1 = _terminal(b'u' );
+//     let t2 = _terminal(b'v' );
 //     let oc11 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc11);
 
-//     let t1 = _terminal('w' as u8);
-//     let t2 = _terminal('x' as u8);
+//     let t1 = _terminal(b'w' );
+//     let t2 = _terminal(b'x' );
 //     let oc12 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc12);
 
-//     let t1 = _terminal('y' as u8);
-//     let t2 = _terminal('z' as u8);
+//     let t1 = _terminal(b'y' );
+//     let t2 = _terminal(b'z' );
 //     let oc13 = _ordered_choice(&t1, &t2);
 //     let hoc = _ordered_choice(&hoc, &oc13);
-    
+
 //     hoc(source, position)
 
 // }
 
-
-
 #[cfg(test)]
 mod tests {
-use parser_core::Source;
-use super::*;
-#[test]
-fn test_alphabet_lower_false() {
-    let string = "AAA".to_string();
-    let src_len = string.len();
+    use parser_core::Source;
 
-    let source = Source::new(string);
-    let position: u32 = 0;
-    let context = Context::new(0, 42);
+    use super::*;
+    #[test]
+    fn test_alphabet_lower_false() {
+        let string = "AAA".to_string();
 
-    let result = alphabet_lower(&context, &source, position);
-    assert_eq!(result, (false, 0));
-}
-#[test]
-fn test_alphabet_lower_true() {
-    let string = "aaa".to_string();
-    let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::new(0, 42);
 
-    let source = Source::new(string);
-    let position: u32 = 0;
-    let context = Context::new(src_len, 42);
+        let result = alphabet_lower(&context, &source, position);
+        assert_eq!(result, (false, 0));
+    }
+    #[test]
+    fn test_alphabet_lower_true() {
+        let string = "aaa".to_string();
+        let src_len = string.len() as u32;
 
-    let result = alphabet_lower(&context, &source, position);
-    assert_eq!(result, (true, 1));
-}
-#[test]
-fn test_alphabet_lower_true2() {
-    let string = "zzz".to_string();
-    let src_len = string.len() as u32;
-    let source = Source::new(string);
-    let position: u32 = 0;
-    let context = Context::new(src_len, 42);
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::new(src_len, 42);
 
-    let result = alphabet_lower(&context, &source, position);
-    assert_eq!(result, (true, 1));
-}
+        let result = alphabet_lower(&context, &source, position);
+        assert_eq!(result, (true, 1));
+    }
+    #[test]
+    fn test_alphabet_lower_true2() {
+        let string = "zzz".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::new(src_len, 42);
+
+        let result = alphabet_lower(&context, &source, position);
+        assert_eq!(result, (true, 1));
+    }
 }

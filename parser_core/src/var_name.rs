@@ -1,7 +1,7 @@
-use crate::Context;
-use cache::Cache;
 use crate::source::Source;
+use crate::Context;
 use crate::Rules;
+use cache::Cache;
 pub fn _var_name_kernel(
     rule: Rules,
     context: &Context,
@@ -14,14 +14,14 @@ pub fn _var_name_kernel(
         let res = &mut *(context.cache).borrow_mut();
         cached_val = res.check(rule as u32, position);
     };
-    match cached_val{
+    match cached_val {
         Some(cached_val) => {
             //println!("Cached");
             // if cached_val.0 == true{
             //     println!("{:?} {:?} {:?}", rule, position, cached_val.1);
             // }
-            return cached_val;
-        },
+            cached_val
+        }
         None => {
             //println!("Not cached");
             let result = func(context, source, position);
@@ -32,7 +32,7 @@ pub fn _var_name_kernel(
             // if result.0 == true{
             //     println!("{:?} {:?} {:?}", rule, position, result.1);
             // }
-            return result
+            result
         }
     }
 }
@@ -54,17 +54,19 @@ pub fn _var_name_kernel(
 
 // }
 
-
-pub fn _var_name(rule: Rules, context: &Context, func: fn(&Context, &Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
+pub fn _var_name(
+    rule: Rules,
+    context: &Context,
+    func: fn(&Context, &Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _var_name_kernel(rule, context, source, position, func)
 }
 
 #[cfg(test)]
 mod tests {
 
-
-    use crate::context::Context;
     use super::_var_name;
+    use crate::context::Context;
     use crate::source::Source;
     use crate::terminal::_terminal;
     use crate::Rules;
@@ -97,5 +99,4 @@ mod tests {
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
     }
-    
 }

@@ -1,7 +1,10 @@
 use crate::source::Source;
 
-pub fn _zero_or_more_kernel(source: &Source, position: u32, func: impl Fn(&Source, u32) -> (bool, u32)) -> (bool, u32)
-{
+pub fn _zero_or_more_kernel(
+    source: &Source,
+    position: u32,
+    func: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let mut temp_position = position;
     loop {
         let (valid, position) = func(source, temp_position);
@@ -14,7 +17,9 @@ pub fn _zero_or_more_kernel(source: &Source, position: u32, func: impl Fn(&Sourc
     (true, temp_position)
 }
 
-pub fn _zero_or_more(func: &impl Fn(&Source, u32) -> (bool, u32)) -> impl Fn(&Source, u32) -> (bool, u32) + '_{
+pub fn _zero_or_more(
+    func: &impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _zero_or_more_kernel(source, position, func)
 }
 
@@ -45,7 +50,7 @@ mod tests {
     // #[test]
     // Will cause an infinite loop, short of littering Options throughout the code base at the cost of performance
     // there isn't much I can do about it. It can be prevented by simply prohibiting doing directly nested zero or mores/one or mores in the grammar
-    // which isn't allowed in peg anyway. 
+    // which isn't allowed in peg anyway.
     // fn test_zero_or_more_nested() {
     //     let s = "aaa".to_string();
     //     let s = Source::new(s);

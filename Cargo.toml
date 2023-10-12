@@ -1,5 +1,5 @@
 [workspace]
-
+resolver = "2"
 members = [
     "parser_core",
     "grammar_parser",
@@ -14,5 +14,3 @@ lto = "fat"
 codegen-units = 1
 panic = "abort"
 
-[profile.dev]
-profiler = true
