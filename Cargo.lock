@@ -3,12 +3,27 @@
 version = 3
 
 [[package]]
-name = "generator"
-version = "0.1.0"
+name = "cache"
+version = "0.5.0"
+
+[[package]]
+name = "grammar_parser"
+version = "0.5.0"
 dependencies = [
- "parser",
+ "cache",
+ "parser_core",
 ]
 
 [[package]]
-name = "parser"
-version = "0.4.0"
+name = "grammar_runner"
+version = "0.5.0"
+dependencies = [
+ "grammar_parser",
+]
+
+[[package]]
+name = "parser_core"
+version = "0.5.0"
+dependencies = [
+ "cache",
+]

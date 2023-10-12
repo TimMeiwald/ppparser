@@ -1,6 +1,6 @@
 {
-    "cmake.sourceDirectory": "${workspaceFolder}/Work/embedded/nucleo_esps_demo/stm32g_espsi_demo_project/ESPLATFORM_NETWORK_STACK",
     "rust-analyzer.linkedProjects": [
-        ".\\Cargo.toml"
+        ".\\parser_core\\Cargo.toml",
+        ".\\parser_core\\Cargo.toml"
     ]
 }
