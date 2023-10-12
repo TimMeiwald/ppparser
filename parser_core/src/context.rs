@@ -3,12 +3,12 @@ use std::{cell::RefCell, rc::Rc};
 use cache::{Cache, BTreeCache, MyCache1, MyCache2, MyCache3};
 
 pub struct Context{
-    pub cache: Rc<RefCell<MyCache3>>
+    pub cache: RefCell<MyCache3>
 }
 impl Context{
 
     pub fn new(size_of_source: u32, number_of_structs:u32) -> Self {
-        let cache: Rc<RefCell<MyCache3>> = Rc::new(RefCell::new(MyCache3::new(size_of_source,number_of_structs)));
+        let cache: RefCell<MyCache3> = RefCell::new(MyCache3::new(size_of_source,number_of_structs));
         //let cache: Rc<RefCell<MyCache1>> = Rc::new(RefCell::new(BTreeCache::new(0, 0)));
 
         Context{cache}

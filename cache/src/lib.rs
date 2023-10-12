@@ -195,7 +195,7 @@ pub struct MyCache3 {
 }
 
 impl Cache for MyCache3 {
-    
+    // Try as flat packed data structure. Since using zero to fill didn't seem to make much difference. 
     fn new(size_of_source: u32, number_of_structs: u32) -> MyCache3 {
         let mut c = MyCache3 {
             entries: Vec::with_capacity(size_of_source as usize),
