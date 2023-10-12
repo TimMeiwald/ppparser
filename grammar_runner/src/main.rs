@@ -132,7 +132,7 @@ fn main() -> ExitCode {
 
     let source = Source::new(grammar_string);
 
-    for _i in 1..1000 {
+    for _i in 0..1000 {
         //let parse_time = Instant::now();
         let (bol, _position) = grammar(&context, &source, position);
         //println!("Parse time elapsed: {:.2?}", parse_time.elapsed());
