@@ -63,8 +63,7 @@ pub fn _var_name(rule: Rules, context: &Context, func: fn(&Context, &Source, u32
 mod tests {
 
 
-    use cache::{Cache, BTreeCache};
-    use crate::context::{Context, self};
+    use crate::context::Context;
     use super::_var_name;
     use crate::source::Source;
     use crate::terminal::_terminal;

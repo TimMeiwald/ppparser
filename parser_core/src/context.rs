@@ -1,16 +1,14 @@
 use std::{cell::RefCell, rc::Rc};
 
-use cache::{Cache, BTreeCache, MyCache1, MyCache2, MyCache3};
+use cache::{BTreeCache, MyCache1, MyCache2, MyCache3, Cache, MyCache4};
 
 pub struct Context{
-    pub cache: RefCell<MyCache3>
+    pub cache: RefCell<MyCache4>
 }
 impl Context{
 
     pub fn new(size_of_source: u32, number_of_structs:u32) -> Self {
-        let cache: RefCell<MyCache3> = RefCell::new(MyCache3::new(size_of_source,number_of_structs));
-        //let cache: Rc<RefCell<MyCache1>> = Rc::new(RefCell::new(BTreeCache::new(0, 0)));
-
+        let cache: RefCell<MyCache4> = RefCell::new(MyCache4::new(size_of_source,number_of_structs));
         Context{cache}
     }
     pub fn clear_cache(&self){
