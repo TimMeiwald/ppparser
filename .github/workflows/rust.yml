@@ -72,3 +72,16 @@ jobs:
       env:
         RUSTFLAGS: "-Dwarnings"
       run: cargo clippy
+  Release_Test:
+        needs: [Test, Format, Lint]
+        runs-on: ubuntu-latest
+        steps: 
+          - name: Checkout code
+            uses: actions/checkout@v3
+          - name: Rust Cache
+            uses: Swatinem/rust-cache@v2.6.2
+            with:
+              shared-key: ${{ env.CI_NAME }}
+              save-if: "false"
+          - name: Test
+            run: cargo test --release
