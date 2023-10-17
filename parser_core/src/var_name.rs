@@ -16,43 +16,21 @@ pub fn _var_name_kernel(
     };
     match cached_val {
         Some(cached_val) => {
-            //println!("Cached");
-            // if cached_val.0 == true{
-            //     println!("{:?} {:?} {:?}", rule, position, cached_val.1);
-            // }
+            println!("Cached");
             cached_val
         }
         None => {
-            //println!("Not cached");
+            println!("Not cached");
             let result = func(context, source, position);
             {
                 let cache = &mut *(context.cache).borrow_mut();
                 cache.push(rule as u32, result.0, position, result.1);
             }
-            // if result.0 == true{
-            //     println!("{:?} {:?} {:?}", rule, position, result.1);
-            // }
             result
         }
     }
 }
-// }
-// pub fn _var_name(func: fn(&Source, u32) -> (bool, u32), cache: &mut impl Cache) -> impl FnMut(&Source, u32) -> (bool, u32) + '_ {
-//     move |source: &Source, position: u32| _var_name_kernel(source, position, func, cache)
-// }
-// pub fn _var_name_kernel(
-//     context: &Context,
-//     source: &Source,
-//     position: u32,
-//     func: fn(&Context, &Source, u32) -> (bool, u32),
-// ) -> (bool, u32) {
-//     let result = func(context, source, position);
-//     let cache = &mut *(context.cache).borrow_mut();
-//     cache.push(0, true, 0, 0);
-//     println!("Result: {:?}, {:?}", result.0, result.1);
-//     result
 
-// }
 
 pub fn _var_name(
     rule: Rules,

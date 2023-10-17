@@ -24,10 +24,33 @@ pub fn expr(context: &Context, source: &Source, position: u32) -> (bool, u32){
 #[cfg(test)]
 mod tests {
     use super::*;
-    use parser_core::Source;
+    use parser_core::{Source, _zero_or_more};
+        
+    #[test]
+    fn test_num() {
+        // To test it doesnt panic on a valid parse
+        let string = "111".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::new(src_len, 42);
+        let num_closure = _var_name(Rules::AlphabetLower, &context, num);
+        let z1 = _zero_or_more(&num_closure);
+        z1(&source, position);
+        z1(&source, position);
+        let result = z1(&source, position); // Multiple exec to check cache not always panicing and only panicng on LR
+        assert_eq!(result, (true, 3));
+    }
+
+    // Zero or more this so it increments position
+    // Then check position and last rule to determine if there's direct recursion happening since
+    // for zero or more etc it should increment if successful so it can fail on a recursion but not
+    // on zero or more etc. 
+
 
     #[test]
-    fn test_direct_left_recursion1() {
+    //#[should_panic]
+    fn test_direct_left_recursion1_deny() {
         // Will overflow stack if using Cache that does not support LR
         // Won't if using Cache that does support LR. 
         let string = "1-2".to_string();
@@ -41,7 +64,9 @@ mod tests {
         assert_eq!(result, (true, 3));
     }
     #[test]
-    fn test_direct_left_recursion2() {
+    //#[should_panic]
+    fn test_direct_left_recursion2_deny() {
+        // Will give this result on LR Deny cache
         // Will overflow stack if using Cache that does not support LR
         // Won't if using Cache that does support LR. 
         let string = "1-2-3-4-5".to_string();
@@ -52,7 +77,7 @@ mod tests {
         let context = Context::new(src_len, 42);
 
         let result = expr(&context, &source, position);
-        assert_eq!(result, (true, 9));
+        assert_eq!(result, (true, 3));
     }
     
 }
