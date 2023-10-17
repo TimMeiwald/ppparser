@@ -12,7 +12,7 @@ pub fn _var_name_kernel(
     let cached_val: Option<(bool, u32)>;
     {
         let res = &mut *(context.cache).borrow_mut();
-        cached_val = res.check(rule as u32, position);
+        cached_val = res.check(rule as u32, position, func);
     };
     match cached_val {
         Some(cached_val) => {
