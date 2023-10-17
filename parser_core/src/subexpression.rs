@@ -21,9 +21,9 @@ pub fn _subexpression(
 
 #[cfg(test)]
 mod tests {
-    use crate::Source;
     use crate::subexpression::{_subexpression, _subexpression_kernel};
     use crate::terminal::_terminal;
+    use crate::Source;
     fn test_func(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         return x(source, position);

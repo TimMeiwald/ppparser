@@ -30,8 +30,8 @@ pub fn _one_or_more(
 #[cfg(test)]
 mod tests {
     use crate::one_or_more::{_one_or_more, _one_or_more_kernel};
-    use crate::Source;
     use crate::terminal::_terminal;
+    use crate::Source;
     fn test_func(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         return x(source, position);

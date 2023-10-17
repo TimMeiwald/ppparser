@@ -32,8 +32,8 @@ pub fn _ordered_choice<'a>(
 #[cfg(test)]
 mod tests {
     use crate::ordered_choice::{_ordered_choice, _ordered_choice_kernel};
-    use crate::Source;
     use crate::terminal::_terminal;
+    use crate::Source;
     fn test_func1(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         return x(source, position);

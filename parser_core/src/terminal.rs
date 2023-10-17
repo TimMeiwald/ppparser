@@ -17,8 +17,8 @@ pub fn _terminal(chr: u8) -> impl Fn(&Source, u32) -> (bool, u32) {
 
 #[cfg(test)]
 mod tests {
-    use crate::Source;
     use crate::terminal::_terminal;
+    use crate::Source;
 
     #[test]
     fn test_terminal_closure() {

@@ -1,6 +1,6 @@
-use crate::Source;
 use crate::Context;
 use crate::Rules;
+use crate::Source;
 use cache::Cache;
 pub fn _var_name_kernel(
     rule: Rules,
@@ -12,7 +12,7 @@ pub fn _var_name_kernel(
     let cached_val: (bool, u32);
     {
         let res = &mut *(context.cache).borrow_mut();
-        cached_val = res.check(rule as u32, position, func);
+        cached_val = res.check(rule as u32, position, context, source, func);
     };
     cached_val
     // match cached_val {
@@ -44,10 +44,10 @@ pub fn _var_name(
 mod tests {
 
     use super::_var_name;
-    use crate::Context;
-    use crate::Source;
     use crate::terminal::_terminal;
+    use crate::Context;
     use crate::Rules;
+    use crate::Source;
     fn test_func(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         x(source, position)
