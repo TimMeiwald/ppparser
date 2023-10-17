@@ -38,26 +38,26 @@ impl Cache for DenyLeftRecursionCache {
         let index = (start_position * self.number_of_structs + rule) as usize;
         let is_true: bool = self.is_true[index];
         let end_position: u32 = self.end_position[index];
-        println!("Rule: {:?}, Start Position: {:?}, is_true: {:?}, End Position: {:?}", rule, start_position, is_true, end_position);
+        println!(
+            "Rule: {:?}, Start Position: {:?}, is_true: {:?}, End Position: {:?}",
+            rule, start_position, is_true, end_position
+        );
 
-        if end_position != 0 { 
-            if self.fail[index]{
+        if end_position != 0 {
+            if self.fail[index] {
                 Some((is_true, end_position))
-            }
-            else{
+            } else {
                 //self.fail[index] = true;
                 None
             }
-            }
-        
-        else { // Hasn't been run yet path
+        } else {
+            // Hasn't been run yet path
             // Tells callee to simply run the actual code instead of using cached value since one does not exist.
             self.fail[index] = true;
             self.is_true[index] = false;
             self.end_position[index] = u32::MAX;
             None
         }
-
     }
     fn clear(&mut self) {}
     fn reinitialize(&mut self) {

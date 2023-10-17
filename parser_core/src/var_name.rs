@@ -31,7 +31,6 @@ pub fn _var_name_kernel(
     }
 }
 
-
 pub fn _var_name(
     rule: Rules,
     context: &Context,

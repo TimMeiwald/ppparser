@@ -134,7 +134,7 @@ fn main() -> ExitCode {
 
         assert!(bol); //-> To test it actually parsed correctly
         assert_eq!(_position, src_len); //
-        //let cache_time = Instant::now();
+                                        //let cache_time = Instant::now();
         context.clear_cache();
         //println!("Cache time elapsed: {:.2?}", cache_time.elapsed())
         //let elapsed = now.elapsed();
