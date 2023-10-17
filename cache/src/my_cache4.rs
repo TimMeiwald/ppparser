@@ -34,12 +34,10 @@ impl Cache for MyCache4 {
         self.end_position[index] = end_position;
     }
     fn check(
-        &mut self,
+        self,
         rule: u32,
         start_position: u32,
-        context: &Context,
-        source: &Source,
-        func: fn(&Context, &Source, u32) -> (bool, u32),
+        func: &dyn Fn() -> (bool, u32),
     ) -> (bool, u32) {
         let index = (start_position * self.number_of_structs + rule) as usize;
         //println!("Index: {:?}, Start_Position: {:?}, Rule: {:?}", index, start_position, rule);
@@ -51,7 +49,7 @@ impl Cache for MyCache4 {
             (is_true, end_position)
         } else {
             // Tells callee to simply run the actual code instead of using cached value since one does not exist.
-            func(context, source, start_position)
+            func()
         }
     }
     fn clear(&mut self) {}
