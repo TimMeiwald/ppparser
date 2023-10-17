@@ -1,5 +1,5 @@
 use crate::Cache;
-
+use crate::{Context, Source};
 // This cache will completely flatten the cache to see if that improves performance.
 pub struct MyCache4 {
     is_true: Vec<bool>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
@@ -33,7 +33,7 @@ impl Cache for MyCache4 {
         self.is_true[index] = is_true;
         self.end_position[index] = end_position;
     }
-    fn check(&mut self, rule: u32, start_position: u32) -> Option<(bool, u32)> {
+    fn check(&mut self, rule: u32, start_position: u32, func: fn(&Context, &Source, u32) -> (bool, u32)) -> (bool, u32) {
         let index = (start_position * self.number_of_structs + rule) as usize;
         //println!("Index: {:?}, Start_Position: {:?}, Rule: {:?}", index, start_position, rule);
         let is_true: bool = self.is_true[index];
