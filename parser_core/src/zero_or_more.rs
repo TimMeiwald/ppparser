@@ -1,4 +1,4 @@
-use crate::source::Source;
+use crate::Source;
 
 pub fn _zero_or_more_kernel(
     source: &Source,
@@ -25,7 +25,7 @@ pub fn _zero_or_more(
 
 #[cfg(test)]
 mod tests {
-    use crate::source::Source;
+    use crate::Source;
     use crate::terminal::_terminal;
     use crate::zero_or_more::{_zero_or_more, _zero_or_more_kernel};
     fn test_func(source: &Source, position: u32) -> (bool, u32) {

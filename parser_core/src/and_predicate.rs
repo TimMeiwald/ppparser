@@ -1,4 +1,4 @@
-use crate::source::Source;
+use crate::Source;
 
 pub fn _and_predicate_kernel(
     source: &Source,
@@ -22,7 +22,7 @@ pub fn _and_predicate(
 #[cfg(test)]
 mod tests {
     use crate::and_predicate::{_and_predicate, _and_predicate_kernel};
-    use crate::source::Source;
+    use crate::Source;
     use crate::terminal::_terminal;
     fn test_func(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);

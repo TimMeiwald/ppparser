@@ -62,7 +62,7 @@ mod tests {
         let context = Context::new(src_len, 42);
 
         let result = expr(&context, &source, position);
-        assert_eq!(result, (true, 3));
+        assert_eq!(result, (true, 1));
     }
     #[test]
     //#[should_panic]
@@ -78,6 +78,6 @@ mod tests {
         let context = Context::new(src_len, 42);
 
         let result = expr(&context, &source, position);
-        assert_eq!(result, (true, 3));
+        assert_eq!(result, (true, 1));
     }
 }

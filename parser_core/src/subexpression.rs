@@ -1,4 +1,4 @@
-use crate::source::Source;
+use crate::Source;
 
 pub fn _subexpression_kernel(
     source: &Source,
@@ -21,7 +21,7 @@ pub fn _subexpression(
 
 #[cfg(test)]
 mod tests {
-    use crate::source::Source;
+    use crate::Source;
     use crate::subexpression::{_subexpression, _subexpression_kernel};
     use crate::terminal::_terminal;
     fn test_func(source: &Source, position: u32) -> (bool, u32) {

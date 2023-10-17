@@ -1,4 +1,4 @@
-use crate::source::Source;
+use crate::Source;
 use crate::Context;
 use crate::Rules;
 use cache::Cache;
@@ -43,8 +43,8 @@ pub fn _var_name(
 mod tests {
 
     use super::_var_name;
-    use crate::context::Context;
-    use crate::source::Source;
+    use crate::Context;
+    use crate::Source;
     use crate::terminal::_terminal;
     use crate::Rules;
     fn test_func(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
