@@ -46,13 +46,12 @@ impl Cache for MyCache4 {
         let is_true: bool = self.is_true[index];
         let end_position: u32 = self.end_position[index];
 
-        func(context, source, start_position);
         if end_position != 0 {
             // Result is returned to callee to unwrap
-            Some((is_true, end_position))
+            (is_true, end_position)
         } else {
             // Tells callee to simply run the actual code instead of using cached value since one does not exist.
-            None
+            func(context, source, start_position)
         }
     }
     fn clear(&mut self) {}
