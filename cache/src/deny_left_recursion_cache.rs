@@ -4,6 +4,7 @@ use crate::Cache;
 pub struct DenyLeftRecursionCache {
     is_true: Vec<bool>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
     end_position: Vec<u32>,
+    fail: Vec<bool>,
     number_of_structs: u32,
 }
 
@@ -15,15 +16,21 @@ impl Cache for DenyLeftRecursionCache {
         let mut c = DenyLeftRecursionCache {
             is_true: Vec::with_capacity(capacity),
             end_position: Vec::with_capacity(capacity),
+            fail: Vec::with_capacity(capacity),
             number_of_structs,
         };
         for _i in 0..capacity {
             // Ensures the Vector in Cache is as large as the input source
             c.is_true.push(false);
             c.end_position.push(0);
+            c.fail.push(false);
         }
         c
         // for every arg cache in c set size to <number_of_structs>
+    }
+    fn set_fail(&mut self, rule: u32, start_position: u32) {
+        let index = (start_position * self.number_of_structs + rule) as usize;
+        self.fail[index] = true;
     }
 
     fn push(&mut self, rule: u32, is_true: bool, start_position: u32, end_position: u32) {
@@ -35,16 +42,19 @@ impl Cache for DenyLeftRecursionCache {
         let index = (start_position * self.number_of_structs + rule) as usize;
         let is_true: bool = self.is_true[index];
         let end_position: u32 = self.end_position[index];
-        if end_position != 0 {
-            Some((is_true, end_position))
+        println!("Rule: {:?}, Start Position: {:?}, is_true: {:?}, End Position: {:?}", rule, start_position, is_true, end_position);
 
-        } else {
-            // Hasn't been run yet path
+        if end_position != 0 {
+            // Result is returned to callee to unwrap
+            Some((is_true, end_position))
+        } else if self.fail[index]{
+            Some((false, end_position))
+        }
+        else {
             // Tells callee to simply run the actual code instead of using cached value since one does not exist.
-            self.is_true[index] = false;
-            self.end_position[index] = u32::MAX;
             None
         }
+
     }
     fn clear(&mut self) {}
     fn reinitialize(&mut self) {

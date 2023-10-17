@@ -9,29 +9,66 @@ pub fn _var_name_kernel(
     position: u32,
     func: fn(&Context, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
-    
-    let res = {
-        (context.cache).get_mut()
+    let cached_val: Option<(bool, u32)>;
+    {
+        let res = &mut *(context.cache).borrow_mut();
+        // Check doesn't run the function. It's run here in _var_name_kernel.
+        cached_val = res.check(rule as u32, position);
     };
-    let closure = move || func(context, source, position);
-    let (is_true, end_position) = res.check(rule as u32, position, &closure);
-    return (is_true, end_position)
-    // match cached_val {
-    //     Some(cached_val) => {
-    //         println!("Cached");
-    //         cached_val
-    //     }
-    //     None => {
-    //         println!("Not cached");
-    //         let result = func(context, source, position);
-    //         {
-    //             let cache = &mut *(context.cache).borrow_mut();
-    //             cache.push(rule as u32, result.0, position, result.1);
-    //         }
-    //         result
-    //     }
-    // }
+    match cached_val {
+        Some(cached_val) => {
+            println!("Cached");
+            cached_val
+        }
+        None => {
+            println!("Not cached");
+            {
+                let cache = &mut *(context.cache).borrow_mut();
+                cache.set_fail(rule as u32, position);
+            }
+            let result = func(context, source, position);
+            {
+                let cache = &mut *(context.cache).borrow_mut();
+                cache.push(rule as u32, result.0, position, result.1);
+                
+            };
+            result
+
+        }
+    }
 }
+
+
+// For use without LR
+// pub fn _var_name_kernel(
+//     rule: Rules,
+//     context: &Context,
+//     source: &Source,
+//     position: u32,
+//     func: fn(&Context, &Source, u32) -> (bool, u32),
+// ) -> (bool, u32) {
+//     let cached_val: Option<(bool, u32)>;
+//     {
+//         let res = &mut *(context.cache).borrow_mut();
+//         cached_val = res.check(rule as u32, position);
+//     };
+//     match cached_val {
+//         Some(cached_val) => {
+//             println!("Cached");
+//             cached_val
+//         }
+//         None => {
+//             println!("Not cached");
+//             let result = func(context, source, position);
+//             {
+//                 let cache = &mut *(context.cache).borrow_mut();
+//                 cache.push(rule as u32, result.0, position, result.1);
+//             }
+//             result
+//         }
+//     }
+// }
+
 
 pub fn _var_name(
     rule: Rules,

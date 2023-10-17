@@ -10,4 +10,5 @@ pub trait Cache {
     ) -> (bool, u32);
     fn clear(&mut self);
     fn reinitialize(&mut self); //Reset state without deallocating memory for reuse.
-}
+    fn set_fail(&mut self, rule: u32, start_position: u32);
+}   
