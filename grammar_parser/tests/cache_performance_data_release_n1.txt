@@ -1,0 +1,6 @@
+RELEASE
+n = 1
+"cache::my_cache1::MyCache1" 948µs
+"cache::my_cache2::MyCache2" 1.331ms
+"cache::my_cache3::MyCache3" 1.3926ms
+"cache::my_cache4::MyCache4" 371.4µs
