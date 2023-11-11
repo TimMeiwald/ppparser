@@ -1,9 +1,9 @@
 mod utils;
 use grammar_parser::{grammar, Context, Source};
+use cache::MyCache4;
 use std::env::args;
 use std::fs;
 use std::process::ExitCode;
-
 use utils::*;
 // use parser::output_stack::Stack;
 // use parser::cache::Cache;
@@ -121,7 +121,7 @@ fn main() -> ExitCode {
     let total = Instant::now();
 
     //let mut now = Instant::now();
-    let context = Context::new(src_len, 42);
+    let context = Context::<MyCache4>::new(src_len, 42);
 
     let position = 0;
 

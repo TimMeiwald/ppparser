@@ -24,6 +24,7 @@ pub fn ascii<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::MyCache4;
     use parser_core::Source;
     #[test]
     fn test_ascii_true() {
@@ -31,7 +32,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(0, 42);
+        let context = Context::<MyCache4>::new(0, 42);
 
         let result = ascii(&context, &source, position);
         assert_eq!(result, (true, 1));
@@ -42,7 +43,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(0, 42);
+        let context = Context::<MyCache4>::new(0, 42);
 
         let result = ascii(&context, &source, position);
         assert_eq!(result, (true, 1));

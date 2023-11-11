@@ -32,6 +32,8 @@ pub fn var_name<T: Cache>(context: &Context<T>, source: &Source, position: u32) 
 mod tests {
     use super::*;
     use parser_core::Source;
+    use cache::MyCache4;
+
     #[test]
     fn test_var_name_false() {
         let string = "_this_is_not_a_valid_var_name".to_string();
@@ -39,7 +41,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = var_name(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -51,7 +53,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = var_name(&context, &source, position);
         assert_eq!(result, (true, 26));
@@ -61,7 +63,7 @@ mod tests {
         let string = "<Alphabet_Upper>".to_string();
 
         let src_len = string.len() as u32;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let source = Source::new(string);
         let position: u32 = 0;

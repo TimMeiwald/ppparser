@@ -6,3 +6,4 @@ default-run = "grammar_runner"
 
 [dependencies]
 grammar_parser = { path = "../grammar_parser" }
+cache = { path = "../cache" }

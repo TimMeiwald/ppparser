@@ -24,7 +24,7 @@ mod terminal;
 mod var_name;
 mod whitespace;
 mod zero_or_more;
-
+pub use cache::Cache;
 use alphabet_lower::alphabet_lower;
 use alphabet_upper::alphabet_upper;
 use and_predicate::and_predicate;

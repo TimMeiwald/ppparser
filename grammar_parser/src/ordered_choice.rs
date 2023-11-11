@@ -33,6 +33,8 @@ pub fn ordered_choice<T: Cache>(context: &Context<T>, source: &Source, position:
 mod tests {
     use super::*;
     use parser_core::Source;
+    use cache::MyCache4;
+
 
     #[test]
     fn test_ordered_choice_false() {
@@ -42,7 +44,7 @@ mod tests {
         let source = Source::new(string);
 
         let position: u32 = 0;
-        let context = Context::new(str_len, 42);
+        let context = Context::<MyCache4>::new(str_len, 42);
 
         let result = ordered_choice(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -53,7 +55,7 @@ mod tests {
         let str_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(str_len, 42);
+        let context = Context::<MyCache4>::new(str_len, 42);
 
         let result = ordered_choice(&context, &source, position);
         assert_eq!(result, (true, 7));
@@ -65,7 +67,7 @@ mod tests {
         let str_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(str_len, 42);
+        let context = Context::<MyCache4>::new(str_len, 42);
         let result = ordered_choice(&context, &source, position);
         assert_eq!(result, (true, 11));
     }
@@ -76,7 +78,7 @@ mod tests {
         let str_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(str_len, 42);
+        let context = Context::<MyCache4>::new(str_len, 42);
 
         let result = ordered_choice(&context, &source, position);
         assert_eq!(result, (true, str_len));
@@ -87,7 +89,7 @@ mod tests {
         let str_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(str_len, 42);
+        let context = Context::<MyCache4>::new(str_len, 42);
 
         let result = ordered_choice(&context, &source, position);
         assert_eq!(result, (true, str_len));
@@ -99,7 +101,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = ordered_choice(&context, &source, position);
         assert_eq!(result, (true, src_len));

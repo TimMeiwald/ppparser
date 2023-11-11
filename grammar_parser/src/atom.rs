@@ -32,6 +32,7 @@ pub fn atom<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (
 mod tests {
     use super::*;
     use parser_core::Source;
+    use cache::MyCache4;
 
     #[test]
     fn test_atom_true() {
@@ -40,7 +41,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = atom(&context, &source, position);
         assert_eq!(result, (true, 3));

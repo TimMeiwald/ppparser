@@ -1,6 +1,7 @@
+use cache::Cache;
 use parser_core::{Context, Source, _sequence, _terminal, _var_name, Rules, _ordered_choice, _subexpression};
 
-pub fn num(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn num<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let char = source.get_char(position); // Optimized version is fine for testing. Known to work correctly with other caches on non-left recursion.
     if char > Some(47) && char < Some(58) {
         (true, position + 1)
@@ -9,7 +10,7 @@ pub fn num(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
     }
 }
 
-pub fn expr(context: &Context, source: &Source, position: u32) -> (bool, u32){
+pub fn expr<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32){
     // Using AlphabetLower for expr and Num for Num, don't want to pollute Rules nor use a trait.
     let t1 = _terminal(b'-');
     let expr = _var_name(Rules::AlphabetLower, context, expr);
@@ -24,6 +25,7 @@ pub fn expr(context: &Context, source: &Source, position: u32) -> (bool, u32){
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::DenyLeftRecursionCache;
     use parser_core::{Source, _zero_or_more};
         
     #[test]
@@ -33,7 +35,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
         let num_closure = _var_name(Rules::AlphabetLower, &context, num);
         let z1 = _zero_or_more(&num_closure);
         z1(&source, position);
@@ -58,7 +60,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
 
         let result = expr(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -74,7 +76,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
 
         let result = expr(&context, &source, position);
         assert_eq!(result, (true, 3));

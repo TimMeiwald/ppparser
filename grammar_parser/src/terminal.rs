@@ -33,6 +33,8 @@ pub fn terminal<T: Cache>(context: &Context<T>, source: &Source, position: u32) 
 mod tests {
     use super::*;
     use parser_core::Source;
+    use cache::MyCache4;
+
     #[test]
     fn test_terminal_false() {
         let string = "\"a".to_string();
@@ -40,7 +42,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -52,7 +54,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -64,7 +66,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -76,7 +78,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -88,7 +90,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -101,7 +103,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));

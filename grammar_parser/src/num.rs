@@ -45,6 +45,8 @@ pub fn num<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (
 mod tests {
     use super::*;
     use parser_core::Source;
+    use cache::MyCache4;
+
     #[test]
     fn test_num_false() {
         let string = "aaa".to_string();
@@ -52,7 +54,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = num(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -64,7 +66,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = num(&context, &source, position);
         assert_eq!(result, (true, 1));
