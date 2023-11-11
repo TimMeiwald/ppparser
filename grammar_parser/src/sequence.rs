@@ -1,9 +1,10 @@
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _sequence, _subexpression, _var_name, _zero_or_more};
 
 use crate::{atom, symbols::comma, whitespace};
 
-pub fn sequence(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn sequence<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::Atom, context, atom);
     let v2 = _var_name(Rules::Whitespace, context, whitespace);
     let v3 = _var_name(Rules::Comma, context, comma);

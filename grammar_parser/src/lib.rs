@@ -24,12 +24,12 @@ mod terminal;
 mod var_name;
 mod whitespace;
 mod zero_or_more;
-
 use alphabet_lower::alphabet_lower;
 use alphabet_upper::alphabet_upper;
 use and_predicate::and_predicate;
 use ascii::ascii;
 use atom::atom;
+pub use cache::Cache;
 use comment::comment;
 pub use grammar::grammar;
 use lhs::lhs;

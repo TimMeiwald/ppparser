@@ -11,7 +11,6 @@ mod subexpression;
 mod terminal;
 mod var_name;
 mod zero_or_more;
-
 pub use and_predicate::_and_predicate;
 pub use context::Context;
 pub use not_predicate::_not_predicate;

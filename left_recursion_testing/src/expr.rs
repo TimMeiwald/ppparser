@@ -1,6 +1,9 @@
-use parser_core::{Context, Source, _sequence, _terminal, _var_name, Rules, _ordered_choice, _subexpression};
-
-pub fn num(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+use cache::Cache;
+use parser_core::{
+    Context, Rules, Source, _ordered_choice, _sequence, _subexpression, _terminal, _var_name,
+};
+#[allow(dead_code)]
+pub fn num<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let char = source.get_char(position); // Optimized version is fine for testing. Known to work correctly with other caches on non-left recursion.
     if char > Some(47) && char < Some(58) {
         (true, position + 1)
@@ -8,8 +11,8 @@ pub fn num(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
         (false, position)
     }
 }
-
-pub fn expr(context: &Context, source: &Source, position: u32) -> (bool, u32){
+#[allow(dead_code)]
+pub fn expr<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     // Using AlphabetLower for expr and Num for Num, don't want to pollute Rules nor use a trait.
     let t1 = _terminal(b'-');
     let expr = _var_name(Rules::AlphabetLower, context, expr);
@@ -24,8 +27,9 @@ pub fn expr(context: &Context, source: &Source, position: u32) -> (bool, u32){
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::DenyLeftRecursionCache;
     use parser_core::{Source, _zero_or_more};
-        
+
     #[test]
     fn test_num() {
         // To test it doesnt panic on a valid parse
@@ -33,7 +37,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
         let num_closure = _var_name(Rules::AlphabetLower, &context, num);
         let z1 = _zero_or_more(&num_closure);
         z1(&source, position);
@@ -45,20 +49,19 @@ mod tests {
     // Zero or more this so it increments position
     // Then check position and last rule to determine if there's direct recursion happening since
     // for zero or more etc it should increment if successful so it can fail on a recursion but not
-    // on zero or more etc. 
-
+    // on zero or more etc.
 
     #[test]
     //#[should_panic]
     fn test_direct_left_recursion1_deny() {
         // Will overflow stack if using Cache that does not support LR
-        // Won't if using Cache that does support LR. 
+        // Won't if using Cache that does support LR.
         let string = "1-2".to_string();
         let src_len = string.len() as u32;
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
 
         let result = expr(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -68,16 +71,15 @@ mod tests {
     fn test_direct_left_recursion2_deny() {
         // Will give this result on LR Deny cache
         // Will overflow stack if using Cache that does not support LR
-        // Won't if using Cache that does support LR. 
+        // Won't if using Cache that does support LR.
         let string = "1-2-3-4-5".to_string();
         let src_len = string.len() as u32;
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
 
         let result = expr(&context, &source, position);
         assert_eq!(result, (true, 3));
     }
-    
 }

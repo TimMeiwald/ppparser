@@ -3,8 +3,13 @@ use parser_core::Source;
 //use parser_core::_ordered_choice;
 use parser_core::Context;
 //Example of possible substiution optimization.
+use cache::Cache;
 
-pub fn alphabet_upper(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn alphabet_upper<T: Cache>(
+    _context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let char = source.get_char(position);
     if char > Some(64) && char < Some(91) {
         (true, position + 1)
@@ -85,6 +90,7 @@ pub fn alphabet_upper(_context: &Context, source: &Source, position: u32) -> (bo
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::MyCache4;
     use parser_core::Rules;
     use parser_core::Source;
     use parser_core::_var_name;
@@ -94,7 +100,7 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len as u32, 42);
+        let context = Context::<MyCache4>::new(src_len as u32, 42);
 
         let result = alphabet_upper(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -105,7 +111,7 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len as u32, 42);
+        let context = Context::<MyCache4>::new(src_len as u32, 42);
 
         let result = alphabet_upper(&context, &source, position);
         assert_eq!(result, (true, 1));
@@ -116,7 +122,7 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len as u32, 42);
+        let context = Context::<MyCache4>::new(src_len as u32, 42);
 
         let var_name_closure = _var_name(Rules::AlphabetUpper, &context, alphabet_upper);
         let result = var_name_closure(&source, position);

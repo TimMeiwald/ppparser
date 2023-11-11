@@ -2,12 +2,12 @@ use crate::source::Source;
 use crate::Context;
 use crate::Rules;
 use cache::Cache;
-pub fn _var_name_kernel(
+pub fn _var_name_kernel<T: Cache>(
     rule: Rules,
-    context: &Context,
+    context: &Context<T>,
     source: &Source,
     position: u32,
-    func: fn(&Context, &Source, u32) -> (bool, u32),
+    func: fn(&Context<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let cached_val: Option<(bool, u32)>;
     {
@@ -16,11 +16,11 @@ pub fn _var_name_kernel(
     };
     match cached_val {
         Some(cached_val) => {
-            println!("Cached");
+            //println!("Cached");
             cached_val
         }
         None => {
-            println!("Not cached");
+            //println!("Not cached");
             let result = func(context, source, position);
             {
                 let cache = &mut *(context.cache).borrow_mut();
@@ -31,11 +31,10 @@ pub fn _var_name_kernel(
     }
 }
 
-
-pub fn _var_name(
+pub fn _var_name<T: Cache>(
     rule: Rules,
-    context: &Context,
-    func: fn(&Context, &Source, u32) -> (bool, u32),
+    context: &Context<T>,
+    func: fn(&Context<T>, &Source, u32) -> (bool, u32),
 ) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _var_name_kernel(rule, context, source, position, func)
 }
@@ -48,7 +47,8 @@ mod tests {
     use crate::source::Source;
     use crate::terminal::_terminal;
     use crate::Rules;
-    fn test_func(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+    use cache::{Cache, MyCache1, MyCache4};
+    fn test_func<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         x(source, position)
     }
@@ -57,7 +57,7 @@ mod tests {
         let s = "aaa".to_string();
         let src_len: u32 = s.len() as u32;
         let s = Source::new(s);
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
@@ -70,7 +70,7 @@ mod tests {
 
         let s = Source::new(s);
         //let mut c = BTreeCache::new(0,0);
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));

@@ -1,0 +1,6 @@
+DEBUG
+n = 10
+"cache::my_cache1::MyCache1" 92.5162ms
+"cache::my_cache2::MyCache2" 83.4499ms
+"cache::my_cache3::MyCache3" 83.8912ms
+"cache::my_cache4::MyCache4" 62.8545ms

@@ -1,8 +1,9 @@
 use super::*;
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _sequence, _subexpression, _terminal, _var_name};
 
-pub fn terminal(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn terminal<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let apostrophe = _var_name(Rules::Apostrophe, context, apostrophe);
     let ascii = _var_name(Rules::Ascii, context, ascii);
     let s1 = _sequence(&apostrophe, &ascii);
@@ -31,7 +32,9 @@ pub fn terminal(context: &Context, source: &Source, position: u32) -> (bool, u32
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::MyCache4;
     use parser_core::Source;
+
     #[test]
     fn test_terminal_false() {
         let string = "\"a".to_string();
@@ -39,7 +42,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -51,7 +54,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -63,7 +66,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -75,7 +78,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -87,7 +90,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -100,7 +103,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));

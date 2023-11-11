@@ -1,9 +1,10 @@
+use cache::Cache;
 use parser_core::Context;
 use parser_core::Source;
 use parser_core::_ordered_choice;
 use parser_core::_terminal;
 
-pub fn spaces(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn spaces<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'\n');
     let t2 = _terminal(b'\t');
     let oc1 = _ordered_choice(&t1, &t2);
@@ -19,7 +20,9 @@ pub fn spaces(_context: &Context, source: &Source, position: u32) -> (bool, u32)
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::MyCache4;
     use parser_core::Source;
+
     #[test]
     fn test_num_false() {
         let string = "aaa".to_string();
@@ -27,7 +30,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = spaces(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -39,7 +42,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = spaces(&context, &source, position);
         assert_eq!(result, (true, 1));

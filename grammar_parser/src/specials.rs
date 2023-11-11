@@ -1,9 +1,10 @@
+use cache::Cache;
 use parser_core::Context;
 use parser_core::Source;
 use parser_core::_ordered_choice;
 use parser_core::_terminal;
 
-pub fn specials(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn specials<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'+');
     let t2 = _terminal(b'*');
     let oc1 = _ordered_choice(&t1, &t2);
@@ -82,6 +83,8 @@ pub fn specials(_context: &Context, source: &Source, position: u32) -> (bool, u3
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::MyCache4;
+
     use parser_core::Source;
     #[test]
     fn test_specials_false() {
@@ -90,7 +93,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = specials(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -100,7 +103,7 @@ mod tests {
         let string = '~'.to_string();
         let src_len = string.len() as u32;
 
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let source = Source::new(string);
         let position: u32 = 0;

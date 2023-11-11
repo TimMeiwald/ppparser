@@ -2,8 +2,9 @@ use parser_core::Context;
 use parser_core::Source;
 // use parser_core::_ordered_choice;
 // use parser_core::_terminal;
+use cache::Cache;
 
-pub fn num(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn num<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let char = source.get_char(position);
     if char > Some(47) && char < Some(58) {
         (true, position + 1)
@@ -43,7 +44,9 @@ pub fn num(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::MyCache4;
     use parser_core::Source;
+
     #[test]
     fn test_num_false() {
         let string = "aaa".to_string();
@@ -51,7 +54,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = num(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -63,7 +66,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::new(src_len, 42);
+        let context = Context::<MyCache4>::new(src_len, 42);
 
         let result = num(&context, &source, position);
         assert_eq!(result, (true, 1));
