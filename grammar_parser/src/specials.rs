@@ -2,8 +2,9 @@ use parser_core::Context;
 use parser_core::Source;
 use parser_core::_ordered_choice;
 use parser_core::_terminal;
+use cache::Cache;
 
-pub fn specials(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn specials<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'+');
     let t2 = _terminal(b'*');
     let oc1 = _ordered_choice(&t1, &t2);

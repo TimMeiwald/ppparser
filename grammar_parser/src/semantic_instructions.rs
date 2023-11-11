@@ -1,8 +1,9 @@
 use parser_core::Context;
 use parser_core::Rules;
 use parser_core::{Source, _ordered_choice, _sequence, _terminal, _var_name};
+use cache::Cache;
 
-pub fn semantic_instructions(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn semantic_instructions<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::Delete, context, delete);
     let v2 = _var_name(Rules::Passthrough, context, passthrough);
     let v3 = _var_name(Rules::Collect, context, collect);
@@ -11,7 +12,7 @@ pub fn semantic_instructions(context: &Context, source: &Source, position: u32) 
     s2(source, position)
 }
 
-pub fn collect(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn collect<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'C');
     let t2 = _terminal(b'O');
     let t3 = _terminal(b'L');
@@ -28,7 +29,7 @@ pub fn collect(_context: &Context, source: &Source, position: u32) -> (bool, u32
     s6(source, position)
 }
 
-pub fn delete(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn delete<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'D');
     let t2 = _terminal(b'E');
     let t3 = _terminal(b'L');
@@ -43,7 +44,7 @@ pub fn delete(_context: &Context, source: &Source, position: u32) -> (bool, u32)
     s5(source, position)
 }
 
-pub fn passthrough(_context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn passthrough<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'P');
     let t2 = _terminal(b'A');
     let t3 = _terminal(b'S');

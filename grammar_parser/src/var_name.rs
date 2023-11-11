@@ -7,8 +7,9 @@ use parser_core::_terminal;
 use parser_core::_var_name;
 use parser_core::_zero_or_more;
 use parser_core::{Context, Rules};
+use cache::Cache;
 
-pub fn var_name(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn var_name<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::LeftAngleBracket, context, left_angle_bracket);
     let v2 = _var_name(Rules::AlphabetLower, context, alphabet_lower);
     let v3 = _var_name(Rules::AlphabetUpper, context, alphabet_upper);

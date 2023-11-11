@@ -1,9 +1,10 @@
 use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _var_name};
+use cache::Cache;
 
 use crate::{atom, ordered_choice, sequence};
 
-pub fn rhs(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn rhs<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::Sequence, context, sequence);
     let v2 = _var_name(Rules::OrderedChoice, context, ordered_choice);
     let v3 = _var_name(Rules::Atom, context, atom);

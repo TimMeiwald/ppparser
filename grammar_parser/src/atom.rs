@@ -1,11 +1,12 @@
 use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _subexpression, _var_name};
+use cache::Cache;
 
 use crate::{
     and_predicate, not_predicate, nucleus, one_or_more, optional, whitespace, zero_or_more,
 };
 
-pub fn atom(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn atom<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::AndPredicate, context, and_predicate);
     let v2 = _var_name(Rules::NotPredicate, context, not_predicate);
     let v3 = _var_name(Rules::OneOrMore, context, one_or_more);

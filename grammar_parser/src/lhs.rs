@@ -1,7 +1,8 @@
 use crate::{semantic_instructions, var_name, whitespace};
 use parser_core::{Context, Rules, Source, _optional, _sequence, _subexpression, _var_name};
+use cache::Cache;
 
-pub fn lhs(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn lhs<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::VarName, context, var_name);
     let v2 = _var_name(Rules::Whitespace, context, whitespace);
     let v3 = _var_name(Rules::SemanticInstructions, context, semantic_instructions);

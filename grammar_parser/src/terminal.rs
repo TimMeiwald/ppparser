@@ -1,8 +1,9 @@
 use super::*;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _sequence, _subexpression, _terminal, _var_name};
+use cache::Cache;
 
-pub fn terminal(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn terminal<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let apostrophe = _var_name(Rules::Apostrophe, context, apostrophe);
     let ascii = _var_name(Rules::Ascii, context, ascii);
     let s1 = _sequence(&apostrophe, &ascii);

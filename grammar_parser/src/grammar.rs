@@ -1,9 +1,10 @@
 use parser_core::{Context, Rules};
 use parser_core::{Source, _one_or_more, _sequence, _var_name};
+use cache::Cache;
 
 use crate::{rule, whitespace};
 
-pub fn grammar(context: &Context, source: &Source, position: u32) -> (bool, u32) {
+pub fn grammar<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::Rule, context, rule);
     let v2 = _var_name(Rules::Whitespace, context, whitespace);
 
