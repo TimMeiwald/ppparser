@@ -1,6 +1,6 @@
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _subexpression, _var_name};
-use cache::Cache;
 
 use crate::{
     and_predicate, not_predicate, nucleus, one_or_more, optional, whitespace, zero_or_more,
@@ -31,8 +31,8 @@ pub fn atom<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (
 #[cfg(test)]
 mod tests {
     use super::*;
-    use parser_core::Source;
     use cache::MyCache4;
+    use parser_core::Source;
 
     #[test]
     fn test_atom_true() {

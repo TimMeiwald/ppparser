@@ -31,7 +31,6 @@ pub fn _var_name_kernel<T: Cache>(
     }
 }
 
-
 pub fn _var_name<T: Cache>(
     rule: Rules,
     context: &Context<T>,
@@ -45,10 +44,10 @@ mod tests {
 
     use super::_var_name;
     use crate::context::Context;
-    use cache::{Cache, MyCache4, MyCache1};
     use crate::source::Source;
     use crate::terminal::_terminal;
     use crate::Rules;
+    use cache::{Cache, MyCache1, MyCache4};
     fn test_func<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         x(source, position)

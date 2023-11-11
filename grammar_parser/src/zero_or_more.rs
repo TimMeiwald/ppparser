@@ -1,7 +1,7 @@
 use crate::{nucleus, symbols::star, whitespace};
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _sequence, _var_name};
-use cache::Cache;
 
 pub fn zero_or_more<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::Nucleus, context, nucleus);

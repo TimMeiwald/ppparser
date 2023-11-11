@@ -1,4 +1,5 @@
 use super::*;
+use cache::Cache;
 use parser_core::Source;
 use parser_core::_ordered_choice;
 use parser_core::_sequence;
@@ -7,7 +8,6 @@ use parser_core::_terminal;
 use parser_core::_var_name;
 use parser_core::_zero_or_more;
 use parser_core::{Context, Rules};
-use cache::Cache;
 
 pub fn var_name<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::LeftAngleBracket, context, left_angle_bracket);
@@ -31,8 +31,8 @@ pub fn var_name<T: Cache>(context: &Context<T>, source: &Source, position: u32) 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use parser_core::Source;
     use cache::MyCache4;
+    use parser_core::Source;
 
     #[test]
     fn test_var_name_false() {

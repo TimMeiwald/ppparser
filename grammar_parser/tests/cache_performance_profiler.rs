@@ -1,10 +1,10 @@
-use cache::{Cache, MyCache1, MyCache2, MyCache3, MyCache4, DenyLeftRecursionCache};
+use cache::{Cache, DenyLeftRecursionCache, MyCache1, MyCache2, MyCache3, MyCache4};
+use grammar_parser::grammar;
+use parser_core::{Context, Source};
+use std::any::type_name;
 use std::fs::canonicalize;
 use std::fs::{read_to_string, write};
-use parser_core::{Source, Context};
-use grammar_parser::grammar;
-use std::time::{Instant, Duration};
-use  std::any::type_name;
+use std::time::{Duration, Instant};
 
 fn get_grammar_string() -> String {
     let path = "../parser_core/tests/Grammar.txt";
@@ -13,12 +13,12 @@ fn get_grammar_string() -> String {
     return string;
 }
 
-fn write_to_performance_profile(data: Vec<String>, path: &str){
+fn write_to_performance_profile(data: Vec<String>, path: &str) {
     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
     write(pathbuf, data.concat()).expect("No reason for it to fail")
 }
 
-fn run_on_grammar<T:Cache>(n: u32) -> (Duration, String){
+fn run_on_grammar<T: Cache>(n: u32) -> (Duration, String) {
     let src = get_grammar_string();
     let src_len = src.len() as u32;
     let source = Source::new(src);
@@ -26,7 +26,7 @@ fn run_on_grammar<T:Cache>(n: u32) -> (Duration, String){
     let time = Instant::now();
 
     // Context get's created once because some caches can reuse context and so amortize the initial
-    // Memory allocations. 
+    // Memory allocations.
     let context = Context::<T>::new(src_len, 42);
     for _i in 0..n {
         //let parse_time = Instant::now();
@@ -35,7 +35,7 @@ fn run_on_grammar<T:Cache>(n: u32) -> (Duration, String){
 
         assert!(bol); //-> To test it actually parsed correctly
         assert_eq!(_position, src_len); //
-        //let cache_time = Instant::now();
+                                        //let cache_time = Instant::now();
         context.clear_cache();
     }
     (time.elapsed(), type_name::<T>().to_string())
@@ -45,7 +45,7 @@ fn create_performance_string(duration: Duration, cach: String) -> String {
 }
 
 #[allow(unused_mut)]
-fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_path: &str){
+fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_path: &str) {
     let mut data = Vec::<String>::new();
     let mut n = n_release;
     let mut path = release_path;
@@ -56,7 +56,6 @@ fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_
         n = n_debug;
         data.push(format!("DEBUG\nn = {:?}\n", n).to_string());
         path = debug_path;
-
     }
     // MyCache1
     let res = run_on_grammar::<MyCache1>(n);
@@ -79,11 +78,10 @@ fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_
     data.push(perf_str);
 
     write_to_performance_profile(data, path)
-
 }
 
 #[test]
-fn profile_caches(){
+fn profile_caches() {
     let release_path = "../grammar_parser/tests/cache_performance_data_release.txt";
     let debug_path = "../grammar_parser/tests/cache_performance_data_debug.txt";
 

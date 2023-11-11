@@ -1,6 +1,6 @@
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _sequence, _var_name};
-use cache::Cache;
 
 use crate::{nucleus, symbols::question_mark, whitespace};
 

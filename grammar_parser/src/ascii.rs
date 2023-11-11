@@ -1,9 +1,9 @@
 use super::*;
+use cache::Cache;
 use parser_core::Source;
 use parser_core::_ordered_choice;
 use parser_core::_var_name;
 use parser_core::{Context, Rules};
-use cache::Cache;
 
 pub fn ascii<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _var_name(Rules::AlphabetLower, context, alphabet_lower);

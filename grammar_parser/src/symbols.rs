@@ -1,26 +1,42 @@
+use cache::Cache;
 use parser_core::Context;
 use parser_core::Source;
 use parser_core::_sequence;
 use parser_core::_terminal;
-use cache::Cache;
 
 pub fn apostrophe<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     _terminal(b'"')(source, position)
 }
 
-pub fn left_angle_bracket<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn left_angle_bracket<T: Cache>(
+    _context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     _terminal(b'<')(source, position)
 }
 
-pub fn right_angle_bracket<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn right_angle_bracket<T: Cache>(
+    _context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     _terminal(b'>')(source, position)
 }
 
-pub fn left_bracket<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn left_bracket<T: Cache>(
+    _context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     _terminal(b'(')(source, position)
 }
 
-pub fn right_bracket<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn right_bracket<T: Cache>(
+    _context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     _terminal(b')')(source, position)
 }
 
@@ -35,7 +51,11 @@ pub fn end_rule<T: Cache>(_context: &Context<T>, source: &Source, position: u32)
 pub fn ampersand<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     _terminal(b'&')(source, position)
 }
-pub fn exclamation_mark<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn exclamation_mark<T: Cache>(
+    _context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     _terminal(b'!')(source, position)
 }
 pub fn plus<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
@@ -44,7 +64,11 @@ pub fn plus<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> 
 pub fn star<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     _terminal(b'*')(source, position)
 }
-pub fn question_mark<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn question_mark<T: Cache>(
+    _context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     _terminal(b'?')(source, position)
 }
 pub fn comma<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {

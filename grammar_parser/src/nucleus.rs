@@ -1,6 +1,6 @@
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _sequence, _subexpression, _var_name};
-use cache::Cache;
 
 use crate::{subexpression, terminal, var_name, whitespace};
 

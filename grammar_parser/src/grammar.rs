@@ -1,6 +1,6 @@
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _one_or_more, _sequence, _var_name};
-use cache::Cache;
 
 use crate::{rule, whitespace};
 
@@ -16,10 +16,10 @@ pub fn grammar<T: Cache>(context: &Context<T>, source: &Source, position: u32) -
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::MyCache4;
     use parser_core::Source;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
-    use cache::MyCache4;
 
     #[test]
     fn test_grammar_true() {

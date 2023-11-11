@@ -1,6 +1,6 @@
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _var_name};
-use cache::Cache;
 
 use crate::{atom, ordered_choice, sequence};
 
@@ -15,9 +15,8 @@ pub fn rhs<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (b
 #[cfg(test)]
 mod tests {
     use super::*;
-    use parser_core::Source;
     use cache::MyCache4;
-
+    use parser_core::Source;
 
     #[test]
     fn test_rhs_true() {

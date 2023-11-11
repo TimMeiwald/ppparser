@@ -1,10 +1,14 @@
 //use parser_core::_terminal;
 use parser_core::Source;
 //use parser_core::_ordered_choice;
-use parser_core::Context;
 use cache::Cache;
+use parser_core::Context;
 //Example of possible substiution optimization.
-pub fn alphabet_lower<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn alphabet_lower<T: Cache>(
+    _context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let char = source.get_char(position);
     if char > Some(95) && char < Some(123) {
         (true, position + 1)

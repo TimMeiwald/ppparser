@@ -5,7 +5,11 @@ use parser_core::Context;
 //Example of possible substiution optimization.
 use cache::Cache;
 
-pub fn alphabet_upper<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn alphabet_upper<T: Cache>(
+    _context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let char = source.get_char(position);
     if char > Some(64) && char < Some(91) {
         (true, position + 1)
@@ -86,9 +90,9 @@ pub fn alphabet_upper<T: Cache>(_context: &Context<T>, source: &Source, position
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cache::MyCache4;
     use parser_core::Rules;
     use parser_core::Source;
-    use cache::MyCache4;
     use parser_core::_var_name;
     #[test]
     fn test_alphabet_upper_false() {

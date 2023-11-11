@@ -1,9 +1,13 @@
+use cache::Cache;
 use parser_core::Context;
 use parser_core::Rules;
 use parser_core::{Source, _ordered_choice, _sequence, _terminal, _var_name};
-use cache::Cache;
 
-pub fn semantic_instructions<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn semantic_instructions<T: Cache>(
+    context: &Context<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let v1 = _var_name(Rules::Delete, context, delete);
     let v2 = _var_name(Rules::Passthrough, context, passthrough);
     let v3 = _var_name(Rules::Collect, context, collect);
@@ -73,8 +77,8 @@ pub fn passthrough<T: Cache>(_context: &Context<T>, source: &Source, position: u
 mod tests {
 
     use super::*;
-    use parser_core::Source;
     use cache::MyCache4;
+    use parser_core::Source;
 
     #[test]
     fn test_semantic_instruction_true() {

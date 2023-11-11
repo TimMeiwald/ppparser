@@ -1,6 +1,6 @@
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _sequence, _var_name, _zero_or_more};
-use cache::Cache;
 
 use crate::{
     comment, lhs, rhs,
@@ -32,9 +32,8 @@ pub fn rule<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (
 #[cfg(test)]
 mod tests {
     use super::*;
-    use parser_core::Source;
     use cache::MyCache4;
-
+    use parser_core::Source;
 
     #[test]
     fn test_rule_true() {

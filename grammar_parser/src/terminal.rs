@@ -1,7 +1,7 @@
 use super::*;
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _sequence, _subexpression, _terminal, _var_name};
-use cache::Cache;
 
 pub fn terminal<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let apostrophe = _var_name(Rules::Apostrophe, context, apostrophe);
@@ -32,8 +32,8 @@ pub fn terminal<T: Cache>(context: &Context<T>, source: &Source, position: u32) 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use parser_core::Source;
     use cache::MyCache4;
+    use parser_core::Source;
 
     #[test]
     fn test_terminal_false() {

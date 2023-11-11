@@ -1,6 +1,6 @@
+use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _sequence, _subexpression, _var_name, _zero_or_more};
-use cache::Cache;
 
 use crate::{atom, symbols::comma, whitespace};
 

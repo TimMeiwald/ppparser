@@ -44,8 +44,8 @@ pub fn num<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (
 #[cfg(test)]
 mod tests {
     use super::*;
-    use parser_core::Source;
     use cache::MyCache4;
+    use parser_core::Source;
 
     #[test]
     fn test_num_false() {

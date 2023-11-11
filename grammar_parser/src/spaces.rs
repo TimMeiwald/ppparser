@@ -1,8 +1,8 @@
+use cache::Cache;
 use parser_core::Context;
 use parser_core::Source;
 use parser_core::_ordered_choice;
 use parser_core::_terminal;
-use cache::Cache;
 
 pub fn spaces<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'\n');
@@ -20,8 +20,8 @@ pub fn spaces<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -
 #[cfg(test)]
 mod tests {
     use super::*;
-    use parser_core::Source;
     use cache::MyCache4;
+    use parser_core::Source;
 
     #[test]
     fn test_num_false() {
