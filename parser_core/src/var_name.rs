@@ -31,8 +31,8 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
     // Want to cache whether bool is true or false since a sub rule can have false
     let stack = &mut *(context.stack).borrow_mut();
     let end_position = res.1;
-    println!("The boolean of line below was : {}", res.0);
-    stack.push(rule as u32, position, end_position);
+    let is_true = res.0;
+    stack.push(is_true, rule as u32, position, end_position);
     res
     
 }

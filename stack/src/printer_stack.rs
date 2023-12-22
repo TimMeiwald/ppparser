@@ -2,7 +2,7 @@ use crate::Stack;
 
 
 
-// Stack that is as the name suggests a printer, useful for seeing output. 
+// Stack that is as the name suggests a printerto stdout, useful for seeing output. 
 pub struct PrinterStack{
     
 }
@@ -12,8 +12,8 @@ impl Stack for PrinterStack{
         return PrinterStack{}
 
     }
-    fn push(&mut self, rule: u32, start_position: u32, end_position: u32){
-        println!("Push Rule: {}, Start Position: {}, End Position: {}", rule, start_position, end_position)
+    fn push(&mut self, is_true: bool, rule: u32, start_position: u32, end_position: u32){
+        println!("Push Rule: {}, Start Position: {}, End Position: {} -> {}", rule, start_position, end_position, is_true)
 
     }
     fn remove(&mut self, index: u32){

@@ -12,7 +12,7 @@ impl Stack for NoopStack{
         return NoopStack{}
 
     }
-    fn push(&mut self, _rule: u32, _start_position: u32, _end_position: u32){
+    fn push(&mut self, _is_true: bool, _rule: u32, _start_position: u32, _end_position: u32){
 
     }
     fn remove(&mut self, _index: u32){
