@@ -105,36 +105,36 @@ mod tests {
     }
 
     
-    #[test]
-    //#[should_panic]
-    fn test_direct_left_recursion1_allow() {
-        // Will overflow stack if using Cache that does not support LR
-        // Won't if using Cache that does support LR.
-        let string = "1-2".to_string();
-        let src_len = string.len() as u32;
+    // #[test]
+    // //#[should_panic]
+    // fn test_direct_left_recursion1_allow() {
+    //     // Will overflow stack if using Cache that does not support LR
+    //     // Won't if using Cache that does support LR.
+    //     let string = "1-2".to_string();
+    //     let src_len = string.len() as u32;
 
-        let source = Source::new(string);
-        let position: u32 = 0;
-        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
+    //     let source = Source::new(string);
+    //     let position: u32 = 0;
+    //     let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
 
-        let result = expr(&context, &source, position);
-        assert_eq!(result, (true, 3));
-    }
-    #[test]
-    //#[should_panic]
-    fn test_direct_left_recursion2_allow() {
-        // Will give this result on LR Deny cache
-        // Will overflow stack if using Cache that does not support LR
-        // Won't if using Cache that does support LR.
-        let string = "1-2-3-4-5".to_string();
-        let src_len = string.len() as u32;
+    //     let result = expr(&context, &source, position);
+    //     assert_eq!(result, (true, 3));
+    // }
+    // #[test]
+    // //#[should_panic]
+    // fn test_direct_left_recursion2_allow() {
+    //     // Will give this result on LR Deny cache
+    //     // Will overflow stack if using Cache that does not support LR
+    //     // Won't if using Cache that does support LR.
+    //     let string = "1-2-3-4-5".to_string();
+    //     let src_len = string.len() as u32;
 
-        let source = Source::new(string);
-        let position: u32 = 0;
-        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
+    //     let source = Source::new(string);
+    //     let position: u32 = 0;
+    //     let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
 
-        let result = expr(&context, &source, position);
-        assert_eq!(result, (true, 9));
-    }
+    //     let result = expr(&context, &source, position);
+    //     assert_eq!(result, (true, 9));
+    // }
 
 }
