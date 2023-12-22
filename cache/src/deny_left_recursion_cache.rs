@@ -49,10 +49,7 @@ impl Cache for DenyLeftRecursionCache {
             println!("LEFT RECURSION DETECTED");
 
             Some((false, end_position))
-
-
-        }
-        else{
+        } else {
             println!("HERE");
 
             // Not Left Recursive
@@ -61,8 +58,7 @@ impl Cache for DenyLeftRecursionCache {
                 println!("HERE2");
 
                 None
-            }
-            else{
+            } else {
                 // Cached but not left recursive
                 println!("HERE3");
 

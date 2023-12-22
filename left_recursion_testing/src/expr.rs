@@ -27,11 +27,11 @@ pub fn expr<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cache::{DenyLeftRecursionCache, AllowDirectLeftRecursionCache};
+    use cache::{AllowDirectLeftRecursionCache, DenyLeftRecursionCache};
     use parser_core::{Source, _zero_or_more};
-    
+
     #[test]
-    fn test_basic_basic_num(){
+    fn test_basic_basic_num() {
         let string = "111".to_string();
         let src_len = string.len() as u32;
         let source = Source::new(string);
@@ -43,7 +43,7 @@ mod tests {
         assert_eq!(result, (true, 1))
     }
     #[test]
-    fn test_basic_num(){
+    fn test_basic_num() {
         let string = "111".to_string();
         let src_len = string.len() as u32;
         let source = Source::new(string);
@@ -104,8 +104,6 @@ mod tests {
     //     assert_eq!(result, (true, 3));
     // }
 
-
-    
     // #[test]
     // //#[should_panic]
     // fn test_direct_left_recursion1_allow() {
@@ -137,6 +135,4 @@ mod tests {
     //     let result = expr(&context, &source, position);
     //     assert_eq!(result, (true, 9));
     // }
-
-
 }

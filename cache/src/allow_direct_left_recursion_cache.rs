@@ -1,5 +1,3 @@
-
-
 use crate::Cache;
 
 // This cache will completely flatten the cache to see if that improves performance.
@@ -50,17 +48,13 @@ impl Cache for AllowDirectLeftRecursionCache {
         if last_rule == rule {
             // Is Left Recursive
             println!("LEFT RECURSION DETECTED");
-            if start_position == end_position{
-                
+            if start_position == end_position {
                 Some((is_true, end_position))
-
-            }else{
+            } else {
                 self.push(rule, is_true, start_position, start_position);
                 None
             }
-            
-        }
-        else{
+        } else {
             println!("HERE");
             self.last_rule[index] = rule;
 
@@ -72,8 +66,7 @@ impl Cache for AllowDirectLeftRecursionCache {
                 println!("HERE2");
 
                 None
-            }
-            else{
+            } else {
                 // Cached but not left recursive
                 println!("HERE3");
 
@@ -85,10 +78,6 @@ impl Cache for AllowDirectLeftRecursionCache {
     fn reinitialize(&mut self) {
         self.end_position.fill(0);
     }
-    
 }
 
-
-impl AllowDirectLeftRecursionCache{
-
-}
+impl AllowDirectLeftRecursionCache {}

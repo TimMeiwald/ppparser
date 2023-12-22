@@ -1,6 +1,6 @@
 RELEASE
 n = 1000
-"cache::my_cache1::MyCache1" 110.3494ms
-"cache::my_cache2::MyCache2" 76.9797ms
-"cache::my_cache3::MyCache3" 76.1919ms
-"cache::my_cache4::MyCache4" 54.0556ms
+"cache::my_cache1::MyCache1" 864.2857ms
+"cache::my_cache2::MyCache2" 818.6215ms
+"cache::my_cache3::MyCache3" 839.5922ms
+"cache::my_cache4::MyCache4" 761.9996ms

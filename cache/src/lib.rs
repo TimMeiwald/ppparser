@@ -1,17 +1,17 @@
 mod cache_trait;
 pub use cache_trait::Cache;
 
+mod allow_direct_left_recursion_cache;
 mod btreemap_cache;
 mod deny_left_recursion_cache;
 mod my_cache1;
-mod allow_direct_left_recursion_cache;
 mod my_cache2;
 mod my_cache3;
 mod my_cache4;
 
+pub use allow_direct_left_recursion_cache::AllowDirectLeftRecursionCache;
 pub use btreemap_cache::BTreeCache;
 pub use deny_left_recursion_cache::DenyLeftRecursionCache;
-pub use allow_direct_left_recursion_cache::AllowDirectLeftRecursionCache;
 pub use my_cache1::MyCache1;
 pub use my_cache2::MyCache2;
 pub use my_cache3::MyCache3;

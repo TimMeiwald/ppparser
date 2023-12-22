@@ -16,7 +16,7 @@ pub fn grammar<T: Cache>(context: &Context<T>, source: &Source, position: u32) -
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cache::{MyCache4, DenyLeftRecursionCache, BTreeCache};
+    use cache::{BTreeCache, DenyLeftRecursionCache, MyCache4};
     use parser_core::Source;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
@@ -59,7 +59,7 @@ mod tests {
     }
 
     #[test]
-    fn test_deny_left_recursion_cache(){
+    fn test_deny_left_recursion_cache() {
         println!("{:?}", env::current_dir().unwrap());
         let path = "../parser_core/tests/Grammar.txt";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
@@ -73,7 +73,7 @@ mod tests {
         assert_eq!(result, (true, src_len));
     }
     #[test]
-    fn test_my_cache_4(){
+    fn test_my_cache_4() {
         println!("{:?}", env::current_dir().unwrap());
         let path = "../parser_core/tests/Grammar.txt";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
@@ -87,7 +87,7 @@ mod tests {
         assert_eq!(result, (true, src_len));
     }
     #[test]
-    fn test_btree_cache(){
+    fn test_btree_cache() {
         println!("{:?}", env::current_dir().unwrap());
         let path = "../parser_core/tests/Grammar.txt";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
