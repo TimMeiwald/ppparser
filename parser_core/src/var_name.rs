@@ -17,7 +17,7 @@ pub fn _var_name_kernel<T: Cache>(
     match cached_val {
         Some(cached_val) => {
             //println!("Cached");
-            println!("Not Cached {:?}", cached_val);
+            // println!("Not Cached {:?}", cached_val);
             // {
             //     let cache = &mut *(context.cache).borrow_mut();
             //     cache.push(rule as u32, cached_val.0, position, cached_val.1); // Not sure if needed maybe for left recursion but unnecessary for no LR
@@ -31,7 +31,7 @@ pub fn _var_name_kernel<T: Cache>(
                 let cache = &mut *(context.cache).borrow_mut();
                 cache.push(rule as u32, result.0, position, result.1);
             }
-            println!("Cached {:?}", result);
+            // println!("Cached {:?}", result);
 
             result
         }
