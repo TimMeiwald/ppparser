@@ -1,11 +1,12 @@
 use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _sequence, _var_name};
+use stack::Stack;
 
 use crate::{nucleus, symbols::exclamation_mark};
 
-pub fn not_predicate<T: Cache>(
-    context: &Context<T>,
+pub fn not_predicate<T: Cache, S: Stack>(
+    context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {

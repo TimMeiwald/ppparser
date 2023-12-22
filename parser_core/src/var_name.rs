@@ -2,12 +2,13 @@ use crate::source::Source;
 use crate::Context;
 use crate::Rules;
 use cache::Cache;
-pub fn _var_name_kernel<T: Cache>(
+use stack::Stack;
+pub fn _var_name_kernel<T: Cache, S: Stack>(
     rule: Rules,
-    context: &Context<T>,
+    context: &Context<T, S>,
     source: &Source,
     position: u32,
-    func: fn(&Context<T>, &Source, u32) -> (bool, u32),
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let cached_val: Option<(bool, u32)>;
     {
@@ -29,10 +30,10 @@ pub fn _var_name_kernel<T: Cache>(
     }
 }
 
-pub fn _var_name<T: Cache>(
+pub fn _var_name<T: Cache, S: Stack>(
     rule: Rules,
-    context: &Context<T>,
-    func: fn(&Context<T>, &Source, u32) -> (bool, u32),
+    context: &Context<T, S>,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _var_name_kernel(rule, context, source, position, func)
 }
@@ -45,8 +46,9 @@ mod tests {
     use crate::source::Source;
     use crate::terminal::_terminal;
     use crate::Rules;
-    use cache::{Cache, MyCache1, MyCache4};
-    fn test_func<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+    use cache::{Cache, MyCache4};
+    use stack::{Stack, NoopStack};
+    fn test_func<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         x(source, position)
     }
@@ -55,7 +57,7 @@ mod tests {
         let s = "aaa".to_string();
         let src_len: u32 = s.len() as u32;
         let s = Source::new(s);
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
@@ -68,7 +70,7 @@ mod tests {
 
         let s = Source::new(s);
         //let mut c = BTreeCache::new(0,0);
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));

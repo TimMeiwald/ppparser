@@ -1,10 +1,11 @@
 use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _one_or_more, _sequence, _var_name};
+use stack::Stack;
 
 use crate::{rule, whitespace};
 
-pub fn grammar<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn grammar<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::Rule, context, rule);
     let v2 = _var_name(Rules::Whitespace, context, whitespace);
 
@@ -20,6 +21,7 @@ mod tests {
     use parser_core::Source;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
+    use stack::NoopStack;
 
     #[test]
     fn test_grammar_true() {
@@ -27,7 +29,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -38,7 +40,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -53,7 +55,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -68,7 +70,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
+        let context = Context::<DenyLeftRecursionCache, NoopStack>::new(src_len, 42);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -82,7 +84,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -96,7 +98,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<BTreeCache>::new(src_len, 42);
+        let context = Context::<BTreeCache, NoopStack>::new(src_len, 42);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }

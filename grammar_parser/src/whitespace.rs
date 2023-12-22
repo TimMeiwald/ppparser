@@ -1,8 +1,9 @@
 use cache::Cache;
 use parser_core::Context;
 use parser_core::{Source, _ordered_choice, _subexpression, _terminal, _zero_or_more};
+use stack::Stack;
 
-pub fn whitespace<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn whitespace<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b' ');
     let t2 = _terminal(b'\n');
     let t3 = _terminal(b'\r');

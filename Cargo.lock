@@ -12,6 +12,7 @@ version = "0.6.0"
 dependencies = [
  "cache",
  "parser_core",
+ "stack",
 ]
 
 [[package]]
@@ -20,6 +21,7 @@ version = "0.6.0"
 dependencies = [
  "cache",
  "grammar_parser",
+ "stack",
 ]
 
 [[package]]
@@ -28,6 +30,7 @@ version = "0.6.0"
 dependencies = [
  "cache",
  "parser_core",
+ "stack",
 ]
 
 [[package]]
@@ -35,6 +38,7 @@ name = "parser_core"
 version = "0.6.0"
 dependencies = [
  "cache",
+ "stack",
 ]
 
 [[package]]

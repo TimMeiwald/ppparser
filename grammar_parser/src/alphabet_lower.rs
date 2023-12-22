@@ -3,9 +3,10 @@ use parser_core::Source;
 //use parser_core::_ordered_choice;
 use cache::Cache;
 use parser_core::Context;
+use stack::Stack;
 //Example of possible substiution optimization.
-pub fn alphabet_lower<T: Cache>(
-    _context: &Context<T>,
+pub fn alphabet_lower<T: Cache, S: Stack>(
+    _context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
@@ -90,6 +91,7 @@ pub fn alphabet_lower<T: Cache>(
 mod tests {
     use cache::MyCache4;
     use parser_core::Source;
+    use stack::NoopStack;
 
     use super::*;
     #[test]
@@ -98,7 +100,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(0, 42);
+        let context = Context::<MyCache4, NoopStack>::new(0, 42);
 
         let result = alphabet_lower(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -110,7 +112,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = alphabet_lower(&context, &source, position);
         assert_eq!(result, (true, 1));
@@ -121,7 +123,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = alphabet_lower(&context, &source, position);
         assert_eq!(result, (true, 1));

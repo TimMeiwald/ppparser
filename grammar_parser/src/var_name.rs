@@ -8,8 +8,9 @@ use parser_core::_terminal;
 use parser_core::_var_name;
 use parser_core::_zero_or_more;
 use parser_core::{Context, Rules};
+use stack::Stack;
 
-pub fn var_name<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn var_name<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::LeftAngleBracket, context, left_angle_bracket);
     let v2 = _var_name(Rules::AlphabetLower, context, alphabet_lower);
     let v3 = _var_name(Rules::AlphabetUpper, context, alphabet_upper);
@@ -33,7 +34,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-
+    use stack::NoopStack;
     #[test]
     fn test_var_name_false() {
         let string = "_this_is_not_a_valid_var_name".to_string();
@@ -41,7 +42,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = var_name(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -53,7 +54,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = var_name(&context, &source, position);
         assert_eq!(result, (true, 26));
@@ -63,7 +64,7 @@ mod tests {
         let string = "<Alphabet_Upper>".to_string();
 
         let src_len = string.len() as u32;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let source = Source::new(string);
         let position: u32 = 0;
