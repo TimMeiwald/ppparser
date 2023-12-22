@@ -2,8 +2,9 @@
 use cache::{BTreeCache, Cache, DenyLeftRecursionCache, MyCache1, MyCache2, MyCache3, MyCache4};
 use std::cell::RefCell;
 
-pub struct Context<T: Cache> {
+pub struct Context<T: Cache, S: Stack> {
     pub cache: RefCell<T>,
+    pub stack: Stack<S>
 }
 impl<T: Cache> Context<T> {
     pub fn new(size_of_source: u32, number_of_structs: u32) -> Self {
@@ -16,3 +17,5 @@ impl<T: Cache> Context<T> {
         res.reinitialize();
     }
 }
+
+
