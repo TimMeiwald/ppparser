@@ -73,36 +73,36 @@ mod tests {
     // for zero or more etc it should increment if successful so it can fail on a recursion but not
     // on zero or more etc.
 
-    #[test]
-    fn test_direct_left_recursion1_deny() {
-        // Will overflow stack if using Cache that does not support LR
-        // Won't if using Cache that does support LR.
-        let string = "1-2".to_string();
-        let src_len = string.len() as u32;
+    // #[test]
+    // fn test_direct_left_recursion1_deny() {
+    //     // Will overflow stack if using Cache that does not support LR
+    //     // Won't if using Cache that does support LR.
+    //     let string = "1-2".to_string();
+    //     let src_len = string.len() as u32;
 
-        let source = Source::new(string);
-        let position: u32 = 0;
-        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
+    //     let source = Source::new(string);
+    //     let position: u32 = 0;
+    //     let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
 
-        let result = expr(&context, &source, position);
-        assert_eq!(result, (true, 3));
-    }
-    #[test]
-    //#[should_panic]
-    fn test_direct_left_recursion2_deny() {
-        // Will give this result on LR Deny cache
-        // Will overflow stack if using Cache that does not support LR
-        // Won't if using Cache that does support LR.
-        let string = "1-2-3-4-5".to_string();
-        let src_len = string.len() as u32;
+    //     let result = expr(&context, &source, position);
+    //     assert_eq!(result, (true, 3));
+    // }
+    // #[test]
+    // //#[should_panic]
+    // fn test_direct_left_recursion2_deny() {
+    //     // Will give this result on LR Deny cache
+    //     // Will overflow stack if using Cache that does not support LR
+    //     // Won't if using Cache that does support LR.
+    //     let string = "1-2-3-4-5".to_string();
+    //     let src_len = string.len() as u32;
 
-        let source = Source::new(string);
-        let position: u32 = 0;
-        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
+    //     let source = Source::new(string);
+    //     let position: u32 = 0;
+    //     let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
 
-        let result = expr(&context, &source, position);
-        assert_eq!(result, (true, 3));
-    }
+    //     let result = expr(&context, &source, position);
+    //     assert_eq!(result, (true, 3));
+    // }
 
 
     

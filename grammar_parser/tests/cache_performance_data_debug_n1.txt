@@ -1,6 +1,6 @@
 DEBUG
 n = 1
-"cache::my_cache1::MyCache1" 6.9389ms
-"cache::my_cache2::MyCache2" 8.6929ms
-"cache::my_cache3::MyCache3" 8.6143ms
-"cache::my_cache4::MyCache4" 7.1448ms
+"cache::my_cache1::MyCache1" 6.8175ms
+"cache::my_cache2::MyCache2" 8.6081ms
+"cache::my_cache3::MyCache3" 8.5686ms
+"cache::my_cache4::MyCache4" 5.0245ms
