@@ -16,7 +16,7 @@ pub fn grammar<T: Cache>(context: &Context<T>, source: &Source, position: u32) -
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cache::MyCache4;
+    use cache::{MyCache4, DenyLeftRecursionCache, BTreeCache};
     use parser_core::Source;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
@@ -54,7 +54,49 @@ mod tests {
         let source = Source::new(string);
         let position: u32 = 0;
         let context = Context::<MyCache4>::new(src_len, 42);
+        let result = grammar(&context, &source, position);
+        assert_eq!(result, (true, src_len));
+    }
 
+    #[test]
+    fn test_deny_left_recursion_cache(){
+        println!("{:?}", env::current_dir().unwrap());
+        let path = "../parser_core/tests/Grammar.txt";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
+        let result = grammar(&context, &source, position);
+        assert_eq!(result, (true, src_len));
+    }
+    #[test]
+    fn test_my_cache_4(){
+        println!("{:?}", env::current_dir().unwrap());
+        let path = "../parser_core/tests/Grammar.txt";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4>::new(src_len, 42);
+        let result = grammar(&context, &source, position);
+        assert_eq!(result, (true, src_len));
+    }
+    #[test]
+    fn test_btree_cache(){
+        println!("{:?}", env::current_dir().unwrap());
+        let path = "../parser_core/tests/Grammar.txt";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<BTreeCache>::new(src_len, 42);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }

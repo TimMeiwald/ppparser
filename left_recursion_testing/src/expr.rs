@@ -27,8 +27,32 @@ pub fn expr<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cache::DenyLeftRecursionCache;
+    use cache::{DenyLeftRecursionCache, AllowDirectLeftRecursionCache};
     use parser_core::{Source, _zero_or_more};
+    
+    #[test]
+    fn test_basic_basic_num(){
+        let string = "111".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
+        //let num_closure = _var_name(Rules::AlphabetLower, &context, num);
+        let result = num(&context, &source, position);
+        //let result = num_closure(&source, position);
+        assert_eq!(result, (true, 1))
+    }
+    #[test]
+    fn test_basic_num(){
+        let string = "111".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
+        let num_closure = _var_name(Rules::AlphabetLower, &context, num);
+        let result = num_closure(&source, position);
+        assert_eq!(result, (true, 1))
+    }
 
     #[test]
     fn test_num() {
@@ -37,12 +61,10 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<DenyLeftRecursionCache>::new(src_len, 42);
+        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
         let num_closure = _var_name(Rules::AlphabetLower, &context, num);
         let z1 = _zero_or_more(&num_closure);
-        z1(&source, position);
-        z1(&source, position);
-        let result = z1(&source, position); // Multiple exec to check cache not always panicing and only panicng on LR
+        let result = z1(&source, position);
         assert_eq!(result, (true, 3));
     }
 
@@ -52,7 +74,6 @@ mod tests {
     // on zero or more etc.
 
     #[test]
-    //#[should_panic]
     fn test_direct_left_recursion1_deny() {
         // Will overflow stack if using Cache that does not support LR
         // Won't if using Cache that does support LR.
@@ -82,4 +103,38 @@ mod tests {
         let result = expr(&context, &source, position);
         assert_eq!(result, (true, 3));
     }
+
+    
+    #[test]
+    //#[should_panic]
+    fn test_direct_left_recursion1_allow() {
+        // Will overflow stack if using Cache that does not support LR
+        // Won't if using Cache that does support LR.
+        let string = "1-2".to_string();
+        let src_len = string.len() as u32;
+
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
+
+        let result = expr(&context, &source, position);
+        assert_eq!(result, (true, 3));
+    }
+    #[test]
+    //#[should_panic]
+    fn test_direct_left_recursion2_allow() {
+        // Will give this result on LR Deny cache
+        // Will overflow stack if using Cache that does not support LR
+        // Won't if using Cache that does support LR.
+        let string = "1-2-3-4-5".to_string();
+        let src_len = string.len() as u32;
+
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
+
+        let result = expr(&context, &source, position);
+        assert_eq!(result, (true, 9));
+    }
+
 }
