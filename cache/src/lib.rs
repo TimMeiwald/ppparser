@@ -17,6 +17,5 @@ pub use my_cache2::MyCache2;
 pub use my_cache3::MyCache3;
 pub use my_cache4::MyCache4;
 
-
 // Still need to try a flatpacked lru cache that doesn't use pointer indexing and instead pushes to a stack and then just reads the last N items
 // May be faster due to better cache coherency, may be slower due to needing to scan don't know until I try.
