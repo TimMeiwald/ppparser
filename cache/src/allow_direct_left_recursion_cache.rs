@@ -1,19 +1,19 @@
 use crate::Cache;
 
 // This cache will completely flatten the cache to see if that improves performance.
-pub struct DenyLeftRecursionCache {
+pub struct AllowDirectLeftRecursionCache {
     is_true: Vec<bool>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
     end_position: Vec<u32>,
     last_rule: Vec<u32>,
     number_of_structs: u32,
 }
 
-impl Cache for DenyLeftRecursionCache {
+impl Cache for AllowDirectLeftRecursionCache {
     // Try as flat packed data structure. Since using zero to fill didn't seem to make much difference.
-    fn new(size_of_source: u32, number_of_structs: u32) -> DenyLeftRecursionCache {
+    fn new(size_of_source: u32, number_of_structs: u32) -> AllowDirectLeftRecursionCache {
         let capacity = (size_of_source + 1) * (number_of_structs + 1);
         let capacity = capacity as usize;
-        let mut c = DenyLeftRecursionCache {
+        let mut c = AllowDirectLeftRecursionCache {
             is_true: Vec::with_capacity(capacity),
             end_position: Vec::with_capacity(capacity),
             last_rule: Vec::with_capacity(capacity),
@@ -21,8 +21,8 @@ impl Cache for DenyLeftRecursionCache {
         };
         for _i in 0..capacity {
             // Ensures the Vector in Cache is as large as the input source
-            c.is_true.push(false);
-            c.end_position.push(0);
+            c.is_true.push(true);
+            c.end_position.push(u32::MAX);
             c.last_rule.push(u32::MAX)
         }
         c
@@ -34,6 +34,7 @@ impl Cache for DenyLeftRecursionCache {
         self.is_true[index] = is_true;
         self.end_position[index] = end_position;
     }
+
     fn check(&mut self, rule: u32, start_position: u32) -> Option<(bool, u32)> {
         let index = (start_position * self.number_of_structs + rule) as usize;
         let is_true: bool = self.is_true[index];
@@ -47,14 +48,21 @@ impl Cache for DenyLeftRecursionCache {
         if last_rule == rule {
             // Is Left Recursive
             println!("LEFT RECURSION DETECTED");
-
-            Some((false, end_position))
+            if start_position == end_position {
+                Some((is_true, end_position))
+            } else {
+                self.push(rule, is_true, start_position, start_position);
+                None
+            }
         } else {
             println!("HERE");
+            self.last_rule[index] = rule;
 
             // Not Left Recursive
-            if end_position == 0 {
+            if end_position == u32::MAX {
                 // Is First time the path has been run
+                self.push(rule, is_true, start_position, end_position);
+
                 println!("HERE2");
 
                 None
@@ -71,3 +79,5 @@ impl Cache for DenyLeftRecursionCache {
         self.end_position.fill(0);
     }
 }
+
+impl AllowDirectLeftRecursionCache {}
