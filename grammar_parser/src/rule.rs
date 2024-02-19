@@ -1,6 +1,7 @@
 use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _sequence, _var_name, _zero_or_more};
+use stack::Stack;
 
 use crate::{
     comment, lhs, rhs,
@@ -8,7 +9,7 @@ use crate::{
     whitespace,
 };
 
-pub fn rule<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn rule<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::Lhs, context, lhs);
     let v2 = _var_name(Rules::Whitespace, context, whitespace);
     let v3 = _var_name(Rules::Assignment, context, assignment);
@@ -34,6 +35,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
+    use stack::NoopStack;
 
     #[test]
     fn test_rule_true() {
@@ -41,7 +43,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -53,7 +55,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -65,7 +67,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -79,7 +81,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -93,7 +95,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -106,7 +108,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -117,7 +119,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));

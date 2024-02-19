@@ -2,8 +2,9 @@ use cache::Cache;
 use parser_core::{
     Context, Rules, Source, _ordered_choice, _sequence, _subexpression, _terminal, _var_name,
 };
+use stack::Stack;
 #[allow(dead_code)]
-pub fn num<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn num<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let char = source.get_char(position); // Optimized version is fine for testing. Known to work correctly with other caches on non-left recursion.
     if char > Some(47) && char < Some(58) {
         (true, position + 1)
@@ -12,7 +13,7 @@ pub fn num<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (
     }
 }
 #[allow(dead_code)]
-pub fn expr<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn expr<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     // Using AlphabetLower for expr and Num for Num, don't want to pollute Rules nor use a trait.
     let t1 = _terminal(b'-');
     let expr = _var_name(Rules::AlphabetLower, context, expr);
@@ -29,6 +30,7 @@ mod tests {
     use super::*;
     use cache::{AllowDirectLeftRecursionCache, DenyLeftRecursionCache};
     use parser_core::{Source, _zero_or_more};
+    use stack::NoopStack;
 
     #[test]
     fn test_basic_basic_num() {
@@ -36,7 +38,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
+        let context = Context::<AllowDirectLeftRecursionCache, NoopStack>::new(src_len, 42);
         //let num_closure = _var_name(Rules::AlphabetLower, &context, num);
         let result = num(&context, &source, position);
         //let result = num_closure(&source, position);
@@ -48,7 +50,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
+        let context = Context::<AllowDirectLeftRecursionCache, NoopStack>::new(src_len, 42);
         let num_closure = _var_name(Rules::AlphabetLower, &context, num);
         let result = num_closure(&source, position);
         assert_eq!(result, (true, 1))
@@ -61,7 +63,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<AllowDirectLeftRecursionCache>::new(src_len, 42);
+        let context = Context::<AllowDirectLeftRecursionCache, NoopStack>::new(src_len, 42);
         let num_closure = _var_name(Rules::AlphabetLower, &context, num);
         let z1 = _zero_or_more(&num_closure);
         let result = z1(&source, position);

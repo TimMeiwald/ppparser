@@ -3,10 +3,11 @@ use parser_core::{Context, Rules};
 use parser_core::{
     Source, _not_predicate, _sequence, _subexpression, _terminal, _var_name, _zero_or_more,
 };
+use stack::Stack;
 
 use crate::{ascii, whitespace};
 
-pub fn comment<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn comment<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::Whitespace, context, whitespace);
     let v2 = _var_name(Rules::Ascii, context, ascii);
     let t1 = _terminal(b'#');

@@ -2,9 +2,10 @@ use cache::Cache;
 use parser_core::Context;
 use parser_core::Rules;
 use parser_core::{Source, _ordered_choice, _sequence, _terminal, _var_name};
+use stack::Stack;
 
-pub fn semantic_instructions<T: Cache>(
-    context: &Context<T>,
+pub fn semantic_instructions<T: Cache, S: Stack>(
+    context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
@@ -16,7 +17,7 @@ pub fn semantic_instructions<T: Cache>(
     s2(source, position)
 }
 
-pub fn collect<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn collect<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'C');
     let t2 = _terminal(b'O');
     let t3 = _terminal(b'L');
@@ -33,7 +34,7 @@ pub fn collect<T: Cache>(_context: &Context<T>, source: &Source, position: u32) 
     s6(source, position)
 }
 
-pub fn delete<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn delete<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'D');
     let t2 = _terminal(b'E');
     let t3 = _terminal(b'L');
@@ -48,7 +49,7 @@ pub fn delete<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -
     s5(source, position)
 }
 
-pub fn passthrough<T: Cache>(_context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn passthrough<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let t1 = _terminal(b'P');
     let t2 = _terminal(b'A');
     let t3 = _terminal(b'S');
@@ -75,6 +76,7 @@ pub fn passthrough<T: Cache>(_context: &Context<T>, source: &Source, position: u
 
 #[cfg(test)]
 mod tests {
+    use stack::NoopStack;
 
     use super::*;
     use cache::MyCache4;
@@ -86,7 +88,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
         let result = semantic_instructions(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -96,7 +98,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
         let result = semantic_instructions(&context, &source, position);
         assert_eq!(result, (true, src_len), "1");
         let result = semantic_instructions(&context, &source, position);

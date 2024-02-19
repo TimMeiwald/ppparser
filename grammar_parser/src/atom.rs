@@ -1,12 +1,13 @@
 use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _subexpression, _var_name};
+use stack::Stack;
 
 use crate::{
     and_predicate, not_predicate, nucleus, one_or_more, optional, whitespace, zero_or_more,
 };
 
-pub fn atom<T: Cache>(context: &Context<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn atom<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
     let v1 = _var_name(Rules::AndPredicate, context, and_predicate);
     let v2 = _var_name(Rules::NotPredicate, context, not_predicate);
     let v3 = _var_name(Rules::OneOrMore, context, one_or_more);
@@ -33,6 +34,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
+    use stack::NoopStack;
 
     #[test]
     fn test_atom_true() {
@@ -41,7 +43,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = atom(&context, &source, position);
         assert_eq!(result, (true, 3));
