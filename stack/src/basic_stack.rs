@@ -1,4 +1,3 @@
-use std::iter::Enumerate;
 
 use crate::Stack;
 
@@ -22,7 +21,7 @@ impl Stack for BasicStack{
         // ahead of time how many elements that is, we will use a heuristic of the source size*number_of_structs*some_hardcoded_parameter
         let parameter = 1; // TODO: May be worth enabling to make this tunable at some point 
         let capacity = (size_of_source*number_of_rules*parameter) as usize;
-        println!("Bytes Availdable: {:?}", capacity);
+        println!("Bytes Available: {:?}", capacity);
         BasicStack{
             rules: Vec::with_capacity(capacity), 
             start_positions: Vec::with_capacity(capacity), 
@@ -41,6 +40,9 @@ impl Stack for BasicStack{
                 // When false pop all instructiosn that exist between start_position and end_position. 
                 loop{
                     let len = self.rules.len();
+                    if len == 0{
+                        break
+                    }
                     let last_index = len - 1;
                     //let last_elem_rule = self.rules[last_index];
                     let last_start_position = self.start_positions[last_index];
@@ -51,17 +53,20 @@ impl Stack for BasicStack{
                         self.end_positions.pop();
                         self.start_positions.pop();
                     }
+                    else{
+                        break
+                    }
                 }
             }
         }
     }
-    fn remove(&mut self, index: u32){
+    fn remove(&mut self, _index: u32){
 
     }
 }
 
 impl BasicStack{
-    pub fn print(&self){
+    pub fn print(&self, source: &String){
         let l1 = self.rules.len();
         let l2 = self.start_positions.len();
         let l3 = self.end_positions.len();
@@ -70,9 +75,16 @@ impl BasicStack{
                 let p1 = self.rules[i];
                 let p2 = self.start_positions[i];
                 let p3 = self.end_positions[i];
-                println!("Rule: {:?}, Start Position: {:?}, End Position: {:?}", p1, p2, p3)
+                let s1 = p2 as usize;
+                let s2 = p3 as usize; 
+                let slice = &source[s1..s2];
+                if p1 == 20{
+                println!("Rule: {:?}, Start Position: {:?}, End Position: {:?} => {}", p1, p2, p3, slice);
+                }
             }
         }
-        println!("Something went wrong with BasicStack, Vector lengths must be identical.")
+        else{
+            println!("Something went wrong with BasicStack, Vector lengths must be identical.");
+        }
     }
 }

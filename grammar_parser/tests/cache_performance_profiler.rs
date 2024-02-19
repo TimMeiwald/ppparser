@@ -1,7 +1,7 @@
 use cache::{Cache, DenyLeftRecursionCache, MyCache1, MyCache2, MyCache3, MyCache4};
 use grammar_parser::grammar;
 use parser_core::{Context, Source};
-use stack::{Stack, NoopStack};
+use stack::{BasicStack, NoopStack, Stack};
 use std::any::type_name;
 use std::fs::canonicalize;
 use std::fs::{read_to_string, write};
@@ -59,22 +59,22 @@ fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_
         path = debug_path;
     }
     // MyCache1
-    let res = run_on_grammar::<MyCache1, NoopStack>(n);
+    let res = run_on_grammar::<MyCache1, BasicStack>(n);
     let perf_str = create_performance_string(res.0, res.1);
     data.push(perf_str);
 
     // MyCache2
-    let res = run_on_grammar::<MyCache2, NoopStack>(n);
+    let res = run_on_grammar::<MyCache2, BasicStack>(n);
     let perf_str = create_performance_string(res.0, res.1);
     data.push(perf_str);
 
     // MyCache3
-    let res = run_on_grammar::<MyCache3, NoopStack>(n);
+    let res = run_on_grammar::<MyCache3, BasicStack>(n);
     let perf_str = create_performance_string(res.0, res.1);
     data.push(perf_str);
 
     // MyCache4
-    let res = run_on_grammar::<MyCache4, NoopStack>(n);
+    let res = run_on_grammar::<MyCache4, BasicStack>(n);
     let perf_str = create_performance_string(res.0, res.1);
     data.push(perf_str);
 
