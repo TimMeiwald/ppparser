@@ -1,0 +1,9 @@
+[package]
+name = "grammar_generator"
+version = "0.6.0"
+edition = "2021"
+[dependencies]
+grammar_parser = { path = "../grammar_parser"}
+parser_core = { path = "../parser_core" }
+cache = { path = "../cache" }
+stack = {path = "../stack"}
