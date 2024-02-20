@@ -17,7 +17,11 @@ pub fn semantic_instructions<T: Cache, S: Stack>(
     s2(source, position)
 }
 
-pub fn collect<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn collect<T: Cache, S: Stack>(
+    _context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let t1 = _terminal(b'C');
     let t2 = _terminal(b'O');
     let t3 = _terminal(b'L');
@@ -34,7 +38,11 @@ pub fn collect<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, po
     s6(source, position)
 }
 
-pub fn delete<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn delete<T: Cache, S: Stack>(
+    _context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let t1 = _terminal(b'D');
     let t2 = _terminal(b'E');
     let t3 = _terminal(b'L');
@@ -49,7 +57,11 @@ pub fn delete<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, pos
     s5(source, position)
 }
 
-pub fn passthrough<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn passthrough<T: Cache, S: Stack>(
+    _context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let t1 = _terminal(b'P');
     let t2 = _terminal(b'A');
     let t3 = _terminal(b'S');

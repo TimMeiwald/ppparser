@@ -7,7 +7,11 @@ use stack::Stack;
 
 use crate::{ascii, whitespace};
 
-pub fn comment<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn comment<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let v1 = _var_name(Rules::Whitespace, context, whitespace);
     let v2 = _var_name(Rules::Ascii, context, ascii);
     let t1 = _terminal(b'#');

@@ -10,7 +10,11 @@ use parser_core::_zero_or_more;
 use parser_core::{Context, Rules};
 use stack::Stack;
 
-pub fn var_name<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn var_name<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let v1 = _var_name(Rules::LeftAngleBracket, context, left_angle_bracket);
     let v2 = _var_name(Rules::AlphabetLower, context, alphabet_lower);
     let v3 = _var_name(Rules::AlphabetUpper, context, alphabet_upper);

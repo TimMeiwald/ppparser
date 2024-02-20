@@ -7,7 +7,11 @@ use crate::{
     and_predicate, not_predicate, nucleus, one_or_more, optional, whitespace, zero_or_more,
 };
 
-pub fn atom<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn atom<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let v1 = _var_name(Rules::AndPredicate, context, and_predicate);
     let v2 = _var_name(Rules::NotPredicate, context, not_predicate);
     let v3 = _var_name(Rules::OneOrMore, context, one_or_more);

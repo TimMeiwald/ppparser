@@ -16,16 +16,14 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
         cached_val = res.check(rule as u32, position);
     };
     let res = match cached_val {
-        Some(cached_val) => {
-            cached_val
-        }
+        Some(cached_val) => cached_val,
         None => {
             let result = func(context, source, position);
             {
                 let cache = &mut *(context.cache).borrow_mut();
                 cache.push(rule as u32, result.0, position, result.1);
             }
-            result  
+            result
         }
     };
     // Want to cache whether bool is true or false since a sub rule can have false
@@ -34,10 +32,7 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
     let is_true = res.0;
     stack.push(is_true, rule as u32, position, end_position);
     res
-    
 }
-
-
 
 // Without stack
 // pub fn _var_name_kernel<T: Cache>(
@@ -76,16 +71,6 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
 //     }
 // }
 
-
-
-
-
-
-
-
-
-
-
 pub fn _var_name<T: Cache, S: Stack>(
     rule: Rules,
     context: &Context<T, S>,
@@ -103,8 +88,12 @@ mod tests {
     use crate::terminal::_terminal;
     use crate::Rules;
     use cache::{Cache, MyCache4};
-    use stack::{Stack, NoopStack};
-    fn test_func<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+    use stack::{NoopStack, Stack};
+    fn test_func<T: Cache, S: Stack>(
+        _context: &Context<T, S>,
+        source: &Source,
+        position: u32,
+    ) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
         x(source, position)
     }

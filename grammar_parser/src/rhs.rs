@@ -5,7 +5,11 @@ use stack::Stack;
 
 use crate::{atom, ordered_choice, sequence};
 
-pub fn rhs<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn rhs<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let v1 = _var_name(Rules::Sequence, context, sequence);
     let v2 = _var_name(Rules::OrderedChoice, context, ordered_choice);
     let v3 = _var_name(Rules::Atom, context, atom);

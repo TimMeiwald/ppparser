@@ -1,8 +1,8 @@
-mod stack_trait;
 mod basic_stack;
 mod noop_stack;
 mod printer_stack;
-pub use stack_trait::Stack;
+mod stack_trait;
+pub use basic_stack::BasicStack;
 pub use noop_stack::NoopStack;
 pub use printer_stack::PrinterStack;
-pub use basic_stack::BasicStack;
+pub use stack_trait::Stack;

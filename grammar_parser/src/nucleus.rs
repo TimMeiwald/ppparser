@@ -5,7 +5,11 @@ use stack::Stack;
 
 use crate::{subexpression, terminal, var_name, whitespace};
 
-pub fn nucleus<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn nucleus<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let v1 = _var_name(Rules::Subexpression, context, subexpression);
     let v2 = _var_name(Rules::Lterminal, context, terminal);
     let v3 = _var_name(Rules::VarName, context, var_name);

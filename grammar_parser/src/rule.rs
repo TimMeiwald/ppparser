@@ -9,7 +9,11 @@ use crate::{
     whitespace,
 };
 
-pub fn rule<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn rule<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let v1 = _var_name(Rules::Lhs, context, lhs);
     let v2 = _var_name(Rules::Whitespace, context, whitespace);
     let v3 = _var_name(Rules::Assignment, context, assignment);

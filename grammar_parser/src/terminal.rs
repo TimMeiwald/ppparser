@@ -4,7 +4,11 @@ use parser_core::{Context, Rules};
 use parser_core::{Source, _ordered_choice, _sequence, _subexpression, _terminal, _var_name};
 use stack::Stack;
 
-pub fn terminal<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn terminal<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let apostrophe = _var_name(Rules::Apostrophe, context, apostrophe);
     let ascii = _var_name(Rules::Ascii, context, ascii);
     let s1 = _sequence(&apostrophe, &ascii);

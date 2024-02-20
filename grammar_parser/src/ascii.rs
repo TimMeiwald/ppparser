@@ -6,7 +6,11 @@ use parser_core::_var_name;
 use parser_core::{Context, Rules};
 use stack::Stack;
 
-pub fn ascii<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn ascii<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let t1 = _var_name(Rules::AlphabetLower, context, alphabet_lower);
     let t2 = _var_name(Rules::AlphabetUpper, context, alphabet_upper);
     let oc1 = _ordered_choice(&t1, &t2);

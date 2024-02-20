@@ -5,7 +5,11 @@ use parser_core::_ordered_choice;
 use parser_core::_terminal;
 use stack::Stack;
 
-pub fn spaces<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn spaces<T: Cache, S: Stack>(
+    _context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let t1 = _terminal(b'\n');
     let t2 = _terminal(b'\t');
     let oc1 = _ordered_choice(&t1, &t2);

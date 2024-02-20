@@ -4,7 +4,11 @@ use parser_core::{
 };
 use stack::Stack;
 #[allow(dead_code)]
-pub fn num<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn num<T: Cache, S: Stack>(
+    _context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     let char = source.get_char(position); // Optimized version is fine for testing. Known to work correctly with other caches on non-left recursion.
     if char > Some(47) && char < Some(58) {
         (true, position + 1)
@@ -13,7 +17,11 @@ pub fn num<T: Cache, S: Stack>(_context: &Context<T, S>, source: &Source, positi
     }
 }
 #[allow(dead_code)]
-pub fn expr<T: Cache, S: Stack>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {
+pub fn expr<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
     // Using AlphabetLower for expr and Num for Num, don't want to pollute Rules nor use a trait.
     let t1 = _terminal(b'-');
     let expr = _var_name(Rules::AlphabetLower, context, expr);
