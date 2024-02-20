@@ -78,7 +78,6 @@ impl<'a> Iterator for BasicStackIterator<'a> {
             let start_position = self.stack.start_positions[index];
             let end_position = self.stack.end_positions[index];
             self.counter += 1;
-            std::thread::sleep(std::time::Duration::new(0, 1 * (10 as u32).pow(7)));
             Some([rule, start_position, end_position])
         } else {
             None
