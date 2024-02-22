@@ -29,7 +29,7 @@ impl Cache for MyCache1 {
         let arg_cache: &mut ArgCache = &mut self.entries[start_position as usize];
         arg_cache.entries[rule as usize] = (is_true, end_position);
     }
-    fn check(&mut self, rule: u32, start_position: u32) -> Option<(bool, u32)> {
+    fn check(&self, rule: u32, start_position: u32) -> Option<(bool, u32)> {
         let ret: (bool, u32) = self.entries[start_position as usize].entries[rule as usize];
         if ret.1 != u32::MAX {
             // Result is returned to callee to unwrap

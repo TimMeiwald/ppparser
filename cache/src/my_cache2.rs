@@ -36,7 +36,7 @@ impl Cache for MyCache2 {
         arg_cache.is_true[rule as usize] = is_true;
         arg_cache.end_position[rule as usize] = end_position;
     }
-    fn check(&mut self, rule: u32, start_position: u32) -> Option<(bool, u32)> {
+    fn check(&self, rule: u32, start_position: u32) -> Option<(bool, u32)> {
         let is_true: bool = self.entries[start_position as usize].is_true[rule as usize];
         let end_position: u32 = self.entries[start_position as usize].end_position[rule as usize];
 

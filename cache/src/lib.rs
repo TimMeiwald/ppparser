@@ -9,7 +9,7 @@ mod my_cache2;
 mod my_cache3;
 mod my_cache4;
 
-pub use allow_direct_left_recursion_cache::AllowDirectLeftRecursionCache;
+//pub use allow_direct_left_recursion_cache::AllowDirectLeftRecursionCache;
 pub use btreemap_cache::BTreeCache;
 pub use deny_left_recursion_cache::DenyLeftRecursionCache;
 pub use my_cache1::MyCache1;

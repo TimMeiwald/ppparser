@@ -15,7 +15,7 @@ impl Cache for BTreeCache {
         self.cache
             .insert((rule, start_position), (is_true, end_position));
     }
-    fn check(&mut self, rule: u32, start_position: u32) -> Option<(bool, u32)> {
+    fn check(&self, rule: u32, start_position: u32) -> Option<(bool, u32)> {
         let result = self.cache.get(&(rule, start_position));
         match result {
             Some(result) => {
