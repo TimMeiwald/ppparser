@@ -1,3 +1,5 @@
+use std::borrow::BorrowMut;
+
 use crate::source::Source;
 use crate::Context;
 use crate::Rules;
@@ -26,10 +28,9 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
             result
         }
     };
-    // Want to cache whether bool is true or false since a sub rule can have false
-    let stack = &mut *(context.stack).borrow_mut();
     let end_position = res.1;
     let is_true = res.0;
+    let stack = &mut *(context.stack).borrow_mut();
     stack.push(is_true, rule as u32, position, end_position);
     res
 }
@@ -102,7 +103,7 @@ mod tests {
         let s = "aaa".to_string();
         let src_len: u32 = s.len() as u32;
         let s = Source::new(s);
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
@@ -115,7 +116,7 @@ mod tests {
 
         let s = Source::new(s);
         //let mut c = BTreeCache::new(0,0);
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
         let func = _var_name(Rules::AlphabetLower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));

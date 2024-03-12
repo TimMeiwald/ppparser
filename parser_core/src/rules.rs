@@ -43,4 +43,5 @@ pub enum Rules {
     Delete,
     Passthrough,
     Collect,
+    VarNameDecl,
 }

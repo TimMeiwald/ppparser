@@ -122,7 +122,7 @@ fn main() -> ExitCode {
     let total = Instant::now();
 
     //let mut now = Instant::now();
-    let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
+    let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
 
     let position = 0;
 

@@ -33,6 +33,16 @@ pub fn var_name<T: Cache, S: Stack>(
     s3(source, position)
 }
 
+pub fn var_name_decl<T: Cache, S: Stack>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let v1 = _var_name(Rules::VarName, context, var_name);
+    v1(source, position)
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -46,7 +56,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
 
         let result = var_name(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -58,7 +68,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
 
         let result = var_name(&context, &source, position);
         assert_eq!(result, (true, 26));
@@ -68,7 +78,7 @@ mod tests {
         let string = "<Alphabet_Upper>".to_string();
 
         let src_len = string.len() as u32;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
 
         let source = Source::new(string);
         let position: u32 = 0;

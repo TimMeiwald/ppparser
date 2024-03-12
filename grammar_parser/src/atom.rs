@@ -47,7 +47,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
 
         let result = atom(&context, &source, position);
         assert_eq!(result, (true, 3));
