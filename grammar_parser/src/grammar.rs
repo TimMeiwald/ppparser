@@ -1,7 +1,7 @@
 use cache::Cache;
 use parser_core::{Context, Rules};
 use parser_core::{Source, _one_or_more, _sequence, _var_name};
-use stack::{Stack};
+use stack::Stack;
 
 use crate::{rule, whitespace};
 
@@ -23,7 +23,7 @@ mod tests {
     use super::*;
     use cache::{BTreeCache, DenyLeftRecursionCache, MyCache4};
     use parser_core::Source;
-    use stack::{NoopStack, PrinterStack, BasicStack};
+    use stack::{BasicStack, NoopStack, PrinterStack};
     use std::env;
     use std::fs::{canonicalize, read_to_string};
 

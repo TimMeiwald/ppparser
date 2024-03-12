@@ -1,8 +1,4 @@
-use crate::{
-    semantic_instructions,
-    var_name::{var_name_decl},
-    whitespace,
-};
+use crate::{semantic_instructions, var_name::var_name_decl, whitespace};
 use cache::Cache;
 use parser_core::{Context, Rules, Source, _optional, _sequence, _subexpression, _var_name};
 use stack::Stack;
