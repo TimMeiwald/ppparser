@@ -60,7 +60,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = num(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -72,7 +72,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 42);
 
         let result = num(&context, &source, position);
         assert_eq!(result, (true, 1));

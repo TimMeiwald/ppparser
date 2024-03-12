@@ -1,6 +1,6 @@
-use crate::Stack;
-use std::ops::Index;
 use std::{marker::PhantomData, time};
+
+use crate::Stack;
 
 // Immediately go to struct of arrays rather than array of structs since it was significantly faster in Cache
 // This of course requires perf testing at some point but this is just a poc so I can get other work done.
@@ -14,6 +14,11 @@ pub struct BasicStack<'a> {
     start_positions: Vec<u32>,
     end_positions: Vec<u32>,
     phantom: PhantomData<&'a BasicStack<'a>>,
+}
+
+pub struct BasicStackIterator<'a> {
+    stack: &'a BasicStack<'a>,
+    counter: usize,
 }
 
 impl<'a> Stack for BasicStack<'a> {
@@ -92,60 +97,7 @@ impl<'a> IntoIterator for &'a BasicStack<'_> {
     }
 }
 
-
-pub struct BasicStackIterator<'a> {
-    stack: &'a BasicStack<'a>,
-    counter: usize,
-}
-
-// // Inverted
-// pub struct BasicStackIterator<'a> {
-//     stack: &'a BasicStack<'a>,
-//     counter: i32,
-// }
-// impl<'a> Iterator for BasicStackIterator<'a> {
-//     type Item = [u32; 3];
-//     fn next(&mut self) -> Option<[u32; 3]> {
-//         let index = self.counter;
-//         if index >= 0 {
-//             let rule = self.stack.rules[index as usize];
-//             let start_position = self.stack.start_positions[index  as usize];
-//             let end_position = self.stack.end_positions[index  as usize];
-//             self.counter -= 1;
-//             Some([rule, start_position, end_position])
-//         } else {
-//             None
-//         }
-//     }
-// }
-
-// impl<'a> IntoIterator for &'a BasicStack<'_> {
-//     type Item = [u32; 3];
-//     type IntoIter = BasicStackIterator<'a>;
-
-//     fn into_iter(self) -> Self::IntoIter {
-//         BasicStackIterator {
-//             stack: self,
-//             counter: (self.rules.len()-1) as i32,
-//         }
-//     }
-// }
-
-
-
 impl<'a> BasicStack<'a> {
-    pub fn get(&self, index: usize) -> Option<[u32;3]>{
-        if index < self.rules.len() {
-            let rule: u32 = self.rules[index];
-            let start_position: u32 = self.start_positions[index];
-            let end_position: u32 = self.end_positions[index];
-            Some([rule, start_position, end_position])
-        }
-        else{
-            None
-        }
-    }
-
     pub fn print(&self, source: &String) {
         let l1 = self.rules.len();
         let l2 = self.start_positions.len();

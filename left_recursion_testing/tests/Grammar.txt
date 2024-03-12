@@ -24,7 +24,7 @@
                     (<Alphabet_Lower>/<Alphabet_Upper>/"_")*,
                     <Right_Angle_Bracket>; 
                     #Not whitespace dependent, feel free to use multiple lines for readability#
-<Var_Name_Decl> = <Var_Name>;
+
 <Subexpression> = <Left_Bracket>,<RHS>,<Right_Bracket>;
 <Epsilon> = <Apostrophe>, <Apostrophe>;
 <Terminal> = (<Apostrophe>,<ASCII>,<Apostrophe>)/(<Apostrophe>,"\",("n"/"r"/"t"),<Apostrophe>)/<Epsilon>;
@@ -41,7 +41,7 @@
 
 <Whitespace> DELETE = (" "/"\n"/"\r")*;
 <RHS> PASSTHROUGH = <Sequence>/<Ordered_Choice>/<Atom>;
-<LHS> = <Var_Name_Decl>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
+<LHS> = <Var_Name>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
 <Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;
 <Grammar> = <Rule>+, <Whitespace>;
 #Lemme just check comments work# #Double up dem comments#
