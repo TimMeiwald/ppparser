@@ -122,7 +122,7 @@ fn main() -> ExitCode {
     let total = Instant::now();
 
     //let mut now = Instant::now();
-    let context = Context::<MyCache4, NoopStack>::new(src_len, 43);
+    let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
 
     let position = 0;
 
@@ -153,13 +153,13 @@ fn main() -> ExitCode {
     // assert_eq!(_position, src_len); //
 
     //34567 lines per second no impl
-    //34355 lines per second impl in Kernels
+    //34455 lines per second impl in Kernels
     //98245 lines per second impl everywhere
     //35K with btreemap cache
     //10K with MyCache1 but allocating after timer
     //260K with MyCache1 but allocating before timer // Really drops off with larger cache sizes unsuprisingly. Cannot use LRU though if I want to support Left Recursion.
     //210K MyCache2 maybe due to less easily simd. - May have just been one off
-    //243K with new change. Which is odd.
+    //244K with new change. Which is odd.
     // 310K using map instead of for loop on MyCache2
     let elapsed = total.elapsed();
     println!("Elapsed with file read: {:.2?}", elapsed);

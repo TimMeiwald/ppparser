@@ -17,6 +17,7 @@
 <Star> DELETE = "*";
 <Question_Mark> DELETE = "?";
 <Comma> DELETE = ",";
+<Newline> = "\n";
 <Backslash> DELETE = "/";
 
 <Var_Name> COLLECT =<Left_Angle_Bracket>,
@@ -37,9 +38,9 @@
 <Ordered_Choice> = <Atom>, <Whitespace>,<Backslash>, <Whitespace>,<Atom>, (<Backslash>, <Whitespace>, <Atom>)*;
 <One_Or_More> = <Nucleus>, <Whitespace>, <Plus>;
 <Zero_Or_More> = <Nucleus>, <Whitespace>, <Star>;
-<Optional> = <Nucleus>, <Whitespace>, <Question_Mark>;
+<Optional> = <Nucleus>, <Whitespace>, <Question_Mark>, <Thing>;
 
-<Whitespace> DELETE = (" "/"\n"/"\r")*;
+<Whitespace> DELETE = (" "/<Newline>/"\r")*;
 <RHS> PASSTHROUGH = <Sequence>/<Ordered_Choice>/<Atom>;
 <LHS> = <Var_Name>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
 <Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;

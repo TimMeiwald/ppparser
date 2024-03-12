@@ -39,7 +39,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(0, 43);
+        let context = Context::<MyCache4, NoopStack>::new(0, 44);
 
         let result = ascii(&context, &source, position);
         assert_eq!(result, (true, 1));
@@ -50,7 +50,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(0, 43);
+        let context = Context::<MyCache4, NoopStack>::new(0, 44);
 
         let result = ascii(&context, &source, position);
         assert_eq!(result, (true, 1));

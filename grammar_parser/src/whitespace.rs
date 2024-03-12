@@ -17,3 +17,13 @@ pub fn whitespace<T: Cache, S: Stack>(
     let z1 = _zero_or_more(&sub1);
     z1(source, position)
 }
+
+pub fn newline<T: Cache, S: Stack>(
+    _context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+
+    let t2 = _terminal(b'\n');
+    t2(source, position)
+}
