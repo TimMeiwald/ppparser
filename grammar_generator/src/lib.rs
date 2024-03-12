@@ -27,9 +27,9 @@ impl SymbolTable {
     }
 
     pub fn check_symbol(&self, symbol_name: &str) -> bool {
-        for i in &self.name{
+        for i in &self.name {
             if symbol_name == *i {
-                return true
+                return true;
             }
         }
         false
@@ -37,14 +37,14 @@ impl SymbolTable {
 }
 
 fn count_lines(src: &String, start_position: u32) -> u32 {
-    let mut new_line_count: u32 = 0;
+    let mut new_line_count: u32 = 1;
 
     for i in &src.as_bytes()[0..start_position as usize] {
-        if *i == b'\n'{
+        if *i == b'\n' {
             new_line_count += 1;
         }
     }
-    return new_line_count
+    return new_line_count;
 }
 
 fn create_symbol_table(stack: &BasicStack, src: &String) -> SymbolTable {
@@ -57,19 +57,25 @@ fn create_symbol_table(stack: &BasicStack, src: &String) -> SymbolTable {
         }
         index += 1;
     }
-    for i in stack{
-        if i[0] == Rules::VarName as u32{
+    for i in stack {
+        if i[0] == Rules::VarName as u32 {
             let name = &src[(i[1] as usize)..(i[2] as usize)];
-            if !sym_table.check_symbol(name){
-                panic!("{:?} on Line: {:?} - Chars: {:?}:{:?} does not exist", name, count_lines(src, i[1]), i[1] as usize, i[2] as usize);
+            if !sym_table.check_symbol(name) {
+                panic!(
+                    "{:?} on Line: {:?} - Chars: {:?}:{:?} does not exist",
+                    name,
+                    count_lines(src, i[1]),
+                    i[1] as usize,
+                    i[2] as usize
+                );
             }
-
         }
     }
 
-    for i in 0..sym_table.index.len() {
-        println!("{}", sym_table.name[i])
-    }
+    // for i in 0..sym_table.index.len() {
+    //     println!("{}", sym_table.name[i])
+    // }
+    println!("Symbol Table created successfully");
     sym_table
 }
 
@@ -85,6 +91,14 @@ fn test() {
     let position: u32 = 0;
     let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
     let result = grammar(&context, &source, position);
+    if result.1 != string2.len() as u32 {
+        panic!(
+            "Failed to parse grammar due to syntax error on Line: {:?}",
+            count_lines(&string2, result.1)
+        )
+    } else {
+        println!("Successfully parsed")
+    }
     //context.stack.borrow().print(&string2);
     // for i in &*context.stack.borrow() {
 

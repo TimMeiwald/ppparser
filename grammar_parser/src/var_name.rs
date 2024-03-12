@@ -42,7 +42,6 @@ pub fn var_name_decl<T: Cache, S: Stack>(
     v1(source, position)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

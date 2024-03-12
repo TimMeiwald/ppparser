@@ -44,5 +44,5 @@ pub enum Rules {
     Passthrough,
     Collect,
     VarNameDecl,
-    NewLine
+    NewLine,
 }

@@ -23,7 +23,6 @@ pub fn newline<T: Cache, S: Stack>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-
     let t2 = _terminal(b'\n');
     t2(source, position)
 }

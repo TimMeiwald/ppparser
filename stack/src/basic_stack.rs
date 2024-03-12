@@ -92,7 +92,6 @@ impl<'a> IntoIterator for &'a BasicStack<'_> {
     }
 }
 
-
 pub struct BasicStackIterator<'a> {
     stack: &'a BasicStack<'a>,
     counter: usize,
@@ -131,17 +130,14 @@ pub struct BasicStackIterator<'a> {
 //     }
 // }
 
-
-
 impl<'a> BasicStack<'a> {
-    pub fn get(&self, index: usize) -> Option<[u32;3]>{
+    pub fn get(&self, index: usize) -> Option<[u32; 3]> {
         if index < self.rules.len() {
             let rule: u32 = self.rules[index];
             let start_position: u32 = self.start_positions[index];
             let end_position: u32 = self.end_positions[index];
             Some([rule, start_position, end_position])
-        }
-        else{
+        } else {
             None
         }
     }
