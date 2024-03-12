@@ -28,7 +28,7 @@ fn run_on_grammar<T: Cache, S: Stack>(n: u32) -> (Duration, String) {
 
     // Context get's created once because some caches can reuse context and so amortize the initial
     // Memory allocations.
-    let context = Context::<T, S>::new(src_len, 42);
+    let context = Context::<T, S>::new(src_len, 43);
     for _i in 0..n {
         //let parse_time = Instant::now();
         let (bol, _position) = grammar(&context, &source, position);

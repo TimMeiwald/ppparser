@@ -7,6 +7,16 @@ name = "cache"
 version = "0.6.0"
 
 [[package]]
+name = "grammar_generator"
+version = "0.6.0"
+dependencies = [
+ "cache",
+ "grammar_parser",
+ "parser_core",
+ "stack",
+]
+
+[[package]]
 name = "grammar_parser"
 version = "0.6.0"
 dependencies = [
