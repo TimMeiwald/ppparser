@@ -10,8 +10,8 @@ use std::time::{Duration, Instant};
 fn get_grammar_string() -> String {
     let path = "../parser_core/tests/Grammar.txt";
     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
-    let string = read_to_string(pathbuf).expect("If it's moved change the string above");
-    string
+    
+    read_to_string(pathbuf).expect("If it's moved change the string above")
 }
 
 fn write_to_performance_profile(data: Vec<String>, path: &str) {

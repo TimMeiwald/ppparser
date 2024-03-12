@@ -116,7 +116,7 @@ fn test() {
     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
     // }
     // println!("\n\n");
-    let sym_table = create_symbol_table(&*context.stack.borrow(), &string2);
+    let _sym_table = create_symbol_table(&context.stack.borrow(), &string2);
     assert_eq!(result, (true, src_len));
 }
 }
