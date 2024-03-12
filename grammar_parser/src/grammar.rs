@@ -33,7 +33,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
 
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -44,7 +44,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -59,7 +59,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -74,7 +74,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<DenyLeftRecursionCache, NoopStack>::new(src_len, 44);
+        let context = Context::<DenyLeftRecursionCache, NoopStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -88,7 +88,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, PrinterStack>::new(src_len, 44);
+        let context = Context::<MyCache4, PrinterStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -102,7 +102,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<BTreeCache, NoopStack>::new(src_len, 44);
+        let context = Context::<BTreeCache, NoopStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -117,7 +117,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+        let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
         //context.stack.borrow().print(&string2);
         for i in &*context.stack.borrow() {

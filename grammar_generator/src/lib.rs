@@ -4,7 +4,6 @@ use grammar_parser::Context;
 use grammar_parser::Source;
 use parser_core::Rules;
 use stack::BasicStack;
-use std::borrow::Borrow;
 use std::env;
 use std::fs::canonicalize;
 use std::fs::read_to_string;
@@ -37,6 +36,17 @@ impl SymbolTable {
     }
 }
 
+fn count_lines(src: &String, start_position: u32) -> u32 {
+    let mut new_line_count: u32 = 0;
+
+    for i in &src.as_bytes()[0..start_position as usize] {
+        if *i == b'\n'{
+            new_line_count += 1;
+        }
+    }
+    return new_line_count
+}
+
 fn create_symbol_table(stack: &BasicStack, src: &String) -> SymbolTable {
     let mut sym_table = SymbolTable::new();
     let mut index = 0;
@@ -47,21 +57,19 @@ fn create_symbol_table(stack: &BasicStack, src: &String) -> SymbolTable {
         }
         index += 1;
     }
-    let mut new_line_count = 0;
     for i in stack{
         if i[0] == Rules::VarName as u32{
             let name = &src[(i[1] as usize)..(i[2] as usize)];
-            println!("{:?}", name);
             if !sym_table.check_symbol(name){
-                panic!("{:?}: {:?}:{:?} does not exist", name, i[1] as usize, i[2] as usize);
+                panic!("{:?} on Line: {:?} - Chars: {:?}:{:?} does not exist", name, count_lines(src, i[1]), i[1] as usize, i[2] as usize);
             }
 
         }
     }
 
-    // for i in 0..sym_table.index.len() {
-    //     println!("{}", sym_table.name[i])
-    // }
+    for i in 0..sym_table.index.len() {
+        println!("{}", sym_table.name[i])
+    }
     sym_table
 }
 
@@ -75,7 +83,7 @@ fn test() {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, BasicStack>::new(src_len, 42);
+    let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
     let result = grammar(&context, &source, position);
     //context.stack.borrow().print(&string2);
     // for i in &*context.stack.borrow() {

@@ -38,7 +38,7 @@
 <Ordered_Choice> = <Atom>, <Whitespace>,<Backslash>, <Whitespace>,<Atom>, (<Backslash>, <Whitespace>, <Atom>)*;
 <One_Or_More> = <Nucleus>, <Whitespace>, <Plus>;
 <Zero_Or_More> = <Nucleus>, <Whitespace>, <Star>;
-<Optional> = <Nucleus>, <Whitespace>, <Question_Mark>, <Thing>;
+<Optional> = <Nucleus>, <Whitespace>, <Question_Mark>;
 
 <Whitespace> DELETE = (" "/<Newline>/"\r")*;
 <RHS> PASSTHROUGH = <Sequence>/<Ordered_Choice>/<Atom>;
