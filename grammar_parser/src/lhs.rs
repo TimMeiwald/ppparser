@@ -1,6 +1,6 @@
 use crate::{
     semantic_instructions,
-    var_name::{self, var_name_decl},
+    var_name::{var_name_decl},
     whitespace,
 };
 use cache::Cache;

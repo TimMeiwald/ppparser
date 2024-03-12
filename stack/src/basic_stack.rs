@@ -1,6 +1,6 @@
 use crate::Stack;
-use std::ops::Index;
-use std::{marker::PhantomData, time};
+
+use std::{marker::PhantomData};
 
 // Immediately go to struct of arrays rather than array of structs since it was significantly faster in Cache
 // This of course requires perf testing at some point but this is just a poc so I can get other work done.

@@ -1,7 +1,7 @@
-use cache::{Cache, DenyLeftRecursionCache, MyCache1, MyCache2, MyCache3, MyCache4};
+use cache::{Cache, MyCache1, MyCache2, MyCache3, MyCache4};
 use grammar_parser::grammar;
 use parser_core::{Context, Source};
-use stack::{BasicStack, NoopStack, Stack};
+use stack::{BasicStack, Stack};
 use std::any::type_name;
 use std::fs::canonicalize;
 use std::fs::{read_to_string, write};
@@ -11,7 +11,7 @@ fn get_grammar_string() -> String {
     let path = "../parser_core/tests/Grammar.txt";
     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
     let string = read_to_string(pathbuf).expect("If it's moved change the string above");
-    return string;
+    string
 }
 
 fn write_to_performance_profile(data: Vec<String>, path: &str) {

@@ -1,12 +1,12 @@
-use cache::MyCache4;
-use grammar_parser::grammar;
-use grammar_parser::Context;
-use grammar_parser::Source;
+
+
+
+
 use parser_core::Rules;
 use stack::BasicStack;
-use std::env;
-use std::fs::canonicalize;
-use std::fs::read_to_string;
+
+
+
 
 struct SymbolTable {
     index: Vec<u32>,
@@ -44,7 +44,7 @@ fn count_lines(src: &String, start_position: u32) -> u32 {
             new_line_count += 1;
         }
     }
-    return new_line_count;
+    new_line_count
 }
 
 fn create_symbol_table(stack: &BasicStack, src: &String) -> SymbolTable {
@@ -79,6 +79,17 @@ fn create_symbol_table(stack: &BasicStack, src: &String) -> SymbolTable {
     sym_table
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cache::MyCache4;
+    use parser_core::Source;
+    use stack::BasicStack;
+    use std::env;
+    use parser_core::Context;
+    use grammar_parser::grammar;
+    use std::fs::{canonicalize, read_to_string};
+
 #[test]
 fn test() {
     println!("{:?}", env::current_dir().unwrap());
@@ -107,4 +118,5 @@ fn test() {
     // println!("\n\n");
     let sym_table = create_symbol_table(&*context.stack.borrow(), &string2);
     assert_eq!(result, (true, src_len));
+}
 }

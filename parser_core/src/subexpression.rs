@@ -26,13 +26,13 @@ mod tests {
     use crate::terminal::_terminal;
     fn test_func(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
-        return x(source, position);
+        x(source, position)
     }
     #[test]
     fn test_subexpression_kernel() {
         let s = "aaa".to_string();
         let s = Source::new(s);
-        let x = _subexpression_kernel(&s, 0, &test_func);
+        let x = _subexpression_kernel(&s, 0, test_func);
         assert_eq!(x, (true, 1));
     }
     #[test]

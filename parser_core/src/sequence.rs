@@ -32,35 +32,35 @@ mod tests {
     use crate::terminal::_terminal;
     fn test_func1(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("a".to_string().as_bytes()[0]);
-        return x(source, position);
+        x(source, position)
     }
     fn test_func2(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("b".to_string().as_bytes()[0]);
-        return x(source, position);
+        x(source, position)
     }
     fn test_func3(source: &Source, position: u32) -> (bool, u32) {
         let x = _terminal("c".to_string().as_bytes()[0]);
-        return x(source, position);
+        x(source, position)
     }
     #[test]
     fn test_sequence_kernel_lhs() {
         let s = "aaa".to_string();
         let s = Source::new(s);
-        let x = _sequence_kernel(&s, 0, &test_func1, &test_func1);
+        let x = _sequence_kernel(&s, 0, test_func1, test_func1);
         assert_eq!(x, (true, 2));
     }
     #[test]
     fn test_sequence_kernel_rhs() {
         let s = "bbb".to_string();
         let s = Source::new(s);
-        let x = _sequence_kernel(&s, 0, &test_func2, &test_func2);
+        let x = _sequence_kernel(&s, 0, test_func2, test_func2);
         assert_eq!(x, (true, 2));
     }
     #[test]
     fn test_sequence_kernel_neither() {
         let s = "ccc".to_string();
         let s = Source::new(s);
-        let x = _sequence_kernel(&s, 0, &test_func1, &test_func1);
+        let x = _sequence_kernel(&s, 0, test_func1, test_func1);
         assert_eq!(x, (false, 0));
     }
 

@@ -5,7 +5,7 @@ pub struct PrinterStack {}
 
 impl Stack for PrinterStack {
     fn new(_size_of_source: u32, _number_of_rules: u32) -> Self {
-        return PrinterStack {};
+        PrinterStack {}
     }
     fn push(&mut self, is_true: bool, rule: u32, start_position: u32, end_position: u32) {
         println!(
