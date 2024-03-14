@@ -5,6 +5,7 @@ use crate::Context;
 use crate::Rules;
 use cache::Cache;
 use stack::Stack;
+
 pub fn _var_name_kernel<T: Cache, S: Stack>(
     rule: Rules,
     context: &Context<T, S>,
@@ -17,23 +18,75 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
         let res = &*(context.cache).borrow();
         cached_val = res.check(rule as u32, position);
     };
-    let res = match cached_val {
-        Some(cached_val) => cached_val,
+    match cached_val {
+        Some(cached_val) => cached_val, // Nothing get's pushed if cached which would cause a bug need to fix,
         None => {
+
+            // Need to push before result to ensure that the order is correct, use patch to insert correct values after
+            let index: u32;
+            {   
+                let stack = &mut *(context.stack).borrow_mut();
+                index = stack.push(false, rule as u32, position, 0);
+            }
+
+            // Run function
             let result = func(context, source, position);
+            // Patch in Result if True else pop to index. 
+            if result.0{
+                {
+                    let stack = &mut *(context.stack).borrow_mut();
+                    stack.patch(index, result.0, rule as u32, position, result.1);
+                }
+
+            }
+            else {
+                // Should pop anything where end_position doesn't get set.
+                {
+                    let stack = &mut *(context.stack).borrow_mut();
+                    stack.pop_to(index);
+                }
+            }
             {
                 let cache = &mut *(context.cache).borrow_mut();
                 cache.push(rule as u32, result.0, position, result.1);
             }
+
             result
         }
-    };
-    let end_position = res.1;
-    let is_true = res.0;
-    let stack = &mut *(context.stack).borrow_mut();
-    stack.push(is_true, rule as u32, position, end_position);
-    res
+    }
+
 }
+
+// Initial buggy _var_name_kernel
+// pub fn _var_name_kernel<T: Cache, S: Stack>(
+//     rule: Rules,
+//     context: &Context<T, S>,
+//     source: &Source,
+//     position: u32,
+//     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+// ) -> (bool, u32) {
+//     let cached_val: Option<(bool, u32)>;
+//     {
+//         let res = &*(context.cache).borrow();
+//         cached_val = res.check(rule as u32, position);
+//     };
+//     let res = match cached_val {
+//         Some(cached_val) => cached_val,
+//         None => {
+//             let result = func(context, source, position);
+//             {
+//                 let cache = &mut *(context.cache).borrow_mut();
+//                 cache.push(rule as u32, result.0, position, result.1);
+//             }
+//             result
+//         }
+//     };
+//     let end_position = res.1;
+//     let is_true = res.0;
+//     let stack = &mut *(context.stack).borrow_mut();
+//     stack.push(is_true, rule as u32, position, end_position);
+//     res
+// }
 
 // Without stack
 // pub fn _var_name_kernel<T: Cache>(

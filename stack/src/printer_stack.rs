@@ -18,7 +18,7 @@ impl Stack for PrinterStack {
     fn patch(&mut self, index: u32, is_true: bool, rule: u32, start_position: u32, end_position: u32) {
         println!("Patch")
     }
-    fn remove(&mut self, index: u32) {
-        println!("Remove Index: {}", index)
-    }
+
+    fn pop(&mut self){}
+    fn pop_to(&mut self, index: u32){}
 }
