@@ -83,7 +83,7 @@ impl<'a> Stack for BasicStack<'a> {
     }
     fn pop_to(&mut self, index: u32){
         // inclusive
-        while (self.rules.len()-1) != index as usize {
+        while (self.rules.len()) != index as usize {
             self.pop();
         }
     }
