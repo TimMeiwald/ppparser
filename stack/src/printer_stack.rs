@@ -7,11 +7,16 @@ impl Stack for PrinterStack {
     fn new(_size_of_source: u32, _number_of_rules: u32) -> Self {
         PrinterStack {}
     }
-    fn push(&mut self, is_true: bool, rule: u32, start_position: u32, end_position: u32) {
+    fn push(&mut self, is_true: bool, rule: u32, start_position: u32, end_position: u32) -> u32 {
         println!(
             "Push Rule: {}, Start Position: {}, End Position: {} -> {}",
             rule, start_position, end_position, is_true
-        )
+        );
+        return 0
+    }
+
+    fn patch(&mut self, index: u32, is_true: bool, rule: u32, start_position: u32, end_position: u32) {
+        println!("Patch")
     }
     fn remove(&mut self, index: u32) {
         println!("Remove Index: {}", index)
