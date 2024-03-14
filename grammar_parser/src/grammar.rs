@@ -124,6 +124,7 @@ mod tests {
             // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
             //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
             // }
+            println!("{}",i[0]);
             println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
         }
         assert_eq!(result, (true, src_len));

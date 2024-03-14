@@ -30,47 +30,63 @@ impl<'a> Stack for BasicStack<'a> {
             phantom: PhantomData,
         }
     }
-    fn push(&mut self, is_true: bool, rule: u32, start_position: u32, end_position: u32) -> u32 {
-        let index: u32 = self.rules.len() as u32;
-        match is_true {
-            true => {
-                // When true push onto stack
-                
-                self.rules.push(rule);
-                self.start_positions.push(start_position);
-                self.end_positions.push(end_position);
-                return index;
-            }
-            false => {
-                // When false pop all instructiosn that exist between start_position and end_position.
-                loop {
-                    if index == 0 {
-                        break;
-                    }
-                    let last_index = index - 1;
-                    //let last_elem_rule = self.rules[last_index];
-                    let last_start_position = self.start_positions[last_index as usize];
-                    let last_end_position = self.end_positions[last_index as usize];
+    fn push(&mut self, _is_true: bool, rule: u32, start_position: u32, end_position: u32) -> u32 {
+        let index = self.rules.len();
+        self.rules.push(rule);
+        self.start_positions.push(start_position);
+        self.end_positions.push(end_position);
+        return index as u32;
 
-                    if start_position >= last_start_position && end_position < last_end_position {
-                        self.rules.pop();
-                        self.end_positions.pop();
-                        self.start_positions.pop();
-                    } else {
-                        break;
-                    }
-                }
-                return index;
-            }
-        }
+        // let index: u32 = self.rules.len() as u32;
+        // match is_true {
+        //     true => {
+        //         // When true push onto stack
+                
+        //         self.rules.push(rule);
+        //         self.start_positions.push(start_position);
+        //         self.end_positions.push(end_position);
+        //         return index;
+        //     }
+        //     false => {
+        //         // When false pop all instructiosn that exist between start_position and end_position.
+        //         loop {
+        //             if index == 0 {
+        //                 break;
+        //             }
+        //             let last_index = index - 1;
+        //             //let last_elem_rule = self.rules[last_index];
+        //             let last_start_position = self.start_positions[last_index as usize];
+        //             let last_end_position = self.end_positions[last_index as usize];
+
+        //             if start_position >= last_start_position && end_position < last_end_position {
+        //                 self.rules.pop();
+        //                 self.end_positions.pop();
+        //                 self.start_positions.pop();
+        //             } else {
+        //                 break;
+        //             }
+        //         }
+        //         return index;
+        //     }
+        // }
     }
 
-    fn patch(&mut self, index: u32, is_true: bool, rule: u32, start_position: u32, end_position: u32) {
+    fn patch(&mut self, index: u32, _is_true: bool, _rule: u32, start_position: u32, end_position: u32) {
         self.start_positions[index as usize] = start_position;
         self.end_positions[index as usize] = end_position;
     }
 
-    fn remove(&mut self, _index: u32) {}
+    fn pop(&mut self){
+        self.rules.pop();
+        self.start_positions.pop();
+        self.end_positions.pop();
+    }
+    fn pop_to(&mut self, index: u32){
+        // inclusive
+        while (self.rules.len()-1) != index as usize {
+            self.pop();
+        }
+    }
 }
 
 impl<'a> Iterator for BasicStackIterator<'a> {
