@@ -30,25 +30,27 @@ impl<'a> Stack for BasicStack<'a> {
             phantom: PhantomData,
         }
     }
-    fn push(&mut self, is_true: bool, rule: u32, start_position: u32, end_position: u32) {
+    fn push(&mut self, is_true: bool, rule: u32, start_position: u32, end_position: u32) -> u32 {
+        let index: u32 = self.rules.len() as u32;
         match is_true {
             true => {
                 // When true push onto stack
+                
                 self.rules.push(rule);
                 self.start_positions.push(start_position);
                 self.end_positions.push(end_position);
+                return index;
             }
             false => {
                 // When false pop all instructiosn that exist between start_position and end_position.
                 loop {
-                    let len = self.rules.len();
-                    if len == 0 {
+                    if index == 0 {
                         break;
                     }
-                    let last_index = len - 1;
+                    let last_index = index - 1;
                     //let last_elem_rule = self.rules[last_index];
-                    let last_start_position = self.start_positions[last_index];
-                    let last_end_position = self.end_positions[last_index];
+                    let last_start_position = self.start_positions[last_index as usize];
+                    let last_end_position = self.end_positions[last_index as usize];
 
                     if start_position >= last_start_position && end_position < last_end_position {
                         self.rules.pop();
@@ -58,9 +60,15 @@ impl<'a> Stack for BasicStack<'a> {
                         break;
                     }
                 }
+                return index;
             }
         }
     }
+
+    fn patch(&mut self, index: u32, is_true: bool, rule: u32, start_position: u32, end_position: u32) {
+        
+    }
+
     fn remove(&mut self, _index: u32) {}
 }
 

@@ -43,6 +43,7 @@ fn count_lines(src: &String, start_position: u32) -> u32 {
 fn create_symbol_table(stack: &BasicStack, src: &String) -> SymbolTable {
     let mut sym_table = SymbolTable::new();
     let mut index = 0;
+    // Gets var name declarations
     for i in stack {
         if i[0] == Rules::VarNameDecl as u32 {
             let name = &src[(i[1] as usize)..(i[2] as usize)];
@@ -50,6 +51,7 @@ fn create_symbol_table(stack: &BasicStack, src: &String) -> SymbolTable {
         }
         index += 1;
     }
+    // Checks that all varnames used exist in symbol table
     for i in stack {
         if i[0] == Rules::VarName as u32 {
             let name = &src[(i[1] as usize)..(i[2] as usize)];
@@ -95,6 +97,8 @@ mod tests {
         let position: u32 = 0;
         let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
+
+        // Checks full file was parsed. 
         if result.1 != string2.len() as u32 {
             panic!(
                 "Failed to parse grammar due to syntax error on Line: {:?}",
