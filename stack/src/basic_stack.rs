@@ -224,8 +224,11 @@ impl<'a> BasicStack<'a> {
         let parent_end = self.end_positions[index as usize];
         println!("{}{}, {}, {}, {}", "    ".repeat(indent as usize), parent_rule, parent_start, parent_end, &source[(parent_start as usize)..(parent_end as usize)]);
         let mut temp_index = index + 1;
-        sleep(Duration::new(0, 100000000));
+        //sleep(Duration::new(0, 100000000));
         loop{
+        if temp_index >= self.rules.len() as u32{
+            return temp_index;
+        }
         if self.is_index_a_child(index, temp_index){
             temp_index = self.print_kernel(temp_index, indent+1, source)
 
@@ -239,7 +242,12 @@ impl<'a> BasicStack<'a> {
 }
 
     pub fn print(&self, source: &String) {
-        self.print_kernel(0, 0, source);
+        let len  = self.rules.len();
+        let mut temp_index: u32 = 0;
+        while temp_index < len as u32{
+            temp_index = self.print_kernel(temp_index, 0, source);
+        }
+
     //     // println!("Into Print");
     //     let mut index: u32 = 0;
     //     let mut indent = 0;
