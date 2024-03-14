@@ -21,4 +21,6 @@ impl Stack for PrinterStack {
 
     fn pop(&mut self){}
     fn pop_to(&mut self, index: u32){}
+    fn read_children(&self, index: u32) -> Option<(u32, u32)>{Some((0,0))}
+
 }

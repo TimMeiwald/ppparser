@@ -119,14 +119,14 @@ mod tests {
         let position: u32 = 0;
         let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
-        //context.stack.borrow().print(&string2);
-        for i in &*context.stack.borrow() {
-            // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
-            //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
-            // }
-            println!("{}",i[0]);
-            println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
-        }
+        context.stack.borrow().print(&string2);
+        // for i in &*context.stack.borrow() {
+        //     // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
+        //     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
+        //     // }
+        //     //println!("{}",i[0]);
+        //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
+        // }
         assert_eq!(result, (true, src_len));
     }
 }
