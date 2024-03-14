@@ -4,4 +4,7 @@ pub trait Stack {
     fn patch(&mut self, index: u32, is_true: bool, rule: u32, start_position: u32, end_position: u32);
     fn pop(&mut self);
     fn pop_to(&mut self, index: u32); // Not inclusive
+    // Read all children and subchildren of index and return start index and end index.
+    fn read_children(&self, index: u32) -> Option<(u32, u32)>;
+
 }

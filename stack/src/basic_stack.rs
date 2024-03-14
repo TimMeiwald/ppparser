@@ -1,6 +1,6 @@
 use crate::Stack;
 
-use std::marker::PhantomData;
+use std::{marker::PhantomData, thread::sleep, time::Duration};
 
 // Immediately go to struct of arrays rather than array of structs since it was significantly faster in Cache
 // This of course requires perf testing at some point but this is just a poc so I can get other work done.
@@ -41,7 +41,7 @@ impl<'a> Stack for BasicStack<'a> {
         // match is_true {
         //     true => {
         //         // When true push onto stack
-                
+
         //         self.rules.push(rule);
         //         self.start_positions.push(start_position);
         //         self.end_positions.push(end_position);
@@ -71,20 +71,53 @@ impl<'a> Stack for BasicStack<'a> {
         // }
     }
 
-    fn patch(&mut self, index: u32, _is_true: bool, _rule: u32, start_position: u32, end_position: u32) {
+    fn patch(
+        &mut self,
+        index: u32,
+        _is_true: bool,
+        _rule: u32,
+        start_position: u32,
+        end_position: u32,
+    ) {
         self.start_positions[index as usize] = start_position;
         self.end_positions[index as usize] = end_position;
     }
 
-    fn pop(&mut self){
+    fn pop(&mut self) {
         self.rules.pop();
         self.start_positions.pop();
         self.end_positions.pop();
     }
-    fn pop_to(&mut self, index: u32){
+    fn pop_to(&mut self, index: u32) {
         // inclusive
         while (self.rules.len()) != index as usize {
             self.pop();
+        }
+    }
+
+    fn read_children(&self, index: u32) -> Option<(u32, u32)> {
+        //println!("Read Children");
+        let parent_start = self.start_positions[index as usize];
+        let parent_end = self.end_positions[index as usize];
+        let mut temp_index = index + 1; // Start at child not node itself
+        loop {
+            //println!("Read Children Index: {}", temp_index);
+
+            let start = self.start_positions[temp_index as usize];
+            let end = self.end_positions[temp_index as usize];
+            //println!("{}, {}, {}, {}", parent_start, start, parent_end, end);
+            if (start >= parent_start) && (end <= parent_end) {
+                // Then it's a child node
+                //println!("Child Node");
+                temp_index += 1;
+            } else {
+                break;
+            }
+        }
+        if temp_index == index + 1 {
+            None
+        } else {
+            Some((index, temp_index))
         }
     }
 }
@@ -167,27 +200,69 @@ impl<'a> BasicStack<'a> {
         }
     }
 
-    pub fn print(&self, source: &String) {
-        let l1 = self.rules.len();
-        let l2 = self.start_positions.len();
-        let l3 = self.end_positions.len();
-        if l1 == l2 && l2 == l3 && l3 == l1 {
-            for i in 0..l1 {
-                let p1 = self.rules[i];
-                let p2 = self.start_positions[i];
-                let p3 = self.end_positions[i];
-                let s1 = p2 as usize;
-                let s2 = p3 as usize;
-                let slice = &source[s1..s2];
-                if p1 == 20 {
-                    println!(
-                        "Rule: {:?}, Start Position: {:?}, End Position: {:?} => {}",
-                        p1, p2, p3, slice
-                    );
-                }
-            }
+    pub fn is_index_a_child(&self, parent_index: u32, potential_child_index: u32) -> bool {
+        let parent_start = self.start_positions[parent_index as usize];
+        let parent_end = self.end_positions[parent_index as usize];
+
+        //println!("Read Children Index: {}", temp_index);
+
+        let start = self.start_positions[potential_child_index as usize];
+        let end = self.end_positions[potential_child_index as usize];
+        //println!("{}, {}, {}, {}", parent_start, start, parent_end, end);
+        if (start >= parent_start) && (end <= parent_end) {
+            // Then it's a child node
+            // println!("Child Node");
+            true
         } else {
-            println!("Something went wrong with BasicStack, Vector lengths must be identical.");
+            false
         }
+    }
+
+    pub fn print_kernel(&self, index: u32, indent: u32, source: &String) -> u32{
+        let parent_rule = self.rules[index as usize];
+        let parent_start = self.start_positions[index as usize];
+        let parent_end = self.end_positions[index as usize];
+        println!("{}{}, {}, {}, {}", "    ".repeat(indent as usize), parent_rule, parent_start, parent_end, &source[(parent_start as usize)..(parent_end as usize)]);
+        let mut temp_index = index + 1;
+        sleep(Duration::new(0, 100000000));
+        loop{
+        if self.is_index_a_child(index, temp_index){
+            temp_index = self.print_kernel(temp_index, indent+1, source)
+
+        }
+        else{
+            return temp_index
+        }
+    }
+
+
+}
+
+    pub fn print(&self, source: &String) {
+        self.print_kernel(0, 0, source);
+    //     // println!("Into Print");
+    //     let mut index: u32 = 0;
+    //     let mut indent = 0;
+    //     let len = self.rules.len();
+    //     loop {
+    //         //println!("Print Loop Index: {}", index);
+    //         let rule = self.rules[index as usize];
+    //         let start = self.start_positions[index as usize];
+    //         let end = self.end_positions[index as usize];
+    //         println!("{}{}, {}, {}", "    ".repeat(indent), rule, start, end);
+    //         if index + 1 == len as u32 {
+    //             break;
+    //         }
+
+    //         if self.is_next_index_a_child(index) {
+    //             indent += 1;
+    //             index += 1;
+    //         } else {
+    //             index +=1;
+    //             if indent >= 1{
+    //             indent -= 1;
+    //             }
+    //         }
+    //     }
     }
 }
