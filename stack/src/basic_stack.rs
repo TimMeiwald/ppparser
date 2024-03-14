@@ -66,7 +66,8 @@ impl<'a> Stack for BasicStack<'a> {
     }
 
     fn patch(&mut self, index: u32, is_true: bool, rule: u32, start_position: u32, end_position: u32) {
-        
+        self.start_positions[index as usize] = start_position;
+        self.end_positions[index as usize] = end_position;
     }
 
     fn remove(&mut self, _index: u32) {}
