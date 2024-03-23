@@ -59,7 +59,7 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
             }
             else {
                 // Should pop anything where end_position doesn't get set.
-                {
+                {   
                     let stack = &mut *(context.stack).borrow_mut();
                     stack.pop_to(index);
                 }

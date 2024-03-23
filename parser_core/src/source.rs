@@ -8,6 +8,11 @@ impl<'a> From<Source> for String {
         return i.source;
     }
 }
+impl<'a> From<&Source> for String {
+    fn from(i: &Source) -> String {
+        return i.source.clone();
+    }
+}
 
 impl Source {
     pub fn new(source: String) -> Source {

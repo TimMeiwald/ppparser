@@ -251,30 +251,13 @@ impl<'a> BasicStack<'a> {
         while temp_index < len as u32{
             temp_index = self.print_kernel(temp_index, 0, source);
         }
-
-    //     // println!("Into Print");
-    //     let mut index: u32 = 0;
-    //     let mut indent = 0;
-    //     let len = self.rules.len();
-    //     loop {
-    //         //println!("Print Loop Index: {}", index);
-    //         let rule = self.rules[index as usize];
-    //         let start = self.start_positions[index as usize];
-    //         let end = self.end_positions[index as usize];
-    //         println!("{}{}, {}, {}", "    ".repeat(indent), rule, start, end);
-    //         if index + 1 == len as u32 {
-    //             break;
-    //         }
-
-    //         if self.is_next_index_a_child(index) {
-    //             indent += 1;
-    //             index += 1;
-    //         } else {
-    //             index +=1;
-    //             if indent >= 1{
-    //             indent -= 1;
-    //             }
-    //         }
-    //     }
     }
+    
+    pub fn print_range(&self, source: &String, start: u32, end: u32){
+        let mut temp_index: u32 = start;
+        while temp_index < end as u32{
+            temp_index = self.print_kernel(temp_index, 0, source);
+        }
+    }
+
 }
