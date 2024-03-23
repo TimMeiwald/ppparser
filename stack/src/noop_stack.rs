@@ -16,6 +16,7 @@ impl Stack for NoopStack {
     ) -> u32 {
         0
     }
+    fn get(&self, index: u32) -> [u32; 3] {[0,0,0]}
     fn pop(&mut self) {}
     fn pop_to(&mut self, index: u32) {}
     fn patch(

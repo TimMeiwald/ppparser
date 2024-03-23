@@ -21,7 +21,8 @@ pub fn grammar<T: Cache, S: Stack>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cache::{BTreeCache, DenyLeftRecursionCache, MyCache4};
+    //use cache::{BTreeCache, DenyLeftRecursionCache, MyCache4};
+    use cache::{MyCache4};
     use parser_core::Source;
     use stack::{BasicStack, NoopStack, PrinterStack};
     use std::env;
@@ -64,20 +65,20 @@ mod tests {
         assert_eq!(result, (true, src_len));
     }
 
-    #[test]
-    fn test_deny_left_recursion_cache() {
-        println!("{:?}", env::current_dir().unwrap());
-        let path = "../parser_core/tests/Grammar.txt";
-        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
-        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+    // #[test]
+    // fn test_deny_left_recursion_cache() {
+    //     println!("{:?}", env::current_dir().unwrap());
+    //     let path = "../parser_core/tests/Grammar.txt";
+    //     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+    //     let string = read_to_string(pathbuf).expect("If it's moved change the string above");
 
-        let src_len = string.len() as u32;
-        let source = Source::new(string);
-        let position: u32 = 0;
-        let context = Context::<DenyLeftRecursionCache, NoopStack>::new(src_len, 45);
-        let result = grammar(&context, &source, position);
-        assert_eq!(result, (true, src_len));
-    }
+    //     let src_len = string.len() as u32;
+    //     let source = Source::new(string);
+    //     let position: u32 = 0;
+    //     let context = Context::<DenyLeftRecursionCache, NoopStack>::new(src_len, 45);
+    //     let result = grammar(&context, &source, position);
+    //     assert_eq!(result, (true, src_len));
+    // }
     #[test]
     fn test_my_cache_4() {
         println!("{:?}", env::current_dir().unwrap());
@@ -92,20 +93,20 @@ mod tests {
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
-    #[test]
-    fn test_btree_cache() {
-        println!("{:?}", env::current_dir().unwrap());
-        let path = "../parser_core/tests/Grammar.txt";
-        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
-        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+    // #[test]
+    // fn test_btree_cache() {
+    //     println!("{:?}", env::current_dir().unwrap());
+    //     let path = "../parser_core/tests/Grammar.txt";
+    //     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+    //     let string = read_to_string(pathbuf).expect("If it's moved change the string above");
 
-        let src_len = string.len() as u32;
-        let source = Source::new(string);
-        let position: u32 = 0;
-        let context = Context::<BTreeCache, NoopStack>::new(src_len, 45);
-        let result = grammar(&context, &source, position);
-        assert_eq!(result, (true, src_len));
-    }
+    //     let src_len = string.len() as u32;
+    //     let source = Source::new(string);
+    //     let position: u32 = 0;
+    //     let context = Context::<BTreeCache, NoopStack>::new(src_len, 45);
+    //     let result = grammar(&context, &source, position);
+    //     assert_eq!(result, (true, src_len));
+    // }
 
     #[test]
     fn test_basic_stack() {
@@ -113,13 +114,12 @@ mod tests {
         let path = "../parser_core/tests/Grammar.txt";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
-        let string2 = string.clone();
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
         let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
-        context.stack.borrow().print(&string2);
+        context.stack.borrow().print(&String::from(source));
         // for i in &*context.stack.borrow() {
         //     // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
         //     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);

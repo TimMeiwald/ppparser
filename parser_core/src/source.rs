@@ -3,6 +3,12 @@ pub struct Source {
     source: String,
     source_len: u32,
 }
+impl<'a> From<Source> for String {
+    fn from(i: Source) -> String {
+        return i.source;
+    }
+}
+
 impl Source {
     pub fn new(source: String) -> Source {
         let source_len = source.len() as u32;

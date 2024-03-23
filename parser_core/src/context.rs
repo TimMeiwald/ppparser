@@ -1,5 +1,6 @@
 #[allow(unused_imports)] // So that I don't need to keep adding or removing whilst testing
-use cache::{BTreeCache, Cache, DenyLeftRecursionCache, MyCache1, MyCache2, MyCache3, MyCache4};
+//use cache::{BTreeCache, Cache, DenyLeftRecursionCache, MyCache1, MyCache2, MyCache3, MyCache4};
+use cache::{MyCache4, Cache};
 use stack::Stack;
 use std::cell::RefCell;
 pub struct Context<T: Cache, S: Stack> {
