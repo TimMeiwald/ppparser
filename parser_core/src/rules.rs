@@ -46,3 +46,8 @@ pub enum Rules {
     VarNameDecl,
     NewLine,
 }
+impl<'a> From<u32> for Rules {
+    fn from(i: u32) -> Rules {
+        return i.into();
+    }
+}

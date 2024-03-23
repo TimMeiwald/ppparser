@@ -1,5 +1,9 @@
 use parser_core::Rules;
 use stack::BasicStack;
+mod create_rule;
+
+
+
 
 struct SymbolTable {
     index: Vec<u32>,
@@ -12,6 +16,13 @@ impl SymbolTable {
             index: Vec::<u32>::new(),
             name: Vec::<String>::new(),
         }
+    }
+
+    pub fn print(&self){
+        for i in 0..self.index.len(){
+            println!("{}, {}", self.index[i], self.name[i])
+        }
+
     }
 
     pub fn push(&mut self, index: u32, name: String) {
@@ -66,10 +77,6 @@ fn create_symbol_table(stack: &BasicStack, src: &String) -> SymbolTable {
             }
         }
     }
-
-    // for i in 0..sym_table.index.len() {
-    //     println!("{}", sym_table.name[i])
-    // }
     println!("Symbol Table created successfully");
     sym_table
 }
@@ -113,7 +120,8 @@ mod tests {
         //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
         // }
         // println!("\n\n");
-        let _sym_table = create_symbol_table(&context.stack.borrow(), &string2);
+        let sym_table = create_symbol_table(&context.stack.borrow(), &string2);
+        sym_table.print();
         assert_eq!(result, (true, src_len));
     }
 }
