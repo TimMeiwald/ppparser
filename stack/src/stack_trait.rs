@@ -6,5 +6,5 @@ pub trait Stack {
     fn pop_to(&mut self, index: u32); // Not inclusive
     // Read all children and subchildren of index and return start index and end index.
     fn read_children(&self, index: u32) -> Option<(u32, u32)>;
-
+    fn get(&self, index: u32) -> [u32; 3];
 }

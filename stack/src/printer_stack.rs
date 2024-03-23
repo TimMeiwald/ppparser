@@ -14,6 +14,7 @@ impl Stack for PrinterStack {
         );
         return 0
     }
+    fn get(&self, index: u32) -> [u32; 3] {[0,0,0]}
 
     fn patch(&mut self, index: u32, is_true: bool, rule: u32, start_position: u32, end_position: u32) {
         println!("Patch")

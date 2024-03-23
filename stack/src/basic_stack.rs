@@ -94,15 +94,28 @@ impl<'a> Stack for BasicStack<'a> {
             self.pop();
         }
     }
+    fn get(&self, index: u32) -> [u32; 3] {
+        if index < self.rules.len() as u32 {
+            let rule: u32 = self.rules[index as usize];
+            let start_position: u32 = self.start_positions[index as usize];
+            let end_position: u32 = self.end_positions[index as usize];
+            [rule, start_position, end_position]
+        } else {
+            panic!("Should never happen")
+        }
+    }
 
     fn read_children(&self, index: u32) -> Option<(u32, u32)> {
-        //println!("Read Children");
+        if index >= self.start_positions.len() as u32 {
+            return None
+        }
         let parent_start = self.start_positions[index as usize];
         let parent_end = self.end_positions[index as usize];
         let mut temp_index = index + 1; // Start at child not node itself
         loop {
-            //println!("Read Children Index: {}", temp_index);
-
+            if temp_index >= self.start_positions.len() as u32 {
+                break
+            }
             let start = self.start_positions[temp_index as usize];
             let end = self.end_positions[temp_index as usize];
             //println!("{}, {}, {}, {}", parent_start, start, parent_end, end);
@@ -189,16 +202,7 @@ pub struct BasicStackIterator<'a> {
 // }
 
 impl<'a> BasicStack<'a> {
-    pub fn get(&self, index: usize) -> Option<[u32; 3]> {
-        if index < self.rules.len() {
-            let rule: u32 = self.rules[index];
-            let start_position: u32 = self.start_positions[index];
-            let end_position: u32 = self.end_positions[index];
-            Some([rule, start_position, end_position])
-        } else {
-            None
-        }
-    }
+
 
     pub fn is_index_a_child(&self, parent_index: u32, potential_child_index: u32) -> bool {
         let parent_start = self.start_positions[parent_index as usize];

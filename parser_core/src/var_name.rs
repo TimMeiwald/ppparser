@@ -1,9 +1,8 @@
-use std::borrow::BorrowMut;
 
 use crate::source::Source;
 use crate::Context;
 use crate::Rules;
-use cache::Cache;
+use cache::{Cache, Index};
 use stack::Stack;
 
 pub fn _var_name_kernel<T: Cache, S: Stack>(
@@ -13,13 +12,32 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
     position: u32,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
-    let cached_val: Option<(bool, u32)>;
+    let cached_val: Option<(bool, u32, Index)>;
     {
         let res = &*(context.cache).borrow();
         cached_val = res.check(rule as u32, position);
     };
     match cached_val {
-        Some(cached_val) => cached_val, // Nothing get's pushed if cached which would cause a bug need to fix,
+        Some(cached_val) => {
+            // If True read results from stack and push back onto stack again 
+            if cached_val.0
+            {
+                let stack = &mut *(context.stack).borrow_mut();
+                let index = u32::from(cached_val.2);
+                let result = stack.read_children(index);
+                match result {
+                    None => {}
+                    Some(res) => {
+                        for child_index in (res.0+1)..res.1{
+                            let dets = stack.get(child_index);
+                            stack.push(true, dets[0], dets[1], dets[2]);
+                        }
+                    }
+                };
+
+            }
+            (cached_val.0, cached_val.1)
+        }, 
         None => {
 
             // Need to push before result to ensure that the order is correct, use patch to insert correct values after
@@ -48,7 +66,7 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
             }
             {
                 let cache = &mut *(context.cache).borrow_mut();
-                cache.push(rule as u32, result.0, position, result.1);
+                cache.push(rule as u32, result.0, position, result.1, Index(index));
             }
 
             result

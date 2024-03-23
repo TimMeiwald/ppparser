@@ -1,9 +1,10 @@
-use crate::Cache;
+use crate::{cache_trait::Index, Cache};
 
 // This cache will completely flatten the cache to see if that improves performance.
 pub struct MyCache4 {
-    is_true: Vec<bool>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
     end_position: Vec<u32>,
+    indexes: Vec<Index>,
+    is_true: Vec<bool>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
     number_of_structs: u32,
 }
 
@@ -15,6 +16,7 @@ impl Cache for MyCache4 {
         let mut c = MyCache4 {
             is_true: Vec::with_capacity(capacity),
             end_position: Vec::with_capacity(capacity),
+            indexes: Vec::with_capacity(capacity),
             number_of_structs,
         };
         for _i in 0..capacity {
@@ -24,24 +26,28 @@ impl Cache for MyCache4 {
         for _i in 0..capacity {
             c.end_position.push(0); // Might be faster? Maybe compiler inlines it? Can't exactly tell needs better performance profiling vs one loop
         }
+        for _i in 0..capacity {
+            c.indexes.push(Index(u32::MAX)); // MAX_INT is not valid, means not yet used. 
+        }
         c
         // for every arg cache in c set size to <number_of_structs>
     }
 
-    fn push(&mut self, rule: u32, is_true: bool, start_position: u32, end_position: u32) {
+    fn push(&mut self, rule: u32, is_true: bool, start_position: u32, end_position: u32, stack_index: Index ) {
         let index = (start_position * self.number_of_structs + rule) as usize;
         self.is_true[index] = is_true;
         self.end_position[index] = end_position;
+        self.indexes[index] = stack_index;
     }
-    fn check(&self, rule: u32, start_position: u32) -> Option<(bool, u32)> {
+    fn check(&self, rule: u32, start_position: u32) -> Option<(bool, u32, Index)> {
         let index = (start_position * self.number_of_structs + rule) as usize;
         //println!("Index: {:?}, Start_Position: {:?}, Rule: {:?}", index, start_position, rule);
         let is_true: bool = self.is_true[index];
         let end_position: u32 = self.end_position[index];
-
+        let indexed: Index = self.indexes[index];
         if end_position != 0 {
             // Result is returned to callee to unwrap
-            Some((is_true, end_position))
+            Some((is_true, end_position, indexed))
         } else {
             // Tells callee to simply run the actual code instead of using cached value since one does not exist.
             None

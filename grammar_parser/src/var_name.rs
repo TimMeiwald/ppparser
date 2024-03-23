@@ -47,7 +47,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::NoopStack;
+    use stack::{BasicStack, NoopStack};
     #[test]
     fn test_var_name_false() {
         let string = "_this_is_not_a_valid_var_name".to_string();
@@ -67,9 +67,9 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
-
+        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
         let result = var_name(&context, &source, position);
+        context.stack.borrow().print(&String::from(source));
         assert_eq!(result, (true, 26));
     }
     #[test]
