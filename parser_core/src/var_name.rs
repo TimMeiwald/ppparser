@@ -17,6 +17,7 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
         let res = &*(context.cache).borrow();
         cached_val = res.check(rule as u32, position);
     };
+    println!("Rule: {:?}", rule);
     match cached_val {
         Some(cached_val) => {
             // If True read results from stack and push back onto stack again 
@@ -36,6 +37,7 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
                 };
 
             }
+            println!("Result: {:?} {:?}", cached_val.0, cached_val.1);
             (cached_val.0, cached_val.1)
         }, 
         None => {
@@ -68,7 +70,7 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
                 let cache = &mut *(context.cache).borrow_mut();
                 cache.push(rule as u32, result.0, position, result.1, Index(index));
             }
-
+            println!("Result: {:?} {:?}", result.0, result.1);
             result
         }
     }

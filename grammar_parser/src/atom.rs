@@ -38,7 +38,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::NoopStack;
+    use stack::{BasicStack, NoopStack};
 
     #[test]
     fn test_atom_true() {
@@ -47,9 +47,10 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
 
         let result = atom(&context, &source, position);
+        context.stack.borrow().print(&String::from(source));
         assert_eq!(result, (true, 3));
     }
 }
