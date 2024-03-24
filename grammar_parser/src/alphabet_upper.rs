@@ -4,9 +4,9 @@ use parser_core::Source;
 use parser_core::Context;
 //Example of possible substiution optimization.
 use cache::Cache;
-use stack::Stack;
+use publisher::Publisher;
 
-pub fn alphabet_upper<T: Cache, S: Stack>(
+pub fn alphabet_upper<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -95,7 +95,7 @@ mod tests {
     use rules::rules::Rules;
     use parser_core::Source;
     use parser_core::_var_name;
-    use stack::NoopStack;
+    use publisher::NoopStack;
 
     #[test]
     fn test_alphabet_upper_false() {

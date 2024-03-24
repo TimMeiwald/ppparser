@@ -6,9 +6,9 @@ use parser_core::_var_name;
 use parser_core::{Context };
 use rules::rules::Rules;
 
-use stack::Stack;
+use publisher::Publisher;
 
-pub fn ascii<T: Cache, S: Stack>(
+pub fn ascii<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -33,7 +33,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::NoopStack;
+    use publisher::NoopStack;
 
     #[test]
     fn test_ascii_true() {

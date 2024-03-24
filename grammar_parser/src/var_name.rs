@@ -10,9 +10,9 @@ use parser_core::_zero_or_more;
 use parser_core::{Context};
 use rules::rules::Rules;
 
-use stack::Stack;
+use publisher::Publisher;
 
-pub fn var_name<T: Cache, S: Stack>(
+pub fn var_name<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -35,7 +35,7 @@ pub fn var_name<T: Cache, S: Stack>(
     s3(source, position)
 }
 
-pub fn var_name_decl<T: Cache, S: Stack>(
+pub fn var_name_decl<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -49,7 +49,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::{BasicStack, NoopStack};
+    use publisher::{BasicStack, NoopStack};
     #[test]
     fn test_var_name_false() {
         let string = "_this_is_not_a_valid_var_name".to_string();
@@ -79,7 +79,7 @@ mod tests {
         let string = "<Alphabet_Upper>".to_string();
 
         let src_len = string.len() as u32;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
 
         let source = Source::new(string);
         let position: u32 = 0;

@@ -3,11 +3,11 @@ use parser_core::{Context};
 use rules::rules::Rules;
 
 use parser_core::{Source, _sequence, _subexpression, _var_name, _zero_or_more};
-use stack::Stack;
+use publisher::Publisher;
 
 use crate::{atom, symbols::backslash, whitespace};
 
-pub fn ordered_choice<T: Cache, S: Stack>(
+pub fn ordered_choice<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -41,7 +41,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::NoopStack;
+    use publisher::NoopStack;
 
     #[test]
     fn test_ordered_choice_false() {

@@ -3,11 +3,11 @@ use crate::source::Source;
 use crate::Context;
 use rules::rules::Rules;
 use cache::{Cache, Index};
-use stack::Stack;
+use publisher::Publisher;
 
 
 
-pub fn _var_name_kernel<T: Cache, S: Stack>(
+pub fn _var_name_kernel<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
     source: &Source,
@@ -225,7 +225,7 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
 //     }
 // }
 
-pub fn _var_name<T: Cache, S: Stack>(
+pub fn _var_name<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
@@ -242,8 +242,8 @@ mod tests {
     use crate::terminal::_terminal;
     use rules::rules::Rules;
     use cache::{Cache, MyCache4};
-    use stack::{NoopStack, Stack};
-    fn test_func<T: Cache, S: Stack>(
+    use publisher::{NoopStack, Publisher};
+    fn test_func<T: Cache, S: Publisher>(
         _context: &Context<T, S>,
         source: &Source,
         position: u32,

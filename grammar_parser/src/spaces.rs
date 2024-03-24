@@ -3,9 +3,9 @@ use parser_core::Context;
 use parser_core::Source;
 use parser_core::_ordered_choice;
 use parser_core::_terminal;
-use stack::Stack;
+use publisher::Publisher;
 
-pub fn spaces<T: Cache, S: Stack>(
+pub fn spaces<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -27,7 +27,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::NoopStack;
+    use publisher::NoopStack;
 
     #[test]
     fn test_num_false() {

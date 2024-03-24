@@ -1,7 +1,7 @@
 mod utils;
 use cache::MyCache4;
 use grammar_parser::{grammar, Context, Source};
-use stack::NoopStack;
+use publisher::NoopStack;
 use std::env::args;
 use std::fs;
 use std::process::ExitCode;

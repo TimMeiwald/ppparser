@@ -2,7 +2,7 @@
 use cache::{Cache, MyCache4};
 use grammar_parser::grammar;
 use parser_core::{Context, Source};
-use stack::{BasicStack, Stack};
+use publisher::{BasicStack, Publisher};
 use std::any::type_name;
 use std::fs::canonicalize;
 use std::fs::{read_to_string, write};
@@ -20,7 +20,7 @@ fn write_to_performance_profile(data: Vec<String>, path: &str) {
     write(pathbuf, data.concat()).expect("No reason for it to fail")
 }
 
-fn run_on_grammar<T: Cache, S: Stack>(n: u32) -> (Duration, String) {
+fn run_on_grammar<T: Cache, S: Publisher>(n: u32) -> (Duration, String) {
     let src = get_grammar_string();
     let src_len = src.len() as u32;
     let source = Source::new(src);

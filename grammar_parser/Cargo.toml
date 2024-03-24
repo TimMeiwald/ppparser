@@ -5,5 +5,5 @@ edition = "2021"
 [dependencies]
 parser_core = { path = "../parser_core" }
 cache = { path = "../cache" }
-stack = {path = "../stack"}
+publisher = {path = "../publisher"}
 rules = {path = "../rules"}

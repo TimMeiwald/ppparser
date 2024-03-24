@@ -6,5 +6,5 @@ edition = "2021"
 grammar_parser = { path = "../grammar_parser"}
 parser_core = { path = "../parser_core" }
 cache = { path = "../cache" }
-stack = {path = "../stack"}
+publisher = {path = "../publisher"}
 rules = {path = "../rules"}

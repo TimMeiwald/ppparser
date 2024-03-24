@@ -22,8 +22,8 @@ dependencies = [
  "cache",
  "grammar_parser",
  "parser_core",
+ "publisher",
  "rules",
- "stack",
 ]
 
 [[package]]
@@ -32,8 +32,8 @@ version = "0.6.0"
 dependencies = [
  "cache",
  "parser_core",
+ "publisher",
  "rules",
- "stack",
 ]
 
 [[package]]
@@ -42,16 +42,7 @@ version = "0.6.0"
 dependencies = [
  "cache",
  "grammar_parser",
- "stack",
-]
-
-[[package]]
-name = "left_recursion_testing"
-version = "0.6.0"
-dependencies = [
- "cache",
- "parser_core",
- "stack",
+ "publisher",
 ]
 
 [[package]]
@@ -145,8 +136,8 @@ name = "parser_core"
 version = "0.6.0"
 dependencies = [
  "cache",
+ "publisher",
  "rules",
- "stack",
 ]
 
 [[package]]
@@ -157,6 +148,10 @@ checksum = "e835ff2298f5721608eb1a980ecaee1aef2c132bf95ecc026a11b7bf3c01c02e"
 dependencies = [
  "unicode-ident",
 ]
+
+[[package]]
+name = "publisher"
+version = "0.6.0"
 
 [[package]]
 name = "quote"
@@ -175,10 +170,6 @@ dependencies = [
  "num-derive",
  "num-traits",
 ]
-
-[[package]]
-name = "stack"
-version = "0.6.0"
 
 [[package]]
 name = "syn"

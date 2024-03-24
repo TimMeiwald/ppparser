@@ -3,9 +3,9 @@ use parser_core::Context;
 use parser_core::Source;
 use parser_core::_sequence;
 use parser_core::_terminal;
-use stack::Stack;
+use publisher::Publisher;
 
-pub fn apostrophe<T: Cache, S: Stack>(
+pub fn apostrophe<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -13,7 +13,7 @@ pub fn apostrophe<T: Cache, S: Stack>(
     _terminal(b'"')(source, position)
 }
 
-pub fn left_angle_bracket<T: Cache, S: Stack>(
+pub fn left_angle_bracket<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -21,7 +21,7 @@ pub fn left_angle_bracket<T: Cache, S: Stack>(
     _terminal(b'<')(source, position)
 }
 
-pub fn right_angle_bracket<T: Cache, S: Stack>(
+pub fn right_angle_bracket<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -29,7 +29,7 @@ pub fn right_angle_bracket<T: Cache, S: Stack>(
     _terminal(b'>')(source, position)
 }
 
-pub fn left_bracket<T: Cache, S: Stack>(
+pub fn left_bracket<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -37,7 +37,7 @@ pub fn left_bracket<T: Cache, S: Stack>(
     _terminal(b'(')(source, position)
 }
 
-pub fn right_bracket<T: Cache, S: Stack>(
+pub fn right_bracket<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -45,7 +45,7 @@ pub fn right_bracket<T: Cache, S: Stack>(
     _terminal(b')')(source, position)
 }
 
-pub fn assignment<T: Cache, S: Stack>(
+pub fn assignment<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -53,7 +53,7 @@ pub fn assignment<T: Cache, S: Stack>(
     _terminal(b'=')(source, position)
 }
 
-pub fn end_rule<T: Cache, S: Stack>(
+pub fn end_rule<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -61,49 +61,49 @@ pub fn end_rule<T: Cache, S: Stack>(
     _terminal(b';')(source, position)
 }
 
-pub fn ampersand<T: Cache, S: Stack>(
+pub fn ampersand<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     _terminal(b'&')(source, position)
 }
-pub fn exclamation_mark<T: Cache, S: Stack>(
+pub fn exclamation_mark<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     _terminal(b'!')(source, position)
 }
-pub fn plus<T: Cache, S: Stack>(
+pub fn plus<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     _terminal(b'+')(source, position)
 }
-pub fn star<T: Cache, S: Stack>(
+pub fn star<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     _terminal(b'*')(source, position)
 }
-pub fn question_mark<T: Cache, S: Stack>(
+pub fn question_mark<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     _terminal(b'?')(source, position)
 }
-pub fn comma<T: Cache, S: Stack>(
+pub fn comma<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     _terminal(b',')(source, position)
 }
-pub fn backslash<T: Cache, S: Stack>(
+pub fn backslash<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -111,7 +111,7 @@ pub fn backslash<T: Cache, S: Stack>(
     _terminal(b'/')(source, position)
 }
 
-pub fn epsilon<T: Cache, S: Stack>(
+pub fn epsilon<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,

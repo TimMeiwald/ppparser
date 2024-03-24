@@ -3,11 +3,11 @@ use parser_core::{Context};
 use rules::rules::Rules;
 
 use parser_core::{Source, _ordered_choice, _var_name};
-use stack::Stack;
+use publisher::Publisher;
 
 use crate::{atom, ordered_choice, sequence};
 
-pub fn rhs<T: Cache, S: Stack>(
+pub fn rhs<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -24,7 +24,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::NoopStack;
+    use publisher::NoopStack;
 
     #[test]
     fn test_rhs_true() {

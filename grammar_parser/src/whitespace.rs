@@ -1,10 +1,10 @@
 use cache::Cache;
 use parser_core::{Context, _var_name};
 use parser_core::{Source, _ordered_choice, _subexpression, _terminal, _zero_or_more};
-use stack::Stack;
+use publisher::Publisher;
 use rules::rules::Rules;
 
-pub fn whitespace<T: Cache, S: Stack>(
+pub fn whitespace<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -19,7 +19,7 @@ pub fn whitespace<T: Cache, S: Stack>(
     z1(source, position)
 }
 
-pub fn newline<T: Cache, S: Stack>(
+pub fn newline<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,

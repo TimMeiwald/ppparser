@@ -3,11 +3,11 @@ use parser_core::{Context};
 use rules::rules::Rules;
 
 use parser_core::{Source, _ordered_choice, _sequence, _subexpression, _var_name};
-use stack::Stack;
+use publisher::Publisher;
 
 use crate::{subexpression, terminal, var_name, whitespace};
 
-pub fn nucleus<T: Cache, S: Stack>(
+pub fn nucleus<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -32,7 +32,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::{BasicStack};
+    use publisher::{BasicStack};
 
     #[test]
     fn test_nucleus_true() {
@@ -57,7 +57,6 @@ mod tests {
         let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
 
         let result = nucleus(&context, &source, position);
-        context.stack.borrow().print(&String::from(source));
         assert_eq!(result, (true, 3));
     }
 }

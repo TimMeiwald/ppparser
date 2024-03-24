@@ -3,9 +3,9 @@ use parser_core::Source;
 //use parser_core::_ordered_choice;
 use cache::Cache;
 use parser_core::Context;
-use stack::Stack;
+use publisher::Publisher;
 //Example of possible substiution optimization.
-pub fn alphabet_lower<T: Cache, S: Stack>(
+pub fn alphabet_lower<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -91,7 +91,7 @@ pub fn alphabet_lower<T: Cache, S: Stack>(
 mod tests {
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::NoopStack;
+    use publisher::NoopStack;
 
     use super::*;
     #[test]

@@ -2,9 +2,9 @@ use cache::Cache;
 use parser_core::Context;
 use rules::rules::Rules;
 use parser_core::{Source, _ordered_choice, _sequence, _terminal, _var_name};
-use stack::Stack;
+use publisher::Publisher;
 
-pub fn semantic_instructions<T: Cache, S: Stack>(
+pub fn semantic_instructions<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -17,7 +17,7 @@ pub fn semantic_instructions<T: Cache, S: Stack>(
     s2(source, position)
 }
 
-pub fn collect<T: Cache, S: Stack>(
+pub fn collect<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -38,7 +38,7 @@ pub fn collect<T: Cache, S: Stack>(
     s6(source, position)
 }
 
-pub fn delete<T: Cache, S: Stack>(
+pub fn delete<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -57,7 +57,7 @@ pub fn delete<T: Cache, S: Stack>(
     s5(source, position)
 }
 
-pub fn passthrough<T: Cache, S: Stack>(
+pub fn passthrough<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -88,7 +88,7 @@ pub fn passthrough<T: Cache, S: Stack>(
 
 #[cfg(test)]
 mod tests {
-    use stack::NoopStack;
+    use publisher::NoopStack;
 
     use super::*;
     use cache::MyCache4;
