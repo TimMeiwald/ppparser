@@ -53,4 +53,18 @@ mod tests {
         context.stack.borrow().print(&String::from(source));
         assert_eq!(result, (true, 3));
     }
+
+    #[test]
+    fn test_nucleus_char() {
+        let string = "\"A\"".to_string();
+        let src_len = string.len() as u32;
+
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+
+        let result = atom(&context, &source, position);
+        context.stack.borrow().print(&String::from(source));
+        assert_eq!(result, (true, 3));
+    }
 }
