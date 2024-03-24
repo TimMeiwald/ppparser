@@ -1,7 +1,7 @@
 
 use crate::source::Source;
 use crate::Context;
-use crate::Rules;
+use rules::rules::Rules;
 use cache::{Cache, Index};
 use stack::Stack;
 
@@ -17,13 +17,13 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
     let cached_val: Option<(bool, u32, Index)>;
     {
         let res = &*(context.cache).borrow();
-        cached_val = res.check(rule as u32, position);
+        cached_val = res.check(rule, position);
     };
 
 
 
 
-    
+
     println!("Rule: {:?}", rule);
     match cached_val {
         Some(cached_val) => {
@@ -75,7 +75,7 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
             }
             {
                 let cache = &mut *(context.cache).borrow_mut();
-                cache.push(rule as u32, result.0, position, result.1, Index(index));
+                cache.push(rule, result.0, position, result.1, Index(index));
             }
             println!("Result: {:?} {:?}", result.0, result.1);
             result
@@ -240,7 +240,7 @@ mod tests {
     use crate::context::Context;
     use crate::source::Source;
     use crate::terminal::_terminal;
-    use crate::Rules;
+    use rules::rules::Rules;
     use cache::{Cache, MyCache4};
     use stack::{NoopStack, Stack};
     fn test_func<T: Cache, S: Stack>(

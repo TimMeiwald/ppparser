@@ -1,5 +1,7 @@
 use cache::Cache;
-use parser_core::{Context, Rules};
+use parser_core::{Context};
+use rules::rules::Rules;
+
 use parser_core::{Source, _ordered_choice, _subexpression, _var_name};
 use stack::Stack;
 
@@ -38,7 +40,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::{BasicStack, NoopStack};
+    use stack::{BasicStack};
 
     #[test]
     fn test_atom_true() {

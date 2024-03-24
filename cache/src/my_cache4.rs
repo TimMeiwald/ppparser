@@ -1,5 +1,5 @@
 use crate::{cache_trait::Index, Cache};
-
+use rules::rules::Rules;
 // This cache will completely flatten the cache to see if that improves performance.
 pub struct MyCache4 {
     end_position: Vec<u32>,
@@ -33,14 +33,14 @@ impl Cache for MyCache4 {
         // for every arg cache in c set size to <number_of_structs>
     }
 
-    fn push(&mut self, rule: u32, is_true: bool, start_position: u32, end_position: u32, stack_index: Index ) {
-        let index = (start_position * self.number_of_structs + rule) as usize;
+    fn push(&mut self, rule: Rules, is_true: bool, start_position: u32, end_position: u32, stack_index: Index ) {
+        let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
         self.is_true[index] = is_true;
         self.end_position[index] = end_position;
         self.indexes[index] = stack_index;
     }
-    fn check(&self, rule: u32, start_position: u32) -> Option<(bool, u32, Index)> {
-        let index = (start_position * self.number_of_structs + rule) as usize;
+    fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Index)> {
+        let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
         //println!("Index: {:?}, Start_Position: {:?}, Rule: {:?}", index, start_position, rule);
         let is_true: bool = self.is_true[index];
         let end_position: u32 = self.end_position[index];

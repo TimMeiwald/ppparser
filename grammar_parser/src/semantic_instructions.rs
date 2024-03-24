@@ -1,6 +1,6 @@
 use cache::Cache;
 use parser_core::Context;
-use parser_core::Rules;
+use rules::rules::Rules;
 use parser_core::{Source, _ordered_choice, _sequence, _terminal, _var_name};
 use stack::Stack;
 

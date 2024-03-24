@@ -92,7 +92,7 @@ pub fn alphabet_upper<T: Cache, S: Stack>(
 mod tests {
     use super::*;
     use cache::MyCache4;
-    use parser_core::Rules;
+    use rules::rules::Rules;
     use parser_core::Source;
     use parser_core::_var_name;
     use stack::NoopStack;
