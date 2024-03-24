@@ -1,7 +1,7 @@
 use std::u32;
 
 use parser_core::Source;
-use stack::BasicStack;
+use publisher::BasicStack;
 use rules::rules::Rules;
 use crate::SymbolTable;
 use crate::create_symbol_table;
@@ -77,7 +77,7 @@ mod tests {
     use parser_core::Source;
     use rules::rules::Rules;
 
-    use stack::BasicStack;
+    use publisher::BasicStack;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
 

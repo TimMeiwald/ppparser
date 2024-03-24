@@ -3,11 +3,11 @@ use parser_core::{Context};
 use rules::rules::Rules;
 
 use parser_core::{Source, _sequence, _subexpression, _var_name, _zero_or_more};
-use stack::Stack;
+use publisher::Publisher;
 
 use crate::{atom, symbols::comma, whitespace};
 
-pub fn sequence<T: Cache, S: Stack>(
+pub fn sequence<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,

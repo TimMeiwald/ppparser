@@ -1,9 +1,9 @@
-use crate::Stack;
+use crate::Publisher;
 
 // Stack that is as the name suggests a printerto stdout, useful for seeing output.
 pub struct PrinterStack {}
 
-impl Stack for PrinterStack {
+impl Publisher for PrinterStack {
     fn new(_size_of_source: u32, _number_of_rules: u32) -> Self {
         PrinterStack {}
     }

@@ -6,8 +6,7 @@ members = [
     "grammar_runner",
     "grammar_generator",
     "cache",
-    "left_recursion_testing",
-    "stack",
+    "publisher",
     "rules",
 ]
 

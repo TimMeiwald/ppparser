@@ -1,8 +1,0 @@
-[package]
-name = "left_recursion_testing"
-version = "0.6.0"
-edition = "2021"
-[dependencies]
-parser_core = { path = "../parser_core" }
-cache = {path = "../cache"}
-stack = {path = "../stack"}

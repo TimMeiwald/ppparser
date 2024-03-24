@@ -3,9 +3,9 @@ use parser_core::Context;
 use parser_core::Source;
 use parser_core::_ordered_choice;
 use parser_core::_terminal;
-use stack::Stack;
+use publisher::Publisher;
 
-pub fn specials<T: Cache, S: Stack>(
+pub fn specials<T: Cache, S: Publisher>(
     _context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -89,7 +89,7 @@ pub fn specials<T: Cache, S: Stack>(
 mod tests {
     use super::*;
     use cache::MyCache4;
-    use stack::NoopStack;
+    use publisher::NoopStack;
 
     use parser_core::Source;
     #[test]

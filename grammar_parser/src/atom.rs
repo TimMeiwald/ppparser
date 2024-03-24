@@ -3,13 +3,13 @@ use parser_core::{Context};
 use rules::rules::Rules;
 
 use parser_core::{Source, _ordered_choice, _subexpression, _var_name};
-use stack::Stack;
+use publisher::Publisher;
 
 use crate::{
     and_predicate, not_predicate, nucleus, one_or_more, optional, whitespace, zero_or_more,
 };
 
-pub fn atom<T: Cache, S: Stack>(
+pub fn atom<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -40,7 +40,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::{BasicStack};
+    use publisher::{BasicStack};
 
     #[test]
     fn test_atom_true() {

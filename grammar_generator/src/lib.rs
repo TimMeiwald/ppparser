@@ -1,4 +1,4 @@
-use stack::BasicStack;
+use publisher::BasicStack;
 mod create_rule;
 use rules::rules::Rules;
 
@@ -89,7 +89,7 @@ mod tests {
     use grammar_parser::grammar;
     use parser_core::Context;
     use parser_core::Source;
-    use stack::BasicStack;
+    use publisher::BasicStack;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
 

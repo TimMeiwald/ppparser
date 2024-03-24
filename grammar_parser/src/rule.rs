@@ -3,7 +3,7 @@ use parser_core::{Context};
 use rules::rules::Rules;
 
 use parser_core::{Source, _sequence, _var_name, _zero_or_more};
-use stack::Stack;
+use publisher::Publisher;
 
 use crate::{
     comment, lhs, rhs,
@@ -11,7 +11,7 @@ use crate::{
     whitespace,
 };
 
-pub fn rule<T: Cache, S: Stack>(
+pub fn rule<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -41,7 +41,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use stack::NoopStack;
+    use publisher::NoopStack;
 
     #[test]
     fn test_rule_true() {

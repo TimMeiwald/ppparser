@@ -4,9 +4,9 @@ use parser_core::{Context};
 use rules::rules::Rules;
 
 use parser_core::{Source, _sequence, _var_name};
-use stack::Stack;
+use publisher::Publisher;
 
-pub fn zero_or_more<T: Cache, S: Stack>(
+pub fn zero_or_more<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,

@@ -3,9 +3,9 @@ use cache::Cache;
 use parser_core::{Context, Source, _optional, _sequence, _subexpression, _var_name};
 use rules::rules::Rules;
 
-use stack::Stack;
+use publisher::Publisher;
 
-pub fn lhs<T: Cache, S: Stack>(
+pub fn lhs<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
