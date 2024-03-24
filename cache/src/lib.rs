@@ -1,6 +1,6 @@
 mod cache_trait;
 pub use cache_trait::Cache;
-pub use cache_trait::Index;
+pub use cache_trait::Key;
 
 // mod allow_direct_left_recursion_cache;
 // mod btreemap_cache;
