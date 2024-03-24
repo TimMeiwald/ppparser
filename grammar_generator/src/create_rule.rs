@@ -8,14 +8,14 @@ use crate::create_symbol_table;
 use crate::count_lines;
 
 pub fn rule(source: &Source, stack: &BasicStack, symbol_table: &SymbolTable, start_index: u32){
-    let source: &String = &String::from(source);
+    let source_str: &String = &String::from(source);
     let start = start_index;
     let mut end = 0;
     let mut counter = 0;
     let mut rule_name: String = "No Name Found".to_string();
     for i in stack{
         if i[0] == Rules::VarNameDecl as u32{
-            rule_name = source[((i[1]+1) as usize)..((i[2]-1) as usize)].to_string();
+            rule_name = source_str[((i[1]+1) as usize)..((i[2]-1) as usize)].to_string();
         }
         else if i[0] == Rules::EndRule as u32{
             end = counter;
@@ -27,26 +27,44 @@ pub fn rule(source: &Source, stack: &BasicStack, symbol_table: &SymbolTable, sta
 
     //stack.print_range(&source, start, end)
     let mut placeholder_count = 0;
-    for i in stack{
-        match Rules::from(i[0]) {
-            Rules::OrderedChoice => {}, 
-            Rules::Sequence => {},
-            Rules::Optional => {}
-            Rules::OneOrMore => {},
-            Rules::ZeroOrMore => {},
-            Rules::NotPredicate => {},
-            Rules::AndPredicate => {},
-            Rules::Subexpression => {},
-            _ => {}
-        }
-        placeholder_count += 1;
-    }
+    for i in stack {
+        let b = Rules::from(i[0]);
+        let r: Option<String> = match b {
+            // Rules::OrderedChoice => {}, 
+            // Rules::Sequence => {},
+            // Rules::Optional => {}
+            // Rules::OneOrMore => {},
+            // Rules::ZeroOrMore => {},
+            // Rules::NotPredicate => {},
+            // Rules::AndPredicate => {},
+            // Rules::Subexpression => {},
+            //Rules::Terminal => {terminal(source_str, i[1], i[2])},
+            Rules::VarName => {var_name(source_str, i[1], i[2])},
+            Rules::EndRule => break,
+            _ => {println!("{:?}", b); None}
+        };
+    };
 
 }
 
-// fn ordered_choice(source: &Source, stack: &BasicStack, symbol_table: &SymbolTable, start_index: u32) -> Option<String> {
-//     stack
-// }
+
+
+fn var_name(source: &String, start: u32, end: u32) -> Option<String> {
+    let name = source[((start+1) as usize)..((end-1) as usize)].to_string();
+    let lc_name = name.to_ascii_lowercase();
+    let uc_name = name.to_ascii_uppercase();
+    let res = Some(format!("let v1 = _var_name(Rules::{}, context, {});", uc_name, lc_name).to_string());
+    println!("{}", res.clone().unwrap());
+    return res;
+}
+
+
+fn terminal(source: &String, start: u32, end: u32) -> Option<String>{
+    let char = source[((start+1) as usize)..((end-1) as usize)].to_string();
+    let res = Some(format!("let t1 = _terminal(b'{}');", char).to_string());
+    println!("{}", res.clone().unwrap());
+    return res;
+}
 
 
 
@@ -87,8 +105,8 @@ mod tests {
         let sym_table = create_symbol_table(&context.stack.borrow(), &string2);
         assert_eq!(result, (true, src_len));
         let stack = &*context.stack.borrow();
-        stack.print_range(&String::from(source), 0, 1);
-        //rule(&source, stack, &sym_table, 0)
+        //stack.print_range(&String::from(source), 0, 1);
+        rule(&source, stack, &sym_table, 0)
 
 
 

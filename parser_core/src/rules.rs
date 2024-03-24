@@ -1,3 +1,6 @@
+
+use num_derive::FromPrimitive;
+#[derive(FromPrimitive)]
 #[derive(Clone, Copy, Debug)]
 pub enum Rules {
     AlphabetUpper,
@@ -23,7 +26,7 @@ pub enum Rules {
     VarName,
     Subexpression,
     Epsilon,
-    Lterminal,
+    Terminal,
     Nucleus,
     Atom,
     AndPredicate,
@@ -46,8 +49,13 @@ pub enum Rules {
     VarNameDecl,
     NewLine,
 }
+
 impl<'a> From<u32> for Rules {
     fn from(i: u32) -> Rules {
-        return i.into();
+        let element = num::FromPrimitive::from_u32(i);
+        match element {
+            Some(rule) => {return rule;},
+            None => panic!("Not a valid Rule")
+        }
     }
 }
