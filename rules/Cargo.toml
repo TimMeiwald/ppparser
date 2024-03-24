@@ -1,0 +1,9 @@
+[package]
+name = "rules"
+version = "0.6.0"
+edition = "2021"
+
+[dependencies]
+num = "0.4.1"
+num-derive = "0.4.2"
+num-traits = "0.2.18"

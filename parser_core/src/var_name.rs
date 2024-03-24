@@ -19,6 +19,11 @@ pub fn _var_name_kernel<T: Cache, S: Stack>(
         let res = &*(context.cache).borrow();
         cached_val = res.check(rule as u32, position);
     };
+
+
+
+
+    
     println!("Rule: {:?}", rule);
     match cached_val {
         Some(cached_val) => {
