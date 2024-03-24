@@ -11,6 +11,9 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 [[package]]
 name = "cache"
 version = "0.6.0"
+dependencies = [
+ "rules",
+]
 
 [[package]]
 name = "grammar_generator"
@@ -19,6 +22,7 @@ dependencies = [
  "cache",
  "grammar_parser",
  "parser_core",
+ "rules",
  "stack",
 ]
 
@@ -28,6 +32,7 @@ version = "0.6.0"
 dependencies = [
  "cache",
  "parser_core",
+ "rules",
  "stack",
 ]
 

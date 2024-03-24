@@ -3,7 +3,9 @@ use cache::Cache;
 use parser_core::Source;
 use parser_core::_ordered_choice;
 use parser_core::_var_name;
-use parser_core::{Context, Rules};
+use parser_core::{Context };
+use rules::rules::Rules;
+
 use stack::Stack;
 
 pub fn ascii<T: Cache, S: Stack>(

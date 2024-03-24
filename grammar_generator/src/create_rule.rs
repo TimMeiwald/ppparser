@@ -2,7 +2,7 @@ use std::u32;
 
 use parser_core::Source;
 use stack::BasicStack;
-use crate::Rules;
+use rules::rules::Rules;
 use crate::SymbolTable;
 use crate::create_symbol_table;
 use crate::count_lines;
@@ -74,8 +74,9 @@ mod tests {
     use cache::MyCache4;
     use grammar_parser::grammar;
     use parser_core::Context;
-    use parser_core::Rules;
     use parser_core::Source;
+    use rules::rules::Rules;
+
     use stack::BasicStack;
     use std::env;
     use std::fs::{canonicalize, read_to_string};

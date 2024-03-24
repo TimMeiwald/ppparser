@@ -1,6 +1,8 @@
 use crate::{semantic_instructions, var_name::var_name_decl, whitespace};
 use cache::Cache;
-use parser_core::{Context, Rules, Source, _optional, _sequence, _subexpression, _var_name};
+use parser_core::{Context, Source, _optional, _sequence, _subexpression, _var_name};
+use rules::rules::Rules;
+
 use stack::Stack;
 
 pub fn lhs<T: Cache, S: Stack>(

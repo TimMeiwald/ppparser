@@ -7,7 +7,9 @@ use parser_core::_subexpression;
 use parser_core::_terminal;
 use parser_core::_var_name;
 use parser_core::_zero_or_more;
-use parser_core::{Context, Rules};
+use parser_core::{Context};
+use rules::rules::Rules;
+
 use stack::Stack;
 
 pub fn var_name<T: Cache, S: Stack>(

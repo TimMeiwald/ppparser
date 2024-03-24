@@ -1,6 +1,8 @@
 use crate::{nucleus, symbols::star, whitespace};
 use cache::Cache;
-use parser_core::{Context, Rules};
+use parser_core::{Context};
+use rules::rules::Rules;
+
 use parser_core::{Source, _sequence, _var_name};
 use stack::Stack;
 
