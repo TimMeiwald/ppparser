@@ -7,7 +7,7 @@ mod not_predicate;
 mod one_or_more;
 mod optional;
 mod ordered_choice;
-mod rules;
+use rules::rules;
 mod sequence;
 mod source;
 mod subexpression;

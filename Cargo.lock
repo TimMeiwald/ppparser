@@ -140,9 +140,7 @@ name = "parser_core"
 version = "0.6.0"
 dependencies = [
  "cache",
- "num",
- "num-derive",
- "num-traits",
+ "rules",
  "stack",
 ]
 
@@ -162,6 +160,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "291ec9ab5efd934aaf503a6466c5d5251535d108ee747472c3977cc5acc868ef"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "rules"
+version = "0.6.0"
+dependencies = [
+ "num",
+ "num-derive",
+ "num-traits",
 ]
 
 [[package]]

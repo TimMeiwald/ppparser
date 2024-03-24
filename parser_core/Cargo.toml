@@ -4,7 +4,5 @@ version = "0.6.0"
 edition = "2021"
 [dependencies]
 cache = {path = "../cache"}
-num = "0.4.1"
-num-derive = "0.4.2"
-num-traits = "0.2.18"
 stack = {path = "../stack"}
+rules = {path = "../rules"}
