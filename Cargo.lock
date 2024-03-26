@@ -16,17 +16,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "grammar_generator"
-version = "0.6.0"
-dependencies = [
- "cache",
- "grammar_parser",
- "parser_core",
- "publisher",
- "rules",
-]
-
-[[package]]
 name = "grammar_parser"
 version = "0.6.0"
 dependencies = [
@@ -152,6 +141,9 @@ dependencies = [
 [[package]]
 name = "publisher"
 version = "0.6.0"
+dependencies = [
+ "rules",
+]
 
 [[package]]
 name = "quote"

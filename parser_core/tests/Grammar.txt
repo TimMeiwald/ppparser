@@ -44,7 +44,7 @@
 <RHS> PASSTHROUGH = <Sequence>/<Ordered_Choice>/<Atom>;
 <LHS> = <Var_Name>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
 <Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;
-<Grammar> = <Rule>+, <Whitespace>;
+<Grammar> = <Rule>+, <Whitespace>?;
 #Lemme just check comments work# #Double up dem comments#
 <Comment> COLLECT = <Whitespace>, "#", (!"#",<ASCII>)*, "#", <Whitespace>;
 <Semantic_Instructions> PASSTHROUGH = <Delete>/<Passthrough>/<Collect>;

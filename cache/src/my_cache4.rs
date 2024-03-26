@@ -1,11 +1,13 @@
-use crate::{cache_trait::Key, Cache};
-use rules::rules::Rules;
+use crate::Cache;
+use rules::{Rules, Key};
+
 // This cache will completely flatten the cache to see if that improves performance.
 pub struct MyCache4 {
     end_position: Vec<u32>,
     indexes: Vec<Key>,
     is_true: Vec<bool>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
     number_of_structs: u32,
+    last_node: Option<Key>,
 }
 
 impl Cache for MyCache4 {
@@ -18,6 +20,7 @@ impl Cache for MyCache4 {
             end_position: Vec::with_capacity(capacity),
             indexes: Vec::with_capacity(capacity),
             number_of_structs,
+            last_node: None
         };
         for _i in 0..capacity {
             // Ensures the Vector in Cache is as large as the input source
@@ -27,10 +30,16 @@ impl Cache for MyCache4 {
             c.end_position.push(0); // Might be faster? Maybe compiler inlines it? Can't exactly tell needs better performance profiling vs one loop
         }
         for _i in 0..capacity {
-            c.indexes.push(Key(u32::MAX)); // Might be faster? Maybe compiler inlines it? Can't exactly tell needs better performance profiling vs one loop
+            c.indexes.push(Key(usize::MAX)); // Might be faster? Maybe compiler inlines it? Can't exactly tell needs better performance profiling vs one loop
         }
         c
         // for every arg cache in c set size to <number_of_structs>
+    }
+    fn last_node(&self) -> Option<Key>{
+        self.last_node
+    }
+    fn set_last_node(&mut self, key: Option<Key>){
+        self.last_node = key
     }
 
     fn push(&mut self, rule: Rules, is_true: bool, start_position: u32, end_position: u32, stack_index: Key ) {

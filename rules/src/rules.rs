@@ -59,3 +59,9 @@ impl<'a> From<u32> for Rules {
         }
     }
 }
+
+impl PartialEq for Rules {
+    fn eq(&self, other: &Self) -> bool {
+        (*self as u32) == (*other as u32)
+    }
+}
