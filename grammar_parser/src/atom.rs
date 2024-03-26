@@ -41,7 +41,7 @@ mod tests {
     use cache::MyCache4;
     use parser_core::Source;
     use publisher::{BasicStack};
-
+    use rules::Key;
     #[test]
     fn test_atom_true() {
         let string = "\"A\"/\"B\"/\"C\"/\"D\"/\"E\"/\"F\"/\"G\"/\"H\"/\"I\"/\"J\"/\"K\"/\"L\"/\"M\"/\"N\"/\"O\"/\"P\"/\"Q\"/\"R\"/\"S\"/\"T\"/\"U\"/\"V\"/\"W\"/\"X\"/\"Y\"/\"Z\"".to_string();
@@ -52,7 +52,7 @@ mod tests {
         let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
 
         let result = atom(&context, &source, position);
-        context.stack.borrow().print(&String::from(source));
+        context.stack.borrow().print(Key(0));
         assert_eq!(result, (true, 3));
     }
 
@@ -66,7 +66,7 @@ mod tests {
         let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
 
         let result = atom(&context, &source, position);
-        context.stack.borrow().print(&String::from(source));
+        context.stack.borrow().print(Key(0));
         assert_eq!(result, (true, 3));
     }
 }

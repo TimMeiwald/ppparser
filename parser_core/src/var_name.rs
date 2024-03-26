@@ -1,108 +1,10 @@
 
 use crate::source::Source;
 use crate::Context;
-use rules::rules::Rules;
-use cache::{Cache, Key};
-use publisher::Publisher;
-
-
-
-// pub fn _var_name_kernel<T: Cache, S: Publisher>(
-//     rule: Rules,
-//     context: &Context<T, S>,
-//     source: &Source,
-//     position: u32,
-//     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
-// ) -> (bool, u32) {
-//     let cached_val: Option<(bool, u32, Key)>;
-//     {
-//         let res = &*(context.cache).borrow();
-//         cached_val = res.check(rule, position);
-//     };
-//     match cached_val{
-//         Some(_) =>{
-//             (false, 0)
-//         },
-//         None => {
-//             (false, 0)
-//         },
-//     }
-
-// }
-
-
-pub fn _var_name_kernel<T: Cache, S: Publisher>(
-    rule: Rules,
-    context: &Context<T, S>,
-    source: &Source,
-    position: u32,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
-) -> (bool, u32) {
-    let cached_val: Option<(bool, u32, Key)>;
-    {
-        let res = &*(context.cache).borrow();
-        cached_val = res.check(rule, position);
-    };
-    println!("Rule: {:?}", rule);
-    match cached_val {
-        Some(cached_val) => {
-            // If True read results from stack and push back onto stack again 
-            if cached_val.0
-            {
-                let stack = &mut *(context.stack).borrow_mut();
-                let index = u32::from(cached_val.2);
-                let result = stack.read_children(index);
-                match result {
-                    None => {}
-                    Some(res) => {
-                        for child_index in (res.0+1)..res.1{
-                            let dets = stack.get(child_index);
-                            stack.push(true, dets[0], dets[1], dets[2]);
-                        }
-                    }
-                };
-
-            }
-            println!("Result: {:?} {:?}", cached_val.0, cached_val.1);
-            (cached_val.0, cached_val.1)
-        }, 
-        None => {
-
-            // Need to push before result to ensure that the order is correct, use patch to insert correct values after
-            let index: u32;
-            {   
-                let stack = &mut *(context.stack).borrow_mut();
-                index = stack.push(false, rule as u32, position, 0);
-            }
-
-            // Run function
-            let result = func(context, source, position);
-            // Patch in Result if True else pop to index. 
-            if result.0{
-                {
-                    let stack = &mut *(context.stack).borrow_mut();
-                    stack.patch(index, result.0, rule as u32, position, result.1);
-                }
-
-            }
-            else {
-                // Should pop anything where end_position doesn't get set.
-                {   
-                    let stack = &mut *(context.stack).borrow_mut();
-                    stack.pop_to(index);
-                }
-            }
-            {
-                let cache = &mut *(context.cache).borrow_mut();
-                cache.push(rule, result.0, position, result.1, Key(index));
-            }
-            println!("Result: {:?} {:?}", result.0, result.1);
-            result
-        }
-    }
-
-}
-
+use cache::Cache;
+use publisher::{Node, Publisher};
+use rules::{Key, Rules};
+use std::{thread, time::{self, Duration}};
 // Initial buggy _var_name_kernel
 // pub fn _var_name_kernel<T: Cache, S: Stack>(
 //     rule: Rules,
@@ -170,6 +72,81 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
 //         }
 //     }
 // }
+pub fn _var_name_kernel<T: Cache, S: Publisher>(
+    rule: Rules,
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> (bool, u32) {
+    let cached_val: Option<(bool, u32, Key)>;
+    let temp_key: Option<Key>;
+    let curr_key: Key;
+    
+    {
+        let res = &*(context.cache).borrow();
+        cached_val = res.check(rule, position);
+        temp_key = res.last_node()
+    }
+    {   
+        // Add Current Node
+        let tree = &mut *(context.stack).borrow_mut();
+        let node = tree.create_node(rule, position, 0, temp_key, false);
+        curr_key = tree.add_node(node);
+        //println!("{:?} {:?} {:?}", rule, temp_key, curr_key)
+    }
+    {
+        let res = &mut *(context.cache).borrow_mut();
+        res.set_last_node(Some(curr_key));
+    }
+
+
+    let result = match cached_val {
+        Some(cached_val) => {
+            // Cached Val at Index Key
+            let key = cached_val.2;
+            // Make cached subtree a child of parent and current node parent of subtree
+            let tree = &mut *(context.stack).borrow_mut();
+            tree.connect(curr_key, key);
+            // Return Result
+            (cached_val.0, cached_val.1)
+        }
+        None => {
+            // No Cached Val
+            let result = func(context, source, position);
+            // Add Node and Result to Tree
+            let tree = &mut *(context.stack).borrow_mut();
+            let last_key: Option<Key>;
+            {
+            let res = &*(context.cache).borrow();
+            last_key = res.last_node();
+            }
+            match temp_key{
+                None => {},
+                Some(tkey) =>{
+                    tree.connect(tkey, curr_key);
+
+                }
+            }
+            // Cache Val
+            let cache = &mut *(context.cache).borrow_mut();
+            cache.push(rule, result.0, position, result.1, curr_key);
+            // Return Result
+            result
+        }
+    };
+    
+    let tree = &mut *(context.stack).borrow_mut();
+    tree.set_node_start_position(curr_key, position);
+    tree.set_node_end_position(curr_key, result.1);
+    tree.set_node_result(curr_key, result.0);
+    let cache = &mut *(context.cache).borrow_mut();
+    cache.set_last_node(temp_key);
+    result
+
+
+
+}
 
 pub fn _var_name<T: Cache, S: Publisher>(
     rule: Rules,
@@ -186,9 +163,9 @@ mod tests {
     use crate::context::Context;
     use crate::source::Source;
     use crate::terminal::_terminal;
-    use rules::rules::Rules;
     use cache::{Cache, MyCache4};
     use publisher::{NoopStack, Publisher};
+    use rules::rules::Rules;
     fn test_func<T: Cache, S: Publisher>(
         _context: &Context<T, S>,
         source: &Source,
