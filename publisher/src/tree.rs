@@ -62,22 +62,24 @@ impl Tree {
         node.index
     }
 
-    pub fn print(&self, index: Key){
-        self.print_kernel(index, 0);
+    pub fn print(&self, index: Key, boolean: Option<bool>){
+        self.print_kernel(index, 0, boolean);
     }
 
-    fn print_kernel(&self, index: Key, indent: usize){
+    fn print_kernel(&self, index: Key, indent: usize, boolean: Option<bool>){
         //thread::sleep(Duration::new(0, 5*10_u32.pow(7)));
 
         let node = &self.0[usize::from(index)];
-        node.print(indent);
+        if boolean.is_some() && node.result == boolean.unwrap() {
+            node.print(indent);
+        }
         let mut counter = 0;
         loop{
             if counter >= node.children.len(){
                 break;
             }
             let child_index = node.children[counter];
-            self.print_kernel(child_index, indent+1);
+            self.print_kernel(child_index, indent+1, boolean);
             counter += 1;
         }
     }
@@ -91,6 +93,8 @@ pub struct Node {
     result: bool,
     parent: Option<Key>,
     children: Vec<Key>,
+    // To minimize allocations maybe have a second struct that contains all child indices and have Node just contain a start_child_index and end_child_index
+    // Because then we can preallocate a load of memory, means a pointer indirection which may or may not impact performance so needs profiling. 
 }
 impl Node {
     pub fn new(rule: Rules, start_position: u32, end_position: u32, parent: Option<Key>, result: bool) -> Self {
@@ -105,6 +109,7 @@ impl Node {
         }
     }
 
+    
     pub fn print(&self, indent: usize){
         println!("{}{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}", "    ".repeat(indent), self.index, self.rule, self.start_position, self.end_position, self.result, self.parent, self.children.len())
     }
@@ -127,18 +132,18 @@ mod tests {
 
         // Only show grammar node
         {
-        t.print(Key(0));
+        t.print(Key(0), None);
         let root = t.get_node(Key(0));
         let y = t.get_node(Key(1));
         t.connect(root.index, y.index);
         println!("Show both nodes now");
-        t.print(Key(0));
+        t.print(Key(0),  None);
         }
         {
         let root = t.get_node(Key(0));
         let y2 = t.get_node(Key(2));
         t.connect(root.index, y2.index);
-        t.print(Key(0));
+        t.print(Key(0),  None);
         }
 
         println!("Multiple Subtrees");
@@ -155,7 +160,7 @@ mod tests {
         let y2 = t.get_node(Key(2));
         let y1 = t.get_node(Key(1));
         t.connect(root.index, y1.index);
-        t.print(Key(0));
+        t.print(Key(0),  None);
 
 
     }

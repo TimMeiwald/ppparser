@@ -52,7 +52,7 @@ mod tests {
         let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
 
         let result = atom(&context, &source, position);
-        context.stack.borrow().print(Key(0));
+        context.stack.borrow().print(Key(0), None);
         assert_eq!(result, (true, 3));
     }
 
@@ -66,7 +66,7 @@ mod tests {
         let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
 
         let result = atom(&context, &source, position);
-        context.stack.borrow().print(Key(0));
+        context.stack.borrow().print(Key(0), None);
         assert_eq!(result, (true, 3));
     }
 }
