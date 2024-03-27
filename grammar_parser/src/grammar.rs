@@ -121,7 +121,7 @@ mod tests {
         let position: u32 = 0;
         let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
-        context.stack.borrow().print(Key(0));
+        context.stack.borrow().print(Key(0), None);
         // for i in &*context.publisher.borrow() {
         //     // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
         //     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
@@ -140,7 +140,7 @@ mod tests {
         let position: u32 = 0;
         let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
         let result = grammar(&context, &source, position);
-        context.stack.borrow().print(Key(0));
+        context.stack.borrow().print(Key(0), None);
         // for i in &*context.publisher.borrow() {
         //     // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
         //     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);

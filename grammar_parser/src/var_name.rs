@@ -73,7 +73,7 @@ mod tests {
         let position: u32 = 0;
         let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
         let result = var_name(&context, &source, position);
-        context.stack.borrow().print(Key(0));
+        context.stack.borrow().print(Key(0), None);
         assert_eq!(result, (true, 26));
     }
     #[test]
