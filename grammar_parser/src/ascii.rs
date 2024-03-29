@@ -33,7 +33,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use publisher::NoopStack;
+    use publisher::Tree;
 
     #[test]
     fn test_ascii_true() {
@@ -41,7 +41,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(0, 44);
+        let context = Context::<MyCache4, Tree>::new(0, 44);
 
         let result = ascii(&context, &source, position);
         assert_eq!(result, (true, 1));
@@ -52,7 +52,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(0, 44);
+        let context = Context::<MyCache4, Tree>::new(0, 44);
 
         let result = ascii(&context, &source, position);
         assert_eq!(result, (true, 1));

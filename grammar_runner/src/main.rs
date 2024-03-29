@@ -1,7 +1,7 @@
 mod utils;
 use cache::MyCache4;
 use grammar_parser::{grammar, Context, Source};
-use publisher::NoopStack;
+use publisher::Tree;
 use std::env::args;
 use std::fs;
 use std::process::ExitCode;
@@ -122,7 +122,7 @@ fn main() -> ExitCode {
     let total = Instant::now();
 
     //let mut now = Instant::now();
-    let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+    let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
     let position = 0;
 

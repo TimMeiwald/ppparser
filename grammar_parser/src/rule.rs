@@ -41,7 +41,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use publisher::NoopStack;
+    use publisher::Tree;
 
     #[test]
     fn test_rule_true() {
@@ -49,7 +49,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -61,7 +61,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -73,7 +73,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -87,7 +87,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -101,7 +101,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -114,7 +114,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -125,7 +125,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));

@@ -49,7 +49,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use publisher::{BasicStack, NoopStack};
+    use publisher::{Tree};
     use rules::Key;
 
     #[test]
@@ -59,7 +59,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = var_name(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -71,7 +71,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
         let result = var_name(&context, &source, position);
         context.stack.borrow().print(Key(0), None);
         assert_eq!(result, (true, 26));
@@ -81,7 +81,7 @@ mod tests {
         let string = "<Alphabet_Upper>".to_string();
 
         let src_len = string.len() as u32;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let source = Source::new(string);
         let position: u32 = 0;

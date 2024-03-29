@@ -2,7 +2,7 @@
 use cache::{Cache, MyCache4};
 use grammar_parser::grammar;
 use parser_core::{Context, Source};
-use publisher::{BasicStack, Publisher};
+use publisher::{Tree, Publisher};
 use std::any::type_name;
 use std::fs::canonicalize;
 use std::fs::{read_to_string, write};
@@ -75,7 +75,7 @@ fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_
     // data.push(perf_str);
 
     // MyCache4
-    let res = run_on_grammar::<MyCache4, BasicStack>(n);
+    let res = run_on_grammar::<MyCache4, Tree>(n);
     let perf_str = create_performance_string(res.0, res.1);
     data.push(perf_str);
 

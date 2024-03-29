@@ -4,6 +4,7 @@ use cache::{MyCache4, Cache};
 use publisher::Publisher;
 use std::{cell::RefCell, marker::PhantomData};
 use publisher::Tree;
+use rules::{Rules, Key};
 pub struct Context<T: Cache, S: Publisher> {
     pub cache: RefCell<T>,
     pub stack: RefCell<Tree>,
@@ -14,6 +15,9 @@ impl<T: Cache, S: Publisher> Context<T, S> {
         let cache: RefCell<T> = RefCell::new(T::new(size_of_source, number_of_structs));
         let stack: RefCell<Tree> = RefCell::new(Tree::new(size_of_source as usize, number_of_structs as usize));
         let phantom = PhantomData::<S>;
+        let root_node = stack.borrow_mut().create_node(Rules::Grammar, 0, size_of_source, None, true);
+        stack.borrow_mut().add_node(root_node);
+        cache.borrow_mut().set_last_node(Some(Key(0)));
         Context { cache, stack, phantom }
     }
     pub fn clear_cache(&self) {

@@ -40,7 +40,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use publisher::{BasicStack};
+    use publisher::{Tree};
     use rules::Key;
     #[test]
     fn test_atom_true() {
@@ -49,7 +49,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = atom(&context, &source, position);
         context.stack.borrow().print(Key(0), None);
@@ -63,7 +63,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = atom(&context, &source, position);
         context.stack.borrow().print(Key(0), None);

@@ -95,7 +95,7 @@ mod tests {
     use rules::rules::Rules;
     use parser_core::Source;
     use parser_core::_var_name;
-    use publisher::NoopStack;
+    use publisher::Tree;
 
     #[test]
     fn test_alphabet_upper_false() {
@@ -103,7 +103,7 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len as u32, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len as u32, 44);
 
         let result = alphabet_upper(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -114,7 +114,7 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len as u32, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len as u32, 44);
 
         let result = alphabet_upper(&context, &source, position);
         assert_eq!(result, (true, 1));
@@ -125,7 +125,7 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len as u32, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len as u32, 44);
 
         let var_name_closure = _var_name(Rules::AlphabetUpper, &context, alphabet_upper);
         let result = var_name_closure(&source, position);
