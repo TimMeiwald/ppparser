@@ -37,8 +37,15 @@ impl Publisher for Tree {
         child_node.parent = Some(parent_index);
     }
 
+    fn get_node_mut(&mut self, index: Key) -> &mut Node {
+        &mut self.0[usize::from(index)]
+    }
+
     fn get_node(&self, index: Key) -> &Node {
         &self.0[usize::from(index)]
+    }
+    fn get_mut_node(&mut self, index: Key) -> &mut Node {
+        &mut self.0[usize::from(index)]
     }
 
     fn create_node(&self, rule: Rules, start_position: u32, end_position: u32, parent: Option<Key>, result: bool) -> Node {
@@ -67,10 +74,6 @@ impl Tree{
 
     fn get_key(&self, node: Node) -> Key{
         node.index
-    }
-
-    fn get_node_mut(&mut self, index: Key) -> &mut Node {
-        &mut self.0[usize::from(index)]
     }
 
 
@@ -105,10 +108,10 @@ impl Tree{
 
 pub struct Node {
     index: Key,
-    rule: Rules,
-    start_position: u32,
-    end_position: u32,
-    result: bool,
+    pub rule: Rules,
+    pub start_position: u32,
+    pub end_position: u32,
+    pub result: bool,
     parent: Option<Key>,
     children: Vec<Key>,
     // To minimize allocations maybe have a second struct that contains all child indices and have Node just contain a start_child_index and end_child_index
@@ -125,6 +128,12 @@ impl Node {
             parent,
             children: Vec::<Key>::new(),
         }
+    }
+    pub fn get_children(&self) -> &Vec<Key> {
+        &self.children
+    }
+    pub fn set_children(&mut self, children: Vec<Key>){
+        self.children = children;
     }
 
     

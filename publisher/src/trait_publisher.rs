@@ -13,13 +13,14 @@ use rules::{Key, Rules};
 use std::rc::Rc;
 pub trait Publisher {
     fn new(size_of_source: usize, number_of_rules: usize) -> Self;
-
+    fn get_node_mut(&mut self, index: Key) -> &mut Node;
     fn add_node(&mut self, node: Node) -> Key;
 
     fn connect(&mut self, parent_index: Key, child_index: Key);
 
 
     fn get_node(&self, index: Key) -> &Node;
+    fn get_mut_node(&mut self, index: Key) -> &mut Node;
 
     fn create_node(
         &self,
