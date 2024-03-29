@@ -14,9 +14,8 @@ pub fn grammar<T: Cache, S: Publisher>(
 ) -> (bool, u32) {
     let v1 = _var_name(Rules::Rule, context, rule);
     let v2 = _var_name(Rules::Whitespace, context, whitespace);
-    let o1 = _optional(&v2);
     let one1 = _one_or_more(&v1);
-    let s1 = _sequence(&one1, &o1);
+    let s1 = _sequence(&one1, &v2);
     s1(source, position)
 }
 
@@ -26,7 +25,7 @@ mod tests {
     //use cache::{BTreeCache, DenyLeftRecursionCache, MyCache4};
     use cache::{MyCache4};
     use parser_core::Source;
-    use publisher::{BasicStack, NoopStack, PrinterStack};
+    use publisher::{Tree};
     use std::env;
     use std::fs::{canonicalize, read_to_string};
     use rules::Key;
@@ -36,7 +35,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
 
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -47,7 +46,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
 
         let result = rule(&context, &source, position);
         assert_eq!(result, (true, src_len));
@@ -62,7 +61,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -91,7 +90,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, PrinterStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
         let result = grammar(&context, &source, position);
         assert_eq!(result, (true, src_len));
     }
@@ -119,9 +118,9 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
         let result = grammar(&context, &source, position);
-        context.stack.borrow().print(Key(0), None);
+        context.stack.borrow().print(Key(0), Some(true));
         // for i in &*context.publisher.borrow() {
         //     // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
         //     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
@@ -131,6 +130,7 @@ mod tests {
         // }
         assert_eq!(result, (true, src_len));
     }
+    
 
     #[test]
     fn test_basic_publisher_short() {
@@ -138,12 +138,12 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
         let result = grammar(&context, &source, position);
         context.stack.borrow().print(Key(0), None);
         // for i in &*context.publisher.borrow() {
         //     // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
-        //     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
+        //     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);p
         //     // }
         //     //println!("{}",i[0]);
         //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);

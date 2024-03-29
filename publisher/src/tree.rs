@@ -15,13 +15,14 @@ use rules::Key;
 
 pub struct Tree(Vec<Node>);
 
-impl Tree {
-    pub fn new(size_of_source: usize, number_of_rules: usize) -> Self {
+impl Publisher for Tree {
+    fn new(size_of_source: usize, number_of_rules: usize) -> Self {
         Tree {
             0: Vec::<Node>::with_capacity(4 * size_of_source * number_of_rules),
         }
     }
-    pub fn add_node(&mut self, mut node: Node) -> Key {
+    fn add_node(&mut self, node: Node) -> Key {
+        let mut node = node;
         let len = self.0.len();
         let key = Key(len);
         node.index = key;
@@ -29,42 +30,49 @@ impl Tree {
         key
     } 
 
-    pub fn connect(&mut self, parent_index: Key, child_index: Key){
+    fn connect(&mut self, parent_index: Key, child_index: Key){
         let parent_node = self.get_node_mut(parent_index);
         parent_node.children.push(child_index);
         let child_node = self.get_node_mut(child_index);
         child_node.parent = Some(parent_index);
     }
 
-    pub fn get_node_mut(&mut self, index: Key) -> &mut Node {
-        &mut self.0[usize::from(index)]
-    }
-
-    pub fn get_node(&self, index: Key) -> &Node {
+    fn get_node(&self, index: Key) -> &Node {
         &self.0[usize::from(index)]
     }
 
-    pub fn create_node(&self, rule: Rules, start_position: u32, end_position: u32, parent: Option<Key>, result: bool) -> Node {
+    fn create_node(&self, rule: Rules, start_position: u32, end_position: u32, parent: Option<Key>, result: bool) -> Node {
         Node::new(rule, start_position, end_position, parent, result)
     }
 
-    pub fn set_node_start_position(&mut self, index: Key, start_position: u32){
+    fn set_node_start_position(&mut self, index: Key, start_position: u32){
         self.0[usize::from(index)].start_position = start_position
     }
-    pub fn set_node_end_position(&mut self, index: Key, end_position: u32){
+    fn set_node_end_position(&mut self, index: Key, end_position: u32){
         self.0[usize::from(index)].end_position = end_position
     }
-    pub fn set_node_result(&mut self, index: Key, result: bool){
+    fn set_node_result(&mut self, index: Key, result: bool){
         self.0[usize::from(index)].result = result
     }
 
-    pub fn get_key(&self, node: Node) -> Key{
+    fn print(&self, index: Key, boolean: Option<bool>){
+        self.print_kernel(index, 0, boolean);
+    }
+
+   
+}
+
+
+impl Tree{
+
+    fn get_key(&self, node: Node) -> Key{
         node.index
     }
 
-    pub fn print(&self, index: Key, boolean: Option<bool>){
-        self.print_kernel(index, 0, boolean);
+    fn get_node_mut(&mut self, index: Key) -> &mut Node {
+        &mut self.0[usize::from(index)]
     }
+
 
     fn print_kernel(&self, index: Key, indent: usize, boolean: Option<bool>){
         //thread::sleep(Duration::new(0, 5*10_u32.pow(7)));
@@ -72,6 +80,16 @@ impl Tree {
         let node = &self.0[usize::from(index)];
         if boolean.is_some() && node.result == boolean.unwrap() {
             node.print(indent);
+        }
+        else if boolean.is_none(){
+            if node.result{
+                node.print(indent);
+            }
+            else{
+            print!("\x1b[31m");
+            node.print(indent);
+            print!("\x1b[0m")
+            }
         }
         let mut counter = 0;
         loop{

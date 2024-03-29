@@ -91,7 +91,7 @@ pub fn alphabet_lower<T: Cache, S: Publisher>(
 mod tests {
     use cache::MyCache4;
     use parser_core::Source;
-    use publisher::NoopStack;
+    use publisher::Tree;
 
     use super::*;
     #[test]
@@ -100,7 +100,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(0, 44);
+        let context = Context::<MyCache4, Tree>::new(0, 44);
 
         let result = alphabet_lower(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -112,7 +112,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = alphabet_lower(&context, &source, position);
         assert_eq!(result, (true, 1));
@@ -123,7 +123,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = alphabet_lower(&context, &source, position);
         assert_eq!(result, (true, 1));

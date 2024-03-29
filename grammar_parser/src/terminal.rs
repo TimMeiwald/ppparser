@@ -42,7 +42,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use publisher::{BasicStack, NoopStack};
+    use publisher::{Tree};
     use rules::Key;
 
     #[test]
@@ -52,7 +52,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = terminal(&context, &source, position);
         context.stack.borrow().print(Key(0), None);
@@ -66,7 +66,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = terminal(&context, &source, position);
         context.stack.borrow().print(Key(0), None);
@@ -79,7 +79,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -91,7 +91,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -103,7 +103,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));
@@ -116,7 +116,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = terminal(&context, &source, position);
         assert_eq!(result, (true, 3));

@@ -3,7 +3,7 @@ use parser_core::{Context};
 use rules::rules::Rules;
 
 use parser_core::{Source, _ordered_choice, _sequence, _subexpression, _var_name};
-use publisher::Publisher;
+use publisher::{Publisher, Tree};
 
 use crate::{subexpression, terminal, var_name, whitespace};
 
@@ -32,7 +32,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use publisher::{BasicStack};
+    use publisher::{Tree};
     use rules::Key;
 
     #[test]
@@ -42,7 +42,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = nucleus(&context, &source, position);
         context.stack.borrow().print(Key(0), None);
@@ -55,7 +55,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, BasicStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = nucleus(&context, &source, position);
         assert_eq!(result, (true, 3));

@@ -89,7 +89,7 @@ pub fn specials<T: Cache, S: Publisher>(
 mod tests {
     use super::*;
     use cache::MyCache4;
-    use publisher::NoopStack;
+    use publisher::Tree;
 
     use parser_core::Source;
     #[test]
@@ -99,7 +99,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = specials(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -109,7 +109,7 @@ mod tests {
         let string = '~'.to_string();
         let src_len = string.len() as u32;
 
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let source = Source::new(string);
         let position: u32 = 0;

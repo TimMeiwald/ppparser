@@ -27,7 +27,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use publisher::NoopStack;
+    use publisher::Tree;
 
     #[test]
     fn test_num_false() {
@@ -36,7 +36,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = spaces(&context, &source, position);
         assert_eq!(result, (false, 0));
@@ -48,7 +48,7 @@ mod tests {
 
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, NoopStack>::new(src_len, 44);
+        let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = spaces(&context, &source, position);
         assert_eq!(result, (true, 1));
