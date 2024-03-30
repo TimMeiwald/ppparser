@@ -100,14 +100,15 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
         res.set_last_node(Some(curr_key));
     }
 
-
+    println!("{:?}", rule);
     let result = match cached_val {
         Some(cached_val) => {
             // Cached Val at Index Key
             let key = cached_val.2;
             // Make cached subtree a child of parent and current node parent of subtree
             let tree = &mut *(context.stack).borrow_mut();
-            tree.connect(curr_key, key);
+
+            tree.connect(temp_key.unwrap(), key);
             // Return Result
             (cached_val.0, cached_val.1)
         }

@@ -120,7 +120,11 @@ mod tests {
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 45);
         let result = grammar(&context, &source, position);
-        context.stack.borrow().print(Key(0), Some(true));
+        //context.stack.borrow().print(Key(0), Some(true));
+        let only_true_tree = context.stack.borrow().clear_false();
+        //only_true_tree.print(Key(0), None);
+        //println!("Capacity: {:?}, Len: {:?}", context.stack.borrow().capacity(), context.stack.borrow().len());
+        //println!("Capacity: {:?}, Len: {:?}", only_true_tree.capacity(), only_true_tree.len());
         // for i in &*context.publisher.borrow() {
         //     // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
         //     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
@@ -141,6 +145,8 @@ mod tests {
         let context = Context::<MyCache4, Tree>::new(src_len, 45);
         let result = grammar(&context, &source, position);
         context.stack.borrow().print(Key(0), None);
+        let only_true_tree = context.stack.borrow().clear_false();
+        only_true_tree.print(Key(0), None);
         // for i in &*context.publisher.borrow() {
         //     // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
         //     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);p

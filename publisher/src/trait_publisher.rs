@@ -34,4 +34,5 @@ pub trait Publisher {
     fn set_node_end_position(&mut self, index: Key, end_position: u32);
     fn set_node_result(&mut self, index: Key, result: bool);
     fn print(&self, index: Key, boolean: Option<bool>);
+    fn clear_false(&self) -> Tree;
 }

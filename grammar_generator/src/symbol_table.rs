@@ -65,7 +65,10 @@ impl<'a> SymbolTable<'a> {
     fn create_symbol_table_from_tree_kernel(&mut self, tree: &Tree, index: Key) {
         let node = tree.get_node(index);
         let mut counter = 0;
-        if node.rule == Rules::VarNameDecl && node.result {
+        if node.rule == Rules::VarNameDecl {
+            if !node.result{
+                panic!("No false results should exist.")
+            }
             let name = &self.source[((node.start_position+1) as usize)..((node.end_position-1) as usize)];
             self.names.push(name.to_string());
         }
@@ -117,7 +120,39 @@ mod tests {
         }
         let tree = &context.stack.borrow();
         let src =&String::from(source);
-        let sym_table = SymbolTable::new(tree, src);
+        let clean_tree = tree.clear_false();
+        clean_tree.print(Key(0), Some(true));
+        let sym_table = SymbolTable::new(&clean_tree, src);
+        sym_table.print();
+    }
+
+    #[test]
+    fn test_2() {
+        let string = "<Rule>=\"A\"/\"B\";".to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 45);
+        let result = grammar(&context, &source, position);
+         // Checks full file was parsed.
+         if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.stack.borrow();
+        let src =&String::from(source);
+        tree.print(Key(0), Some(true));
+        println!("\nCLEAN TREE\n");
+        let clean_tree = tree.clear_false();
+        clean_tree.print(Key(0), Some(true));
+        let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
     }
 }
+
+

@@ -58,6 +58,8 @@ mod tests {
         let context = Context::<MyCache4, Tree>::new(src_len, 44);
 
         let result = nucleus(&context, &source, position);
+        context.stack.borrow().print(Key(0), None);
+
         assert_eq!(result, (true, 3));
     }
 }

@@ -17,18 +17,11 @@ pub fn ordered_choice<T: Cache, S: Publisher>(
     let v3 = _var_name(Rules::Backslash, context, backslash);
     let s1 = _sequence(&v1, &v2);
     let s2 = _sequence(&s1, &v3);
-    let v4 = _var_name(Rules::Whitespace, context, whitespace);
-    let v5 = _var_name(Rules::Atom, context, atom);
+    let s3 = _sequence(&s2, &v2);
+    let s4 = _sequence(&s3, &v1);
 
-    let s3 = _sequence(&s2, &v4);
-    let s4 = _sequence(&s3, &v5);
-
-    let v7 = _var_name(Rules::Atom, context, atom);
-    let v6 = _var_name(Rules::Whitespace, context, whitespace);
-    let v8 = _var_name(Rules::Backslash, context, backslash);
-
-    let s5 = _sequence(&v8, &v6);
-    let s6 = _sequence(&s5, &v7);
+    let s5 = _sequence(&v3, &v2);
+    let s6 = _sequence(&s5, &v1);
     let sub1 = _subexpression(&s6);
     let z1 = _zero_or_more(&sub1);
 
