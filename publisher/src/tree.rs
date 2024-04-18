@@ -235,6 +235,11 @@ impl Node {
             children: Vec::<Key>::new(),
         }
     }
+
+    pub fn get_string(&self, source: &String) -> String {
+        source[(self.start_position as usize)..(self.end_position as usize)].to_string()
+    }
+
     pub fn get_children(&self) -> &Vec<Key> {
         &self.children
     }

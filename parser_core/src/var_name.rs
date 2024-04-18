@@ -100,7 +100,6 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
         res.set_last_node(Some(curr_key));
     }
 
-    println!("{:?}", rule);
     let result = match cached_val {
         Some(cached_val) => {
             // Cached Val at Index Key
