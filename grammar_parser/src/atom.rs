@@ -1,12 +1,12 @@
 use cache::Cache;
 use parser_core::{Context};
 use rules::rules::Rules;
-
-use parser_core::{Source, _ordered_choice, _subexpression, _var_name};
+use parser_core::_sequence;
+use parser_core::{Source, _ordered_choice, _subexpression, _var_name, };
 use publisher::Publisher;
 
 use crate::{
-    and_predicate, not_predicate, nucleus, one_or_more, optional, whitespace, zero_or_more,
+    and_predicate, not_predicate, nucleus, one_or_more, optional, sequence::sequence, whitespace, zero_or_more
 };
 
 pub fn atom<T: Cache, S: Publisher>(
@@ -16,21 +16,25 @@ pub fn atom<T: Cache, S: Publisher>(
 ) -> (bool, u32) {
     let v1 = _var_name(Rules::AndPredicate, context, and_predicate);
     let v2 = _var_name(Rules::NotPredicate, context, not_predicate);
-    let v3 = _var_name(Rules::OneOrMore, context, one_or_more);
-    let v4 = _var_name(Rules::ZeroOrMore, context, zero_or_more);
-    let v5 = _var_name(Rules::Optional, context, optional);
-    let v6 = _var_name(Rules::Nucleus, context, nucleus);
-
     let oc1 = _ordered_choice(&v1, &v2);
+
+    let v3 = _var_name(Rules::OneOrMore, context, one_or_more);
     let oc2 = _ordered_choice(&oc1, &v3);
+
+
+    let v4 = _var_name(Rules::ZeroOrMore, context, zero_or_more);
     let oc3 = _ordered_choice(&oc2, &v4);
+
+    let v5 = _var_name(Rules::Optional, context, optional);
     let oc4 = _ordered_choice(&oc3, &v5);
+
+    let v6 = _var_name(Rules::Nucleus, context, nucleus);
     let oc5 = _ordered_choice(&oc4, &v6);
 
     let sub1 = _subexpression(&oc5);
 
     let v7 = _var_name(Rules::Whitespace, context, whitespace);
-    let oc6 = _ordered_choice(&sub1, &v7);
+    let oc6 = _sequence(&sub1, &v7);
 
     oc6(source, position)
 }
