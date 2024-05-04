@@ -1,8 +1,8 @@
 use publisher::{Publisher, Tree};
 use rules::{rules::Rules, Key};
 
-use std::panic;
 use crate::count_lines;
+use std::panic;
 pub struct SymbolTable<'a> {
     names: Vec<String>,
     source: &'a String,
@@ -18,6 +18,10 @@ impl<'a> SymbolTable<'a> {
         sym_table.create_symbol_table_from_tree(tree);
         sym_table.run_duplication_check();
         return sym_table;
+    }
+
+    pub fn get_names(&self) -> &Vec<String> {
+        return &self.names;
     }
 
     pub fn print(&self) {
@@ -39,9 +43,9 @@ impl<'a> SymbolTable<'a> {
         false
     }
 
-    fn run_duplication_check(&mut self){
+    fn run_duplication_check(&mut self) {
         self.names.sort();
-        // Dedup only dedups consecutive elements hence the prior sort. 
+        // Dedup only dedups consecutive elements hence the prior sort.
         self.names.dedup();
     }
 
@@ -66,10 +70,11 @@ impl<'a> SymbolTable<'a> {
         let node = tree.get_node(index);
         let mut counter = 0;
         if node.rule == Rules::VarNameDecl {
-            if !node.result{
+            if !node.result {
                 panic!("No false results should exist.")
             }
-            let name = &self.source[((node.start_position+1) as usize)..((node.end_position-1) as usize)];
+            let name = &self.source
+                [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)];
             self.names.push(name.to_string());
         }
         loop {
@@ -83,7 +88,6 @@ impl<'a> SymbolTable<'a> {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -119,7 +123,7 @@ mod tests {
             println!("Successfully parsed")
         }
         let tree = &context.stack.borrow();
-        let src =&String::from(source);
+        let src = &String::from(source);
         let clean_tree = tree.clear_false();
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
@@ -135,8 +139,8 @@ mod tests {
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 45);
         let result = grammar(&context, &source, position);
-         // Checks full file was parsed.
-         if result.1 != string2.len() as u32 {
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
             panic!(
                 "Failed to parse grammar due to syntax error on Line: {:?}",
                 count_lines(&string2, result.1)
@@ -145,7 +149,7 @@ mod tests {
             println!("Successfully parsed")
         }
         let tree = &context.stack.borrow();
-        let src =&String::from(source);
+        let src = &String::from(source);
         tree.print(Key(0), Some(true));
         println!("\nCLEAN TREE\n");
         let clean_tree = tree.clear_false();
@@ -154,5 +158,3 @@ mod tests {
         sym_table.print();
     }
 }
-
-

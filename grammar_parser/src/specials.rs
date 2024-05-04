@@ -80,7 +80,9 @@ pub fn specials<T: Cache, S: Publisher>(
     let hoc = _ordered_choice(&hoc, &oc14);
 
     let t1 = _terminal(b'~');
-    let hoc = _ordered_choice(&hoc, &t1);
+    let t2 = _terminal(b'@');
+    let oc15 = _ordered_choice(&t1, &t2);
+    let hoc = _ordered_choice(&hoc, &oc15);
 
     hoc(source, position)
 }

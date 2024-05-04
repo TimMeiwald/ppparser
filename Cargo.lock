@@ -46,6 +46,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "java_parser"
+version = "0.6.0"
+dependencies = [
+ "cache",
+ "grammar_generator",
+ "grammar_parser",
+ "parser_core",
+ "publisher",
+ "rules",
+]
+
+[[package]]
 name = "num"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

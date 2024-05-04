@@ -1,6 +1,6 @@
 mod constructor;
 mod symbol_table;
-
+mod binary_wo;
 fn count_lines(source: &String, start_position: u32) -> u32 {
     let mut new_line_count: u32 = 1;
 
