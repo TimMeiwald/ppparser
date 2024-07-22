@@ -8,3 +8,5 @@ default-run = "grammar_runner"
 grammar_parser = { path = "../grammar_parser" }
 cache = { path = "../cache" }
 publisher = {path = "../publisher"}
+clap = { version = "4.5.9", features = ["derive"] }
+anyhow = "1.0.86"

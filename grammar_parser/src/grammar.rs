@@ -23,12 +23,12 @@ pub fn grammar<T: Cache, S: Publisher>(
 mod tests {
     use super::*;
     //use cache::{BTreeCache, DenyLeftRecursionCache, MyCache4};
-    use cache::{MyCache4};
+    use cache::MyCache4;
     use parser_core::Source;
-    use publisher::{Tree};
+    use publisher::Tree;
+    use rules::Key;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
-    use rules::Key;
     #[test]
     fn test_grammar_true() {
         let string = "<Spaces> PASSTHROUGH = \"\n\"/\"\t\"/\"\r\"/\" \";".to_string();
@@ -134,7 +134,6 @@ mod tests {
         // }
         assert_eq!(result, (true, src_len));
     }
-    
 
     #[test]
     fn test_basic_publisher_short() {
@@ -146,6 +145,8 @@ mod tests {
         let result = grammar(&context, &source, position);
         context.stack.borrow().print(Key(0), None);
         let only_true_tree = context.stack.borrow().clear_false();
+        println!("\n###############################################\nWithout False Values\n######################################################");
+
         only_true_tree.print(Key(0), None);
         // for i in &*context.publisher.borrow() {
         //     // if i[0] == 20 || i[0] == 36 || i[0] == 29 || (i[0] >= 26 && i[0] <= 32) {
