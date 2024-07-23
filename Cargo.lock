@@ -144,6 +144,7 @@ dependencies = [
  "anyhow",
  "cache",
  "clap",
+ "grammar_generator",
  "grammar_parser",
  "publisher",
 ]
@@ -159,18 +160,6 @@ name = "is_terminal_polyfill"
 version = "1.70.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8478577c03552c21db0e2724ffb8986a5ce7af88107e6be5d2ee6e158c12800"
-
-[[package]]
-name = "java_parser"
-version = "0.6.0"
-dependencies = [
- "cache",
- "grammar_generator",
- "grammar_parser",
- "parser_core",
- "publisher",
- "rules",
-]
 
 [[package]]
 name = "num"

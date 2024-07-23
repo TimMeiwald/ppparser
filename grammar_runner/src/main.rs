@@ -1,7 +1,4 @@
-use std::{
-    path::{Path, PathBuf},
-    str::FromStr,
-};
+use std::{fs, path::PathBuf};
 mod copy_dir;
 mod data;
 use clap::Parser;
@@ -34,25 +31,32 @@ fn main() {
         Ok(source) => source,
     };
 
+    let target_str = args.target.to_str().unwrap();
+
     let target: PathBuf = match args.target.canonicalize() {
-        Err(e) => {
-            let res = std::fs::create_dir(args.target);
-            return res.unwrap_or_else(|_| panic!("Failed to create Target Directory!\n{:?}", e));
-        }
-        Ok(target) => target,
+        Ok(path) => path,
+        Err(e) => match fs::create_dir_all(target_str) {
+            Ok(()) => PathBuf::from(target_str),
+            Err(e) => panic!("Failed to create Target Directory"),
+        },
     };
 
-    println!("{:?}", args.name);
-    println!("{:?}", target);
-    println!("{:?}", source);
+    println!("Parser Name: {:?}", args.name);
+    println!("Target Directory: {:?}", target);
+    println!("Source File: {:?}", source);
 
     let data = DataGenerator::new(
         "./cache",
         "./rules",
         "./publisher",
-        "./grammar_generator",
-        "./grammar_runner",
-        target,
+        // "./grammar_generator",
+        // "./grammar_runner",
+        target.to_str().unwrap().into(),
+        "./parser_core",
+        source,
     );
-    data.generate_data();
+    match data.generate_data() {
+        Ok(()) => println!("Success"),
+        Err(e) => println!("Error: {:?}", e),
+    }
 }

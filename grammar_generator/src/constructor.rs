@@ -9,10 +9,10 @@ use rules::Rules;
 use std::fmt::format;
 use std::panic::panic_any;
 
-struct GeneratedCode {
+pub struct GeneratedCode {
     // String per rule so we can seperate into files per rule.
-    rules: Vec<String>,
-    rules_enum: String,
+    pub rules: Vec<String>,
+    pub rules_enum: String,
 }
 
 impl GeneratedCode {
@@ -414,9 +414,7 @@ impl GeneratedCode {
                 Rules::VarName => {
                     ret_key = Self::var_name(out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::Whitespace => {
-
-                }
+                Rules::Whitespace => {}
                 _ => {
                     let err_msg = format!("nucleus, Rule: {:?}", child_rule);
                     panic_any(err_msg);
@@ -480,10 +478,9 @@ impl GeneratedCode {
             let mut contents: String = source
                 [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)]
                 .to_string();
-            if contents == "\\"{
+            if contents == "\\" {
                 contents = "\\\\".to_string();
-            }
-            else if contents == "'"{
+            } else if contents == "'" {
                 contents = "\\'".to_string();
             }
             let contents = format!("{}", contents);
@@ -503,8 +500,6 @@ mod tests {
     use std::env;
     use std::fs::{canonicalize, read_to_string};
 
-
-    
     #[test]
     fn test_java_grammar_parser() {
         println!("{:?}", env::current_dir().unwrap());
@@ -538,9 +533,7 @@ mod tests {
         for i in gen_code.rules {
             println!("{}", i)
         }
-        
     }
-
 
     #[test]
     fn test_5() {
@@ -570,7 +563,7 @@ mod tests {
         //sym_table.print();
         let gen_code = GeneratedCode::new(&sym_table, &tree, src);
     }
-    
+
     #[test]
     fn test_4() {
         let string = "<Rule>=\"A\",\"B\",\"\";   #   Ein Kommentar   #  ".to_string();

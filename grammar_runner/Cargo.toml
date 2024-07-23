@@ -6,6 +6,7 @@ default-run = "grammar_runner"
 
 [dependencies]
 grammar_parser = { path = "../grammar_parser" }
+grammar_generator = {path = "../grammar_generator"}
 cache = { path = "../cache" }
 publisher = {path = "../publisher"}
 clap = { version = "4.5.9", features = ["derive"] }
