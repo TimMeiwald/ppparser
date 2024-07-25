@@ -1,12 +1,13 @@
 use cache::Cache;
-use parser_core::{Context};
-use rules::rules::Rules;
+use parser_core::Context;
 use parser_core::_sequence;
-use parser_core::{Source, _ordered_choice, _subexpression, _var_name, };
+use parser_core::{Source, _ordered_choice, _subexpression, _var_name};
 use publisher::Publisher;
+use rules::rules::Rules;
 
 use crate::{
-    and_predicate, not_predicate, nucleus, one_or_more, optional, sequence::sequence, whitespace, zero_or_more
+    and_predicate, not_predicate, nucleus, one_or_more, optional, sequence::sequence, whitespace,
+    zero_or_more,
 };
 
 pub fn atom<T: Cache, S: Publisher>(
@@ -20,7 +21,6 @@ pub fn atom<T: Cache, S: Publisher>(
 
     let v3 = _var_name(Rules::OneOrMore, context, one_or_more);
     let oc2 = _ordered_choice(&oc1, &v3);
-
 
     let v4 = _var_name(Rules::ZeroOrMore, context, zero_or_more);
     let oc3 = _ordered_choice(&oc2, &v4);
@@ -44,7 +44,7 @@ mod tests {
     use super::*;
     use cache::MyCache4;
     use parser_core::Source;
-    use publisher::{Tree};
+    use publisher::Tree;
     use rules::Key;
     #[test]
     fn test_atom_true() {
@@ -61,8 +61,8 @@ mod tests {
     }
 
     #[test]
-    fn test_nucleus_char() {
-        let string = "\"A\"".to_string();
+    fn test_atom_char() {
+        let string = "\"A\"/\"B\"".to_string();
         let src_len = string.len() as u32;
 
         let source = Source::new(string);

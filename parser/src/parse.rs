@@ -9,6 +9,7 @@ use rules::Key;
 use std::fs::canonicalize;
 use std::fs::read_to_string;
 use std::path::Path;
+use std::time::Instant;
 
 pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
     let pathbuf = canonicalize(path)?;
@@ -16,10 +17,16 @@ pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 45);
+    let context = Context::<MyCache4, Tree>::new(src_len, 55);
+    let now = Instant::now();
     let result = grammar(&context, &source, position);
-    //context.stack.borrow().print(Key(0), Some(true));
+    let elapsed = now.elapsed();
+    context.stack.borrow().print(Key(0), None);
     let only_true_tree = context.stack.borrow().clear_false();
+    let elapsed2 = now.elapsed();
+    println!("Elapsed: {:.2?}", elapsed);
+    println!("Elapsed with Tree cleaning: {:.2?}", elapsed2);
+
     //only_true_tree.print(Key(0), None);
     //println!("Capacity: {:?}, Len: {:?}", context.stack.borrow().capacity(), context.stack.borrow().len());
     //println!("Capacity: {:?}, Len: {:?}", only_true_tree.capacity(), only_true_tree.len());

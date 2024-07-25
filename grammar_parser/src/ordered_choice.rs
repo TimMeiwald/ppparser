@@ -1,5 +1,5 @@
 use cache::Cache;
-use parser_core::{Context};
+use parser_core::Context;
 use rules::rules::Rules;
 
 use parser_core::{Source, _sequence, _subexpression, _var_name, _zero_or_more};
@@ -52,6 +52,17 @@ mod tests {
     #[test]
     fn test_ordered_choice_true() {
         let string = "\"A\"/\"B\"".to_string();
+        let str_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(str_len, 45);
+
+        let result = ordered_choice(&context, &source, position);
+        assert_eq!(result, (true, 7));
+    }
+    #[test]
+    fn test_ordered_choice_true10() {
+        let string = "<A>/<B>".to_string();
         let str_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;

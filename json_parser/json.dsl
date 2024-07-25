@@ -25,10 +25,10 @@
 <escape> = ("\"/"b"/"f"/"n"/"r"/"t"/("u", <hex>, <hex>, <hex>, <hex>))?;
 <hex> = <digit>/<Alphabet_Upper>/<Alphabet_Lower>;
 <number> = <integer>, <fraction>, <exponent>;
-<integer> = (<onenine>, <digit>+)/("-", <onenine>, <digits>)/<digit>/("-", <digit>);
+<integer> = ("-", <onenine>, <digits>)/(<onenine>, <digit>+)/("-", <digit>)/<digit>;
 <digits> = <digit>+;
 <digit> = "0"/<onenine>;
-<onenine> = <Num>;
+<onenine> = "1"/"2"/"3"/"4"/"5"/"6"/"7"/"8"/"9";
 <fraction> = (".", <digit>+)?;
 <exponent> = (("E", "e"), <sign>, <digits>)?;
 <sign> = ("+"/"-")?;
