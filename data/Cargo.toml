@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+members = [
+    "parser_core",
+    "grammar_parser",
+    "cache",
+    "publisher",
+    "rules",
+    "parser",
+
+]
+
+[profile.release]
+strip = true  # Automatically strip symbols from the binary.
+opt-level = 3  
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+

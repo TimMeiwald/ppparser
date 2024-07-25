@@ -248,6 +248,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "parser"
+version = "0.6.0"
+dependencies = [
+ "anyhow",
+ "cache",
+ "clap",
+ "grammar_parser",
+ "parser_core",
+ "publisher",
+ "rules",
+]
+
+[[package]]
 name = "parser_core"
 version = "0.6.0"
 dependencies = [

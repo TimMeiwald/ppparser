@@ -109,9 +109,13 @@ use publisher::*;";
         // self.copy_all(&self.runner_dir)?;
         self.copy_all(&self.rules_dir)?;
         self.copy_all(&self.parser_core_dir)?;
-        self.copy_all(&PathBuf::from_str("./my_parser").unwrap())?;
+        self.copy_all(&PathBuf::from_str("./parser").unwrap())?;
 
         self.copy_file(&PathBuf::from_str("Cargo.toml").unwrap())?;
+        self.copy_file_with_dst(
+            &PathBuf::from_str("./data/Cargo.toml").unwrap(),
+            &PathBuf::from_str("Cargo.toml").unwrap(),
+        )?;
         self.copy_file(&PathBuf::from_str("Cargo.lock").unwrap())?;
         self.copy_file(&PathBuf::from_str(".gitignore").unwrap())?;
         self.create_dir(&PathBuf::from_str("./grammar_parser/").unwrap())?;
@@ -141,6 +145,22 @@ use publisher::*;";
             }
         }
     }
+
+    fn copy_file_with_dst(&self, pathbuf: &PathBuf, dst: &PathBuf) -> Result<()> {
+        let cache_target = &mut self.target_dir.clone();
+        cache_target.extend(dst.iter());
+        println!("{:?}", cache_target);
+        let success = copy_file(&pathbuf, cache_target);
+        match success {
+            std::result::Result::Ok(e) => {
+                return Ok(());
+            }
+            Err(e) => {
+                bail!("Failed to create {:?}: {:?}", pathbuf, e)
+            }
+        }
+    }
+
     fn make_file(&self, pathbuf: &PathBuf) -> Result<File> {
         let cache_target = &mut self.target_dir.clone();
         cache_target.extend(pathbuf.iter());
