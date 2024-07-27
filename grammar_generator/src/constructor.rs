@@ -641,7 +641,7 @@ mod tests {
     //     let src_len = string.len() as u32;
     //     let source = Source::new(string);
     //     let position: u32 = 0;
-    //     let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    //     let context = Context::<MyCache4, Tree>::new(src_len, 52);
     //     let result = grammar(&context, &source, position);
 
     //     // Checks full file was parsed.
@@ -673,7 +673,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -702,7 +702,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -731,7 +731,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -761,7 +761,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -793,9 +793,10 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
-
+        let tree = &context.stack.borrow();
+        //tree.print(Key(0), None);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
@@ -805,8 +806,7 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = &context.stack.borrow();
-        //tree.print(Key(0), None);
+
         let tree = &tree.clear_false();
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
@@ -827,7 +827,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -862,7 +862,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -897,7 +897,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -932,7 +932,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.

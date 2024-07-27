@@ -11,7 +11,7 @@ fn test_atom_true() {
 
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
     let result = atom(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
@@ -25,7 +25,7 @@ fn test_atom_char() {
 
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
     let result = atom(&context, &source, position);
     context.stack.borrow().print(Key(0), Some(true));
@@ -39,7 +39,7 @@ fn test_atom_string_term() {
 
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
     let result = atom(&context, &source, position);
     context.stack.borrow().print(Key(0), Some(true));
@@ -53,7 +53,7 @@ fn test_atom_string_termfalse() {
 
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
     let result = atom(&context, &source, position);
     context.stack.borrow().print(Key(0), Some(true));

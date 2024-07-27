@@ -110,7 +110,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -137,7 +137,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -156,6 +156,5 @@ mod tests {
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
-        
     }
 }

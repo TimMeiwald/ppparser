@@ -5,149 +5,48 @@ use rules::Rules;
 
 pub use parser_core::Context;
 pub use parser_core::Source;
-
 pub fn AlphabetUpper<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     // We all love commments
-    let closure_1 = _terminal(b'A');
-    let closure_2 = _terminal(b'B');
-    let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _terminal(b'C');
-    let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _terminal(b'D');
-    let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    let closure_8 = _terminal(b'E');
-    let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    let closure_10 = _terminal(b'F');
-    let closure_11 = _ordered_choice(&closure_9, &closure_10);
-    let closure_12 = _terminal(b'G');
-    let closure_13 = _ordered_choice(&closure_11, &closure_12);
-    let closure_14 = _terminal(b'H');
-    let closure_15 = _ordered_choice(&closure_13, &closure_14);
-    let closure_16 = _terminal(b'I');
-    let closure_17 = _ordered_choice(&closure_15, &closure_16);
-    let closure_18 = _terminal(b'J');
-    let closure_19 = _ordered_choice(&closure_17, &closure_18);
-    let closure_20 = _terminal(b'K');
-    let closure_21 = _ordered_choice(&closure_19, &closure_20);
-    let closure_22 = _terminal(b'L');
-    let closure_23 = _ordered_choice(&closure_21, &closure_22);
-    let closure_24 = _terminal(b'M');
-    let closure_25 = _ordered_choice(&closure_23, &closure_24);
-    let closure_26 = _terminal(b'N');
-    let closure_27 = _ordered_choice(&closure_25, &closure_26);
-    let closure_28 = _terminal(b'O');
-    let closure_29 = _ordered_choice(&closure_27, &closure_28);
-    let closure_30 = _terminal(b'P');
-    let closure_31 = _ordered_choice(&closure_29, &closure_30);
-    let closure_32 = _terminal(b'Q');
-    let closure_33 = _ordered_choice(&closure_31, &closure_32);
-    let closure_34 = _terminal(b'R');
-    let closure_35 = _ordered_choice(&closure_33, &closure_34);
-    let closure_36 = _terminal(b'S');
-    let closure_37 = _ordered_choice(&closure_35, &closure_36);
-    let closure_38 = _terminal(b'T');
-    let closure_39 = _ordered_choice(&closure_37, &closure_38);
-    let closure_40 = _terminal(b'U');
-    let closure_41 = _ordered_choice(&closure_39, &closure_40);
-    let closure_42 = _terminal(b'V');
-    let closure_43 = _ordered_choice(&closure_41, &closure_42);
-    let closure_44 = _terminal(b'W');
-    let closure_45 = _ordered_choice(&closure_43, &closure_44);
-    let closure_46 = _terminal(b'X');
-    let closure_47 = _ordered_choice(&closure_45, &closure_46);
-    let closure_48 = _terminal(b'Y');
-    let closure_49 = _ordered_choice(&closure_47, &closure_48);
-    let closure_50 = _terminal(b'Z');
-    let closure_51 = _ordered_choice(&closure_49, &closure_50);
-    closure_51(source, position)
+    let closure_1 = _ordered_choice_match_range(65, 90);
+    closure_1(source, position)
 }
 pub fn AlphabetLower<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _terminal(b'a');
-    let closure_2 = _terminal(b'b');
-    let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _terminal(b'c');
-    let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _terminal(b'd');
-    let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    let closure_8 = _terminal(b'e');
-    let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    let closure_10 = _terminal(b'f');
-    let closure_11 = _ordered_choice(&closure_9, &closure_10);
-    let closure_12 = _terminal(b'g');
-    let closure_13 = _ordered_choice(&closure_11, &closure_12);
-    let closure_14 = _terminal(b'h');
-    let closure_15 = _ordered_choice(&closure_13, &closure_14);
-    let closure_16 = _terminal(b'i');
-    let closure_17 = _ordered_choice(&closure_15, &closure_16);
-    let closure_18 = _terminal(b'j');
-    let closure_19 = _ordered_choice(&closure_17, &closure_18);
-    let closure_20 = _terminal(b'k');
-    let closure_21 = _ordered_choice(&closure_19, &closure_20);
-    let closure_22 = _terminal(b'l');
-    let closure_23 = _ordered_choice(&closure_21, &closure_22);
-    let closure_24 = _terminal(b'm');
-    let closure_25 = _ordered_choice(&closure_23, &closure_24);
-    let closure_26 = _terminal(b'n');
-    let closure_27 = _ordered_choice(&closure_25, &closure_26);
-    let closure_28 = _terminal(b'o');
-    let closure_29 = _ordered_choice(&closure_27, &closure_28);
-    let closure_30 = _terminal(b'p');
-    let closure_31 = _ordered_choice(&closure_29, &closure_30);
-    let closure_32 = _terminal(b'q');
-    let closure_33 = _ordered_choice(&closure_31, &closure_32);
-    let closure_34 = _terminal(b'r');
-    let closure_35 = _ordered_choice(&closure_33, &closure_34);
-    let closure_36 = _terminal(b's');
-    let closure_37 = _ordered_choice(&closure_35, &closure_36);
-    let closure_38 = _terminal(b't');
-    let closure_39 = _ordered_choice(&closure_37, &closure_38);
-    let closure_40 = _terminal(b'u');
-    let closure_41 = _ordered_choice(&closure_39, &closure_40);
-    let closure_42 = _terminal(b'v');
-    let closure_43 = _ordered_choice(&closure_41, &closure_42);
-    let closure_44 = _terminal(b'w');
-    let closure_45 = _ordered_choice(&closure_43, &closure_44);
-    let closure_46 = _terminal(b'x');
-    let closure_47 = _ordered_choice(&closure_45, &closure_46);
-    let closure_48 = _terminal(b'y');
-    let closure_49 = _ordered_choice(&closure_47, &closure_48);
-    let closure_50 = _terminal(b'z');
-    let closure_51 = _ordered_choice(&closure_49, &closure_50);
-    closure_51(source, position)
+    let closure_1 = _ordered_choice_match_range(97, 122);
+    closure_1(source, position)
 }
 pub fn num<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _terminal(b'0');
-    let closure_2 = _terminal(b'1');
+    let closure_1 = _ordered_choice_match_range(48, 57);
+    closure_1(source, position)
+}
+pub fn numnozero<T: Cache, S: Publisher>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _ordered_choice_match_range(49, 57);
+    closure_1(source, position)
+}
+pub fn hexval<T: Cache, S: Publisher>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _ordered_choice_match_range(48, 57);
+    let closure_2 = _ordered_choice_match_range(65, 70);
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _terminal(b'2');
-    let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _terminal(b'3');
-    let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    let closure_8 = _terminal(b'4');
-    let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    let closure_10 = _terminal(b'5');
-    let closure_11 = _ordered_choice(&closure_9, &closure_10);
-    let closure_12 = _terminal(b'6');
-    let closure_13 = _ordered_choice(&closure_11, &closure_12);
-    let closure_14 = _terminal(b'7');
-    let closure_15 = _ordered_choice(&closure_13, &closure_14);
-    let closure_16 = _terminal(b'8');
-    let closure_17 = _ordered_choice(&closure_15, &closure_16);
-    let closure_18 = _terminal(b'9');
-    let closure_19 = _ordered_choice(&closure_17, &closure_18);
-    closure_19(source, position)
+    closure_3(source, position)
 }
 pub fn spaces<T: Cache, S: Publisher>(
     context: &Context<T, S>,
@@ -168,82 +67,26 @@ pub fn specials<T: Cache, S: Publisher>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _terminal(b'+');
-    let closure_2 = _terminal(b'*');
+    let closure_1 = _var_name(Rules::AlphabetUpper, context, AlphabetUpper);
+    let closure_2 = _var_name(Rules::AlphabetLower, context, AlphabetLower);
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _terminal(b'-');
+    let closure_4 = _var_name(Rules::Num, context, num);
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _terminal(b'&');
+    let closure_6 = _var_name(Rules::Spaces, context, spaces);
     let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    let closure_8 = _terminal(b'!');
-    let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    let closure_10 = _terminal(b'?');
-    let closure_11 = _ordered_choice(&closure_9, &closure_10);
-    let closure_12 = _terminal(b'<');
-    let closure_13 = _ordered_choice(&closure_11, &closure_12);
-    let closure_14 = _terminal(b'>');
-    let closure_15 = _ordered_choice(&closure_13, &closure_14);
-    let closure_16 = _terminal(b'"');
-    let closure_17 = _ordered_choice(&closure_15, &closure_16);
-    let closure_18 = _terminal(b'(');
-    let closure_19 = _ordered_choice(&closure_17, &closure_18);
-    let closure_20 = _terminal(b')');
-    let closure_21 = _ordered_choice(&closure_19, &closure_20);
-    let closure_22 = _terminal(b'_');
-    let closure_23 = _ordered_choice(&closure_21, &closure_22);
-    let closure_24 = _terminal(b',');
-    let closure_25 = _ordered_choice(&closure_23, &closure_24);
-    let closure_26 = _terminal(b'/');
-    let closure_27 = _ordered_choice(&closure_25, &closure_26);
-    let closure_28 = _terminal(b';');
-    let closure_29 = _ordered_choice(&closure_27, &closure_28);
-    let closure_30 = _terminal(b'=');
-    let closure_31 = _ordered_choice(&closure_29, &closure_30);
-    let closure_32 = _terminal(b'\\');
-    let closure_33 = _ordered_choice(&closure_31, &closure_32);
-    let closure_34 = _terminal(b'#');
-    let closure_35 = _ordered_choice(&closure_33, &closure_34);
-    let closure_36 = _terminal(b':');
-    let closure_37 = _ordered_choice(&closure_35, &closure_36);
-    let closure_38 = _terminal(b'|');
-    let closure_39 = _ordered_choice(&closure_37, &closure_38);
-    let closure_40 = _terminal(b'.');
-    let closure_41 = _ordered_choice(&closure_39, &closure_40);
-    let closure_42 = _terminal(b'{');
-    let closure_43 = _ordered_choice(&closure_41, &closure_42);
-    let closure_44 = _terminal(b'}');
-    let closure_45 = _ordered_choice(&closure_43, &closure_44);
-    let closure_46 = _terminal(b'[');
-    let closure_47 = _ordered_choice(&closure_45, &closure_46);
-    let closure_48 = _terminal(b']');
-    let closure_49 = _ordered_choice(&closure_47, &closure_48);
-    let closure_50 = _terminal(b'%');
-    let closure_51 = _ordered_choice(&closure_49, &closure_50);
-    let closure_52 = _terminal(b'\'');
-    let closure_53 = _ordered_choice(&closure_51, &closure_52);
-    let closure_54 = _terminal(b'^');
-    let closure_55 = _ordered_choice(&closure_53, &closure_54);
-    let closure_56 = _terminal(b'~');
-    let closure_57 = _ordered_choice(&closure_55, &closure_56);
-    let closure_58 = _terminal(b'@');
-    let closure_59 = _ordered_choice(&closure_57, &closure_58);
-    closure_59(source, position)
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 = _not_predicate(&closure_8);
+    let closure_10 = _ordered_choice_match_range(0, 255);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    closure_11(source, position)
 }
 pub fn ascii<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::AlphabetLower, context, AlphabetLower);
-    let closure_2 = _var_name(Rules::AlphabetUpper, context, AlphabetUpper);
-    let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Num, context, num);
-    let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::Spaces, context, spaces);
-    let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    let closure_8 = _var_name(Rules::Specials, context, specials);
-    let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    closure_9(source, position)
+    let closure_1 = _ordered_choice_match_range(0, 255);
+    closure_1(source, position)
 }
 pub fn apostrophe<T: Cache, S: Publisher>(
     context: &Context<T, S>,
@@ -373,47 +216,63 @@ pub fn backslash<T: Cache, S: Publisher>(
     let closure_1 = _terminal(b'/');
     closure_1(source, position)
 }
-
+pub fn var_name<T: Cache, S: Publisher>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    // Not whitespace dependent, feel free to use multiple lines for readability
+    let closure_1 = _var_name(Rules::LeftAngleBracket, context, LeftAngleBracket);
+    let closure_2 = _var_name(Rules::AlphabetLower, context, AlphabetLower);
+    let closure_3 = _var_name(Rules::AlphabetUpper, context, AlphabetUpper);
+    let closure_4 = _ordered_choice(&closure_2, &closure_3);
+    let closure_5 = _subexpression(&closure_4);
+    let closure_6 = _sequence(&closure_1, &closure_5);
+    let closure_7 = _var_name(Rules::AlphabetLower, context, AlphabetLower);
+    let closure_8 = _var_name(Rules::AlphabetUpper, context, AlphabetUpper);
+    let closure_9 = _ordered_choice(&closure_7, &closure_8);
+    let closure_10 = _terminal(b'_');
+    let closure_11 = _ordered_choice(&closure_9, &closure_10);
+    let closure_12 = _subexpression(&closure_11);
+    let closure_13 = _zero_or_more(&closure_12);
+    let closure_14 = _sequence(&closure_6, &closure_13);
+    let closure_15 = _var_name(Rules::RightAngleBracket, context, RightAngleBracket);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    closure_16(source, position)
+}
+pub fn var_name_decl<T: Cache, S: Publisher>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::VarName, context, var_name);
+    closure_1(source, position)
+}
 pub fn hex<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     // Replace with custom code
-    let char = source.get_char(position).unwrap();
-    if char != "0".as_bytes()[0] {
-        return (false, position);
-    }
-    let char = source.get_char(position + 1).unwrap();
-    if char != "x".as_bytes()[0] {
-        return (false, position);
-    }
-    let mut count = 2;
-    let mut end_position: u32 = position + count;
-    loop {
-        let chr = source.get_char(position + count);
-        match chr {
-            None => break,
-            Some(chr) => {
-                if (chr >= 48 && chr <= 57) || (chr >= 65 && chr <= 70) || (chr >= 97 && chr <= 102)
-                {
-                    count += 1;
-                    end_position = position + count;
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-    return (true, end_position);
+    let closure_1 = _terminal(b'0');
+    let closure_2 = _terminal(b'x');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::HexVal, context, hexval);
+    let closure_5 = _one_or_more(&closure_4);
+    let closure_6 = _sequence(&closure_3, &closure_5);
+    closure_6(source, position)
 }
 pub fn integer<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    println!("Not implemented yet: integer");
-    return (false, position);
+    // No negative values since that is meaningless in this context
+    let closure_1 = _var_name(Rules::NumNoZero, context, numnozero);
+    let closure_2 = _var_name(Rules::Num, context, num);
+    let closure_3 = _zero_or_more(&closure_2);
+    let closure_4 = _sequence(&closure_1, &closure_3);
+    closure_4(source, position)
 }
 pub fn orderedchoicematchrange<T: Cache, S: Publisher>(
     context: &Context<T, S>,
@@ -450,40 +309,6 @@ pub fn orderedchoicematchrange<T: Cache, S: Publisher>(
     let closure_28 = _var_name(Rules::Whitespace, context, whitespace);
     let closure_29 = _sequence(&closure_27, &closure_28);
     closure_29(source, position)
-}
-
-pub fn var_name_decl<T: Cache, S: Publisher>(
-    context: &Context<T, S>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::VarName, context, var_name);
-    closure_1(source, position)
-}
-
-pub fn var_name<T: Cache, S: Publisher>(
-    context: &Context<T, S>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    // Not whitespace dependent, feel free to use multiple lines for readability
-    let closure_1 = _var_name(Rules::LeftAngleBracket, context, LeftAngleBracket);
-    let closure_2 = _var_name(Rules::AlphabetLower, context, AlphabetLower);
-    let closure_3 = _var_name(Rules::AlphabetUpper, context, AlphabetUpper);
-    let closure_4 = _ordered_choice(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _sequence(&closure_1, &closure_5);
-    let closure_7 = _var_name(Rules::AlphabetLower, context, AlphabetLower);
-    let closure_8 = _var_name(Rules::AlphabetUpper, context, AlphabetUpper);
-    let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    let closure_10 = _terminal(b'_');
-    let closure_11 = _ordered_choice(&closure_9, &closure_10);
-    let closure_12 = _subexpression(&closure_11);
-    let closure_13 = _zero_or_more(&closure_12);
-    let closure_14 = _sequence(&closure_6, &closure_13);
-    let closure_15 = _var_name(Rules::RightAngleBracket, context, RightAngleBracket);
-    let closure_16 = _sequence(&closure_14, &closure_15);
-    closure_16(source, position)
 }
 pub fn subexpression<T: Cache, S: Publisher>(
     context: &Context<T, S>,
@@ -593,12 +418,12 @@ pub fn atom<T: Cache, S: Publisher>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::AndPredicate, context, and_predicate);
-    let closure_2 = _var_name(Rules::NotPredicate, context, not_predicate);
+    let closure_1 = _var_name(Rules::AndPredicate, context, AndPredicate);
+    let closure_2 = _var_name(Rules::NotPredicate, context, NotPredicate);
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::OneOrMore, context, one_or_more);
+    let closure_4 = _var_name(Rules::OneOrMore, context, OneOrMore);
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::ZeroOrMore, context, zero_or_more);
+    let closure_6 = _var_name(Rules::ZeroOrMore, context, ZeroOrMore);
     let closure_7 = _ordered_choice(&closure_5, &closure_6);
     let closure_8 = _var_name(Rules::Optional, context, optional);
     let closure_9 = _ordered_choice(&closure_7, &closure_8);
@@ -609,7 +434,7 @@ pub fn atom<T: Cache, S: Publisher>(
     let closure_14 = _sequence(&closure_12, &closure_13);
     closure_14(source, position)
 }
-pub fn and_predicate<T: Cache, S: Publisher>(
+pub fn AndPredicate<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -619,7 +444,7 @@ pub fn and_predicate<T: Cache, S: Publisher>(
     let closure_3 = _sequence(&closure_1, &closure_2);
     closure_3(source, position)
 }
-pub fn not_predicate<T: Cache, S: Publisher>(
+pub fn NotPredicate<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -677,7 +502,7 @@ pub fn ordered_choice<T: Cache, S: Publisher>(
     let closure_17 = _sequence(&closure_9, &closure_16);
     closure_17(source, position)
 }
-pub fn one_or_more<T: Cache, S: Publisher>(
+pub fn OneOrMore<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -689,7 +514,7 @@ pub fn one_or_more<T: Cache, S: Publisher>(
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(source, position)
 }
-pub fn zero_or_more<T: Cache, S: Publisher>(
+pub fn ZeroOrMore<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
@@ -719,7 +544,7 @@ pub fn whitespace<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _terminal(b' ');
-    let closure_2 = _var_name(Rules::Newline, context, newline);
+    let closure_2 = _terminal(b'\n');
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
     let closure_4 = _terminal(b'\r');
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
@@ -833,46 +658,18 @@ pub fn delete<T: Cache, S: Publisher>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _terminal(b'D');
-    let closure_2 = _terminal(b'E');
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _terminal(b'L');
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _terminal(b'E');
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = _terminal(b'T');
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _terminal(b'E');
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    closure_11(source, position)
+    let closure_1 = _string_terminal_opt_ascii(&[b'D', b'E', b'L', b'E', b'T', b'E']);
+    closure_1(source, position)
 }
 pub fn passthrough<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _terminal(b'P');
-    let closure_2 = _terminal(b'A');
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _terminal(b'S');
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _terminal(b'S');
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = _terminal(b'T');
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _terminal(b'H');
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    let closure_12 = _terminal(b'R');
-    let closure_13 = _sequence(&closure_11, &closure_12);
-    let closure_14 = _terminal(b'O');
-    let closure_15 = _sequence(&closure_13, &closure_14);
-    let closure_16 = _terminal(b'U');
-    let closure_17 = _sequence(&closure_15, &closure_16);
-    let closure_18 = _terminal(b'G');
-    let closure_19 = _sequence(&closure_17, &closure_18);
-    let closure_20 = _terminal(b'H');
-    let closure_21 = _sequence(&closure_19, &closure_20);
-    closure_21(source, position)
+    let closure_1 = _string_terminal_opt_ascii(&[
+        b'P', b'A', b'S', b'S', b'T', b'H', b'R', b'O', b'U', b'G', b'H',
+    ]);
+    closure_1(source, position)
 }
 pub fn collect<T: Cache, S: Publisher>(
     context: &Context<T, S>,
@@ -880,18 +677,49 @@ pub fn collect<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     // Comment
-    let closure_1 = _terminal(b'C');
-    let closure_2 = _terminal(b'O');
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _terminal(b'L');
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _terminal(b'L');
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = _terminal(b'E');
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _terminal(b'C');
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    let closure_12 = _terminal(b'T');
-    let closure_13 = _sequence(&closure_11, &closure_12);
-    closure_13(source, position)
+    let closure_1 = _string_terminal_opt_ascii(&[b'C', b'O', b'L', b'L', b'E', b'C', b'T']);
+    closure_1(source, position)
+}
+
+use rules::Key;
+#[test]
+fn test_hex() {
+    let string = "0x0001F600".to_string();
+    let src_len = string.len() as u32;
+
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+
+    let result = hex(&context, &source, position);
+    context.stack.borrow().print(Key(0), None);
+    assert_eq!(result, (true, src_len));
+}
+
+#[test]
+fn test_hex2() {
+    let string = "0x0".to_string();
+    let src_len = string.len() as u32;
+
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+
+    let result = hex(&context, &source, position);
+    context.stack.borrow().print(Key(0), None);
+    assert_eq!(result, (true, src_len));
+}
+
+#[test]
+fn test_hex3() {
+    let string = "0xFF".to_string();
+    let src_len = string.len() as u32;
+
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+
+    let result = hex(&context, &source, position);
+    context.stack.borrow().print(Key(0), None);
+    assert_eq!(result, (true, src_len));
 }

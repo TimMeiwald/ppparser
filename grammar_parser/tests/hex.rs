@@ -12,7 +12,7 @@ fn test_hex() {
 
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
     let result = hex(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
@@ -26,7 +26,7 @@ fn test_hex2() {
 
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
     let result = hex(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
@@ -40,7 +40,7 @@ fn test_hex3() {
 
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
     let result = hex(&context, &source, position);
     context.stack.borrow().print(Key(0), None);

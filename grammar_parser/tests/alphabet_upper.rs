@@ -10,7 +10,7 @@ fn test_alphabet_upper_false() {
     let src_len = string.len();
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len as u32, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len as u32, 52);
 
     let result = AlphabetUpper(&context, &source, position);
     assert_eq!(result, (false, 0));
@@ -21,7 +21,7 @@ fn test_alphabet_upper_true() {
     let src_len = string.len();
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len as u32, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len as u32, 52);
 
     let result = AlphabetUpper(&context, &source, position);
     assert_eq!(result, (true, 1));
@@ -32,7 +32,7 @@ fn test_alphabet_upper_true_with_var_name() {
     let src_len = string.len();
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len as u32, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len as u32, 52);
 
     let var_name_closure = _var_name(Rules::AlphabetUpper, &context, AlphabetUpper);
     let result = var_name_closure(&source, position);

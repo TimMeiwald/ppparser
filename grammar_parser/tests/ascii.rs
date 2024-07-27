@@ -8,7 +8,7 @@ fn test_ascii_true() {
 
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(0, 50);
+    let context = Context::<MyCache4, Tree>::new(0, 52);
 
     let result = ascii(&context, &source, position);
     assert_eq!(result, (true, 1));
@@ -19,7 +19,7 @@ fn test_ascii_true2() {
 
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(0, 50);
+    let context = Context::<MyCache4, Tree>::new(0, 52);
 
     let result = ascii(&context, &source, position);
     assert_eq!(result, (true, 1));

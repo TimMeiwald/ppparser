@@ -13,7 +13,7 @@ fn test_grammar_true() {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
     let result = grammar(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -24,7 +24,7 @@ fn test_grammar_true2() {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -39,7 +39,7 @@ fn test_grammar_true3() {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let result = grammar(&context, &source, position);
     assert_eq!(result, (true, src_len));
 }
@@ -68,7 +68,7 @@ fn test_my_cache_4() {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let result = grammar(&context, &source, position);
     assert_eq!(result, (true, src_len));
 }
@@ -96,7 +96,7 @@ fn test_basic_publisher() {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let result = grammar(&context, &source, position);
     //context.stack.borrow().print(Key(0), Some(true));
     let only_true_tree = context.stack.borrow().clear_false();
@@ -119,7 +119,7 @@ fn test_basic_publisher_short() {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let result = grammar(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
     let only_true_tree = context.stack.borrow().clear_false();
