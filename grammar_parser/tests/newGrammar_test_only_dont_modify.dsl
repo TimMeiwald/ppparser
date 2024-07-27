@@ -1,9 +1,11 @@
-<Alphabet_Upper> PASSTHROUGH =['A'..'Z']; #We all love commments#
+<Alphabet_Upper> PASSTHROUGH = ['A'..'Z']; #We all love commments#
 <Alphabet_Lower> PASSTHROUGH =['a'..'z'];
-<Num> PASSTHROUGH = '0'/'1'/'2'/'3'/'4'/'5'/'6'/'7'/'8'/'9';
+<Num> PASSTHROUGH = [0x30..0x39];
+<NumNoZero> = [0x31..0x39];
+<HexVal>= [0x30..0x39]/[0x65..0x70];
 <Spaces> PASSTHROUGH = '\n'/'\t'/'\r'/' ';
-<Specials> PASSTHROUGH = '+'/'*'/'-'/'&'/'!'/'?'/'<'/'>'/'"'/'('/')'/'_'/','/'/'/';'/'='/'\'/'#'/':'/'|'/'.'/'{'/'}'/'['/']'/'%'/'''/'^'/'~'/'@';
-<ASCII> PASSTHROUGH = <Alphabet_Lower>/<Alphabet_Upper>/<Num>/<Spaces>/<Specials>;
+<Specials> PASSTHROUGH = !(<Alphabet_Upper>/<Alphabet_Lower>/<Num>/<Spaces>),[0x0..0xFF] ;
+<ASCII> PASSTHROUGH = [0x00..0xFF];
 <Apostrophe> DELETE = '"';
 <QuotationMark> = ''';
 <Left_Angle_Bracket> DELETE = '<';
@@ -29,8 +31,8 @@
 
 
 <Var_Name_Decl> = <Var_Name>;
-<Hex> = '0', 'x'; #Replace with custom code#
-<Integer> = '0'; #Replace with custom code#
+<Hex> = '0', 'x', <HexVal>+; #Replace with custom code#
+<Integer> = <NumNoZero>, <Num>*; #No negative values since that is meaningless in this context#
 <OrderedChoiceMatchRange> = <Whitespace>, '[', <Whitespace>,(<Terminal>/<Integer>/<Hex>),'.', '.',(<Terminal>/<Integer>/<Hex>) ,<Whitespace>, ']', <Whitespace>;
 
 
@@ -39,7 +41,7 @@
 <StringTerminal> = (<Apostrophe>, !<Apostrophe>, (<ASCII>, (!<Apostrophe>,<ASCII>)+), <Apostrophe>)/<Hex>/<Integer>; #Multibyte matches essentially#
 
 <Terminal> = (<QuotationMark>,<ASCII>,<QuotationMark>)/(<QuotationMark>,'\',('n'/'r'/'t'),<QuotationMark>)/<Epsilon>;
-<Nucleus> PASSTHROUGH = (<Subexpression>/<Terminal>/<StringTerminal>/<Var_Name>), <Whitespace>;
+<Nucleus> PASSTHROUGH = (<OrderedChoiceMatchRange>/<Subexpression>/<Terminal>/<StringTerminal>/<Var_Name>), <Whitespace>;
 <Atom> PASSTHROUGH = (<And_Predicate>/<Not_Predicate>/<One_Or_More>/<Zero_Or_More>/<Optional>/<Nucleus>), <Whitespace>;
 
 <And_Predicate> = <Ampersand>, <Nucleus>;
@@ -50,7 +52,7 @@
 <Zero_Or_More> = <Nucleus>, <Whitespace>, <Star>;
 <Optional> = <Nucleus>, <Whitespace>, <Question_Mark>;
 
-<Whitespace> DELETE = (' '/<Newline>/'\r'/'\t')*;
+<Whitespace> DELETE = (' '/'\n'/'\r'/'\t')*;
 <RHS> PASSTHROUGH = <Sequence>/<Ordered_Choice>/<Atom>;
 <LHS> = <Var_Name_Decl>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
 <Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;

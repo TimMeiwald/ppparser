@@ -373,6 +373,7 @@ pub fn backslash<T: Cache, S: Publisher>(
     let closure_1 = _terminal(b'/');
     closure_1(source, position)
 }
+
 pub fn hex<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,

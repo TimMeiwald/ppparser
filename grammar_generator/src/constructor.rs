@@ -521,8 +521,29 @@ impl GeneratedCode {
                     panic!("OrderedChoiceMatchRange Not yet implemented Integer")
                 }
                 Rules::Hex => {
-                    panic!("OrderedChoiceMatchRange Not yet implemented Integer")
+                    let contents = source[((child_node.start_position + 2) as usize)
+                        ..((child_node.end_position) as usize)]
+                        .to_string();
+                    let f = match u32::from_str_radix(&contents, 16) {
+                        Err(e) => {
+                            panic!("Failed to parse Hex value: {:?}", e)
+                        }
+                        Ok(value) => value,
+                    };
+
+                    if !start_set {
+                        value_start = f; // Terminal can only be ascii
+                        start_set = true;
+                    } else {
+                        value_end = f; // Terminal can only be ascii
+                        ret_key = out_tree.push(
+                            Reference::OrderedChoiceMatchRange(value_start, value_end),
+                            None,
+                            None,
+                        )
+                    }
                 }
+                Rules::Whitespace => {}
 
                 _ => {
                     let err_msg = format!("ordered choice match range, Rule: {:?}", child_rule);
@@ -800,6 +821,41 @@ mod tests {
     #[test]
     fn test_ordered_choice_match_range() {
         let string = r#"<Atom> PASSTHROUGH = ['A'..'Z'];
+        "#
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 50);
+        let result = grammar(&context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.stack.borrow();
+        let tree = &tree.clear_false();
+
+        tree.print(Key(0), None);
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        sym_table.print();
+        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        for i in gen_code.rules {
+            println!("{}", i)
+        }
+        println!("{}", gen_code.rules_enum)
+    }
+
+    #[test]
+    fn test_ordered_choice_match_range2() {
+        let string = r#"<Atom> PASSTHROUGH = [0x20..0xFF];
         "#
         .to_string();
         let string2 = string.clone();
