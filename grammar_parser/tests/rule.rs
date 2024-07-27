@@ -52,6 +52,18 @@ fn test_rule_true25() {
 }
 
 #[test]
+fn test_rule_true101() {
+    let string = "<Alphabet_Upper> PASSTHROUGH = ['A'..'Z']; #We all love commments#".to_string();
+    let src_len = string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+
+    let result = rule(&context, &source, position);
+    assert_eq!(result, (true, src_len));
+}
+
+#[test]
 fn test_rule_true4() {
     let string =
         "<ASCII> PASSTHROUGH = <Alphabet_Lower>/<Alphabet_Upper>/<Num>/<Spaces>/<Specials>;"

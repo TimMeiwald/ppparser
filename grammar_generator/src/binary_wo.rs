@@ -169,7 +169,7 @@ impl BinaryTree_WO {
         match &node.reference {
             Reference::OrderedChoiceMatchRange(start, end) => {
                 stack.push(format!(
-                    "let closure_{:?} = _ordered_choice_match_range(b'{}', b'{}');",
+                    "let closure_{:?} = _ordered_choice_match_range({}, {});",
                     index.0, start, end
                 ));
                 index

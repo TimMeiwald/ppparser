@@ -12,7 +12,6 @@ pub fn AlphabetUpper<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     // We all love commments
-
     let closure_1 = _terminal(b'A');
     let closure_2 = _terminal(b'B');
     let closure_3 = _ordered_choice(&closure_1, &closure_2);

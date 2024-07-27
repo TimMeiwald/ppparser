@@ -11,6 +11,7 @@ use grammar_parser::Context;
 use grammar_parser::Source;
 use publisher::Publisher;
 use publisher::Tree;
+use rules::Key;
 fn count_lines(source: &String, start_position: u32) -> u32 {
     let mut new_line_count: u32 = 1;
 
@@ -28,9 +29,11 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 45);
+    let context = Context::<MyCache4, Tree>::new(src_len, 50);
     let result = grammar(&context, &source, position);
-
+    // let tree = &context.stack.borrow();
+    // tree.print(Key(0), Some(true));
+    // println!("Grammar Parsing Result: {} {}", result.0, result.1);
     // Checks full file was parsed.
     if result.1 != string2.len() as u32 {
         println!(
