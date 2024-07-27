@@ -1,5 +1,4 @@
 use std::{fs, path::PathBuf};
-mod copy_dir;
 mod data;
 use clap::Parser;
 use data::DataGenerator;

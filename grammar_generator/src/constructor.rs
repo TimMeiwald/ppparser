@@ -76,11 +76,11 @@ impl GeneratedCode {
         let mut comment: Option<String> = None;
         for i in rule_children {
             match tree.get_node(*i).rule {
-                Rules::Lhs => {
+                Rules::LHS => {
                     name = Some(Self::lhs(symbol_table, tree, source, *i));
                     name = Some(name.unwrap().to_lowercase());
                 }
-                Rules::Rhs => {
+                Rules::RHS => {
                     let mut out_tree = BinaryTree_WO::new();
                     let rhs_key = Self::rhs(&mut out_tree, symbol_table, tree, source, *i);
                     let last_key = out_tree.push(Reference::Exec, Some(rhs_key), None);
@@ -142,7 +142,7 @@ impl GeneratedCode {
         let mut end: Option<u32> = None;
         for key in comment_node.get_children() {
             match tree.get_node(*key).rule {
-                Rules::Ascii => {
+                Rules::ASCII => {
                     if start.is_none() {
                         start = Some(tree.get_node(*key).start_position);
                     }
@@ -415,12 +415,143 @@ impl GeneratedCode {
                     ret_key = Self::var_name(out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Whitespace => {}
+                Rules::OrderedChoiceMatchRange => {
+                    ret_key =
+                        Self::ordered_choice_match_range(out_tree, symbol_table, tree, source, *i)
+                }
+                Rules::StringTerminal => {
+                    ret_key = Self::string_terminal(out_tree, symbol_table, tree, source, *i);
+                }
                 _ => {
                     let err_msg = format!("nucleus, Rule: {:?}", child_rule);
                     panic_any(err_msg);
                 }
             }
         }
+        ret_key
+    }
+
+    fn string_terminal(
+        mut out_tree: &mut BinaryTree_WO,
+        symbol_table: &SymbolTable,
+        tree: &Tree,
+        source: &String,
+        index: Key,
+    ) -> Key {
+        let node = tree.get_node(index);
+        let mut ret_key = Key(0);
+        let mut start_set: bool = false;
+        let mut data: Vec<char> = Vec::new();
+        for i in node.get_children() {
+            let child_node = tree.get_node(*i);
+            let child_rule = child_node.rule;
+            match child_rule {
+                Rules::ASCII => {
+                    let contents = source[((child_node.start_position) as usize)
+                        ..((child_node.end_position) as usize)]
+                        .as_bytes()[0];
+                    data.push(contents as char);
+                }
+                Rules::Integer => {
+                    panic!("string_terminal Not yet implemented Integer")
+                }
+                Rules::Hex => {
+                    let contents = &source[((child_node.start_position + 2) as usize)
+                        ..((child_node.end_position) as usize)];
+                    let char = u32::from_str_radix(&contents, 16);
+                    data.push(
+                        char::from_u32(char.expect("Failed to parse hex correctly"))
+                            .expect("Should be valid codepoint"),
+                    );
+                }
+                Rules::Apostrophe => {}
+                _ => {
+                    let err_msg = format!("string_terminal, Rule: {:?}", child_rule);
+                    panic_any(err_msg);
+                }
+            }
+        }
+        let mut all_ascii = true;
+        for char in &data {
+            if char.len_utf8() != 1 {
+                all_ascii = false;
+            }
+        }
+        if all_ascii {
+            ret_key = out_tree.push(Reference::StringTerminalAsciiOpt(data), None, None);
+        } else {
+            ret_key = out_tree.push(Reference::StringTerminal(data), None, None);
+        }
+        ret_key
+    }
+
+    fn ordered_choice_match_range(
+        mut out_tree: &mut BinaryTree_WO,
+        symbol_table: &SymbolTable,
+        tree: &Tree,
+        source: &String,
+        index: Key,
+    ) -> Key {
+        let node = tree.get_node(index);
+        let mut ret_key = Key(0);
+        let mut start_set: bool = false;
+        let mut value_start: u32 = 0;
+        let mut value_end: u32 = 0;
+        for i in node.get_children() {
+            let child_node = tree.get_node(*i);
+            let child_rule = child_node.rule;
+            match child_rule {
+                Rules::Terminal => {
+                    let contents = source[((child_node.start_position + 1) as usize)
+                        ..((child_node.end_position - 1) as usize)]
+                        .to_string();
+                    if !start_set {
+                        value_start = contents.as_bytes()[0] as u32; // Terminal can only be ascii
+                        start_set = true;
+                    } else {
+                        value_end = contents.as_bytes()[0] as u32; // Terminal can only be ascii
+                        ret_key = out_tree.push(
+                            Reference::OrderedChoiceMatchRange(value_start, value_end),
+                            None,
+                            None,
+                        )
+                    }
+                }
+                Rules::Integer => {
+                    panic!("OrderedChoiceMatchRange Not yet implemented Integer")
+                }
+                Rules::Hex => {
+                    let contents = source[((child_node.start_position + 2) as usize)
+                        ..((child_node.end_position) as usize)]
+                        .to_string();
+                    let f = match u32::from_str_radix(&contents, 16) {
+                        Err(e) => {
+                            panic!("Failed to parse Hex value: {:?}", e)
+                        }
+                        Ok(value) => value,
+                    };
+
+                    if !start_set {
+                        value_start = f; // Terminal can only be ascii
+                        start_set = true;
+                    } else {
+                        value_end = f; // Terminal can only be ascii
+                        ret_key = out_tree.push(
+                            Reference::OrderedChoiceMatchRange(value_start, value_end),
+                            None,
+                            None,
+                        )
+                    }
+                }
+                Rules::Whitespace => {}
+
+                _ => {
+                    let err_msg = format!("ordered choice match range, Rule: {:?}", child_rule);
+                    panic_any(err_msg);
+                }
+            }
+        }
+
         ret_key
     }
 
@@ -435,7 +566,7 @@ impl GeneratedCode {
         let mut ret_key = Key(0);
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Rhs => {
+                Rules::RHS => {
                     let key = Self::rhs(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::Subexpression, Some(key), None);
                 }
@@ -500,49 +631,49 @@ mod tests {
     use std::env;
     use std::fs::{canonicalize, read_to_string};
 
-    #[test]
-    fn test_java_grammar_parser() {
-        println!("{:?}", env::current_dir().unwrap());
-        let path = "../java_parser/src/java_grammar_def_parser.txt";
-        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
-        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
-        let string2 = string.clone();
-        let src_len = string.len() as u32;
-        let source = Source::new(string);
-        let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 45);
-        let result = grammar(&context, &source, position);
+    // #[test]
+    // fn test_java_grammar_parser() {
+    //     println!("{:?}", env::current_dir().unwrap());
+    //     let path = "../java_parser/src/java_grammar_definition_parser.txt";
+    //     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+    //     let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+    //     let string2 = string.clone();
+    //     let src_len = string.len() as u32;
+    //     let source = Source::new(string);
+    //     let position: u32 = 0;
+    //     let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    //     let result = grammar(&context, &source, position);
 
-        // Checks full file was parsed.
-        if result.1 != string2.len() as u32 {
-            panic!(
-                "Failed to parse grammar due to syntax error on Line: {:?}",
-                count_lines(&string2, result.1)
-            )
-        } else {
-            println!("Successfully parsed")
-        }
-        let tree = &context.stack.borrow();
-        //tree.print(Key(0), None);
-        let tree = &tree.clear_false();
-        let src = &String::from(source);
-        let sym_table = SymbolTable::new(tree, src);
-        //sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
-        println!("{}", gen_code.rules_enum);
-        for i in gen_code.rules {
-            println!("{}", i)
-        }
-    }
+    //     // Checks full file was parsed.
+    //     if result.1 != string2.len() as u32 {
+    //         panic!(
+    //             "Failed to parse grammar due to syntax error on Line: {:?}",
+    //             count_lines(&string2, result.1)
+    //         )
+    //     } else {
+    //         println!("Successfully parsed")
+    //     }
+    //     let tree = &context.stack.borrow();
+    //     //tree.print(Key(0), None);
+    //     let tree = &tree.clear_false();
+    //     let src = &String::from(source);
+    //     let sym_table = SymbolTable::new(tree, src);
+    //     //sym_table.print();
+    //     let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+    //     println!("{}", gen_code.rules_enum);
+    //     for i in gen_code.rules {
+    //         println!("{}", i)
+    //     }
+    // }
 
     #[test]
     fn test_5() {
-        let string = "<Rule>=\"A\"/\"B\"/\"C\"/\"D\";   #   Ein Kommentar   #  ".to_string();
+        let string = "<Rule>='A'/'B'/'C'/'D';   #   Ein Kommentar   #  ".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -566,12 +697,12 @@ mod tests {
 
     #[test]
     fn test_4() {
-        let string = "<Rule>=\"A\",\"B\",\"\";   #   Ein Kommentar   #  ".to_string();
+        let string = "<Rule>='A','B','';   #   Ein Kommentar   #  ".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -595,12 +726,12 @@ mod tests {
 
     #[test]
     fn test_2() {
-        let string = "<Rule>=\"A\"/\"B\"/\"\";   #   Ein Kommentar   #  ".to_string();
+        let string = "<Rule>='A'/'B'/'C';   #   Ein Kommentar   #  ".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -630,7 +761,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -655,14 +786,83 @@ mod tests {
     #[test]
     fn test() {
         println!("{:?}", env::current_dir().unwrap());
-        let path = "../parser_core/tests/Grammar.txt";
+        let path = "../grammar_parser/tests/newGrammar_test_only_dont_modify.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+        let tree = &context.stack.borrow();
+        //tree.print(Key(0), None);
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+
+        let tree = &tree.clear_false();
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        //sym_table.print();
+        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        for i in gen_code.rules {
+            println!("{}", i)
+        }
+        println!("{}", gen_code.rules_enum)
+    }
+
+    #[test]
+    fn test25() {
+        println!("{:?}", env::current_dir().unwrap());
+        let path = "../json_parser/json.dsl";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+        let tree = &context.stack.borrow();
+        //tree.print(Key(0), None);
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+
+        let tree = &tree.clear_false();
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        //sym_table.print();
+        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        for i in gen_code.rules {
+            println!("{}", i)
+        }
+        println!("{}", gen_code.rules_enum)
+    }
+
+    #[test]
+    fn test_ordered_choice_match_range() {
+        let string = r#"<Atom> PASSTHROUGH = ['A'..'Z'];
+        "#
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -675,11 +875,117 @@ mod tests {
             println!("Successfully parsed")
         }
         let tree = &context.stack.borrow();
-        //tree.print(Key(0), None);
         let tree = &tree.clear_false();
+
+        tree.print(Key(0), None);
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
-        //sym_table.print();
+        sym_table.print();
+        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        for i in gen_code.rules {
+            println!("{}", i)
+        }
+        println!("{}", gen_code.rules_enum)
+    }
+
+    #[test]
+    fn test_ordered_choice_match_range2() {
+        let string = r#"<Atom> PASSTHROUGH = [0x20..0xFF];
+        "#
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.stack.borrow();
+        let tree = &tree.clear_false();
+
+        tree.print(Key(0), None);
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        sym_table.print();
+        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        for i in gen_code.rules {
+            println!("{}", i)
+        }
+        println!("{}", gen_code.rules_enum)
+    }
+
+    #[test]
+    fn test_string_terminal() {
+        let string = r#"<Atom> PASSTHROUGH = "COLLECT";
+        "#
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.stack.borrow();
+        let tree = &tree.clear_false();
+
+        tree.print(Key(0), None);
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        sym_table.print();
+        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        for i in gen_code.rules {
+            println!("{}", i)
+        }
+        println!("{}", gen_code.rules_enum)
+    }
+
+    #[test]
+    fn test_string_terminal_emoji_codepoint() {
+        let string = r#"<Atom> PASSTHROUGH = 0x0001F600;
+        "#
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.stack.borrow();
+        let tree = &tree.clear_false();
+
+        tree.print(Key(0), None);
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        sym_table.print();
         let gen_code = GeneratedCode::new(&sym_table, &tree, src);
         for i in gen_code.rules {
             println!("{}", i)

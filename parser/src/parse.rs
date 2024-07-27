@@ -17,7 +17,7 @@ pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 55);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let now = Instant::now();
     let result = grammar(&context, &source, position);
     let elapsed = now.elapsed();

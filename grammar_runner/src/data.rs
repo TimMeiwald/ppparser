@@ -79,9 +79,12 @@ impl DataGenerator {
                 let mut f =
                     self.make_file(&PathBuf::from_str("./grammar_parser/src/lib.rs").unwrap())?;
                 let s2 = "use cache::*;
-use rules::Rules;
 use parser_core::*;
-use publisher::*;";
+use publisher::*;
+use rules::Rules;
+
+pub use parser_core::Context;
+pub use parser_core::Source;";
                 f.write_all(s2.as_bytes())?;
                 for rule in rules {
                     f.write(rule.as_bytes())?;

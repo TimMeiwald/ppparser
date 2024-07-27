@@ -1,3 +1,4 @@
+use core::panic;
 use std::fmt::format;
 
 use crate::count_lines;
@@ -24,6 +25,10 @@ pub enum Reference {
     Sequence,
     Exec,
     NULL,
+
+    OrderedChoiceMatchRange(u32, u32), // Custom Code for optimization purposes
+    StringTerminal(Vec<char>),
+    StringTerminalAsciiOpt(Vec<char>),
 }
 
 pub struct BinaryTree_WO {
@@ -96,7 +101,11 @@ impl BinaryTree_WO {
 
             Reference::Terminal(_) => self.terminal(stack, index),
             Reference::VarName(_) => self.var_name(stack, index),
-
+            Reference::OrderedChoiceMatchRange(_, _) => {
+                self.ordered_choice_match_range(stack, index)
+            }
+            Reference::StringTerminal(_) => self.string_terminal(stack, index),
+            Reference::StringTerminalAsciiOpt(_) => self.string_terminal_ascii_opt(stack, index),
             Reference::Exec | Reference::NULL => {
                 panic!("Exec should only exist once and NULL should never exist")
             }
@@ -116,6 +125,59 @@ impl BinaryTree_WO {
             _ => panic!("Invalid Key Index. Must be Exec"),
         };
         key
+    }
+
+    fn string_terminal(&self, stack: &mut Vec<String>, index: Key) -> Key {
+        let node = &self.nodes[usize::from(index)];
+        match &node.reference {
+            Reference::StringTerminal(chars) => {
+                stack.push(format!(
+                    "let closure_{:?} = _string_terminal(&{:?});",
+                    index.0, chars
+                ));
+                index
+            }
+            _ => {
+                panic!("Shouldn't happen string terminal")
+            }
+        }
+    }
+
+    fn string_terminal_ascii_opt(&self, stack: &mut Vec<String>, index: Key) -> Key {
+        let node = &self.nodes[usize::from(index)];
+        match &node.reference {
+            Reference::StringTerminalAsciiOpt(chars) => {
+                let mut r: String =
+                    format!("let closure_{:?} = _string_terminal_opt_ascii(&[", index.0);
+
+                for i in chars {
+                    r.push_str(&format!("b{:?},", i))
+                }
+                r.pop();
+                r.push_str("]);");
+                stack.push(r);
+                index
+            }
+            _ => {
+                panic!("Shouldn't happen ascii opt string terminal")
+            }
+        }
+    }
+
+    fn ordered_choice_match_range(&self, stack: &mut Vec<String>, index: Key) -> Key {
+        let node = &self.nodes[usize::from(index)];
+        match &node.reference {
+            Reference::OrderedChoiceMatchRange(start, end) => {
+                stack.push(format!(
+                    "let closure_{:?} = _ordered_choice_match_range({}, {});",
+                    index.0, start, end
+                ));
+                index
+            }
+            _ => {
+                panic!("Shouldn't happen")
+            }
+        }
     }
 
     fn and_predicate(&self, stack: &mut Vec<String>, index: Key) -> Key {

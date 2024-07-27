@@ -1,3 +1,0 @@
-DEBUG
-n = 10
-"cache::my_cache4::MyCache4" 57.2471ms
