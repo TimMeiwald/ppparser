@@ -819,6 +819,41 @@ mod tests {
     }
 
     #[test]
+    fn test25() {
+        println!("{:?}", env::current_dir().unwrap());
+        let path = "../json_parser/json.dsl";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+        let tree = &context.stack.borrow();
+        //tree.print(Key(0), None);
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+
+        let tree = &tree.clear_false();
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        //sym_table.print();
+        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        for i in gen_code.rules {
+            println!("{}", i)
+        }
+        println!("{}", gen_code.rules_enum)
+    }
+
+    #[test]
     fn test_ordered_choice_match_range() {
         let string = r#"<Atom> PASSTHROUGH = ['A'..'Z'];
         "#

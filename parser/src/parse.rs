@@ -15,7 +15,6 @@ pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
     let pathbuf = canonicalize(path)?;
     let string = read_to_string(pathbuf)?;
     let src_len = string.len() as u32;
-    println!("{}", string);
     let source = Source::new(string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(src_len, 52);

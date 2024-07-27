@@ -29,7 +29,7 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
     let src_len = string.len() as u32;
     let source = Source::new(string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 50);
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let result = grammar(&context, &source, position);
     // let tree = &context.stack.borrow();
     // tree.print(Key(0), Some(true));

@@ -72,6 +72,22 @@ fn test_my_cache_4() {
     let result = grammar(&context, &source, position);
     assert_eq!(result, (true, src_len));
 }
+#[test]
+fn test_json_description() {
+    println!("{:?}", env::current_dir().unwrap());
+    let path = "../json_parser/json.dsl";
+    let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+    let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+
+    let src_len = string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let result = grammar(&context, &source, position);
+    context.stack.borrow().print(Key(0), None);
+    let only_true_tree = context.stack.borrow().clear_false();
+    assert_eq!(result, (true, src_len));
+}
 // #[test]
 // fn test_btree_cache() {
 //     println!("{:?}", env::current_dir().unwrap());
