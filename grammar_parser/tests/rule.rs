@@ -28,6 +28,20 @@ fn test_rule_true2() {
 }
 
 #[test]
+fn test_rule_true40() {
+    let string = "<Alphabet_Upper> = ['A'..'Z'];
+"
+    .to_string();
+    let src_len = string.len() as u32;
+    let source = Source::new(string);
+    let position: u32 = 0;
+    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+
+    let result = rule(&context, &source, position);
+    assert_eq!(result, (true, src_len));
+}
+
+#[test]
 fn test_rule_true3() {
     let string = "<Specials> PASSTHROUGH = '+'/'*'/'-'/'&'/'!'/'?'/'<'/'>'/'''/'('/')'/'_'/','/'/'/';'/'='/'\\'/'#'/':'/'|'/'.'/'{'/'}'/'['/']'/'%'/'''/'^'/'~';".to_string();
     let src_len = string.len() as u32;

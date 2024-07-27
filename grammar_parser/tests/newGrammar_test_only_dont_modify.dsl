@@ -1,4 +1,4 @@
-<Alphabet_Upper> PASSTHROUGH = ['A'..'Z']; #We all love commments#
+<Alphabet_Upper> PASSTHROUGH = ['A'..'Z'];
 <Alphabet_Lower> PASSTHROUGH =['a'..'z'];
 <Num> PASSTHROUGH = [0x30..0x39];
 <NumNoZero> = [0x31..0x39];
