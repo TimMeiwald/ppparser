@@ -103,14 +103,14 @@ mod tests {
     #[test]
     fn test() {
         println!("{:?}", env::current_dir().unwrap());
-        let path = "../parser_core/tests/Grammar.txt";
+        let path = "../grammar_parser/tests/newGrammar_test_only_dont_modify.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 50);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -132,12 +132,12 @@ mod tests {
 
     #[test]
     fn test_2() {
-        let string = "<Rule>=\"A\"/\"B\";".to_string();
+        let string = "<Rule>='A'/'B';".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
         let source = Source::new(string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 45);
+        let context = Context::<MyCache4, Tree>::new(src_len, 50);
         let result = grammar(&context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -156,5 +156,6 @@ mod tests {
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
+        
     }
 }

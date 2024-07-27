@@ -1,0 +1,32 @@
+<Alphabet_Upper> PASSTHROUGH = "A"/"B"/"C"/"D"/"E"/"F"/"G"/"H"/"I"/"J"/"K"/"L"/"M"/"N"/"O"/"P"/"Q"/"R"/"S"/"T"/"U"/"V"/"W"/"X"/"Y"/"Z"; #We all love commments#
+<Alphabet_Lower> PASSTHROUGH ="a"/"b"/"c"/"d"/"e"/"f"/"g"/"h"/"i"/"j"/"k"/"l"/"m"/"n"/"o"/"p"/"q"/"r"/"s"/"t"/"u"/"v"/"w"/"x"/"y"/"z";
+<Alphabet> = <Alphabet_Upper>/<Alphabet_Lower>;
+<Num> PASSTHROUGH = "0"/"1"/"2"/"3"/"4"/"5"/"6"/"7"/"8"/"9";
+<Specials> PASSTHROUGH = "+"/"*"/"-"/"&"/"!"/"?"/"<"/">"/"""/"("/")"/"_"/","/"/"/";"/"="/"\"/"#"/":"/"|"/"."/"{"/"}"/"["/"]"/"%"/"'"/"^"/"~"/"@"/"%";
+<Spaces> PASSTHROUGH = "\n"/"\t"/"\r"/" ";
+<Ascii> PASSTHROUGH = <Alphabet_Lower>/<Alphabet_Upper>/<Num>/<Spaces>/<Specials>;
+<Tab> = (" ", " ", " ", " ")/"\t";
+<EightTab> = <Tab>, <Tab>, <Tab>, <Tab>, <Tab>, <Tab>, <Tab>, <Tab>;
+<Terminal> = ("[", "]")/(".", ".", ".")/(!<Spaces>, <Ascii>);
+<Var> = <Alphabet_Upper>, (<Alphabet>/<Num>)*;
+<Keyword> = <Alphabet_Lower>, (<Alphabet_Lower>/"-")*;
+<Operators> = ("|", "|")/((!("["/"]"/"{"/"}"/"("/")"/"|"), <Specials>)+);
+<LeafNode> = <Var>/<Keyword>/<Operators>/<Terminal>;
+<VarDecl> = <Var>, ":", " "*, "\r"?, "\n", <Tab>;
+
+<Whitespace> DELETE = (" "/"\n"/"\r"/"\t")*;
+<Sequence> = <Atom>, (((" "+)/(" "?, "\r"?, "\n", <EightTab>)), <Expression>)+;
+<InlineOrderedChoice> = ("(", <Atom>," ", "|", " ", <Expression> ,")");
+<OrderedChoice> = ((<Atom>, " "*, "\r"?, "\n", <Tab>, <Expression>)+);
+<Optional> = "[", <Expression>, "]";
+<ZeroOrMore> = "{", <Expression>,"}";
+
+<Atom> = <InlineOrderedChoice>/<Optional>/<ZeroOrMore>/<LeafNode>;
+<PrecedenceSequence> = <Sequence>/<Atom>;
+<PrecedenceOrderedChoice> = <OrderedChoice>/<PrecedenceSequence>;
+<Expression> = <PrecedenceOrderedChoice>;
+
+<TempRule> = <LeafNode>;
+<OneOf> = <Whitespace>, "(", "o", "n", "e", " ", "o", "f", ")", " "*, "\r"?, "\n", <Whitespace>, (<TempRule>, !":", <Whitespace>)+;
+<VarExpression> = <Whitespace>, <VarDecl>, (<OneOf>/<Expression>), <Whitespace>;
+<Grammar> = <VarExpression>+;

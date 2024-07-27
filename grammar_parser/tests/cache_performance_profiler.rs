@@ -2,14 +2,14 @@
 use cache::{Cache, MyCache4};
 use grammar_parser::grammar;
 use parser_core::{Context, Source};
-use publisher::{Tree, Publisher};
+use publisher::{Publisher, Tree};
 use std::any::type_name;
 use std::fs::canonicalize;
 use std::fs::{read_to_string, write};
 use std::time::{Duration, Instant};
 
 fn get_grammar_string() -> String {
-    let path = "../parser_core/tests/Grammar.txt";
+    let path = "../grammar_parser/tests/newGrammar_test_only_dont_modify.dsl";
     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
 
     read_to_string(pathbuf).expect("If it's moved change the string above")
@@ -29,7 +29,7 @@ fn run_on_grammar<T: Cache, S: Publisher>(n: u32) -> (Duration, String) {
 
     // Context get's created once because some caches can reuse context and so amortize the initial
     // Memory allocations.
-    let context = Context::<T, S>::new(src_len, 45);
+    let context = Context::<T, S>::new(src_len, 50);
     for _i in 0..n {
         //let parse_time = Instant::now();
         let (bol, _position) = grammar(&context, &source, position);
@@ -84,11 +84,11 @@ fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_
 
 #[test]
 fn profile_caches() {
-    let release_path = "../grammar_parser/tests/cache_performance_data_release.txt";
-    let debug_path = "../grammar_parser/tests/cache_performance_data_debug.txt";
+    let release_path = "../grammar_parser/tests/perf_data/cache_performance_data_release.txt";
+    let debug_path = "../grammar_parser/tests/perf_data/cache_performance_data_debug.txt";
 
     profile_cache_kernel(1000, 10, release_path, debug_path);
-    let release_path = "../grammar_parser/tests/cache_performance_data_release_n1.txt";
-    let debug_path = "../grammar_parser/tests/cache_performance_data_debug_n1.txt";
+    let release_path = "../grammar_parser/tests/perf_data/cache_performance_data_release_n1.txt";
+    let debug_path = "../grammar_parser/tests/perf_data/cache_performance_data_debug_n1.txt";
     profile_cache_kernel(1, 1, release_path, debug_path);
 }

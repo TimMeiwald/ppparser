@@ -21,7 +21,7 @@
 <Newline> = "\n";
 <Backslash> DELETE = "/";
 
-
+<Var_Name_Decl> = <Var_Name>;
 
 <Hex> = "0", "x"; #Replace with custom code#
 <Integer> = "0"; #Replace with custom code#
@@ -51,7 +51,7 @@
 
 <Whitespace> DELETE = (" "/<Newline>/"\r"/"\t")*;
 <RHS> PASSTHROUGH = <Sequence>/<Ordered_Choice>/<Atom>;
-<LHS> = <Var_Name>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
+<LHS> = <Var_Name_Decl>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
 <Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;
 <Grammar> = <Rule>+, <Whitespace>?;
 #Lemme just check comments work# #Double up dem comments#

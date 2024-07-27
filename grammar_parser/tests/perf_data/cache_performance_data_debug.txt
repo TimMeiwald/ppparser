@@ -1,0 +1,3 @@
+DEBUG
+n = 10
+"cache::my_cache4::MyCache4" 96.2031ms
