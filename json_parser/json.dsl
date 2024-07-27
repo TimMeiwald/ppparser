@@ -24,7 +24,7 @@
 <characters> = <character>*;
 <character> = !('"'/('\', '\', <escape>)/'\'), <Ascii>; #Cannot handle UTF-8 yet so this isn't quite correct#
 <escape> = ('\'/'b'/'f'/'n'/'r'/'t'/('u', <hex>, <hex>, <hex>, <hex>))?;
-<integer> = ('-', <onenine>, [0x30..0x39]+)/(<onenine>, [0x30..0x39]+)/('-', [0x30..0x39])/[0x30..0x39];
+<integer> = ('-', [0x31..0x39], [0x30..0x39]+)/([0x31..0x39], [0x30..0x39]+)/('-', [0x30..0x39])/[0x30..0x39];
 <number> = <integer>, <fraction>, <exponent>;
 <fraction> = ('.', [0x30..0x39]+)?;
 <exponent> = (('E'/'e'), <sign>, [0x30..0x39]+)?;
