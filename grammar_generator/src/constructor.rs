@@ -471,7 +471,17 @@ impl GeneratedCode {
                 }
             }
         }
-        ret_key = out_tree.push(Reference::StringTerminal(data), None, None);
+        let mut all_ascii = true;
+        for char in &data {
+            if char.len_utf8() != 1 {
+                all_ascii = false;
+            }
+        }
+        if all_ascii {
+            ret_key = out_tree.push(Reference::StringTerminalAsciiOpt(data), None, None);
+        } else {
+            ret_key = out_tree.push(Reference::StringTerminal(data), None, None);
+        }
         ret_key
     }
 

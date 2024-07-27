@@ -28,6 +28,17 @@ impl Source {
             None
         }
     }
+
+    pub fn get_multiple_chars(&self, position: u32, number_of_chars: u32) -> Option<&[u8]> {
+        if position + number_of_chars < self.source_len {
+            let src_chrs =
+                &self.source.as_bytes()[position as usize..(position + number_of_chars) as usize];
+            Some(src_chrs)
+        } else {
+            None
+        }
+    }
+
     pub fn get_len(&self) -> u32 {
         self.source_len
     }

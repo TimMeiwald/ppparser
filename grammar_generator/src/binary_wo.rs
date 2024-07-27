@@ -28,6 +28,7 @@ pub enum Reference {
 
     OrderedChoiceMatchRange(u32, u32), // Custom Code for optimization purposes
     StringTerminal(Vec<char>),
+    StringTerminalAsciiOpt(Vec<char>),
 }
 
 pub struct BinaryTree_WO {
@@ -104,6 +105,7 @@ impl BinaryTree_WO {
                 self.ordered_choice_match_range(stack, index)
             }
             Reference::StringTerminal(_) => self.string_terminal(stack, index),
+            Reference::StringTerminalAsciiOpt(_) => self.string_terminal_ascii_opt(stack, index),
             Reference::Exec | Reference::NULL => {
                 panic!("Exec should only exist once and NULL should never exist")
             }
@@ -130,13 +132,34 @@ impl BinaryTree_WO {
         match &node.reference {
             Reference::StringTerminal(chars) => {
                 stack.push(format!(
-                    "let closure_{:?} = _string_terminal({:?});",
+                    "let closure_{:?} = _string_terminal(&{:?});",
                     index.0, chars
                 ));
                 index
             }
             _ => {
-                panic!("Shouldn't happen")
+                panic!("Shouldn't happen string terminal")
+            }
+        }
+    }
+
+    fn string_terminal_ascii_opt(&self, stack: &mut Vec<String>, index: Key) -> Key {
+        let node = &self.nodes[usize::from(index)];
+        match &node.reference {
+            Reference::StringTerminalAsciiOpt(chars) => {
+                let mut r: String =
+                    format!("let closure_{:?} = _string_terminal_opt_ascii(&[", index.0);
+
+                for i in chars {
+                    r.push_str(&format!("b{:?},", i))
+                }
+                r.pop();
+                r.push_str("]);");
+                stack.push(r);
+                index
+            }
+            _ => {
+                panic!("Shouldn't happen ascii opt string terminal")
             }
         }
     }
