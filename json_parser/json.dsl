@@ -23,9 +23,9 @@
 <characters> = <character>*;
 <character> = !("""/("\", "\", <escape>)/"\"), <Ascii>; #Cannot handle UTF-8 yet so this isn't quite correct#
 <escape> = ("\"/"b"/"f"/"n"/"r"/"t"/("u", <hex>, <hex>, <hex>, <hex>))?;
-<hex> = <digit>/<Alphabet_Upper>/<Alphabet_Lower>;
-<number> = <integer>, <fraction>, <exponent>;
+<hex> = <digit>/<Alphabet_Upper>/<Alphabet_Lower>; #Needs to be A.F and a.f instead#
 <integer> = ("-", <onenine>, <digits>)/(<onenine>, <digit>+)/("-", <digit>)/<digit>;
+<number> = <integer>, <fraction>, <exponent>;
 <digits> = <digit>+;
 <digit> = "0"/<onenine>;
 <onenine> = "1"/"2"/"3"/"4"/"5"/"6"/"7"/"8"/"9";

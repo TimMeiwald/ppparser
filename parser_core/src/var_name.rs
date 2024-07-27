@@ -1,10 +1,12 @@
-
 use crate::source::Source;
 use crate::Context;
 use cache::Cache;
 use publisher::{Node, Publisher};
 use rules::{Key, Rules};
-use std::{thread, time::{self, Duration}};
+use std::{
+    thread,
+    time::{self, Duration},
+};
 // Initial buggy _var_name_kernel
 // pub fn _var_name_kernel<T: Cache, S: Stack>(
 //     rule: Rules,
@@ -82,13 +84,13 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
     let cached_val: Option<(bool, u32, Key)>;
     let temp_key: Option<Key>;
     let curr_key: Key;
-    
+
     {
         let res = &*(context.cache).borrow();
         cached_val = res.check(rule, position);
         temp_key = res.last_node()
     }
-    {   
+    {
         // Add Current Node
         let tree = &mut *(context.stack).borrow_mut();
         let node = tree.create_node(rule, position, 0, temp_key, false);
@@ -118,14 +120,13 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
             let tree = &mut *(context.stack).borrow_mut();
             let last_key: Option<Key>;
             {
-            let res = &*(context.cache).borrow();
-            last_key = res.last_node();
+                let res = &*(context.cache).borrow();
+                last_key = res.last_node();
             }
-            match temp_key{
-                None => {},
-                Some(tkey) =>{
+            match temp_key {
+                None => {}
+                Some(tkey) => {
                     tree.connect(tkey, curr_key);
-
                 }
             }
             // Cache Val
@@ -135,7 +136,7 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
             result
         }
     };
-    
+
     let tree = &mut *(context.stack).borrow_mut();
     tree.set_node_start_position(curr_key, position);
     tree.set_node_end_position(curr_key, result.1);
@@ -143,9 +144,6 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
     let cache = &mut *(context.cache).borrow_mut();
     cache.set_last_node(temp_key);
     result
-
-
-
 }
 
 pub fn _var_name<T: Cache, S: Publisher>(

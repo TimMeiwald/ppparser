@@ -22,8 +22,10 @@
 <Backslash> DELETE = "/";
 
 
-<Integer> = "P"; #Replace with custom code#
-<OrderedChoiceMatchRange> = <Whitespace>, "[", <Whitespace>,(<Terminal>/<Integer>),".", ".",(<Terminal>/<Integer>) ,<Whitespace>, "]", <Whitespace>;
+
+<Hex> = "0", "x"; #Replace with custom code#
+<Integer> = "0"; #Replace with custom code#
+<OrderedChoiceMatchRange> = <Whitespace>, "[", <Whitespace>,(<Terminal>/<Integer>/<Hex>),".", ".",(<Terminal>/<Integer>/<Hex>) ,<Whitespace>, "]", <Whitespace>;
 
 <Var_Name> COLLECT =<Left_Angle_Bracket>,
                     (<Alphabet_Lower>/<Alphabet_Upper>),
@@ -33,7 +35,7 @@
 
 <Subexpression> = <Left_Bracket>,<RHS>,<Right_Bracket>;
 <Epsilon> = <QuotationMark>, <QuotationMark>;
-<StringTerminal> = <Apostrophe>, !<Apostrophe>, <ASCII>, (!<Apostrophe>,<ASCII>)+, <Apostrophe>;
+<StringTerminal> = (<Apostrophe>, !<Apostrophe>, (<ASCII>, (!<Apostrophe>,<ASCII>)+), <Apostrophe>)/<Hex>/<Integer>; #Multibyte matches essentially#
 
 <Terminal> = (<QuotationMark>,<ASCII>,<QuotationMark>)/(<QuotationMark>,"\",("n"/"r"/"t"),<QuotationMark>)/<Epsilon>;
 <Nucleus> PASSTHROUGH = (<OrderedChoiceMatchRange>/<Subexpression>/<Terminal>/<StringTerminal>/<Var_Name>), <Whitespace>;

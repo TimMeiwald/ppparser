@@ -1,5 +1,5 @@
 use crate::Cache;
-use rules::{Rules, Key};
+use rules::{Key, Rules};
 
 // This cache will completely flatten the cache to see if that improves performance.
 pub struct MyCache4 {
@@ -9,7 +9,7 @@ pub struct MyCache4 {
     number_of_structs: u32,
     last_node: Option<Key>,
 }
-
+// TODO: Last Node should probably be in the publisher not in Cache. Irrelevant to caching per se.
 impl Cache for MyCache4 {
     // Try as flat packed data structure. Since using zero to fill didn't seem to make much difference.
     fn new(size_of_source: u32, number_of_structs: u32) -> MyCache4 {
@@ -20,7 +20,7 @@ impl Cache for MyCache4 {
             end_position: Vec::with_capacity(capacity),
             indexes: Vec::with_capacity(capacity),
             number_of_structs,
-            last_node: None
+            last_node: None,
         };
         for _i in 0..capacity {
             // Ensures the Vector in Cache is as large as the input source
@@ -35,14 +35,21 @@ impl Cache for MyCache4 {
         c
         // for every arg cache in c set size to <number_of_structs>
     }
-    fn last_node(&self) -> Option<Key>{
+    fn last_node(&self) -> Option<Key> {
         self.last_node
     }
-    fn set_last_node(&mut self, key: Option<Key>){
+    fn set_last_node(&mut self, key: Option<Key>) {
         self.last_node = key
     }
 
-    fn push(&mut self, rule: Rules, is_true: bool, start_position: u32, end_position: u32, stack_index: Key ) {
+    fn push(
+        &mut self,
+        rule: Rules,
+        is_true: bool,
+        start_position: u32,
+        end_position: u32,
+        stack_index: Key,
+    ) {
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
         self.is_true[index] = is_true;
         self.end_position[index] = end_position;
