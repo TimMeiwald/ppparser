@@ -165,3 +165,4 @@ TODO: Also implement automated tests for the entire compile process.
 TODO: Basically more Tests.    
   
 
+PERF=/usr/lib/linux-tools/6.8.0-39-generic/perf cargo flamegraph --root -- -s ../json_samples/canada.json
