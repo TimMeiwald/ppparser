@@ -24,7 +24,7 @@ impl Publisher for Tree {
     fn add_node(&mut self, node: Node) -> Key {
         let mut node = node;
         let len = self.0.len();
-        let key = Key(len);
+        let key = Key(len as u32);
         node.index = key;
         self.0.push(node);
         key
@@ -73,16 +73,12 @@ impl Publisher for Tree {
         let indent = 0;
         if boolean.is_some() && boolean.unwrap() == true {
             self.print_kernel_true(index, indent);
-        
-        }
-        else if boolean.is_some() && boolean.unwrap() == false{
+        } else if boolean.is_some() && boolean.unwrap() == false {
             self.print_kernel_false(index, indent);
-
-        }
-        else{
+        } else {
             self.print_kernel_all(index, indent);
         }
-}
+    }
 
     fn clear_false(&self) -> Tree {
         // Since Tree is a write only structure we need to remvoe False results to be more useful at some point
@@ -141,12 +137,10 @@ impl Tree {
     fn get_key(&self, node: &Node) -> Key {
         node.index
     }
-    fn print_kernel_true(&self, index: Key, indent: usize)
-    {
-
+    fn print_kernel_true(&self, index: Key, indent: usize) {
         let node = &self.0[usize::from(index)];
-        if !node.result{
-            return
+        if !node.result {
+            return;
         }
         node.print(indent);
         let mut counter = 0;
@@ -159,17 +153,15 @@ impl Tree {
             counter += 1;
         }
     }
-    fn print_kernel_false(&self, index: Key, indent: usize)
-    {
-
+    fn print_kernel_false(&self, index: Key, indent: usize) {
         let node = &self.0[usize::from(index)];
-        if node.result{
-            return
+        if node.result {
+            return;
         }
         print!("\x1b[31m");
         node.print(indent);
         print!("\x1b[0m");
-        
+
         let mut counter = 0;
         loop {
             if counter >= node.children.len() {
@@ -180,18 +172,16 @@ impl Tree {
             counter += 1;
         }
     }
-    
 
     fn print_kernel_all(&self, index: Key, indent: usize) {
         //thread::sleep(Duration::new(0, 5*10_u32.pow(7)));
 
         let node = &self.0[usize::from(index)];
-        if !node.result{
+        if !node.result {
             print!("\x1b[31m");
-
         }
         node.print(indent);
-        if !node.result{
+        if !node.result {
             print!("\x1b[0m")
         }
         let mut counter = 0;

@@ -24,7 +24,7 @@ impl Cache for MyCache4 {
         };
         c.is_true.resize(capacity, false);
         c.end_position.resize(capacity, 0);
-        c.indexes.resize(capacity, Key(usize::MAX));
+        c.indexes.resize(capacity, Key(u32::MAX));
         c
         // for every arg cache in c set size to <number_of_structs>
     }

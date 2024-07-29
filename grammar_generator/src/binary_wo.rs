@@ -50,7 +50,7 @@ impl BinaryTree_WO {
             lhs,
             rhs,
         };
-        let key = Key(self.nodes.len());
+        let key = Key(self.nodes.len() as u32);
 
         self.nodes.push(node);
         key
