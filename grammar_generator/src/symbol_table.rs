@@ -1,11 +1,11 @@
+use crate::count_lines;
 use publisher::{Publisher, Tree};
 use rules::{rules::Rules, Key};
-
-use crate::count_lines;
-use std::panic;
+use std::{collections::HashMap, panic};
 pub struct SymbolTable<'a> {
     names: Vec<String>,
     source: &'a String,
+    inlined_rules: HashMap<String, String>,
 }
 
 impl<'a> SymbolTable<'a> {
@@ -13,6 +13,7 @@ impl<'a> SymbolTable<'a> {
         let mut sym_table = SymbolTable {
             names: Vec::<String>::new(),
             source,
+            inlined_rules: HashMap::new(),
         };
         println!("Symbol Table created successfully");
         sym_table.create_symbol_table_from_tree(tree);
@@ -66,16 +67,33 @@ impl<'a> SymbolTable<'a> {
         }
     }
 
+    fn check_semantic_instructions(&mut self, name: &str, tree: &Tree, index: Key) {
+        let node = tree.get_node(index);
+        let lhs = tree.get_node(index);
+        for child in lhs.get_children() {
+            let child_node = tree.get_node(*child);
+            if child_node.rule == Rules::Semantic_Instructions {
+                let sem_instr_key = child_node.get_children()[0];
+                let sem_instr_node = tree.get_node(sem_instr_key).rule;
+                if sem_instr_node == Rules::Inline {
+                    self.inlined_rules.insert(name.to_string(), "".to_string());
+                }
+            }
+        }
+    }
+
     fn create_symbol_table_from_tree_kernel(&mut self, tree: &Tree, index: Key) {
         let node = tree.get_node(index);
         let mut counter = 0;
-        if node.rule == Rules::VarNameDecl {
+        if node.rule == Rules::Var_Name_Decl {
             if !node.result {
                 panic!("No false results should exist.")
             }
             let name = &self.source
                 [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)];
             self.names.push(name.to_string());
+
+            self.check_semantic_instructions(name, tree, index);
         }
         loop {
             if counter >= node.get_children().len() {

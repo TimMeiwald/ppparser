@@ -202,7 +202,7 @@ pub struct Node {
     pub start_position: u32,
     pub end_position: u32,
     pub result: bool,
-    parent: Option<Key>,
+    pub parent: Option<Key>,
     children: Vec<Key>,
     // To minimize allocations maybe have a second struct that contains all child indices and have Node just contain a start_child_index and end_child_index
     // Because then we can preallocate a load of memory, means a pointer indirection which may or may not impact performance so needs profiling.
@@ -260,8 +260,8 @@ mod tests {
     #[test]
     fn test_tree() {
         let x = Node::new(Rules::Grammar, 0, 0, None, false);
-        let x2 = Node::new(Rules::AlphabetLower, 0, 0, None, false);
-        let x3 = Node::new(Rules::AlphabetUpper, 0, 0, None, false);
+        let x2 = Node::new(Rules::Alphabet_Lower, 0, 0, None, false);
+        let x3 = Node::new(Rules::Alphabet_Upper, 0, 0, None, false);
         let mut t = Tree::new(40, 100);
         t.add_node(x);
         t.add_node(x2);

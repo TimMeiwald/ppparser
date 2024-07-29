@@ -23,7 +23,7 @@
 <Newline> = '\n';
 <Backslash> DELETE = '/';
 
-<Var_Name> COLLECT =<Left_Angle_Bracket>,
+<Var_Name> =<Left_Angle_Bracket>,
                     (<Alphabet_Lower>/<Alphabet_Upper>),
                     (<Alphabet_Lower>/<Alphabet_Upper>/'_')*,
                     <Right_Angle_Bracket>; 
@@ -58,8 +58,8 @@
 <Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;
 <Grammar> = <Rule>+, <Whitespace>?;
 #Lemme just check comments work# #Double up dem comments#
-<Comment> COLLECT = <Whitespace>, '#', (!'#',<ASCII>)*, '#', <Whitespace>;
+<Comment> = <Whitespace>, '#', (!'#',<ASCII>)*, '#', <Whitespace>;
 <Semantic_Instructions> PASSTHROUGH = <Delete>/<Passthrough>/<Collect>;
 <Delete> = "DELETE";
-<Passthrough> COLLECT = "PASSTHROUGH";
-<Collect> COLLECT = "COLLECT"; #Comment#
+<Passthrough> = "PASSTHROUGH";
+<Collect> = "COLLECT"; #Comment#

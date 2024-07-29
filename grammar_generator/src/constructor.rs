@@ -170,7 +170,7 @@ impl GeneratedCode {
         let mut ret_key = Key(0);
         for i in rhs_node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::OrderedChoice => {
+                Rules::Ordered_Choice => {
                     ret_key = Self::ordered_choice(&mut out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Sequence => {
@@ -251,16 +251,16 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::AndPredicate => {
+                Rules::And_Predicate => {
                     ret_key = Self::and_predicate(out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::NotPredicate => {
+                Rules::Not_Predicate => {
                     ret_key = Self::not_predicate(out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::OneOrMore => {
+                Rules::One_Or_More => {
                     ret_key = Self::one_or_more(out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::ZeroOrMore => {
+                Rules::Zero_Or_More => {
                     ret_key = Self::zero_or_more(out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Optional => {
@@ -288,7 +288,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::QuestionMark => {}
+                Rules::Whitespace | Rules::Question_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::Optional, Some(key), None)
@@ -381,7 +381,7 @@ impl GeneratedCode {
         let mut ret_key = Key(0);
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::ExclamationMark => {}
+                Rules::Whitespace | Rules::Exclamation_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::NotPredicate, Some(key), None)
@@ -411,7 +411,7 @@ impl GeneratedCode {
                 Rules::Terminal => {
                     ret_key = Self::terminal(out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::VarName => {
+                Rules::Var_Name => {
                     ret_key = Self::var_name(out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Whitespace => {}
@@ -570,7 +570,7 @@ impl GeneratedCode {
                     let key = Self::rhs(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::Subexpression, Some(key), None);
                 }
-                Rules::LeftBracket | Rules::RightBracket => {}
+                Rules::Left_Bracket | Rules::Right_Bracket => {}
                 _ => panic!("subexpression"),
             }
         }

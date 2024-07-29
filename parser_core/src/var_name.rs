@@ -178,7 +178,7 @@ mod tests {
         let src_len: u32 = s.len() as u32;
         let s = Source::new(s);
         let context = Context::<MyCache4, Tree>::new(src_len, 51);
-        let func = _var_name(Rules::AlphabetLower, &context, test_func);
+        let func = _var_name(Rules::Alphabet_Lower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
     }
@@ -191,7 +191,7 @@ mod tests {
         let s = Source::new(s);
         //let mut c = BTreeCache::new(0,0);
         let context = Context::<MyCache4, Tree>::new(src_len, 51);
-        let func = _var_name(Rules::AlphabetLower, &context, test_func);
+        let func = _var_name(Rules::Alphabet_Lower, &context, test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));
         let x = func(&s, 0);
