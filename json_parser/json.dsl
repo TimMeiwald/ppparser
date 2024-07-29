@@ -14,14 +14,13 @@
 <ffalse> = "false";
 <null> = "null";
 
-<object> = '{', (<members>/<ws>), '}';
+<object> = '{', ((<member>, (',', <member>)*)/<ws>), '}';
 <members> = <member>, (',', <member>)*;
 <member> = <ws>, <sstring>, <ws>, ':', <ws>, <element>, <ws>;
 <array> = '[', (<elements>/<ws>), ']';
 <elements> = <element>, (',', <element>)*;
 <element> = <ws>, <value>, <ws>;
-<sstring> = '"', <characters>, '"';
-<characters> = <character>*;
+<sstring> = '"', (!('"'/('\', '\', <escape>)/'\'), <Ascii>)*, '"';
 <character> = !('"'/('\', '\', <escape>)/'\'), <Ascii>; #Cannot handle UTF-8 yet so this isn't quite correct#
 <escape> = ('\'/'b'/'f'/'n'/'r'/'t'/('u', <hex>, <hex>, <hex>, <hex>))?;
 <integer> = ('-', [0x31..0x39], [0x30..0x39]+)/([0x31..0x39], [0x30..0x39]+)/('-', [0x30..0x39])/[0x30..0x39];
