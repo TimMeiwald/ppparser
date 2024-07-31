@@ -67,10 +67,16 @@ impl<'a> SymbolTable<'a> {
         }
     }
 
+    fn print_inlined_rules(&self) {
+        println!("{:#?}", self.inlined_rules);
+    }
+
     fn check_semantic_instructions(&mut self, name: &str, tree: &Tree, index: Key) {
-        let node = tree.get_node(index);
         let lhs = tree.get_node(index);
-        for child in lhs.get_children() {
+        println!("Sem Instr: {:?}", lhs.rule);
+        let node = tree.get_node(lhs.parent.expect("Parent should exist"));
+        println!("Sem Instr Parent: {:?}", node.rule);
+        for child in node.get_children() {
             let child_node = tree.get_node(*child);
             if child_node.rule == Rules::Semantic_Instructions {
                 let sem_instr_key = child_node.get_children()[0];
@@ -146,6 +152,7 @@ mod tests {
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
+        sym_table.print_inlined_rules()
     }
 
     #[test]
@@ -174,5 +181,35 @@ mod tests {
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
+    }
+
+    #[test]
+    fn test_3() {
+        let string = "<Rule> INLINE ='A'/'B';".to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.stack.borrow();
+        let src = &String::from(source);
+        //tree.print(Key(0), Some(true));
+        println!("\nCLEAN TREE\n");
+        let clean_tree = tree.clear_false();
+        clean_tree.print(Key(0), Some(true));
+        let sym_table = SymbolTable::new(&clean_tree, src);
+        sym_table.print();
+        println!("Inlined Rules:");
+        sym_table.print_inlined_rules();
     }
 }
