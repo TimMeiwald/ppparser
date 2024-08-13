@@ -149,16 +149,10 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
     let cached_val: Option<(bool, u32, Key)>;
     let temp_key: Option<Key>;
     let curr_key: Key;
-    let tree: &mut S = unsafe {
-        let tree: *mut S = context.stack.get();
-        let tree: &mut S = &mut *tree as &mut S;
-        tree
-    };
-    let cache: &mut T = unsafe {
-        let cache: *mut T = context.cache.get();
-        let cache: &mut T = &mut *cache as &mut T;
-        cache
-    };
+
+    let mut tree = context.stack.borrow_mut();
+    let mut cache = context.cache.borrow_mut();
+
     cached_val = cache.check(rule, position);
     temp_key = tree.last_node();
     curr_key = tree.add_node(rule, position, 0, temp_key, false);
@@ -175,10 +169,9 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
             (cached_val.0, cached_val.1)
         }
         None => {
-            // No Cached Val
-            // References must be dropped before here.
+            // Here we call again and potentially call _var_name again so we need to not have any references anymore.
             let result = func(context, source, position);
-            // Add Node and Result to Tree
+
             match temp_key {
                 None => {}
                 Some(tkey) => {

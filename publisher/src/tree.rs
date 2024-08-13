@@ -215,7 +215,7 @@ pub struct Node {
     pub start_position: u32,
     pub end_position: u32,
     pub result: bool,
-    parent: Option<Key>,
+    pub parent: Option<Key>,
     children: Vec<Key>,
     // To minimize allocations maybe have a second struct that contains all child indices and have Node just contain a start_child_index and end_child_index
     // Because then we can preallocate a load of memory, means a pointer indirection which may or may not impact performance so needs profiling.
@@ -239,7 +239,7 @@ impl Node {
         }
     }
 
-    pub fn get_string(&self, source: &String) -> String {
+    pub fn get_string(&self, source: &str) -> String {
         source[(self.start_position as usize)..(self.end_position as usize)].to_string()
     }
 
