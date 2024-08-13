@@ -1,13 +1,7 @@
 use crate::Publisher;
 use rules::rules::Rules;
 use rules::Key;
-use std::cell::RefCell;
-use std::marker::PhantomData;
-use std::ops::Index;
-use std::ops::IndexMut;
-use std::rc::Rc;
-use std::thread;
-use std::time::Duration;
+
 // Tree needs to be able to swap existing structures into other locations
 // E.g Rule A may fail but calls subrule B where B succeeds
 // Then Rule C may try on same start location and also need subrule B
@@ -17,9 +11,9 @@ pub struct Tree(Vec<Node>);
 
 impl Publisher for Tree {
     fn new(size_of_source: usize, number_of_rules: usize) -> Self {
-        Tree {
-            0: Vec::<Node>::with_capacity((size_of_source * number_of_rules) / 8),
-        }
+        Tree(Vec::<Node>::with_capacity(
+            (size_of_source * number_of_rules) / 8,
+        ))
     }
     fn add_node(&mut self, node: Node) -> Key {
         let mut node = node;
@@ -71,9 +65,9 @@ impl Publisher for Tree {
 
     fn print(&self, index: Key, boolean: Option<bool>) {
         let indent = 0;
-        if boolean.is_some() && boolean.unwrap() == true {
+        if boolean.is_some() && boolean.unwrap() {
             self.print_kernel_true(index, indent);
-        } else if boolean.is_some() && boolean.unwrap() == false {
+        } else if boolean.is_some() && !boolean.unwrap() {
             self.print_kernel_false(index, indent);
         } else {
             self.print_kernel_all(index, indent);
@@ -133,10 +127,10 @@ impl Tree {
     pub fn len(&self) -> usize {
         self.0.len()
     }
-
-    fn get_key(&self, node: &Node) -> Key {
-        node.index
+    pub fn is_empty(&self) -> bool {
+        self.0.len() == 0
     }
+
     fn print_kernel_true(&self, index: Key, indent: usize) {
         let node = &self.0[usize::from(index)];
         if !node.result {
@@ -226,7 +220,7 @@ impl Node {
         }
     }
 
-    pub fn get_string(&self, source: &String) -> String {
+    pub fn get_string(&self, source: &str) -> String {
         source[(self.start_position as usize)..(self.end_position as usize)].to_string()
     }
 
@@ -287,14 +281,14 @@ mod tests {
 
         // Multiple subtrees
         {
-            let root = t.get_node(Key(0));
+            let _root = t.get_node(Key(0));
             let y2 = t.get_node(Key(2));
             let y1 = t.get_node(Key(1));
             t.connect(y1.index, y2.index);
         }
 
         let root = t.get_node(Key(0));
-        let y2 = t.get_node(Key(2));
+        let _y2 = t.get_node(Key(2));
         let y1 = t.get_node(Key(1));
         t.connect(root.index, y1.index);
         t.print(Key(0), None);

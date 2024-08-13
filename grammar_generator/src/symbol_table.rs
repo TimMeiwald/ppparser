@@ -1,4 +1,3 @@
-use crate::count_lines;
 use publisher::{Publisher, Tree};
 use rules::{rules::Rules, Key};
 use std::{collections::HashMap, panic};
@@ -18,11 +17,11 @@ impl<'a> SymbolTable<'a> {
         println!("Symbol Table created successfully");
         sym_table.create_symbol_table_from_tree(tree);
         sym_table.run_duplication_check();
-        return sym_table;
+        sym_table
     }
 
     pub fn get_names(&self) -> &Vec<String> {
-        return &self.names;
+        &self.names
     }
 
     pub fn print(&self) {
@@ -31,7 +30,7 @@ impl<'a> SymbolTable<'a> {
         }
     }
 
-    pub fn push(&mut self, index: u32, name: String) {
+    pub fn push(&mut self, name: String) {
         self.names.push(name);
     }
 
@@ -42,6 +41,11 @@ impl<'a> SymbolTable<'a> {
             }
         }
         false
+    }
+
+    pub fn check_symbol_is_inline(&self, symbol_name: &str) -> bool {
+        let rule = self.inlined_rules.get(symbol_name);
+        rule.is_some()
     }
 
     fn run_duplication_check(&mut self) {
@@ -67,10 +71,14 @@ impl<'a> SymbolTable<'a> {
         }
     }
 
+    pub fn print_inlined_rules(&self) {
+        println!("{:#?}", self.inlined_rules);
+    }
+
     fn check_semantic_instructions(&mut self, name: &str, tree: &Tree, index: Key) {
-        let node = tree.get_node(index);
         let lhs = tree.get_node(index);
-        for child in lhs.get_children() {
+        let node = tree.get_node(lhs.parent.expect("Parent should exist"));
+        for child in node.get_children() {
             let child_node = tree.get_node(*child);
             if child_node.rule == Rules::Semantic_Instructions {
                 let sem_instr_key = child_node.get_children()[0];
@@ -110,6 +118,7 @@ impl<'a> SymbolTable<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::count_lines;
     use cache::MyCache4;
     use grammar_parser::grammar;
     use parser_core::Context;
@@ -117,7 +126,6 @@ mod tests {
     use publisher::Tree;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
-
     #[test]
     fn test() {
         println!("{:?}", env::current_dir().unwrap());
@@ -146,6 +154,7 @@ mod tests {
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
+        sym_table.print_inlined_rules()
     }
 
     #[test]
@@ -174,5 +183,35 @@ mod tests {
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
+    }
+
+    #[test]
+    fn test_3() {
+        let string = "<Rule> INLINE ='A'/'B';".to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.stack.borrow();
+        let src = &String::from(source);
+        //tree.print(Key(0), Some(true));
+        println!("\nCLEAN TREE\n");
+        let clean_tree = tree.clear_false();
+        clean_tree.print(Key(0), Some(true));
+        let sym_table = SymbolTable::new(&clean_tree, src);
+        sym_table.print();
+        println!("Inlined Rules:");
+        sym_table.print_inlined_rules();
     }
 }

@@ -11,7 +11,6 @@ use grammar_parser::Context;
 use grammar_parser::Source;
 use publisher::Publisher;
 use publisher::Tree;
-use rules::Key;
 fn count_lines(source: &String, start_position: u32) -> u32 {
     let mut new_line_count: u32 = 1;
 
@@ -50,6 +49,6 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
     let src = &String::from(source);
     let sym_table = SymbolTable::new(tree, src);
     //sym_table.print();
-    let gen_code = GeneratedCode::new(&sym_table, &tree, src);
-    return Some(gen_code);
+    let gen_code = GeneratedCode::new(&sym_table, tree, src);
+    Some(gen_code)
 }

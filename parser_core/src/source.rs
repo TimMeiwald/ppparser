@@ -3,14 +3,14 @@ pub struct Source {
     source: String,
     source_len: u32,
 }
-impl<'a> From<Source> for String {
+impl From<Source> for String {
     fn from(i: Source) -> String {
-        return i.source;
+        i.source
     }
 }
-impl<'a> From<&Source> for String {
+impl From<&Source> for String {
     fn from(i: &Source) -> String {
-        return i.source.clone();
+        i.source.clone()
     }
 }
 

@@ -1,4 +1,7 @@
+#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually but not that relevant right now
+
 use num_derive::FromPrimitive;
+
 #[derive(FromPrimitive, Clone, Copy, Debug)]
 pub enum Rules {
     ASCII,

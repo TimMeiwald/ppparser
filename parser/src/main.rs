@@ -1,7 +1,6 @@
 use clap::Parser;
 use std::path::PathBuf;
 mod parse;
-use parse::parse;
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
@@ -18,7 +17,7 @@ fn main() {
         Err(_e) => panic!("Failed to find Source File"),
         Ok(source) => source,
     };
-    let r = parse(source);
+    let r = parse::parse(source);
     match r {
         Ok(result) => match result {
             true => {
@@ -26,7 +25,7 @@ fn main() {
             }
             false => println!("Source file is not a valid file for this parser"),
         },
-        Err(e) => {
+        Err(_) => {
             panic!("Something went wrong");
         }
     }

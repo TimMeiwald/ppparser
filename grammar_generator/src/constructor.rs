@@ -1,32 +1,43 @@
-use super::binary_wo::{BinaryNode, BinaryTree_WO, Reference};
-use crate::count_lines;
+use super::binary_wo::{BinaryTreeWO, Reference};
 use crate::symbol_table::SymbolTable;
-use publisher::Node;
 use publisher::Publisher;
 use publisher::Tree;
 use rules::Key;
 use rules::Rules;
-use std::fmt::format;
 use std::panic::panic_any;
 
 pub struct GeneratedCode {
     // String per rule so we can seperate into files per rule.
+    pub num_rules: usize,
     pub rules: Vec<String>,
     pub rules_enum: String,
 }
 
 impl GeneratedCode {
-    pub fn new(symbol_table: &SymbolTable, tree: &Tree, source: &String) -> Self {
+    pub fn new(symbol_table: &SymbolTable, tree: &Tree, source: &str) -> Self {
         println!("Generating Code");
-        let mut s = GeneratedCode {
-            rules: Self::generate(symbol_table, tree, source),
-            rules_enum: GeneratedCode::generate_rules_enum(symbol_table),
+        let rules = Self::generate(symbol_table, tree, source);
+        let (rules_enum, num_rules) = Self::generate_rules_enum(symbol_table);
+        let s = GeneratedCode {
+            rules,
+            rules_enum,
+            num_rules,
         };
         println!("Code generation complete");
         s
     }
 
-    fn generate(symbol_table: &SymbolTable, tree: &Tree, source: &String) -> Vec<String> {
+    pub fn print(&self) {
+        println!("Number of Rules: {}", self.num_rules);
+        println!("Rules Enum: \n");
+        println!("{}\n", self.rules_enum);
+        println!("Rules:\n");
+        for i in &self.rules {
+            println!("{}", i)
+        }
+    }
+
+    fn generate(symbol_table: &SymbolTable, tree: &Tree, source: &str) -> Vec<String> {
         let node = tree.get_node(Key(0));
         if node.rule != Rules::Grammar {
             panic!("Invalid Root. Must be of type Rules::Grammar");
@@ -46,19 +57,23 @@ impl GeneratedCode {
         rules
     }
 
-    fn generate_rules_enum(symbol_table: &SymbolTable) -> String {
+    fn generate_rules_enum(symbol_table: &SymbolTable) -> (String, usize) {
         let mut rules_enum = "pub enum Rules {\n".to_string();
+        let mut count: usize = 0;
         for s in symbol_table.get_names() {
-            rules_enum.push('\t');
-            rules_enum.push_str(&s);
-            rules_enum.push(',');
-            rules_enum.push('\n');
+            if !symbol_table.check_symbol_is_inline(s) {
+                rules_enum.push('\t');
+                rules_enum.push_str(s);
+                rules_enum.push(',');
+                rules_enum.push('\n');
+                count += 1;
+            }
         }
         rules_enum.push_str("\n}");
-        rules_enum
+        (rules_enum, count)
     }
 
-    fn match_rule(symbol_table: &SymbolTable, tree: &Tree, source: &String, index: Key) -> String {
+    fn match_rule(symbol_table: &SymbolTable, tree: &Tree, source: &str, index: Key) -> String {
         let node = tree.get_node(index);
         match node.rule {
             Rules::Rule => Self::rule(symbol_table, tree, source, index),
@@ -68,7 +83,7 @@ impl GeneratedCode {
         }
     }
 
-    fn rule(symbol_table: &SymbolTable, tree: &Tree, source: &String, index: Key) -> String {
+    fn rule(symbol_table: &SymbolTable, tree: &Tree, source: &str, index: Key) -> String {
         let rule_node = tree.get_node(index);
         let rule_children = rule_node.get_children();
         let mut name: Option<String> = None;
@@ -81,16 +96,16 @@ impl GeneratedCode {
                     name = Some(name.unwrap().to_lowercase());
                 }
                 Rules::RHS => {
-                    let mut out_tree = BinaryTree_WO::new();
+                    let mut out_tree = BinaryTreeWO::new();
                     let rhs_key = Self::rhs(&mut out_tree, symbol_table, tree, source, *i);
                     let last_key = out_tree.push(Reference::Exec, Some(rhs_key), None);
                     //out_tree.print(last_key);
 
                     let mut result = "".to_string();
                     for i in out_tree.to_string(last_key) {
-                        result.push_str("\t");
+                        result.push('\t');
                         result.push_str(&i);
-                        result.push_str("\n");
+                        result.push('\n');
                     }
 
                     rhs = result
@@ -113,10 +128,10 @@ impl GeneratedCode {
             rhs
         );
         //println!("{}", builder);
-        return builder;
+        builder
     }
 
-    fn lhs(symbol_table: &SymbolTable, tree: &Tree, source: &String, index: Key) -> String {
+    fn lhs(_symbol_table: &SymbolTable, tree: &Tree, source: &str, index: Key) -> String {
         let lhs_node = tree.get_node(index);
         let lhs_children = lhs_node.get_children();
         let var_name_decl_key = lhs_children[0];
@@ -128,42 +143,36 @@ impl GeneratedCode {
         // so simply remove first and last char
         let mut s = name;
         s.pop(); // remove last
-        if s.len() > 0 {
+        if !s.is_empty() {
             s.remove(0); // remove first
         }
         s
     }
 
-    fn comment(symbol_table: &SymbolTable, tree: &Tree, source: &String, index: Key) -> String {
+    fn comment(_symbol_table: &SymbolTable, tree: &Tree, source: &str, index: Key) -> String {
         let comment_node = tree.get_node(index);
-        let max_comment_size = (comment_node.end_position - comment_node.start_position) as usize;
-        let acc = String::with_capacity(max_comment_size + 3);
         let mut start: Option<u32> = None;
         let mut end: Option<u32> = None;
         for key in comment_node.get_children() {
-            match tree.get_node(*key).rule {
-                Rules::ASCII => {
-                    if start.is_none() {
-                        start = Some(tree.get_node(*key).start_position);
-                    }
-
-                    end = Some(tree.get_node(*key).end_position);
+            if let Rules::ASCII = tree.get_node(*key).rule {
+                if start.is_none() {
+                    start = Some(tree.get_node(*key).start_position);
                 }
-                _ => {}
+
+                end = Some(tree.get_node(*key).end_position);
             };
         }
-        let acc = "\t// ".to_string()
-            + &source[(start.expect("Must have start") as usize)
-                ..(end.expect("Must have end") as usize)]
-                .to_string();
-        acc
+
+        "\t// ".to_string()
+            + &source
+                [(start.expect("Must have start") as usize)..(end.expect("Must have end") as usize)]
     }
 
     fn rhs(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let rhs_node = tree.get_node(index);
@@ -171,23 +180,23 @@ impl GeneratedCode {
         for i in rhs_node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::Ordered_Choice => {
-                    ret_key = Self::ordered_choice(&mut out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::ordered_choice(out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Sequence => {
-                    ret_key = Self::sequence(&mut out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::sequence(out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::Atom => ret_key = Self::atom(&mut out_tree, symbol_table, tree, source, *i),
-                _ => return panic!("rhs"),
+                Rules::Atom => ret_key = Self::atom(out_tree, symbol_table, tree, source, *i),
+                _ => panic!("rhs"),
             }
         }
         ret_key
     }
 
     fn ordered_choice(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let oc_node = tree.get_node(index);
@@ -212,10 +221,10 @@ impl GeneratedCode {
     }
 
     fn sequence(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let oc_node = tree.get_node(index);
@@ -240,10 +249,10 @@ impl GeneratedCode {
     }
 
     fn atom(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
@@ -277,10 +286,10 @@ impl GeneratedCode {
     }
 
     fn optional(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
@@ -300,10 +309,10 @@ impl GeneratedCode {
         ret_key
     }
     fn one_or_more(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
@@ -323,10 +332,10 @@ impl GeneratedCode {
         ret_key
     }
     fn zero_or_more(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
@@ -347,10 +356,10 @@ impl GeneratedCode {
     }
 
     fn and_predicate(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
@@ -371,10 +380,10 @@ impl GeneratedCode {
     }
 
     fn not_predicate(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
@@ -394,10 +403,10 @@ impl GeneratedCode {
     }
 
     fn nucleus(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
@@ -432,15 +441,13 @@ impl GeneratedCode {
     }
 
     fn string_terminal(
-        mut out_tree: &mut BinaryTree_WO,
-        symbol_table: &SymbolTable,
+        out_tree: &mut BinaryTreeWO,
+        _symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
-        let mut ret_key = Key(0);
-        let mut start_set: bool = false;
         let mut data: Vec<char> = Vec::new();
         for i in node.get_children() {
             let child_node = tree.get_node(*i);
@@ -458,7 +465,7 @@ impl GeneratedCode {
                 Rules::Hex => {
                     let contents = &source[((child_node.start_position + 2) as usize)
                         ..((child_node.end_position) as usize)];
-                    let char = u32::from_str_radix(&contents, 16);
+                    let char = u32::from_str_radix(contents, 16);
                     data.push(
                         char::from_u32(char.expect("Failed to parse hex correctly"))
                             .expect("Should be valid codepoint"),
@@ -478,25 +485,24 @@ impl GeneratedCode {
             }
         }
         if all_ascii {
-            ret_key = out_tree.push(Reference::StringTerminalAsciiOpt(data), None, None);
+            out_tree.push(Reference::StringTerminalAsciiOpt(data), None, None)
         } else {
-            ret_key = out_tree.push(Reference::StringTerminal(data), None, None);
+            out_tree.push(Reference::StringTerminal(data), None, None)
         }
-        ret_key
     }
 
     fn ordered_choice_match_range(
-        mut out_tree: &mut BinaryTree_WO,
-        symbol_table: &SymbolTable,
+        out_tree: &mut BinaryTreeWO,
+        _symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
         let mut ret_key = Key(0);
         let mut start_set: bool = false;
         let mut value_start: u32 = 0;
-        let mut value_end: u32 = 0;
+        let mut value_end: u32;
         for i in node.get_children() {
             let child_node = tree.get_node(*i);
             let child_rule = child_node.rule;
@@ -556,10 +562,10 @@ impl GeneratedCode {
     }
 
     fn subexpression(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
@@ -578,26 +584,31 @@ impl GeneratedCode {
     }
 
     fn var_name(
-        mut out_tree: &mut BinaryTree_WO,
+        out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
-        let contents: String = source
+        let var_name: String = source
             [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)]
             .to_string();
 
-        let contents = format!("{}", contents,);
-        out_tree.push(Reference::VarName(contents), None, None)
+        if symbol_table.check_symbol_is_inline(&var_name) {
+            let contents = var_name.to_string();
+            out_tree.push(Reference::InlinedRule(contents), None, None)
+        } else {
+            let contents = var_name.to_string();
+            out_tree.push(Reference::VarName(contents), None, None)
+        }
     }
 
     fn terminal(
-        mut out_tree: &mut BinaryTree_WO,
-        symbol_table: &SymbolTable,
+        out_tree: &mut BinaryTreeWO,
+        _symbol_table: &SymbolTable,
         tree: &Tree,
-        source: &String,
+        source: &str,
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
@@ -614,7 +625,7 @@ impl GeneratedCode {
             } else if contents == "'" {
                 contents = "\\'".to_string();
             }
-            let contents = format!("{}", contents);
+            let contents = contents.to_string();
             out_tree.push(Reference::Terminal(contents), None, None)
         }
     }
@@ -623,6 +634,7 @@ impl GeneratedCode {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::count_lines;
     use cache::MyCache4;
     use grammar_parser::grammar;
     use parser_core::Context;
@@ -692,7 +704,7 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
     }
 
     #[test]
@@ -721,7 +733,7 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
     }
 
     #[test]
@@ -750,7 +762,7 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
     }
 
     #[test]
@@ -780,7 +792,7 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
     }
 
     #[test]
@@ -991,5 +1003,39 @@ mod tests {
             println!("{}", i)
         }
         println!("{}", gen_code.rules_enum)
+    }
+
+    #[test]
+    fn test_inline() {
+        let string = r#"<Atom> INLINE = ['A'..'Z'];
+                                <Uses_Atom> = <Atom>;
+        "#
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.stack.borrow();
+        let tree = &tree.clear_false();
+
+        tree.print(Key(0), None);
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        sym_table.print();
+        sym_table.print_inlined_rules();
+        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        gen_code.print();
     }
 }

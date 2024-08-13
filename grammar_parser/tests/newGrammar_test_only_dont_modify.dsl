@@ -5,7 +5,7 @@
 <HexVal>= [0x30..0x39]/[0x65..0x70];
 <Spaces> PASSTHROUGH = '\n'/'\t'/'\r'/' ';
 <Specials> PASSTHROUGH = !(<Alphabet_Upper>/<Alphabet_Lower>/<Num>/<Spaces>),[0x0..0xFF] ;
-<ASCII> PASSTHROUGH = [0x00..0xFF];
+<ASCII> INLINE = [0x00..0xFF];
 <Apostrophe> DELETE = '"';
 <QuotationMark> = ''';
 <Left_Angle_Bracket> DELETE = '<';

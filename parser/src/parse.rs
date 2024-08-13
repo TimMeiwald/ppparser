@@ -1,10 +1,10 @@
+#![allow(unused)]
 use anyhow::Result;
 use cache::*;
 use grammar_parser::grammar;
 use parser_core::Context;
 use parser_core::Source;
 use publisher::*;
-use rules::rules::Rules;
 use rules::Key;
 use std::fs::canonicalize;
 use std::fs::read_to_string;
@@ -38,5 +38,5 @@ pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
     // }
     assert_eq!(result, (true, src_len));
-    return Ok(result.0);
+    Ok(result.0)
 }
