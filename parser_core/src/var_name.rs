@@ -1,12 +1,10 @@
+#![allow(clippy::type_complexity)] // While complex still under development and the core of the entire program is here so complexity is
+                                   // Acceptable
 use crate::source::Source;
 use crate::Context;
 use cache::Cache;
-use publisher::{Node, Publisher};
+use publisher::Publisher;
 use rules::{Key, Rules};
-use std::{
-    thread,
-    time::{self, Duration},
-};
 // Initial buggy _var_name_kernel
 // pub fn _var_name_kernel<T: Cache, S: Stack>(
 //     rule: Rules,
@@ -118,11 +116,6 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
             let result = func(context, source, position);
             // Add Node and Result to Tree
             let tree = &mut *(context.stack).borrow_mut();
-            let last_key: Option<Key>;
-            {
-                let res = &*(context.cache).borrow();
-                last_key = res.last_node();
-            }
             match temp_key {
                 None => {}
                 Some(tkey) => {

@@ -50,13 +50,13 @@ impl DataGenerator {
             // generator_dir: PathBuf::from(generator_dir),
             // runner_dir: PathBuf::from(runner_dir),
             parser_core_dir: PathBuf::from(parser_core_dir),
-            target_dir: target_dir,
-            source: source,
+            target_dir,
+            source,
         };
         dir_data
             .verify()
             .unwrap_or_else(|_| panic!("One of the directories don't exist./n"));
-        return dir_data;
+        dir_data
     }
 
     fn verify(&self) -> Result<()> {
@@ -87,7 +87,7 @@ pub use parser_core::Context;
 pub use parser_core::Source;";
                 f.write_all(s2.as_bytes())?;
                 for rule in rules {
-                    f.write(rule.as_bytes())?;
+                    f.write_all(rule.as_bytes())?;
                 }
                 self.remove_file(&PathBuf::from_str("./rules/src/rules.rs").unwrap())?;
                 let mut f2 = self.make_file(&PathBuf::from_str("./rules/src/rules.rs").unwrap())?;
@@ -128,79 +128,69 @@ pub use parser_core::Source;";
         Ok(())
     }
 
-    fn copy_all(&self, pathbuf: &PathBuf) -> Result<()> {
+    fn copy_all(&self, pathbuf: &Path) -> Result<()> {
         let cache_target = &mut self.target_dir.clone();
         cache_target.extend(pathbuf.iter());
         println!("{:?}", cache_target);
-        copy_dir_all(&pathbuf, cache_target)
+        copy_dir_all(pathbuf, cache_target)
     }
-    fn copy_file(&self, pathbuf: &PathBuf) -> Result<()> {
+    fn copy_file(&self, pathbuf: &Path) -> Result<()> {
         let cache_target = &mut self.target_dir.clone();
         cache_target.extend(pathbuf.iter());
         println!("{:?}", cache_target);
-        let success = copy_file(&pathbuf, cache_target);
+        let success = copy_file(pathbuf, cache_target);
         match success {
-            std::result::Result::Ok(e) => {
-                return Ok(());
-            }
+            std::result::Result::Ok(_) => Ok(()),
             Err(e) => {
                 bail!("Failed to create {:?}: {:?}", pathbuf, e)
             }
         }
     }
 
-    fn copy_file_with_dst(&self, pathbuf: &PathBuf, dst: &PathBuf) -> Result<()> {
+    fn copy_file_with_dst(&self, pathbuf: &Path, dst: &Path) -> Result<()> {
         let cache_target = &mut self.target_dir.clone();
         cache_target.extend(dst.iter());
         println!("{:?}", cache_target);
-        let success = copy_file(&pathbuf, cache_target);
+        let success = copy_file(pathbuf, cache_target);
         match success {
-            std::result::Result::Ok(e) => {
-                return Ok(());
-            }
+            std::result::Result::Ok(_) => Ok(()),
             Err(e) => {
                 bail!("Failed to create {:?}: {:?}", pathbuf, e)
             }
         }
     }
 
-    fn make_file(&self, pathbuf: &PathBuf) -> Result<File> {
+    fn make_file(&self, pathbuf: &Path) -> Result<File> {
         let cache_target = &mut self.target_dir.clone();
         cache_target.extend(pathbuf.iter());
         println!("{:?}", cache_target);
-        let success = std::fs::File::create(&cache_target);
+        let success = std::fs::File::create(cache_target);
         match success {
-            std::result::Result::Ok(f) => {
-                return Ok(f);
-            }
+            std::result::Result::Ok(f) => Ok(f),
             Err(e) => {
                 bail!("Failed to create {:?}: {:?}", pathbuf, e)
             }
         }
     }
-    fn create_dir(&self, pathbuf: &PathBuf) -> Result<()> {
+    fn create_dir(&self, pathbuf: &Path) -> Result<()> {
         let cache_target = &mut self.target_dir.clone();
         cache_target.extend(pathbuf.iter());
         let f = cache_target.clone();
         let success = create_dir(cache_target);
         match success {
-            std::result::Result::Ok(()) => {
-                return Ok(());
-            }
+            std::result::Result::Ok(()) => Ok(()),
             Err(e) => {
                 bail!("Failed to create {:?}: {:?}", f, e)
             }
         }
     }
-    fn remove_file(&self, pathbuf: &PathBuf) -> Result<()> {
+    fn remove_file(&self, pathbuf: &Path) -> Result<()> {
         let cache_target = &mut self.target_dir.clone();
         cache_target.extend(pathbuf.iter());
         println!("{:?}", cache_target);
-        let success = std::fs::remove_file(&cache_target);
+        let success = std::fs::remove_file(cache_target);
         match success {
-            std::result::Result::Ok(f) => {
-                return Ok(());
-            }
+            std::result::Result::Ok(_) => Ok(()),
             Err(e) => {
                 bail!("Failed to create {:?}: {:?}", pathbuf, e)
             }

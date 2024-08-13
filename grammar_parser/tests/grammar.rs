@@ -85,7 +85,7 @@ fn test_json_description() {
     let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let result = grammar(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
-    let only_true_tree = context.stack.borrow().clear_false();
+    let _only_true_tree = context.stack.borrow().clear_false();
     assert_eq!(result, (true, src_len));
 }
 // #[test]
@@ -115,7 +115,7 @@ fn test_basic_publisher() {
     let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let result = grammar(&context, &source, position);
     //context.stack.borrow().print(Key(0), Some(true));
-    let only_true_tree = context.stack.borrow().clear_false();
+    let _only_true_tree = context.stack.borrow().clear_false();
     //only_true_tree.print(Key(0), None);
     //println!("Capacity: {:?}, Len: {:?}", context.stack.borrow().capacity(), context.stack.borrow().len());
     //println!("Capacity: {:?}, Len: {:?}", only_true_tree.capacity(), only_true_tree.len());

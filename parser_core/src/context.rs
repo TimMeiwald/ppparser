@@ -2,7 +2,6 @@
 //use cache::{BTreeCache, Cache, DenyLeftRecursionCache, MyCache1, MyCache2, MyCache3, MyCache4};
 use cache::{Cache, MyCache4};
 use publisher::Publisher;
-use publisher::Tree;
 use rules::{Key, Rules};
 use std::{cell::RefCell, marker::PhantomData};
 pub struct Context<T: Cache, S: Publisher> {

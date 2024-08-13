@@ -1,8 +1,4 @@
 use crate::source::Source;
-use crate::Context;
-use cache::Cache;
-use publisher::Publisher;
-use rules::Rules;
 
 fn _string_terminal_kernel_ascii_opt(source: &Source, position: u32, data: &[u8]) -> (bool, u32) {
     let mut end_position = position;
@@ -17,7 +13,7 @@ fn _string_terminal_kernel_ascii_opt(source: &Source, position: u32, data: &[u8]
             return (false, position);
         }
     }
-    return (true, end_position);
+    (true, end_position)
 }
 
 pub fn _string_terminal_opt_ascii(data: &[u8]) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {

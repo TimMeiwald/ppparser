@@ -26,7 +26,7 @@ fn main() {
 
     //let source: Path = args.source.canonicalize().ok_or_else(panic!("Failed to find Source File"));
     let source: PathBuf = match args.source.canonicalize() {
-        Err(_e) => panic!("Failed to find Source File"),
+        Err(_) => panic!("Failed to find Source File"),
         Ok(source) => source,
     };
 
@@ -34,9 +34,9 @@ fn main() {
 
     let target: PathBuf = match args.target.canonicalize() {
         Ok(path) => path,
-        Err(e) => match fs::create_dir_all(target_str) {
+        Err(_) => match fs::create_dir_all(target_str) {
             Ok(()) => PathBuf::from(target_str),
-            Err(e) => panic!("Failed to create Target Directory"),
+            Err(_) => panic!("Failed to create Target Directory"),
         },
     };
 

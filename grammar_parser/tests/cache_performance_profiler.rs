@@ -50,14 +50,14 @@ fn create_performance_string(duration: Duration, cach: String) -> String {
 fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_path: &str) {
     let mut data = Vec::<String>::new();
     let mut n = n_release;
-    let mut path = release_path;
+    let mut _path = release_path;
     data.push(format!("RELEASE\nn = {:?}\n", n).to_string());
     #[cfg(debug_assertions)]
     {
         data.clear();
         n = n_debug;
         data.push(format!("DEBUG\nn = {:?}\n", n).to_string());
-        path = debug_path;
+        _path = debug_path;
     }
     // // MyCache1
     // let res = run_on_grammar::<MyCache1, BasicStack>(n);
@@ -79,7 +79,7 @@ fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_
     let perf_str = create_performance_string(res.0, res.1);
     data.push(perf_str);
 
-    write_to_performance_profile(data, path)
+    write_to_performance_profile(data, _path)
 }
 
 #[test]

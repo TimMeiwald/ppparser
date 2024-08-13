@@ -1,3 +1,3 @@
 RELEASE
 n = 1000
-"cache::my_cache4::MyCache4" 927.8753ms
+"cache::my_cache4::MyCache4" 439.0386ms

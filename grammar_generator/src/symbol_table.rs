@@ -1,4 +1,3 @@
-use crate::count_lines;
 use publisher::{Publisher, Tree};
 use rules::{rules::Rules, Key};
 use std::{collections::HashMap, panic};
@@ -18,11 +17,11 @@ impl<'a> SymbolTable<'a> {
         println!("Symbol Table created successfully");
         sym_table.create_symbol_table_from_tree(tree);
         sym_table.run_duplication_check();
-        return sym_table;
+        sym_table
     }
 
     pub fn get_names(&self) -> &Vec<String> {
-        return &self.names;
+        &self.names
     }
 
     pub fn print(&self) {
@@ -31,7 +30,7 @@ impl<'a> SymbolTable<'a> {
         }
     }
 
-    pub fn push(&mut self, index: u32, name: String) {
+    pub fn push(&mut self, name: String) {
         self.names.push(name);
     }
 
@@ -46,10 +45,7 @@ impl<'a> SymbolTable<'a> {
 
     pub fn check_symbol_is_inline(&self, symbol_name: &str) -> bool {
         let rule = self.inlined_rules.get(symbol_name);
-        match rule {
-            None => return false,
-            Some(_) => return true,
-        }
+        rule.is_some()
     }
 
     fn run_duplication_check(&mut self) {
@@ -122,6 +118,7 @@ impl<'a> SymbolTable<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::count_lines;
     use cache::MyCache4;
     use grammar_parser::grammar;
     use parser_core::Context;
@@ -129,7 +126,6 @@ mod tests {
     use publisher::Tree;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
-
     #[test]
     fn test() {
         println!("{:?}", env::current_dir().unwrap());

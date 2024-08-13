@@ -1,8 +1,4 @@
 use crate::source::Source;
-use crate::Context;
-use cache::Cache;
-use publisher::Publisher;
-use rules::Rules;
 
 fn _ordered_choice_match_range_kernel(
     source: &Source,
@@ -12,12 +8,12 @@ fn _ordered_choice_match_range_kernel(
 ) -> (bool, u32) {
     let chr = source.get_char(position);
     match chr {
-        None => return (false, position),
+        None => (false, position),
         Some(value) => {
             if (value as u32 >= start) && (value as u32 <= end) {
-                return (true, position + 1);
+                (true, position + 1)
             } else {
-                return (false, position);
+                (false, position)
             }
         }
     }
@@ -32,9 +28,7 @@ pub fn _ordered_choice_match_range(start: u32, end: u32) -> impl Fn(&Source, u32
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::optional::{_optional, _optional_kernel};
     use crate::source::Source;
-    use crate::terminal::_terminal;
     #[test]
     fn test_ordered_choice_kernel_1() {
         let s = "0".to_string();

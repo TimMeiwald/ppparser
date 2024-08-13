@@ -1,13 +1,5 @@
 use core::panic;
-use std::fmt::format;
-
-use crate::count_lines;
-use crate::symbol_table::SymbolTable;
-use publisher::Node;
-use publisher::Publisher;
-use publisher::Tree;
 use rules::Key;
-use rules::Rules;
 
 #[derive(Debug, Clone)]
 pub enum Reference {
@@ -24,7 +16,7 @@ pub enum Reference {
     OrderedChoice,
     Sequence,
     Exec,
-    NULL,
+    Null,
 
     OrderedChoiceMatchRange(u32, u32), // Custom Code for optimization purposes
     StringTerminal(Vec<char>),
@@ -32,16 +24,16 @@ pub enum Reference {
     InlinedRule(String),
 }
 
-pub struct BinaryTree_WO {
+pub struct BinaryTreeWO {
     nodes: Vec<BinaryNode>,
 }
 
-impl BinaryTree_WO {
+impl BinaryTreeWO {
     pub fn new() -> Self {
-        let mut tree = BinaryTree_WO {
+        let mut tree = BinaryTreeWO {
             nodes: Vec::<BinaryNode>::new(),
         };
-        tree.push(Reference::NULL, None, None);
+        tree.push(Reference::Null, None, None);
         tree
     }
 
@@ -72,12 +64,12 @@ impl BinaryTree_WO {
             node.rhs
         );
         let child_index = node.lhs;
-        if child_index.is_some() {
-            self.print_kernel(child_index.unwrap(), indent + 1);
+        if let Some(child_index) = child_index {
+            self.print_kernel(child_index, indent + 1);
         }
         let child_index = node.rhs;
-        if child_index.is_some() {
-            self.print_kernel(child_index.unwrap(), indent + 1);
+        if let Some(child_index) = child_index {
+            self.print_kernel(child_index, indent + 1);
         }
     }
 
@@ -108,7 +100,7 @@ impl BinaryTree_WO {
             Reference::StringTerminal(_) => self.string_terminal(stack, index),
             Reference::StringTerminalAsciiOpt(_) => self.string_terminal_ascii_opt(stack, index),
             Reference::InlinedRule(_) => self.inlined_rule(stack, index),
-            Reference::Exec | Reference::NULL => {
+            Reference::Exec | Reference::Null => {
                 panic!("Exec should only exist once and NULL should never exist")
             }
         }
@@ -116,7 +108,8 @@ impl BinaryTree_WO {
 
     fn to_string_kernel(&self, stack: &mut Vec<String>, index: Key) -> Key {
         let node = &self.nodes[usize::from(index)];
-        let key = match node.reference {
+
+        match node.reference {
             Reference::Exec => {
                 let child_index = node.lhs.expect("Should always have child");
                 let key = self.match_ref(stack, child_index);
@@ -125,8 +118,7 @@ impl BinaryTree_WO {
             }
 
             _ => panic!("Invalid Key Index. Must be Exec"),
-        };
-        key
+        }
     }
 
     fn string_terminal(&self, stack: &mut Vec<String>, index: Key) -> Key {
@@ -357,7 +349,6 @@ impl BinaryTree_WO {
             Reference::InlinedRule(content) => {
                 let contents = format!(
                     "let closure_{} = move |source: &Source, position: u32| {}(context, source, position);",
-                    
                     index.0,
                     content.to_lowercase()
                 );

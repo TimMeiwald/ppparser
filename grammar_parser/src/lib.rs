@@ -1,3 +1,6 @@
+#![allow(non_camel_case_types, unused_variables)]
+// Generated Code kinda annoying to deal with so w/e
+// Generated Code also, since everything passes stuff recursively that's more work for little gain.
 use cache::*;
 use parser_core::*;
 use publisher::*;
