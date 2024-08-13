@@ -223,12 +223,14 @@ pub fn var_name<T: Cache, S: Publisher>(
 ) -> (bool, u32) {
     // Not whitespace dependent, feel free to use multiple lines for readability
     let closure_1 = _var_name(Rules::Left_Angle_Bracket, context, left_angle_bracket);
-    let closure_2 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
+    let closure_2 = move |source: &Source, position: u32| alphabet_lower(context, source, position);
+    //let closure_2 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
     let closure_3 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
     let closure_4 = _ordered_choice(&closure_2, &closure_3);
     let closure_5 = _subexpression(&closure_4);
     let closure_6 = _sequence(&closure_1, &closure_5);
-    let closure_7 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
+    let closure_7 = move |source: &Source, position: u32| alphabet_lower(context, source, position);
+    //let closure_7 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
     let closure_8 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
     let closure_9 = _ordered_choice(&closure_7, &closure_8);
     let closure_10 = _terminal(b'_');

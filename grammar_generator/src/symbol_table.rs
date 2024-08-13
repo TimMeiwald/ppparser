@@ -44,6 +44,14 @@ impl<'a> SymbolTable<'a> {
         false
     }
 
+    pub fn check_symbol_is_inline(&self, symbol_name: &str) -> bool {
+        let rule = self.inlined_rules.get(symbol_name);
+        match rule {
+            None => return false,
+            Some(_) => return true,
+        }
+    }
+
     fn run_duplication_check(&mut self) {
         self.names.sort();
         // Dedup only dedups consecutive elements hence the prior sort.
@@ -67,15 +75,13 @@ impl<'a> SymbolTable<'a> {
         }
     }
 
-    fn print_inlined_rules(&self) {
+    pub fn print_inlined_rules(&self) {
         println!("{:#?}", self.inlined_rules);
     }
 
     fn check_semantic_instructions(&mut self, name: &str, tree: &Tree, index: Key) {
         let lhs = tree.get_node(index);
-        println!("Sem Instr: {:?}", lhs.rule);
         let node = tree.get_node(lhs.parent.expect("Parent should exist"));
-        println!("Sem Instr Parent: {:?}", node.rule);
         for child in node.get_children() {
             let child_node = tree.get_node(*child);
             if child_node.rule == Rules::Semantic_Instructions {

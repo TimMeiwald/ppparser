@@ -29,6 +29,7 @@ pub enum Reference {
     OrderedChoiceMatchRange(u32, u32), // Custom Code for optimization purposes
     StringTerminal(Vec<char>),
     StringTerminalAsciiOpt(Vec<char>),
+    InlinedRule(String),
 }
 
 pub struct BinaryTree_WO {
@@ -106,6 +107,7 @@ impl BinaryTree_WO {
             }
             Reference::StringTerminal(_) => self.string_terminal(stack, index),
             Reference::StringTerminalAsciiOpt(_) => self.string_terminal_ascii_opt(stack, index),
+            Reference::InlinedRule(_) => self.inlined_rule(stack, index),
             Reference::Exec | Reference::NULL => {
                 panic!("Exec should only exist once and NULL should never exist")
             }
@@ -338,6 +340,25 @@ impl BinaryTree_WO {
                     "let closure_{:?} = _var_name(Rules::{}, context, {});",
                     index.0,
                     content,
+                    content.to_lowercase()
+                );
+                stack.push(contents);
+                index
+            }
+            _ => {
+                panic!("Shouldn't happen")
+            }
+        }
+    }
+
+    fn inlined_rule(&self, stack: &mut Vec<String>, index: Key) -> Key {
+        let node = &self.nodes[usize::from(index)];
+        match &node.reference {
+            Reference::InlinedRule(content) => {
+                let contents = format!(
+                    "let closure_{} = move |source: &Source, position: u32| {}(context, source, position);",
+                    
+                    index.0,
                     content.to_lowercase()
                 );
                 stack.push(contents);

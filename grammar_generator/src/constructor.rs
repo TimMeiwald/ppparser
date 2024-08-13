@@ -11,6 +11,7 @@ use std::panic::panic_any;
 
 pub struct GeneratedCode {
     // String per rule so we can seperate into files per rule.
+    pub num_rules: usize,
     pub rules: Vec<String>,
     pub rules_enum: String,
 }
@@ -18,12 +19,25 @@ pub struct GeneratedCode {
 impl GeneratedCode {
     pub fn new(symbol_table: &SymbolTable, tree: &Tree, source: &String) -> Self {
         println!("Generating Code");
+        let rules = Self::generate(symbol_table, tree, source);
+        let (rules_enum, num_rules) = Self::generate_rules_enum(symbol_table);
         let mut s = GeneratedCode {
-            rules: Self::generate(symbol_table, tree, source),
-            rules_enum: GeneratedCode::generate_rules_enum(symbol_table),
+            rules,
+            rules_enum,
+            num_rules,
         };
         println!("Code generation complete");
         s
+    }
+
+    pub fn print(&self) {
+        println!("Number of Rules: {}", self.num_rules);
+        println!("Rules Enum: \n");
+        println!("{}\n", self.rules_enum);
+        println!("Rules:\n");
+        for i in &self.rules {
+            println!("{}", i)
+        }
     }
 
     fn generate(symbol_table: &SymbolTable, tree: &Tree, source: &String) -> Vec<String> {
@@ -46,16 +60,20 @@ impl GeneratedCode {
         rules
     }
 
-    fn generate_rules_enum(symbol_table: &SymbolTable) -> String {
+    fn generate_rules_enum(symbol_table: &SymbolTable) -> (String, usize) {
         let mut rules_enum = "pub enum Rules {\n".to_string();
+        let mut count: usize = 0;
         for s in symbol_table.get_names() {
-            rules_enum.push('\t');
-            rules_enum.push_str(&s);
-            rules_enum.push(',');
-            rules_enum.push('\n');
+            if !symbol_table.check_symbol_is_inline(&s) {
+                rules_enum.push('\t');
+                rules_enum.push_str(&s);
+                rules_enum.push(',');
+                rules_enum.push('\n');
+                count += 1;
+            }
         }
         rules_enum.push_str("\n}");
-        rules_enum
+        (rules_enum, count)
     }
 
     fn match_rule(symbol_table: &SymbolTable, tree: &Tree, source: &String, index: Key) -> String {
@@ -585,12 +603,17 @@ impl GeneratedCode {
         index: Key,
     ) -> Key {
         let node = tree.get_node(index);
-        let contents: String = source
+        let var_name: String = source
             [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)]
             .to_string();
 
-        let contents = format!("{}", contents,);
-        out_tree.push(Reference::VarName(contents), None, None)
+        if symbol_table.check_symbol_is_inline(&var_name) {
+            let contents = format!("{}", var_name,);
+            out_tree.push(Reference::InlinedRule(contents), None, None)
+        } else {
+            let contents = format!("{}", var_name,);
+            out_tree.push(Reference::VarName(contents), None, None)
+        }
     }
 
     fn terminal(
@@ -991,5 +1014,39 @@ mod tests {
             println!("{}", i)
         }
         println!("{}", gen_code.rules_enum)
+    }
+
+    #[test]
+    fn test_inline() {
+        let string = r#"<Atom> INLINE = ['A'..'Z'];
+                                <Uses_Atom> = <Atom>;
+        "#
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len() as u32;
+        let source = Source::new(string);
+        let position: u32 = 0;
+        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let result = grammar(&context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.stack.borrow();
+        let tree = &tree.clear_false();
+
+        tree.print(Key(0), None);
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        sym_table.print();
+        sym_table.print_inlined_rules();
+        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        gen_code.print();
     }
 }
