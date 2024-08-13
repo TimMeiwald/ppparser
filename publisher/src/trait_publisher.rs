@@ -10,27 +10,24 @@
 // }
 use crate::{Node, Tree};
 use rules::{Key, Rules};
+use std::rc::Rc;
 pub trait Publisher {
     fn new(size_of_source: usize, number_of_rules: usize) -> Self;
-    fn get_node_mut(&mut self, index: Key) -> &mut Node;
-    fn add_node(&mut self, node: Node) -> Key;
-
-    fn connect(&mut self, parent_index: Key, child_index: Key);
-
-    fn get_node(&self, index: Key) -> &Node;
-    fn get_mut_node(&mut self, index: Key) -> &mut Node;
-
-    fn create_node(
-        &self,
+    fn add_node(
+        &mut self,
         rule: Rules,
         start_position: u32,
         end_position: u32,
         parent: Option<Key>,
         result: bool,
-    ) -> Node;
+    ) -> Key;
+    fn connect(&mut self, parent_index: Key, child_index: Key);
     fn set_node_start_position(&mut self, index: Key, start_position: u32);
     fn set_node_end_position(&mut self, index: Key, end_position: u32);
     fn set_node_result(&mut self, index: Key, result: bool);
     fn print(&self, index: Key, boolean: Option<bool>);
     fn clear_false(&self) -> Tree;
+    fn last_node(&self) -> Option<Key>;
+    fn set_last_node(&mut self, key: Option<Key>);
+    fn clear_tree(&mut self);
 }

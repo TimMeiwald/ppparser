@@ -18,27 +18,27 @@ impl From<Index> for usize {
     }
 }
 
-pub struct Children(Vec<Key>);
-impl Children {
-    fn new(size_of_source: usize, number_of_structs: usize) -> Self {
-        let capacity: usize = size_of_source * number_of_structs;
-        // TODO allow this to be controllable.
-        Children {
-            0: Vec::with_capacity(capacity),
-        }
-    }
+// pub struct Children(Vec<Key>);
+// impl Children {
+//     fn new(size_of_source: usize, number_of_structs: usize) -> Self {
+//         let capacity: usize = size_of_source * number_of_structs;
+//         // TODO allow this to be controllable.
+//         Children {
+//             0: Vec::with_capacity(capacity),
+//         }
+//     }
 
-    fn push(&mut self, child: Key) -> Index {
-        self.0.push(child);
-        Index::from(self.0.len())
-    }
+//     fn push(&mut self, child: Key) -> Index {
+//         self.0.push(child);
+//         Index::from(self.0.len())
+//     }
 
-    fn clear(&mut self) {
-        self.0.clear();
-    }
-}
+//     fn clear(&mut self) {
+//         self.0.clear();
+//     }
+// }
 
-pub struct Tree2 {
+pub struct UnsafeTree2 {
     last_node: Option<Key>,
     rules: Vec<Rules>,
     start_positions: Vec<u32>,
@@ -47,13 +47,13 @@ pub struct Tree2 {
     parents: Vec<Option<Key>>,
     children_start: Vec<Index>,
     children_end: Vec<Index>,
-    children: Children,
+    children: Vec<Key>,
 }
 
-impl Publisher for Tree2 {
+impl Publisher for UnsafeTree2 {
     fn new(size_of_source: usize, number_of_structs: usize) -> Self {
         let capacity: usize = size_of_source * number_of_structs * 4;
-        Tree2 {
+        UnsafeTree2 {
             last_node: None,
             rules: Vec::with_capacity(capacity),
             start_positions: Vec::with_capacity(capacity),
@@ -62,7 +62,7 @@ impl Publisher for Tree2 {
             parents: Vec::with_capacity(capacity),
             children_start: Vec::with_capacity(capacity),
             children_end: Vec::with_capacity(capacity),
-            children: Children::new(size_of_source, number_of_structs),
+            children: Vec::with_capacity(capacity),
         }
     }
 
@@ -87,7 +87,8 @@ impl Publisher for Tree2 {
         result: bool,
     ) -> Key {
         let len = self.rules.len();
-        let key = Key(len.try_into().unwrap());
+        // let key = Key(len.try_into().unwrap());
+        let key = Key { 0: len as u32 };
         self.parents.push(parent);
         self.rules.push(rule);
         self.start_positions.push(start_position);
@@ -99,28 +100,60 @@ impl Publisher for Tree2 {
     }
     #[inline(always)]
     fn connect(&mut self, parent_index: Key, child_index: Key) {
-        let idx = self.children.push(child_index);
-        if self.children_start[usize::from(parent_index)] == Index(u32::MAX) {
-            self.children_start[usize::from(parent_index)] = idx;
-            self.children_end[usize::from(parent_index)] = idx;
+        let idx = Index(self.children.len() as u32);
+        self.children.push(child_index);
+
+        let child_start = unsafe { *self.children_start.get_unchecked(usize::from(parent_index)) };
+
+        if child_start == Index(u32::MAX) {
+            unsafe {
+                let node = self
+                    .children_start
+                    .get_unchecked_mut(usize::from(parent_index));
+                let node = node as *mut Index;
+                (*node) = idx;
+                let node = self
+                    .children_end
+                    .get_unchecked_mut(usize::from(parent_index));
+                let node = node as *mut Index;
+                (*node) = idx;
+            }
         } else {
-            self.children_end[usize::from(parent_index)] = idx;
+            unsafe {
+                let node = self
+                    .children_end
+                    .get_unchecked_mut(usize::from(parent_index));
+                let node = node as *mut Index;
+                (*node) = idx;
+            }
         }
     }
     #[inline(always)]
 
     fn set_node_start_position(&mut self, index: Key, start_position: u32) {
-        self.start_positions[usize::from(index)] = start_position;
+        unsafe {
+            let node = self.start_positions.get_unchecked_mut(usize::from(index));
+            let node = node as *mut u32;
+            (*node) = start_position;
+        }
     }
     #[inline(always)]
 
     fn set_node_end_position(&mut self, index: Key, end_position: u32) {
-        self.end_positions[usize::from(index)] = end_position;
+        unsafe {
+            let node = self.end_positions.get_unchecked_mut(usize::from(index));
+            let node = node as *mut u32;
+            (*node) = end_position;
+        }
     }
     #[inline(always)]
 
     fn set_node_result(&mut self, index: Key, result: bool) {
-        self.results[usize::from(index)] = result;
+        unsafe {
+            let node = self.results.get_unchecked_mut(usize::from(index));
+            let node = node as *mut bool;
+            (*node) = result;
+        }
     }
     #[inline(always)]
     fn set_last_node(&mut self, key: Option<Key>) {

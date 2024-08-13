@@ -72,6 +72,73 @@ use rules::{Key, Rules};
 //         }
 //     }
 // }
+// pub fn _var_name_kernel<T: Cache, S: Publisher>(
+//     rule: Rules,
+//     context: &Context<T, S>,
+//     source: &Source,
+//     position: u32,
+//     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+// ) -> (bool, u32) {
+//     let cached_val: Option<(bool, u32, Key)>;
+//     let temp_key: Option<Key>;
+//     let curr_key: Key;
+
+//     {
+//         let res = &*(context.cache).borrow();
+//         cached_val = res.check(rule, position);
+//         temp_key = res.last_node()
+//     }
+//     {
+//         // Add Current Node
+//         let tree = &mut *(context.stack).borrow_mut();
+//         let node = tree.create_node(rule, position, 0, temp_key, false);
+//         curr_key = tree.add_node(node);
+//         //println!("{:?} {:?} {:?}", rule, temp_key, curr_key)
+//     }
+//     {
+//         let res = &mut *(context.cache).borrow_mut();
+//         res.set_last_node(Some(curr_key));
+//     }
+
+//     let result = match cached_val {
+//         Some(cached_val) => {
+//             // Cached Val at Index Key
+//             let key = cached_val.2;
+//             // Make cached subtree a child of parent and current node parent of subtree
+//             let tree = &mut *(context.stack).borrow_mut();
+
+//             tree.connect(temp_key.unwrap(), key);
+//             // Return Result
+//             (cached_val.0, cached_val.1)
+//         }
+//         None => {
+//             // No Cached Val
+//             let result = func(context, source, position);
+//             // Add Node and Result to Tree
+//             let tree = &mut *(context.stack).borrow_mut();
+//             match temp_key {
+//                 None => {}
+//                 Some(tkey) => {
+//                     tree.connect(tkey, curr_key);
+//                 }
+//             }
+//             // Cache Val
+//             let cache = &mut *(context.cache).borrow_mut();
+//             cache.push(rule, result.0, position, result.1, curr_key);
+//             // Return Result
+//             result
+//         }
+//     };
+
+//     let tree = &mut *(context.stack).borrow_mut();
+//     tree.set_node_start_position(curr_key, position);
+//     tree.set_node_end_position(curr_key, result.1);
+//     tree.set_node_result(curr_key, result.0);
+//     let cache = &mut *(context.cache).borrow_mut();
+//     cache.set_last_node(temp_key);
+//     result
+// }
+
 pub fn _var_name_kernel<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
@@ -82,40 +149,36 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
     let cached_val: Option<(bool, u32, Key)>;
     let temp_key: Option<Key>;
     let curr_key: Key;
-
-    {
-        let res = &*(context.cache).borrow();
-        cached_val = res.check(rule, position);
-        temp_key = res.last_node()
-    }
-    {
-        // Add Current Node
-        let tree = &mut *(context.stack).borrow_mut();
-        let node = tree.create_node(rule, position, 0, temp_key, false);
-        curr_key = tree.add_node(node);
-        //println!("{:?} {:?} {:?}", rule, temp_key, curr_key)
-    }
-    {
-        let res = &mut *(context.cache).borrow_mut();
-        res.set_last_node(Some(curr_key));
-    }
-
+    let tree: &mut S = unsafe {
+        let tree: *mut S = context.stack.get();
+        let tree: &mut S = &mut *tree as &mut S;
+        tree
+    };
+    let cache: &mut T = unsafe {
+        let cache: *mut T = context.cache.get();
+        let cache: &mut T = &mut *cache as &mut T;
+        cache
+    };
+    cached_val = cache.check(rule, position);
+    temp_key = tree.last_node();
+    curr_key = tree.add_node(rule, position, 0, temp_key, false);
+    tree.set_last_node(Some(curr_key));
     let result = match cached_val {
         Some(cached_val) => {
             // Cached Val at Index Key
             let key = cached_val.2;
             // Make cached subtree a child of parent and current node parent of subtree
-            let tree = &mut *(context.stack).borrow_mut();
-
-            tree.connect(temp_key.unwrap(), key);
+            unsafe {
+                tree.connect(temp_key.unwrap_unchecked(), key);
+            }
             // Return Result
             (cached_val.0, cached_val.1)
         }
         None => {
             // No Cached Val
+            // References must be dropped before here.
             let result = func(context, source, position);
             // Add Node and Result to Tree
-            let tree = &mut *(context.stack).borrow_mut();
             match temp_key {
                 None => {}
                 Some(tkey) => {
@@ -123,19 +186,15 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
                 }
             }
             // Cache Val
-            let cache = &mut *(context.cache).borrow_mut();
             cache.push(rule, result.0, position, result.1, curr_key);
             // Return Result
             result
         }
     };
-
-    let tree = &mut *(context.stack).borrow_mut();
     tree.set_node_start_position(curr_key, position);
     tree.set_node_end_position(curr_key, result.1);
     tree.set_node_result(curr_key, result.0);
-    let cache = &mut *(context.cache).borrow_mut();
-    cache.set_last_node(temp_key);
+    tree.set_last_node(temp_key);
     result
 }
 
