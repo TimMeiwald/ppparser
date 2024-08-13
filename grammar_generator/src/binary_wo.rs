@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use core::panic;
 use rules::Key;
 
