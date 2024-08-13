@@ -2,7 +2,7 @@
 use cache::{Cache, MyCache4};
 use grammar_parser::grammar;
 use parser_core::{Context, Source};
-use publisher::{Publisher, Tree};
+use publisher::{Publisher, Tree, Tree2, UnsafeTree, UnsafeTree2, NOOP};
 use std::any::type_name;
 use std::fs::canonicalize;
 use std::fs::{read_to_string, write};
@@ -20,7 +20,7 @@ fn write_to_performance_profile(data: Vec<String>, path: &str) {
     write(pathbuf, data.concat()).expect("No reason for it to fail")
 }
 
-fn run_on_grammar<T: Cache, S: Publisher>(n: u32) -> (Duration, String) {
+fn run_on_grammar<T: Cache, S: Publisher>(n: u32) -> (Duration, String, String) {
     let src = get_grammar_string();
     let src_len = src.len() as u32;
     let source = Source::new(src);
@@ -40,10 +40,14 @@ fn run_on_grammar<T: Cache, S: Publisher>(n: u32) -> (Duration, String) {
                                         //let cache_time = Instant::now();
         context.clear_cache();
     }
-    (time.elapsed(), type_name::<T>().to_string())
+    (
+        time.elapsed(),
+        type_name::<T>().to_string(),
+        type_name::<S>().to_string(),
+    )
 }
-fn create_performance_string(duration: Duration, cach: String) -> String {
-    format!("{:?} {:?}\n", cach, duration)
+fn create_performance_string(duration: Duration, cach: String, tree: String) -> String {
+    format!("{:?} {:?} {:?}\n", cach, tree, duration)
 }
 
 #[allow(unused_mut)]
@@ -61,22 +65,30 @@ fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_
     }
     // // MyCache1
     // let res = run_on_grammar::<MyCache1, BasicStack>(n);
-    // let perf_str = create_performance_string(res.0, res.1);
+    // let perf_str = create_performance_string(res.0, res.1, res.2);
     // data.push(perf_str);
 
-    // // MyCache2
-    // let res = run_on_grammar::<MyCache2, BasicStack>(n);
-    // let perf_str = create_performance_string(res.0, res.1);
-    // data.push(perf_str);
+    let res = run_on_grammar::<MyCache4, UnsafeTree>(n);
+    let perf_str = create_performance_string(res.0, res.1, res.2);
+    data.push(perf_str);
 
-    // // MyCache3
-    // let res = run_on_grammar::<MyCache3, BasicStack>(n);
-    // let perf_str = create_performance_string(res.0, res.1);
-    // data.push(perf_str);
+    let res = run_on_grammar::<MyCache4, UnsafeTree2>(n);
+    let perf_str = create_performance_string(res.0, res.1, res.2);
+    data.push(perf_str);
+
+    // MyCache2
+    let res = run_on_grammar::<MyCache4, Tree2>(n);
+    let perf_str = create_performance_string(res.0, res.1, res.2);
+    data.push(perf_str);
+
+    // MyCache3
+    let res = run_on_grammar::<MyCache4, NOOP>(n);
+    let perf_str = create_performance_string(res.0, res.1, res.2);
+    data.push(perf_str);
 
     // MyCache4
     let res = run_on_grammar::<MyCache4, Tree>(n);
-    let perf_str = create_performance_string(res.0, res.1);
+    let perf_str = create_performance_string(res.0, res.1, res.2);
     data.push(perf_str);
 
     write_to_performance_profile(data, _path)
