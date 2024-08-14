@@ -187,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_3() {
-        let string = "<Rule> INLINE ='A'/'B';".to_string();
+        let string = "<Rule> Inline ='A'/'B';".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
         let source = Source::new(&string);

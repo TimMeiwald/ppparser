@@ -1,11 +1,12 @@
 #![allow(unused)]
 use anyhow::Result;
 use cache::*;
-use grammar_parser::grammar;
+use grammar_parser::{grammar, test_lr_expr};
 use parser_core::Context;
 use parser_core::Source;
 use publisher::*;
 use rules::Key;
+use rules::RULES_SIZE;
 use std::fs::canonicalize;
 use std::fs::read_to_string;
 use std::path::Path;
@@ -17,9 +18,9 @@ pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
     let now = Instant::now();
-    let result = grammar(&context, &source, position);
+    let result = test_lr_expr(&context, &source, position);
     let elapsed = now.elapsed();
     context.stack.borrow().print(Key(0), None);
     let only_true_tree = context.stack.borrow().clear_false();
@@ -37,6 +38,20 @@ pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
     //     //println!("{}",i[0]);
     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
     // }
+    println!("{:?} {:?}", result.0, result.1);
     assert_eq!(result, (true, src_len));
     Ok(result.0)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::parse;
+    use std::path::Path;
+
+    #[test]
+    fn test_overflows_by_default() {
+        let path = Path::new("../grammar_parser/newGrammar_test_only_dont_modify.dsl");
+        parse(path);
+    }
 }

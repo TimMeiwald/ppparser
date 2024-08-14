@@ -1,7 +1,7 @@
 DEBUG
 n = 10
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree::UnsafeTree" 59.5607ms
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree2::UnsafeTree2" 48.8275ms
-"cache::my_cache4::MyCache4" "publisher::tree2::Tree2" 49.5377ms
-"cache::my_cache4::MyCache4" "publisher::noop::NOOP" 37.3736ms
-"cache::my_cache4::MyCache4" "publisher::tree::Tree" 55.042ms
+"cache::my_cache4::MyCache4" "publisher::unsafe_tree::UnsafeTree" 57.3244ms
+"cache::my_cache4::MyCache4" "publisher::unsafe_tree2::UnsafeTree2" 53.0848ms
+"cache::my_cache4::MyCache4" "publisher::tree2::Tree2" 47.4525ms
+"cache::my_cache4::MyCache4" "publisher::noop::NOOP" 36.0447ms
+"cache::my_cache4::MyCache4" "publisher::tree::Tree" 56.7983ms

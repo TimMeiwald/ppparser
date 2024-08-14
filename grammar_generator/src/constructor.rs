@@ -900,7 +900,7 @@ mod tests {
 
     #[test]
     fn test_ordered_choice_match_range2() {
-        let string = r#"<Atom> PASSTHROUGH = [0x20..0xFF];
+        let string = r#"<Atom> = [0x20..0xFF];
         "#
         .to_string();
         let string2 = string.clone();
@@ -1005,7 +1005,7 @@ mod tests {
 
     #[test]
     fn test_inline() {
-        let string = r#"<Atom> INLINE = ['A'..'Z'];
+        let string = r#"<Atom> Inline = ['A'..'Z'];
                                 <Uses_Atom> = <Atom>;
         "#
         .to_string();

@@ -1,7 +1,7 @@
 #![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually but not tha
 
 use num_derive::FromPrimitive;
-static RULES_SIZE: usize = 52;
+pub static RULES_SIZE: u32 = 52;
 #[derive(FromPrimitive, Clone, Copy, Debug)]
 pub enum Rules {
     ASCII,

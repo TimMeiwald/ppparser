@@ -62,4 +62,6 @@
 <Semantic_Instructions> PASSTHROUGH = <Delete>/<Passthrough>/<Inline>;
 <Delete> = "DELETE";
 <Passthrough> = "PASSTHROUGH";
-<Inline> = "Inline"; #Comment#
+<Inline> = "Inline"; #Comment# 
+
+# Remember to add LR support stuff if you use this for generation#
