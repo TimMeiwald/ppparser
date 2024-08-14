@@ -72,6 +72,13 @@ impl Cache for MyCache4 {
             None
         }
     }
+    fn check_LR(&self, rule: Rules, start_position: u32) -> Option<(Option<bool>, u32, Key)> {
+        panic!("This cache requires the use of _var_name function!")
+    }
+    fn get_lr_detected(&self) -> bool {
+        return false;
+    }
+    fn set_lr_detected(&mut self, detected: bool) {}
     fn clear(&mut self) {}
     fn reinitialize(&mut self) {
         self.end_position.fill(0);

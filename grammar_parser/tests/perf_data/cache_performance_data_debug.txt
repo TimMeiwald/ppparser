@@ -1,9 +1,9 @@
 DEBUG
 n = 10
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree::UnsafeTree" 68.7552ms
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree2::UnsafeTree2" 52.5777ms
-"cache::my_cache4::MyCache4" "publisher::tree2::Tree2" 51.4007ms
-"cache::my_cache4::MyCache4" "publisher::noop::NOOP" 45.1366ms
-"cache::my_cache4::MyCache4" "publisher::tree::Tree" 57.3908ms
-"cache::deny_left_recursion_cache::DenyLeftRecursionCache" "publisher::noop::NOOP" 42.014ms
-"cache::deny_left_recursion_cache::DenyLeftRecursionCache" "publisher::tree::Tree" 59.432ms
+"cache::my_cache4::MyCache4" "publisher::unsafe_tree::UnsafeTree" 57.4629ms
+"cache::my_cache4::MyCache4" "publisher::unsafe_tree2::UnsafeTree2" 56.4672ms
+"cache::my_cache4::MyCache4" "publisher::tree2::Tree2" 49.364ms
+"cache::my_cache4::MyCache4" "publisher::noop::NOOP" 37.2589ms
+"cache::my_cache4::MyCache4" "publisher::tree::Tree" 63.0078ms
+"cache::deny_left_recursion_cache::DenyLeftRecursionCache" "publisher::noop::NOOP" 48.6844ms
+"cache::deny_left_recursion_cache::DenyLeftRecursionCache" "publisher::tree::Tree" 74.1548ms
