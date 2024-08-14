@@ -1,4 +1,3 @@
-#![allow(unused)]
 use anyhow::Result;
 use cache::*;
 use grammar_parser::{grammar, test_lr_expr};
@@ -12,13 +11,12 @@ use std::fs::read_to_string;
 use std::path::Path;
 use std::time::Instant;
 
-pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
-    let pathbuf = canonicalize(path)?;
-    let string = read_to_string(pathbuf)?;
+pub fn parse<T: Cache, S: Publisher>(src: String) -> Result<bool> {
+    let string = src;
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
+    let context = Context::<T, S>::new(src_len, RULES_SIZE);
     let now = Instant::now();
     let result = test_lr_expr(&context, &source, position);
     let elapsed = now.elapsed();
@@ -46,12 +44,25 @@ pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::parse;
+    use std::panic::catch_unwind;
     use std::path::Path;
 
+    // #[test]
+    // fn test_overflows_by_default() {
+    //     // Overflows always fails. Disable if not testing LR.
+    //     let src: String = "0-0-0-0".to_string();
+    //     let _x = catch_unwind(move || parse::<MyCache4, Tree>(src));
+    //     assert!(_x.is_err());
+    //     println!("{:?}", _x);
+    // }
+
     #[test]
-    fn test_overflows_by_default() {
-        let path = Path::new("../grammar_parser/newGrammar_test_only_dont_modify.dsl");
-        parse(path);
+    fn test_deny_left_recursion_cache() {
+        // Overflows always fails. Disable if not testing LR.
+        let src: String = "1-2-3".to_string();
+        let _x = catch_unwind(move || parse::<DenyLeftRecursionCache, Tree>(src));
+        // Should return a Left Recursion Detected error.
+        assert!(_x.is_err());
+        println!("{:?}", _x);
     }
 }

@@ -1,7 +1,9 @@
 RELEASE
 n = 1
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree::UnsafeTree" 705.1µs
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree2::UnsafeTree2" 545.7µs
-"cache::my_cache4::MyCache4" "publisher::tree2::Tree2" 299.7µs
-"cache::my_cache4::MyCache4" "publisher::noop::NOOP" 361.5µs
-"cache::my_cache4::MyCache4" "publisher::tree::Tree" 412.3µs
+"cache::my_cache4::MyCache4" "publisher::unsafe_tree::UnsafeTree" 885µs
+"cache::my_cache4::MyCache4" "publisher::unsafe_tree2::UnsafeTree2" 582µs
+"cache::my_cache4::MyCache4" "publisher::tree2::Tree2" 276.9µs
+"cache::my_cache4::MyCache4" "publisher::noop::NOOP" 410µs
+"cache::my_cache4::MyCache4" "publisher::tree::Tree" 579.1µs
+"cache::deny_left_recursion_cache::DenyLeftRecursionCache" "publisher::noop::NOOP" 132.2µs
+"cache::deny_left_recursion_cache::DenyLeftRecursionCache" "publisher::tree::Tree" 730.4µs

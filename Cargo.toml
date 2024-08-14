@@ -9,9 +9,12 @@ members = [
     "publisher",
     "rules",
     "parser",
-    "LR_Recursion_playarea",
+    "LR",
 
 ]
+
+[profile.dev]
+panic = "unwind"
 
 [profile.release]
 # strip = true  # Automatically strip symbols from the binary.

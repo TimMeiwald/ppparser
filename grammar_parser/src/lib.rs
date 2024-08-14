@@ -687,7 +687,7 @@ pub fn test_lr_num<T: Cache, S: Publisher>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _terminal(b'0');
+    let closure_1 = _var_name(Rules::Num, context, num);
     closure_1(source, position)
 }
 pub fn test_lr_expr<T: Cache, S: Publisher>(

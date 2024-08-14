@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "LR_Recursion_playarea"
+name = "LR"
 version = "0.6.0"
 dependencies = [
  "anyhow",

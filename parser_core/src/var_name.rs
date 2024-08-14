@@ -1,5 +1,7 @@
-#![allow(clippy::type_complexity)] // While complex still under development and the core of the entire program is here so complexity is
-                                   // Acceptable
+#![allow(clippy::type_complexity)]
+
+// While complex still under development and the core of the entire program is here so complexity is
+// Acceptable
 use crate::source::Source;
 use crate::Context;
 use cache::Cache;
@@ -47,6 +49,11 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
         return result;
         // Return Result
     } else {
+        {
+            // Only necessary when Cache is DenyLeftRecursionCache
+            let mut cache = context.cache.borrow_mut();
+            cache.push_deny_LR(rule, None, position, 0, curr_key);
+        }
         let result = func(context, source, position);
         {
             // Cache Val - Scoping may let the compiler optimize better. May being the operative word.

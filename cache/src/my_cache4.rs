@@ -34,6 +34,16 @@ impl Cache for MyCache4 {
     fn set_last_node(&mut self, key: Option<Key>) {
         self.last_node = key
     }
+    fn push_deny_LR(
+        &mut self,
+        rule: Rules,
+        is_true: Option<bool>,
+        start_position: u32,
+        end_position: u32,
+        reference: Key,
+    ) {
+        // Noop
+    }
 
     fn push(
         &mut self,
