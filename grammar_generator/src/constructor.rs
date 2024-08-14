@@ -213,7 +213,7 @@ impl GeneratedCode {
                     count += 1;
                     last_key = key;
                 }
-                Rules::Backslash | Rules::Whitespace => {}
+                Rules::Backslash => {}
                 _ => panic!("ordered_choice"),
             }
         }
@@ -241,7 +241,7 @@ impl GeneratedCode {
                     count += 1;
                     last_key = key;
                 }
-                Rules::Comma | Rules::Whitespace => {}
+                Rules::Comma => {}
                 _ => panic!("sequence"),
             }
         }
@@ -297,7 +297,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Question_Mark => {}
+                Rules::Question_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::Optional, Some(key), None)
@@ -320,7 +320,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Plus => {}
+                Rules::Plus => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::OneOrMore, Some(key), None)
@@ -343,7 +343,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Star => {}
+                Rules::Star => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::ZeroOrMore, Some(key), None)
@@ -367,7 +367,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Ampersand => {}
+                Rules::Ampersand => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::AndPredicate, Some(key), None);
@@ -390,7 +390,7 @@ impl GeneratedCode {
         let mut ret_key = Key(0);
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Exclamation_Mark => {}
+                Rules::Exclamation_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::NotPredicate, Some(key), None)
@@ -423,7 +423,6 @@ impl GeneratedCode {
                 Rules::Var_Name => {
                     ret_key = Self::var_name(out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::Whitespace => {}
                 Rules::OrderedChoiceMatchRange => {
                     ret_key =
                         Self::ordered_choice_match_range(out_tree, symbol_table, tree, source, *i)
@@ -549,7 +548,6 @@ impl GeneratedCode {
                         )
                     }
                 }
-                Rules::Whitespace => {}
 
                 _ => {
                     let err_msg = format!("ordered choice match range, Rule: {:?}", child_rule);

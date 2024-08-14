@@ -1,6 +1,5 @@
-#![allow(non_camel_case_types, unused_variables)]
-// Generated Code kinda annoying to deal with so w/e
-// Generated Code also, since everything passes stuff recursively that's more work for little gain.
+#[allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
+#[warn(unused_variables)] // Generated Code also, since everything passes stuff
 use cache::*;
 use parser_core::*;
 use publisher::*;
@@ -226,14 +225,12 @@ pub fn var_name<T: Cache, S: Publisher>(
 ) -> (bool, u32) {
     // Not whitespace dependent, feel free to use multiple lines for readability
     let closure_1 = _var_name(Rules::Left_Angle_Bracket, context, left_angle_bracket);
-    let closure_2 = move |source: &Source, position: u32| alphabet_lower(context, source, position);
-    //let closure_2 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
+    let closure_2 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
     let closure_3 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
     let closure_4 = _ordered_choice(&closure_2, &closure_3);
     let closure_5 = _subexpression(&closure_4);
     let closure_6 = _sequence(&closure_1, &closure_5);
-    let closure_7 = move |source: &Source, position: u32| alphabet_lower(context, source, position);
-    //let closure_7 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
+    let closure_7 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
     let closure_8 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
     let closure_9 = _ordered_choice(&closure_7, &closure_8);
     let closure_10 = _terminal(b'_');
@@ -284,10 +281,10 @@ pub fn orderedchoicematchrange<T: Cache, S: Publisher>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_1 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_2 = _terminal(b'[');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_4 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _var_name(Rules::Terminal, context, terminal);
     let closure_7 = _var_name(Rules::Integer, context, integer);
@@ -307,11 +304,11 @@ pub fn orderedchoicematchrange<T: Cache, S: Publisher>(
     let closure_21 = _ordered_choice(&closure_19, &closure_20);
     let closure_22 = _subexpression(&closure_21);
     let closure_23 = _sequence(&closure_16, &closure_22);
-    let closure_24 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_24 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_25 = _sequence(&closure_23, &closure_24);
     let closure_26 = _terminal(b']');
     let closure_27 = _sequence(&closure_25, &closure_26);
-    let closure_28 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_28 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_29 = _sequence(&closure_27, &closure_28);
     closure_29(source, position)
 }
@@ -414,7 +411,7 @@ pub fn nucleus<T: Cache, S: Publisher>(
     let closure_8 = _var_name(Rules::Var_Name, context, var_name);
     let closure_9 = _ordered_choice(&closure_7, &closure_8);
     let closure_10 = _subexpression(&closure_9);
-    let closure_11 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_11 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_12 = _sequence(&closure_10, &closure_11);
     closure_12(source, position)
 }
@@ -435,7 +432,7 @@ pub fn atom<T: Cache, S: Publisher>(
     let closure_10 = _var_name(Rules::Nucleus, context, nucleus);
     let closure_11 = _ordered_choice(&closure_9, &closure_10);
     let closure_12 = _subexpression(&closure_11);
-    let closure_13 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_13 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_14 = _sequence(&closure_12, &closure_13);
     closure_14(source, position)
 }
@@ -465,16 +462,16 @@ pub fn sequence<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Atom, context, atom);
-    let closure_2 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_2 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Comma, context, comma);
     let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_6 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_7 = _sequence(&closure_5, &closure_6);
     let closure_8 = _var_name(Rules::Atom, context, atom);
     let closure_9 = _sequence(&closure_7, &closure_8);
     let closure_10 = _var_name(Rules::Comma, context, comma);
-    let closure_11 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_11 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_12 = _sequence(&closure_10, &closure_11);
     let closure_13 = _var_name(Rules::Atom, context, atom);
     let closure_14 = _sequence(&closure_12, &closure_13);
@@ -489,16 +486,16 @@ pub fn ordered_choice<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Atom, context, atom);
-    let closure_2 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_2 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Backslash, context, backslash);
     let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_6 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_7 = _sequence(&closure_5, &closure_6);
     let closure_8 = _var_name(Rules::Atom, context, atom);
     let closure_9 = _sequence(&closure_7, &closure_8);
     let closure_10 = _var_name(Rules::Backslash, context, backslash);
-    let closure_11 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_11 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_12 = _sequence(&closure_10, &closure_11);
     let closure_13 = _var_name(Rules::Atom, context, atom);
     let closure_14 = _sequence(&closure_12, &closure_13);
@@ -513,7 +510,7 @@ pub fn one_or_more<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Nucleus, context, nucleus);
-    let closure_2 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_2 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Plus, context, plus);
     let closure_5 = _sequence(&closure_3, &closure_4);
@@ -525,7 +522,7 @@ pub fn zero_or_more<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Nucleus, context, nucleus);
-    let closure_2 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_2 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Star, context, star);
     let closure_5 = _sequence(&closure_3, &closure_4);
@@ -537,7 +534,7 @@ pub fn optional<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Nucleus, context, nucleus);
-    let closure_2 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_2 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Question_Mark, context, question_mark);
     let closure_5 = _sequence(&closure_3, &closure_4);
@@ -577,10 +574,10 @@ pub fn lhs<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Var_Name_Decl, context, var_name_decl);
-    let closure_2 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_2 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_3 = _var_name(Rules::Semantic_Instructions, context, semantic_instructions);
     let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_5 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_6 = _sequence(&closure_4, &closure_5);
     let closure_7 = _subexpression(&closure_6);
     let closure_8 = _optional(&closure_7);
@@ -593,19 +590,19 @@ pub fn rule<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::LHS, context, lhs);
-    let closure_2 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_2 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Assignment, context, assignment);
     let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_6 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_7 = _sequence(&closure_5, &closure_6);
     let closure_8 = _var_name(Rules::RHS, context, rhs);
     let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_10 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_11 = _sequence(&closure_9, &closure_10);
     let closure_12 = _var_name(Rules::End_Rule, context, end_rule);
     let closure_13 = _sequence(&closure_11, &closure_12);
-    let closure_14 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_14 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_15 = _sequence(&closure_13, &closure_14);
     let closure_16 = _var_name(Rules::Comment, context, comment);
     let closure_17 = _zero_or_more(&closure_16);
@@ -620,7 +617,7 @@ pub fn grammar<T: Cache, S: Publisher>(
     // Double up dem comments
     let closure_1 = _var_name(Rules::Rule, context, rule);
     let closure_2 = _one_or_more(&closure_1);
-    let closure_3 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_3 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_4 = _optional(&closure_3);
     let closure_5 = _sequence(&closure_2, &closure_4);
     closure_5(source, position)
@@ -630,7 +627,7 @@ pub fn comment<T: Cache, S: Publisher>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_1 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_2 = _terminal(b'#');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _terminal(b'#');
@@ -642,7 +639,7 @@ pub fn comment<T: Cache, S: Publisher>(
     let closure_10 = _sequence(&closure_3, &closure_9);
     let closure_11 = _terminal(b'#');
     let closure_12 = _sequence(&closure_10, &closure_11);
-    let closure_13 = _var_name(Rules::Whitespace, context, whitespace);
+    let closure_13 = move |source: &Source, position: u32| whitespace(context, source, position);
     let closure_14 = _sequence(&closure_12, &closure_13);
     closure_14(source, position)
 }
@@ -682,6 +679,30 @@ pub fn inline<T: Cache, S: Publisher>(
     position: u32,
 ) -> (bool, u32) {
     // Comment
-    let closure_1 = _string_terminal_opt_ascii(&[b'I', b'N', b'L', b'I', b'N', b'E']);
+    let closure_1 = _string_terminal_opt_ascii(&[b'I', b'n', b'l', b'i', b'n', b'e']);
     closure_1(source, position)
+}
+pub fn test_lr_num<T: Cache, S: Publisher>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'0');
+    closure_1(source, position)
+}
+pub fn test_lr_expr<T: Cache, S: Publisher>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    //  Should match 0-0-0-0-0-0-0-0 etc
+    let closure_1 = _var_name(Rules::test_LR_expr, context, test_lr_expr);
+    let closure_2 = _terminal(b'-');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_8 = _ordered_choice(&closure_6, &closure_7);
+    closure_8(source, position)
 }

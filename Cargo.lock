@@ -3,6 +3,18 @@
 version = 3
 
 [[package]]
+name = "LR_Recursion_playarea"
+version = "0.6.0"
+dependencies = [
+ "anyhow",
+ "cache",
+ "grammar_parser",
+ "parser_core",
+ "publisher",
+ "rules",
+]
+
+[[package]]
 name = "anstream"
 version = "0.6.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"

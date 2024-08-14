@@ -1,11 +1,11 @@
-<Alphabet_Upper> PASSTHROUGH = ['A'..'Z'];
+<Alphabet_Upper> PASSTHROUGH = ['A'..'Z']; #We all love commments#
 <Alphabet_Lower> PASSTHROUGH =['a'..'z'];
 <Num> PASSTHROUGH = [0x30..0x39];
 <NumNoZero> = [0x31..0x39];
-<HexVal>= [0x30..0x39]/[0x65..0x70];
+<HexVal>= [0x30..0x39]/[0x41..0x46];
 <Spaces> PASSTHROUGH = '\n'/'\t'/'\r'/' ';
 <Specials> PASSTHROUGH = !(<Alphabet_Upper>/<Alphabet_Lower>/<Num>/<Spaces>),[0x0..0xFF] ;
-<ASCII> INLINE = [0x00..0xFF];
+<ASCII> PASSTHROUGH = [0x00..0xFF];
 <Apostrophe> DELETE = '"';
 <QuotationMark> = ''';
 <Left_Angle_Bracket> DELETE = '<';
@@ -52,14 +52,17 @@
 <Zero_Or_More> = <Nucleus>, <Whitespace>, <Star>;
 <Optional> = <Nucleus>, <Whitespace>, <Question_Mark>;
 
-<Whitespace> DELETE = (' '/'\n'/'\r'/'\t')*;
+<Whitespace> Inline = (' '/'\n'/'\r'/'\t')*;
 <RHS> PASSTHROUGH = <Sequence>/<Ordered_Choice>/<Atom>;
 <LHS> = <Var_Name_Decl>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
 <Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;
 <Grammar> = <Rule>+, <Whitespace>?;
 #Lemme just check comments work# #Double up dem comments#
 <Comment> = <Whitespace>, '#', (!'#',<ASCII>)*, '#', <Whitespace>;
-<Semantic_Instructions> PASSTHROUGH = <Delete>/<Passthrough>/<Collect>;
+<Semantic_Instructions> PASSTHROUGH = <Delete>/<Passthrough>/<Inline>;
 <Delete> = "DELETE";
 <Passthrough> = "PASSTHROUGH";
-<Collect> = "COLLECT"; #Comment#
+<Inline> = "Inline"; #Comment#
+
+<test_LR_num> = '0';
+<test_LR_expr> = (<test_LR_expr>, '-', <test_LR_num>) / <test_LR_num>; # Should match 0-0-0-0-0-0-0-0 etc #

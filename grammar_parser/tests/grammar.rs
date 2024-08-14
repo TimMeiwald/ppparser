@@ -70,7 +70,7 @@ fn test_my_cache_4() {
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let result = grammar(&context, &source, position);
-    context.stack.borrow().print(Key(0), None);
+    //context.stack.borrow().print(Key(0), None);
     let _only_true_tree = context.stack.borrow().clear_false();
     assert_eq!(result, (true, src_len));
 }

@@ -1,7 +1,7 @@
-#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually but not that relevant right now
+#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually but not tha
 
 use num_derive::FromPrimitive;
-
+static RULES_SIZE: usize = 52;
 #[derive(FromPrimitive, Clone, Copy, Debug)]
 pub enum Rules {
     ASCII,
@@ -54,6 +54,7 @@ pub enum Rules {
     Terminal,
     Var_Name,
     Var_Name_Decl,
-    Whitespace,
     Zero_Or_More,
+    test_LR_expr, // These two rules exist solely for Left Recursion testing.
+    test_LR_num,
 }

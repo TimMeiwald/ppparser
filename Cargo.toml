@@ -9,6 +9,7 @@ members = [
     "publisher",
     "rules",
     "parser",
+    "LR_Recursion_playarea",
 
 ]
 
