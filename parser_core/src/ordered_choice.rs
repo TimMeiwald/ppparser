@@ -49,21 +49,21 @@ mod tests {
     #[test]
     fn test_ordered_choice_kernel_lhs() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _ordered_choice_kernel(&s, 0, test_func1, test_func2);
         assert_eq!(x, (true, 1));
     }
     #[test]
     fn test_ordered_choice_kernel_rhs() {
         let s = "bbb".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _ordered_choice_kernel(&s, 0, test_func1, test_func2);
         assert_eq!(x, (true, 1));
     }
     #[test]
     fn test_ordered_choice_kernel_neither() {
         let s = "ccc".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _ordered_choice_kernel(&s, 0, test_func1, test_func2);
         assert_eq!(x, (false, 0));
     }
@@ -71,7 +71,7 @@ mod tests {
     #[test]
     fn test_ordered_choice_nested() {
         let s = "ccc".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _ordered_choice(&test_func1, &test_func2);
         let y = _ordered_choice(&test_func3, &test_func2);
         let z = _ordered_choice(&x, &y);

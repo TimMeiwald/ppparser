@@ -8,7 +8,7 @@ fn test_num_false() {
     let string = "aaa".to_string();
     let src_len = string.len() as u32;
 
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
@@ -20,7 +20,7 @@ fn test_num_true() {
     let string = "511".to_string();
     let src_len = string.len() as u32;
 
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(src_len, 52);
 

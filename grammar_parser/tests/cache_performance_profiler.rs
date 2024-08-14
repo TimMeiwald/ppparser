@@ -23,7 +23,7 @@ fn write_to_performance_profile(data: Vec<String>, path: &str) {
 fn run_on_grammar<T: Cache, S: Publisher>(n: u32) -> (Duration, String, String) {
     let src = get_grammar_string();
     let src_len = src.len() as u32;
-    let source = Source::new(src);
+    let source = Source::new(&src);
     let position: u32 = 0;
     let time = Instant::now();
 

@@ -39,14 +39,14 @@ mod tests {
     #[test]
     fn test_one_or_more_kernel() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _one_or_more_kernel(&s, 0, test_func);
         assert_eq!(x, (true, 3));
     }
     #[test]
     fn test_one_or_more() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let func = _one_or_more(&test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 3));
@@ -54,7 +54,7 @@ mod tests {
     #[test]
     fn test_one_or_more_no_elements() {
         let s = "".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let func = _one_or_more(&test_func);
         let x = func(&s, 0);
         assert_eq!(x, (false, 0));
@@ -62,7 +62,7 @@ mod tests {
     #[test]
     fn test_one_or_more_one_elements() {
         let s = "a".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let func = _one_or_more(&test_func);
         let x = func(&s, 0);
         assert_eq!(x, (true, 1));

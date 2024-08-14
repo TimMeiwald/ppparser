@@ -10,7 +10,7 @@ fn test_var_name_false() {
     let string = "_this_is_not_a_valid_var_name".to_string();
     let src_len = string.len() as u32;
 
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
@@ -22,7 +22,7 @@ fn test_var_name_true() {
     let string = "<this_is_a_valid_var_name>".to_string();
     let src_len = string.len() as u32;
 
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(src_len, 52);
     let result = var_name(&context, &source, position);
@@ -36,7 +36,7 @@ fn test_var_name_true2() {
     let src_len = string.len() as u32;
     let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let result = var_name(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -49,7 +49,7 @@ fn test_var_name_false2() {
     let src_len = string.len() as u32;
     let context = Context::<MyCache4, Tree>::new(src_len, 52);
 
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let result = var_name(&context, &source, position);
     assert_eq!(result, (false, 0));

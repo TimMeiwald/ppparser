@@ -31,14 +31,14 @@ mod tests {
     #[test]
     fn test_subexpression_kernel() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _subexpression_kernel(&s, 0, test_func);
         assert_eq!(x, (true, 1));
     }
     #[test]
     fn test_subexpression() {
         let s = "baa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let func = _subexpression(&test_func);
         let x = func(&s, 0);
         assert_eq!(x, (false, 0));
@@ -46,7 +46,7 @@ mod tests {
     #[test]
     fn test_subexpression_no_elements() {
         let s = "".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let func = _subexpression(&test_func);
         let x = func(&s, 0);
         assert_eq!(x, (false, 0));
@@ -55,7 +55,7 @@ mod tests {
     #[test]
     fn test_subexpression_nested() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let func = _subexpression(&test_func);
         let func = _subexpression(&func);
         let x = func(&s, 0);

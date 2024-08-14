@@ -8,7 +8,7 @@ use rules::Rules;
 fn test_alphabet_upper_false() {
     let string = "aaa".to_string();
     let src_len = string.len();
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(src_len as u32, 52);
 
@@ -19,7 +19,7 @@ fn test_alphabet_upper_false() {
 fn test_alphabet_upper_true() {
     let string = "AAA".to_string();
     let src_len = string.len();
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(src_len as u32, 52);
 
@@ -30,7 +30,7 @@ fn test_alphabet_upper_true() {
 fn test_alphabet_upper_true_with_var_name() {
     let string = "AAA".to_string();
     let src_len = string.len();
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(src_len as u32, 52);
 

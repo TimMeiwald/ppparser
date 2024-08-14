@@ -23,7 +23,7 @@ mod tests {
     #[test]
     fn test_terminal_closure() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let c = _terminal("a".to_string().as_bytes()[0]);
         assert_eq!(c(&s, 0), (true, 1));
     }
@@ -31,7 +31,7 @@ mod tests {
     #[test]
     fn test_terminal_closure_fail() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let c = _terminal("a".to_string().as_bytes()[0]);
         assert_eq!(c(&s, 3), (false, 3));
     }

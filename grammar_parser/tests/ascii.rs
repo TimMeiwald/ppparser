@@ -6,7 +6,7 @@ use publisher::Tree;
 fn test_ascii_true() {
     let string = "aaa".to_string();
 
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(0, 52);
 
@@ -17,7 +17,7 @@ fn test_ascii_true() {
 fn test_ascii_true2() {
     let string = "~".to_string();
 
-    let source = Source::new(string);
+    let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<MyCache4, Tree>::new(0, 52);
 

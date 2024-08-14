@@ -1,7 +1,7 @@
 RELEASE
 n = 1000
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree::UnsafeTree" 359.0403ms
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree2::UnsafeTree2" 156.2588ms
-"cache::my_cache4::MyCache4" "publisher::tree2::Tree2" 161.3911ms
-"cache::my_cache4::MyCache4" "publisher::noop::NOOP" 99.7559ms
-"cache::my_cache4::MyCache4" "publisher::tree::Tree" 378.1237ms
+"cache::my_cache4::MyCache4" "publisher::unsafe_tree::UnsafeTree" 381.0457ms
+"cache::my_cache4::MyCache4" "publisher::unsafe_tree2::UnsafeTree2" 163.6835ms
+"cache::my_cache4::MyCache4" "publisher::tree2::Tree2" 172.9915ms
+"cache::my_cache4::MyCache4" "publisher::noop::NOOP" 79.692ms
+"cache::my_cache4::MyCache4" "publisher::tree::Tree" 374.0853ms

@@ -683,7 +683,7 @@ mod tests {
         let string = "<Rule>='A'/'B'/'C'/'D';   #   Ein Kommentar   #  ".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -712,7 +712,7 @@ mod tests {
         let string = "<Rule>='A','B','';   #   Ein Kommentar   #  ".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -741,7 +741,7 @@ mod tests {
         let string = "<Rule>='A'/'B'/'C';   #   Ein Kommentar   #  ".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -771,7 +771,7 @@ mod tests {
         "#.to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -803,7 +803,7 @@ mod tests {
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -838,7 +838,7 @@ mod tests {
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -872,7 +872,7 @@ mod tests {
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -907,7 +907,7 @@ mod tests {
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -942,7 +942,7 @@ mod tests {
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -977,7 +977,7 @@ mod tests {
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);
@@ -1013,7 +1013,7 @@ mod tests {
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
         let context = Context::<MyCache4, Tree>::new(src_len, 52);
         let result = grammar(&context, &source, position);

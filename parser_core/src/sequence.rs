@@ -45,21 +45,21 @@ mod tests {
     #[test]
     fn test_sequence_kernel_lhs() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _sequence_kernel(&s, 0, test_func1, test_func1);
         assert_eq!(x, (true, 2));
     }
     #[test]
     fn test_sequence_kernel_rhs() {
         let s = "bbb".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _sequence_kernel(&s, 0, test_func2, test_func2);
         assert_eq!(x, (true, 2));
     }
     #[test]
     fn test_sequence_kernel_neither() {
         let s = "ccc".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _sequence_kernel(&s, 0, test_func1, test_func1);
         assert_eq!(x, (false, 0));
     }
@@ -67,7 +67,7 @@ mod tests {
     #[test]
     fn test_sequence_nested() {
         let s = "abc".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _sequence(&test_func1, &test_func2);
         let y = _sequence(&test_func3, &test_func2);
         let z = _sequence(&x, &y);

@@ -31,14 +31,14 @@ mod tests {
     #[test]
     fn test_and_predicate_kernel() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let x = _and_predicate_kernel(&s, 0, test_func);
         assert_eq!(x, (true, 0));
     }
     #[test]
     fn test_and_predicate() {
         let s = "baa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let func = _and_predicate(&test_func);
         let x = func(&s, 0);
         assert_eq!(x, (false, 0));
@@ -46,7 +46,7 @@ mod tests {
     #[test]
     fn test_and_predicate_no_elements() {
         let s = "".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let func = _and_predicate(&test_func);
         let x = func(&s, 0);
         assert_eq!(x, (false, 0));
@@ -55,7 +55,7 @@ mod tests {
     #[test]
     fn test_and_predicate_nested() {
         let s = "aaa".to_string();
-        let s = Source::new(s);
+        let s = Source::new(&s);
         let func = _and_predicate(&test_func);
         let func = _and_predicate(&func);
         let x = func(&s, 0);
