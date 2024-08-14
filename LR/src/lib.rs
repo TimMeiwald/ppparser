@@ -11,14 +11,17 @@ use std::fs::read_to_string;
 use std::path::Path;
 use std::time::Instant;
 
-pub fn parse<T: Cache, S: Publisher>(src: String) -> Result<bool> {
+pub fn parse<T: Cache, S: Publisher>(
+    src: String,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> Result<(bool, u32)> {
     let string = src;
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
     let context = Context::<T, S>::new(src_len, RULES_SIZE);
     let now = Instant::now();
-    let result = test_lr_expr(&context, &source, position);
+    let result = func(&context, &source, position);
     let elapsed = now.elapsed();
     context.stack.borrow().print(Key(0), None);
     let only_true_tree = context.stack.borrow().clear_false();
@@ -36,13 +39,13 @@ pub fn parse<T: Cache, S: Publisher>(src: String) -> Result<bool> {
     //     //println!("{}",i[0]);
     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
     // }
-    println!("{:?} {:?}", result.0, result.1);
-    assert_eq!(result, (true, src_len));
-    Ok(result.0)
+    Ok(result)
 }
 
 #[cfg(test)]
 mod tests {
+    use grammar_parser::integer;
+
     use super::*;
     use std::panic::catch_unwind;
     use std::path::Path;
@@ -57,12 +60,41 @@ mod tests {
     // }
 
     #[test]
-    fn test_deny_left_recursion_cache() {
-        // Overflows always fails. Disable if not testing LR.
+    fn test_no_recursion_deny_left_recursion_cache() {
+        // Should not fail.
         let src: String = "1-2-3".to_string();
-        let _x = catch_unwind(move || parse::<DenyLeftRecursionCache, Tree>(src));
+
+        let x = parse::<DenyLeftRecursionCache, Tree>(src, integer);
+        assert_eq!(x.unwrap(), (true, 1));
+    }
+
+    #[test]
+    fn test_recursion_deny_left_recursion_cache() {
+        // Should panic but with Left Recursion Detected Panic.
+        let src: String = "1-2-3".to_string();
+
+        let _x = catch_unwind(move || parse::<DenyLeftRecursionCache, Tree>(src, test_lr_expr));
         // Should return a Left Recursion Detected error.
         assert!(_x.is_err());
         println!("{:?}", _x);
+    }
+
+    #[test]
+    fn test_no_recursion_direct_left_recursion_cache() {
+        // Should not fail.
+        let src: String = "1-2-3".to_string();
+
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, integer);
+        assert_eq!(x.unwrap(), (true, 1));
+    }
+
+    #[test]
+    fn test_recursion_direct_left_recursion_cache() {
+        // Should panic but with Left Recursion Detected Panic.
+        let src: String = "1-2-3".to_string();
+
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, test_lr_expr);
+        // Should return a Left Recursion Detected error.
+        assert_eq!(x.unwrap(), (true, 5));
     }
 }

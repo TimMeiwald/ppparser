@@ -4,7 +4,7 @@ use crate::Cache;
 use rules::{Key, Rules};
 
 // This cache will completely flatten the cache to see if that improves performance.
-pub struct DenyLeftRecursionCache {
+pub struct DirectLeftRecursionCache {
     end_position: Vec<u32>,
     indexes: Vec<Key>,
     is_true: Vec<Option<bool>>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
@@ -12,12 +12,12 @@ pub struct DenyLeftRecursionCache {
     last_node: Option<Key>,
 }
 // TODO: Last Node should probably be in the publisher not in Cache. Irrelevant to caching per se.
-impl Cache for DenyLeftRecursionCache {
+impl Cache for DirectLeftRecursionCache {
     // Try as flat packed data structure. Since using zero to fill didn't seem to make much difference.
-    fn new(size_of_source: u32, number_of_structs: u32) -> DenyLeftRecursionCache {
+    fn new(size_of_source: u32, number_of_structs: u32) -> DirectLeftRecursionCache {
         let capacity = (size_of_source + 1) * (number_of_structs + 1);
         let capacity = capacity as usize;
-        let mut c = DenyLeftRecursionCache {
+        let mut c = DirectLeftRecursionCache {
             is_true: Vec::with_capacity(capacity),
             end_position: Vec::with_capacity(capacity),
             indexes: Vec::with_capacity(capacity),
@@ -68,6 +68,7 @@ impl Cache for DenyLeftRecursionCache {
         self.end_position[index] = end_position;
         self.indexes[index] = stack_index;
     }
+
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
         //println!("Index: {:?}, Start_Position: {:?}, Rule: {:?}", index, start_position, rule);
