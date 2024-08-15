@@ -192,11 +192,19 @@ pub fn grow_LR_Direct_Recursion<T: Cache, S: Publisher>(
     position: u32,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
+    let mut result: (bool, u32);
+    loop {
+        let p = position; // We always reset p to position to repeatedly evaluate the recursive function at the same location.
+        result = func(context, source, position);
+        break;
+    }
+
     {
+        // Reset lr detected after we get here since this should consume it all.
         let mut cache = context.cache.borrow_mut();
         cache.set_lr_detected(false);
     }
-    panic!("Got to Grow LR")
+    return result;
 }
 pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     rule: Rules,
