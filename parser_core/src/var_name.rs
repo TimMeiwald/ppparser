@@ -186,6 +186,7 @@ pub fn _var_name_kernel_deny_lr<T: Cache, S: Publisher>(
 }
 
 pub fn grow_direct_lr<T: Cache, S: Publisher>(
+    reference: Key,
     rule: Rules,
     context: &Context<T, S>,
     source: &Source,
@@ -199,6 +200,18 @@ pub fn grow_direct_lr<T: Cache, S: Publisher>(
         cached_val = cache.check_LR(rule, position);
     }
     println!("Cached Val: {:?}", cached_val);
+
+    loop {
+        let result = func(context, source, position);
+        println!("Result: {:?}", result);
+        if result.0 == false {
+            break;
+        }
+        {
+            let mut cache = context.cache.borrow_mut();
+            cache.push(rule, result.0, position, result.1, reference);
+        }
+    }
     panic!("")
 }
 
@@ -266,7 +279,7 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
             cache.push_deny_LR(rule, None, position, position, curr_key);
         }
         println!("Prior to func call");
-        let result = func(context, source, position);
+        let mut result = func(context, source, position);
 
         let lr_detected: bool;
         {
@@ -276,8 +289,14 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
             lr_detected = cache.get_lr_detected(rule);
         }
         if lr_detected {
-            grow_direct_lr(rule, context, source, position, func);
-            // Get result of value
+            result = grow_direct_lr(
+                temp_key.expect("Only root Grammar rule should have no key"),
+                rule,
+                context,
+                source,
+                position,
+                func,
+            );
         }
 
         let mut tree = context.stack.borrow_mut();

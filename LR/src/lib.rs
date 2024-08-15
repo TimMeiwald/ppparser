@@ -89,7 +89,7 @@ mod tests {
 
     #[test]
     fn test_recursion_direct_left_recursion_cache() {
-        let src: String = "1-2-3".to_string();
+        let src: String = "1-2-3-7-9   ".to_string();
         let x = parse::<DirectLeftRecursionCache, Tree>(src, test_lr_expr);
         // Not it should be 5 not 3 since it should grow the seed.
         assert_eq!(x.unwrap(), (true, 5));
