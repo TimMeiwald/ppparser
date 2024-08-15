@@ -30,7 +30,7 @@ pub fn _var_name<T: Cache, S: Publisher>(
     }
 }
 
-pub fn _var_name_allow_direct_lr<T: Cache, S: Publisher>(
+pub fn _var_name_direct_lr<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
@@ -127,9 +127,9 @@ pub fn _var_name_kernel_deny_lr<T: Cache, S: Publisher>(
     }
     // If cached val exists. We don't use cache because we need to scope borrow_mut correctly
     if cached_val.is_some() {
-        let cached_val = cached_val.unwrap();
+        let mut cached_val = cached_val.unwrap();
         if cached_val.0.is_none() {
-            return (false, cached_val.1);
+            cached_val.0 = Some(false);
         }
 
         // Cached Val at Index Key
@@ -201,6 +201,7 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     position: u32,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
+    println!("Rule: {:?}, Position: {:?}", rule, position);
     let cached_val: Option<(Option<bool>, u32, Key)>;
     let temp_key: Option<Key>;
     let curr_key: Key;
@@ -217,10 +218,12 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     // If cached val exists. We don't use cache because we need to scope borrow_mut correctly
     if cached_val.is_some() {
         let cached_val = cached_val.unwrap();
-
-        // If None then Left Recursion detected
         if cached_val.0.is_none() {
-            panic!("Left Recursion detected!");
+            let mut cache = context.cache.borrow_mut();
+            cache.set_lr_detected(true);
+            // Returning false forces a try of the subrules in expr, aka the num in the LR test expression.
+            // However we need to know that we're in LR so that we can grow the seed on the second attempt to parse.
+            return (false, cached_val.1);
         }
 
         // Cached Val at Index Key
@@ -236,7 +239,7 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
         let result = (
             cached_val
                 .0
-                .expect("Should have been diverted into Grow LR and have a result by now"),
+                .expect("By this point we should have checked for None"),
             cached_val.1,
         );
         tree.set_node_start_position(curr_key, position);
@@ -247,12 +250,13 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
         // Return Result
     } else {
         {
+            println!("No Cached Value");
             // Solely for Deny LR
             let mut cache = context.cache.borrow_mut();
-            // is_true == None determines that LR has been detected and we need to move into Grow_LR on the next pass. Which will happen in the
-            // cached component in the if statement above.
-            cache.push_deny_LR(rule, None, position, 0, curr_key);
+            println!("Pushing to Cache");
+            cache.push_deny_LR(rule, None, position, position, curr_key);
         }
+        println!("Prior to func call");
         let result = func(context, source, position);
         {
             // Cache Val - Scoping may let the compiler optimize better. May being the operative word.

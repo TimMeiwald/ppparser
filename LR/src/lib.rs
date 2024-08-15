@@ -23,8 +23,8 @@ pub fn parse<T: Cache, S: Publisher>(
     let now = Instant::now();
     let result = func(&context, &source, position);
     let elapsed = now.elapsed();
-    context.stack.borrow().print(Key(0), None);
-    let only_true_tree = context.stack.borrow().clear_false();
+    // context.stack.borrow().print(Key(0), None);
+    // let only_true_tree = context.stack.borrow().clear_false();
     let elapsed2 = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
     println!("Elapsed with Tree cleaning: {:.2?}", elapsed2);
@@ -89,11 +89,9 @@ mod tests {
 
     #[test]
     fn test_recursion_direct_left_recursion_cache() {
-        // Should panic but with Left Recursion Detected Panic.
         let src: String = "1-2-3".to_string();
-
         let x = parse::<DirectLeftRecursionCache, Tree>(src, test_lr_expr);
-        // Should return a Left Recursion Detected error.
+        // Not it should be 5 not 3 since it should grow the seed.
         assert_eq!(x.unwrap(), (true, 5));
     }
 }
