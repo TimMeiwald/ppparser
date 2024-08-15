@@ -20,7 +20,7 @@ pub fn _var_name_no_lr<T: Cache, S: Publisher>(
     }
 }
 
-pub fn _var_name<T: Cache, S: Publisher>(
+pub fn _var_name_deny_lr<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
@@ -30,7 +30,7 @@ pub fn _var_name<T: Cache, S: Publisher>(
     }
 }
 
-pub fn _var_name_direct_lr<T: Cache, S: Publisher>(
+pub fn _var_name<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
@@ -192,7 +192,11 @@ pub fn grow_LR_Direct_Recursion<T: Cache, S: Publisher>(
     position: u32,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
-    panic!("Got to growLR");
+    {
+        let mut cache = context.cache.borrow_mut();
+        cache.set_lr_detected(false);
+    }
+    panic!("Got to Grow LR")
 }
 pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     rule: Rules,
@@ -217,13 +221,16 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     }
     // If cached val exists. We don't use cache because we need to scope borrow_mut correctly
     if cached_val.is_some() {
-        let cached_val = cached_val.unwrap();
+        let mut cached_val = cached_val.unwrap();
+
         if cached_val.0.is_none() {
-            let mut cache = context.cache.borrow_mut();
-            cache.set_lr_detected(true);
-            // Returning false forces a try of the subrules in expr, aka the num in the LR test expression.
-            // However we need to know that we're in LR so that we can grow the seed on the second attempt to parse.
-            return (false, cached_val.1);
+            {
+                let mut cache = context.cache.borrow_mut();
+
+                println!("LR Detected, setting LR Detected");
+                cache.set_lr_detected(true);
+            }
+            cached_val.0 = Some(false);
         }
 
         // Cached Val at Index Key
@@ -275,6 +282,16 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
         tree.set_node_end_position(curr_key, result.1);
         tree.set_node_result(curr_key, result.0);
         tree.set_last_node(temp_key);
+        let lr_detected: bool;
+        {
+            let cache = context.cache.borrow();
+            lr_detected = cache.get_lr_detected();
+            // Since we use cache in grow Lr we need to drop scope
+        }
+        if lr_detected {
+            return grow_LR_Direct_Recursion(rule, context, source, position, func);
+        }
+
         return result;
     }
 }
