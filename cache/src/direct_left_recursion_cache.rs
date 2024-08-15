@@ -10,7 +10,7 @@ pub struct DirectLeftRecursionCache {
     is_true: Vec<Option<bool>>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
     number_of_structs: u32,
     last_node: Option<Key>,
-    lr_detected: bool,
+    lr_detected: Rules,
 }
 // TODO: Last Node should probably be in the publisher not in Cache. Irrelevant to caching per se.
 impl Cache for DirectLeftRecursionCache {
@@ -24,7 +24,7 @@ impl Cache for DirectLeftRecursionCache {
             indexes: Vec::with_capacity(capacity),
             number_of_structs,
             last_node: None,
-            lr_detected: false,
+            lr_detected: Rules::Grammar,
         };
         c.is_true.resize(capacity, Some(false));
         c.end_position.resize(capacity, 0);
@@ -62,7 +62,7 @@ impl Cache for DirectLeftRecursionCache {
         stack_index: Key,
     ) {
         println!(
-            "DenyLRCache: Rule: {:?} End Position: {:?}",
+            "DirectLRCache: Rule: {:?} End Position: {:?}",
             rule, end_position
         );
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
@@ -91,11 +91,15 @@ impl Cache for DirectLeftRecursionCache {
             None
         }
     }
-    fn set_lr_detected(&mut self, detected: bool) {
+    fn set_lr_detected(&mut self, detected: Rules) {
         self.lr_detected = detected;
     }
-    fn get_lr_detected(&self) -> bool {
-        self.lr_detected
+    fn get_lr_detected(&self, rule: Rules) -> bool {
+        if self.lr_detected == rule {
+            true
+        } else {
+            false
+        }
     }
     fn clear(&mut self) {}
     fn reinitialize(&mut self) {

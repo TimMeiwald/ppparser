@@ -185,27 +185,23 @@ pub fn _var_name_kernel_deny_lr<T: Cache, S: Publisher>(
     }
 }
 
-pub fn grow_LR_Direct_Recursion<T: Cache, S: Publisher>(
+pub fn grow_direct_lr<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
     source: &Source,
     position: u32,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
-    let mut result: (bool, u32);
-    loop {
-        let p = position; // We always reset p to position to repeatedly evaluate the recursive function at the same location.
-        result = func(context, source, position);
-        break;
-    }
-
+    println!("In Grow LR with Rule: {:?}", rule);
+    let cached_val: Option<(Option<bool>, u32, Key)>;
     {
-        // Reset lr detected after we get here since this should consume it all.
-        let mut cache = context.cache.borrow_mut();
-        cache.set_lr_detected(false);
+        let cache = context.cache.borrow();
+        cached_val = cache.check_LR(rule, position);
     }
-    return result;
+    println!("Cached Val: {:?}", cached_val);
+    panic!("")
 }
+
 pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
@@ -230,13 +226,11 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     // If cached val exists. We don't use cache because we need to scope borrow_mut correctly
     if cached_val.is_some() {
         let mut cached_val = cached_val.unwrap();
-
         if cached_val.0.is_none() {
             {
                 let mut cache = context.cache.borrow_mut();
-
-                println!("LR Detected, setting LR Detected");
-                cache.set_lr_detected(true);
+                cache.set_lr_detected(rule);
+                println!("Setting LR Detected to '{:?}'", rule);
             }
             cached_val.0 = Some(false);
         }
@@ -273,11 +267,19 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
         }
         println!("Prior to func call");
         let result = func(context, source, position);
+
+        let lr_detected: bool;
         {
             // Cache Val - Scoping may let the compiler optimize better. May being the operative word.
             let mut cache = context.cache.borrow_mut();
             cache.push(rule, result.0, position, result.1, curr_key);
+            lr_detected = cache.get_lr_detected(rule);
         }
+        if lr_detected {
+            grow_direct_lr(rule, context, source, position, func);
+            // Get result of value
+        }
+
         let mut tree = context.stack.borrow_mut();
         match temp_key {
             None => {}
@@ -290,16 +292,6 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
         tree.set_node_end_position(curr_key, result.1);
         tree.set_node_result(curr_key, result.0);
         tree.set_last_node(temp_key);
-        let lr_detected: bool;
-        {
-            let cache = context.cache.borrow();
-            lr_detected = cache.get_lr_detected();
-            // Since we use cache in grow Lr we need to drop scope
-        }
-        if lr_detected {
-            return grow_LR_Direct_Recursion(rule, context, source, position, func);
-        }
-
         return result;
     }
 }
