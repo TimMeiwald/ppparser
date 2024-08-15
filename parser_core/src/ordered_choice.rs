@@ -1,3 +1,5 @@
+use std::result;
+
 use crate::source::Source;
 
 pub fn _ordered_choice_kernel(
@@ -8,12 +10,15 @@ pub fn _ordered_choice_kernel(
 ) -> (bool, u32) {
     let temp_position = position;
     let (valid, position) = func_lhs(source, position);
+    println!("Func LHS: {:?}", (valid, position));
     if valid {
+        println!("Should end here");
         return (true, position);
     }
     let position = temp_position;
     let (valid, position) = func_rhs(source, position);
     if valid {
+        println!("Wtf why");
         (true, position)
     } else {
         (false, temp_position)

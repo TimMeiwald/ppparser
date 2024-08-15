@@ -78,7 +78,7 @@ impl Cache for MyCache4 {
     fn get_lr_detected(&self, rule: Rules) -> bool {
         panic!("");
     }
-    fn set_lr_detected(&mut self, detected: Rules) {
+    fn set_lr_detected(&mut self, detected: Option<Rules>) {
         panic!("");
     }
     fn clear(&mut self) {}

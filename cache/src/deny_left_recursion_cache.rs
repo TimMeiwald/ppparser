@@ -91,7 +91,7 @@ impl Cache for DenyLeftRecursionCache {
     fn get_lr_detected(&self, rule: Rules) -> bool {
         panic!("");
     }
-    fn set_lr_detected(&mut self, detected: Rules) {}
+    fn set_lr_detected(&mut self, detected: Option<Rules>) {}
     fn clear(&mut self) {}
     fn reinitialize(&mut self) {
         self.end_position.fill(0);

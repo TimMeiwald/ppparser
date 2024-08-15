@@ -200,19 +200,29 @@ pub fn grow_direct_lr<T: Cache, S: Publisher>(
         cached_val = cache.check_LR(rule, position);
     }
     println!("Cached Val: {:?}", cached_val);
-
+    let mut result: (bool, u32);
+    let mut second_last_result: (bool, u32) = (false, position);
+    let mut last_result: (bool, u32) = (false, position);
+    // Need to break one before the last result so that the Last Sequence can execute
     loop {
-        let result = func(context, source, position);
-        println!("Result: {:?}", result);
-        if result.0 == false {
+        result = func(context, source, position);
+        if result.0 == false || result.1 <= last_result.1 {
             break;
         }
         {
             let mut cache = context.cache.borrow_mut();
             cache.push(rule, result.0, position, result.1, reference);
         }
+        second_last_result = last_result;
+        last_result = result;
+        println!("Result: {:?}", result);
     }
-    panic!("")
+    {
+        let mut cache = context.cache.borrow_mut();
+        cache.set_lr_detected(None);
+    }
+    println!("Returning: {:?}", second_last_result);
+    return second_last_result;
 }
 
 pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
@@ -222,7 +232,7 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     position: u32,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
-    println!("Rule: {:?}, Position: {:?}", rule, position);
+    // println!("Rule: {:?}, Position: {:?}", rule, position);
     let cached_val: Option<(Option<bool>, u32, Key)>;
     let temp_key: Option<Key>;
     let curr_key: Key;
@@ -238,11 +248,12 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     }
     // If cached val exists. We don't use cache because we need to scope borrow_mut correctly
     if cached_val.is_some() {
+        println!("Entering Cached Function: {:?}", rule);
         let mut cached_val = cached_val.unwrap();
         if cached_val.0.is_none() {
             {
                 let mut cache = context.cache.borrow_mut();
-                cache.set_lr_detected(rule);
+                cache.set_lr_detected(Some(rule));
                 println!("Setting LR Detected to '{:?}'", rule);
             }
             cached_val.0 = Some(false);
@@ -268,18 +279,23 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
         tree.set_node_end_position(curr_key, result.1);
         tree.set_node_result(curr_key, result.0);
         tree.set_last_node(temp_key);
+        println!("Exiting Cached Function: {:?}", rule);
         return result;
         // Return Result
     } else {
+        println!("Entering NonCached Function: {:?}", rule);
+
         {
-            println!("No Cached Value");
+            // println!("No Cached Value");
             // Solely for Deny LR
             let mut cache = context.cache.borrow_mut();
-            println!("Pushing to Cache");
+            // println!("Pushing to Cache");
             cache.push_deny_LR(rule, None, position, position, curr_key);
         }
-        println!("Prior to func call");
+        println!("Entering, Rule: {:?}", rule);
         let mut result = func(context, source, position);
+        println!("Result: {:?}", result);
+        println!("Exiting, Rule: {:?}", rule);
 
         let lr_detected: bool;
         {
@@ -299,6 +315,10 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
             );
         }
 
+        println!(
+            "In _var_name: No Cache Rule: {:?}: Result {:?}",
+            rule, result
+        );
         let mut tree = context.stack.borrow_mut();
         match temp_key {
             None => {}
@@ -311,6 +331,10 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
         tree.set_node_end_position(curr_key, result.1);
         tree.set_node_result(curr_key, result.0);
         tree.set_last_node(temp_key);
+        println!(
+            "Exiting NonCached Function: {:?}: Result: {:?}",
+            rule, result
+        );
         return result;
     }
 }

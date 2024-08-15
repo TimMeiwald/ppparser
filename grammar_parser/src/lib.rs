@@ -704,5 +704,19 @@ pub fn test_lr_expr<T: Cache, S: Publisher>(
     let closure_6 = _subexpression(&closure_5);
     let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
     let closure_8 = _ordered_choice(&closure_6, &closure_7);
-    closure_8(source, position)
+    let result = closure_8(source, position);
+    // The 2nd half of the sequence always fails because it's already been consumed ahead of time.
+    // We need to therefore get the result from the cache instead.
+    // To handle LR we need to just get the cached value for the Rules.
+    // let f = context
+    //     .cache
+    //     .borrow_mut()
+    //     .check_LR(Rules::test_LR_expr, position)
+    //     .expect("We expect it to exist since we just did it");
+    // println!(
+    //     "test_lr_expr Response: {:?}",
+    //     (f.0.expect("Should exist"), f.1)
+    // );
+    // return (f.0.expect("Should exist"), f.1);
+    return result;
 }

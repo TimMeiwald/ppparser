@@ -19,7 +19,7 @@ pub trait Cache {
         reference: Key,
     );
     fn check_LR(&self, rule: Rules, start_position: u32) -> Option<(Option<bool>, u32, Key)>;
-    fn set_lr_detected(&mut self, detected: Rules);
+    fn set_lr_detected(&mut self, detected: Option<Rules>);
     fn get_lr_detected(&self, rule: Rules) -> bool;
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)>;
     fn clear(&mut self);
