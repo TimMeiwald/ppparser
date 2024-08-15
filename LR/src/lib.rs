@@ -96,4 +96,20 @@ mod tests {
         println!("Before assert");
         assert_eq!(x.unwrap(), (true, 11));
     }
+    #[test]
+    fn test_recursion_direct_left_recursion_cache2() {
+        let src: String = "1-2-3-7-9-   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, test_lr_expr);
+        // Not it should be 5 not 3 since it should grow the seed.
+        println!("Before assert");
+        assert_eq!(x.unwrap(), (true, 9));
+    }
+    #[test]
+    fn test_recursion_direct_left_recursion_cache3() {
+        let src: String = "1-2-3-7-9".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, test_lr_expr);
+        // Not it should be 5 not 3 since it should grow the seed.
+        println!("Before assert");
+        assert_eq!(x.unwrap(), (true, 9));
+    }
 }
