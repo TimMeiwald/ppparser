@@ -8,13 +8,46 @@ use cache::Cache;
 use publisher::Publisher;
 use rules::{Key, Rules};
 
-pub fn _var_name_kernel<T: Cache, S: Publisher>(
+// Rename to _var_name temporarily for testing.
+pub fn _var_name_no_lr<T: Cache, S: Publisher>(
+    // Temporary rename from _var_name for testing.
+    rule: Rules,
+    context: &Context<T, S>,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
+    move |source: &Source, position: u32| {
+        _var_name_kernel_no_lr(rule, context, source, position, func)
+    }
+}
+
+pub fn _var_name<T: Cache, S: Publisher>(
+    rule: Rules,
+    context: &Context<T, S>,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
+    move |source: &Source, position: u32| {
+        _var_name_kernel_deny_lr(rule, context, source, position, func)
+    }
+}
+
+pub fn _var_name_allow_direct_lr<T: Cache, S: Publisher>(
+    rule: Rules,
+    context: &Context<T, S>,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
+    move |source: &Source, position: u32| {
+        _var_name_kernel_direct_lr(rule, context, source, position, func)
+    }
+}
+
+pub fn _var_name_kernel_no_lr<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
     source: &Source,
     position: u32,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
+    // NO LR
     let cached_val: Option<(bool, u32, Key)>;
     let temp_key: Option<Key>;
     let curr_key: Key;
@@ -49,9 +82,175 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
         return result;
         // Return Result
     } else {
+        let result = func(context, source, position);
+        {
+            // Cache Val - Scoping may let the compiler optimize better. May being the operative word.
+            let mut cache = context.cache.borrow_mut();
+            cache.push(rule, result.0, position, result.1, curr_key);
+        }
+        let mut tree = context.stack.borrow_mut();
+        match temp_key {
+            None => {}
+            Some(tkey) => {
+                tree.connect(tkey, curr_key);
+            }
+        }
+        // Return Result
+        tree.set_node_start_position(curr_key, position);
+        tree.set_node_end_position(curr_key, result.1);
+        tree.set_node_result(curr_key, result.0);
+        tree.set_last_node(temp_key);
+        return result;
+    }
+}
+
+pub fn _var_name_kernel_deny_lr<T: Cache, S: Publisher>(
+    rule: Rules,
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> (bool, u32) {
+    println!("Rule: {:?}, Position: {:?}", rule, position);
+    let cached_val: Option<(Option<bool>, u32, Key)>;
+    let temp_key: Option<Key>;
+    let curr_key: Key;
+    {
+        let cache = context.cache.borrow();
+        cached_val = cache.check_LR(rule, position);
+    }
+    {
+        let mut tree = context.stack.borrow_mut();
+        temp_key = tree.last_node();
+        curr_key = tree.add_node(rule, position, 0, temp_key, false);
+        tree.set_last_node(Some(curr_key));
+    }
+    // If cached val exists. We don't use cache because we need to scope borrow_mut correctly
+    if cached_val.is_some() {
+        let cached_val = cached_val.unwrap();
+        if cached_val.0.is_none() {
+            return (false, cached_val.1);
+        }
+
+        // Cached Val at Index Key
+        let key = cached_val.2;
+        // Make cached subtree a child of parent and current node parent of subtree
+        let mut tree = context.stack.borrow_mut();
+        match temp_key {
+            None => {}
+            Some(tkey) => {
+                tree.connect(tkey, key);
+            }
+        }
+        let result = (
+            cached_val
+                .0
+                .expect("By this point we should have checked for None"),
+            cached_val.1,
+        );
+        tree.set_node_start_position(curr_key, position);
+        tree.set_node_end_position(curr_key, result.1);
+        tree.set_node_result(curr_key, result.0);
+        tree.set_last_node(temp_key);
+        return result;
+        // Return Result
+    } else {
+        {
+            println!("No Cached Value");
+            // Solely for Deny LR
+            let mut cache = context.cache.borrow_mut();
+            println!("Pushing to Cache");
+            cache.push_deny_LR(rule, None, position, position, curr_key);
+        }
+        println!("Prior to func call");
+        let result = func(context, source, position);
+        {
+            // Cache Val - Scoping may let the compiler optimize better. May being the operative word.
+            let mut cache = context.cache.borrow_mut();
+            cache.push(rule, result.0, position, result.1, curr_key);
+        }
+        let mut tree = context.stack.borrow_mut();
+        match temp_key {
+            None => {}
+            Some(tkey) => {
+                tree.connect(tkey, curr_key);
+            }
+        }
+        // Return Result
+        tree.set_node_start_position(curr_key, position);
+        tree.set_node_end_position(curr_key, result.1);
+        tree.set_node_result(curr_key, result.0);
+        tree.set_last_node(temp_key);
+        return result;
+    }
+}
+
+pub fn grow_LR_Direct_Recursion<T: Cache, S: Publisher>(
+    rule: Rules,
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> (bool, u32) {
+    panic!("Got to growLR");
+}
+pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
+    rule: Rules,
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> (bool, u32) {
+    let cached_val: Option<(Option<bool>, u32, Key)>;
+    let temp_key: Option<Key>;
+    let curr_key: Key;
+    {
+        let cache = context.cache.borrow();
+        cached_val = cache.check_LR(rule, position);
+    }
+    {
+        let mut tree = context.stack.borrow_mut();
+        temp_key = tree.last_node();
+        curr_key = tree.add_node(rule, position, 0, temp_key, false);
+        tree.set_last_node(Some(curr_key));
+    }
+    // If cached val exists. We don't use cache because we need to scope borrow_mut correctly
+    if cached_val.is_some() {
+        let cached_val = cached_val.unwrap();
+
+        // If None then Left Recursion detected
+        if cached_val.0.is_none() {
+            panic!("Left Recursion detected!");
+        }
+
+        // Cached Val at Index Key
+        let key = cached_val.2;
+        // Make cached subtree a child of parent and current node parent of subtree
+        let mut tree = context.stack.borrow_mut();
+        match temp_key {
+            None => {}
+            Some(tkey) => {
+                tree.connect(tkey, key);
+            }
+        }
+        let result = (
+            cached_val
+                .0
+                .expect("Should have been diverted into Grow LR and have a result by now"),
+            cached_val.1,
+        );
+        tree.set_node_start_position(curr_key, position);
+        tree.set_node_end_position(curr_key, result.1);
+        tree.set_node_result(curr_key, result.0);
+        tree.set_last_node(temp_key);
+        return result;
+        // Return Result
+    } else {
         {
             // Solely for Deny LR
             let mut cache = context.cache.borrow_mut();
+            // is_true == None determines that LR has been detected and we need to move into Grow_LR on the next pass. Which will happen in the
+            // cached component in the if statement above.
             cache.push_deny_LR(rule, None, position, 0, curr_key);
         }
         let result = func(context, source, position);
@@ -74,96 +273,6 @@ pub fn _var_name_kernel<T: Cache, S: Publisher>(
         tree.set_last_node(temp_key);
         return result;
     }
-}
-
-pub fn _var_name_no_LR<T: Cache, S: Publisher>(
-    // Temporary rename from _var_name for testing.
-    rule: Rules,
-    context: &Context<T, S>,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
-) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
-    move |source: &Source, position: u32| _var_name_kernel(rule, context, source, position, func)
-}
-
-pub fn grow_LR_Direct_Recursion<T: Cache, S: Publisher>(
-    rule: Rules,
-    context: &Context<T, S>,
-    source: &Source,
-    position: u32,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
-) -> (bool, u32) {
-    panic!("Got to growLR");
-}
-
-pub fn _var_name_kernel_LR<T: Cache, S: Publisher>(
-    rule: Rules,
-    context: &Context<T, S>,
-    source: &Source,
-    position: u32,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
-) -> (bool, u32) {
-    let cached_val: Option<(bool, u32, Key)>;
-    let temp_key: Option<Key>;
-    let curr_key: Key;
-    {
-        let cache = context.cache.borrow();
-        cached_val = cache.check(rule, position);
-    }
-    {
-        let mut tree = context.stack.borrow_mut();
-        temp_key = tree.last_node();
-        curr_key = tree.add_node(rule, position, 0, temp_key, false);
-        tree.set_last_node(Some(curr_key));
-    }
-    // If cached val exists. We don't use cache because we need to scope borrow_mut correctly
-    if cached_val.is_some() {
-        let cached_val = cached_val.unwrap();
-        // Cached Val at Index Key
-        let key = cached_val.2;
-        // Make cached subtree a child of parent and current node parent of subtree
-        let mut tree = context.stack.borrow_mut();
-        match temp_key {
-            None => {}
-            Some(tkey) => {
-                tree.connect(tkey, key);
-            }
-        }
-        let result = (cached_val.0, cached_val.1);
-        tree.set_node_start_position(curr_key, position);
-        tree.set_node_end_position(curr_key, result.1);
-        tree.set_node_result(curr_key, result.0);
-        tree.set_last_node(temp_key);
-        return result;
-        // Return Result
-    } else {
-        let result = func(context, source, position);
-        {
-            // Cache Val - Scoping may let the compiler optimize better. May being the operative word.
-            let mut cache = context.cache.borrow_mut();
-            cache.push(rule, result.0, position, result.1, curr_key);
-        }
-        let mut tree = context.stack.borrow_mut();
-        match temp_key {
-            None => {}
-            Some(tkey) => {
-                tree.connect(tkey, curr_key);
-            }
-        }
-        // Return Result
-        tree.set_node_start_position(curr_key, position);
-        tree.set_node_end_position(curr_key, result.1);
-        tree.set_node_result(curr_key, result.0);
-        tree.set_last_node(temp_key);
-        return result;
-    }
-}
-
-pub fn _var_name<T: Cache, S: Publisher>(
-    rule: Rules,
-    context: &Context<T, S>,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
-) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
-    move |source: &Source, position: u32| _var_name_kernel(rule, context, source, position, func)
 }
 
 #[cfg(test)]

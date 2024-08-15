@@ -69,14 +69,17 @@ impl Cache for DenyLeftRecursionCache {
         self.indexes[index] = stack_index;
     }
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
+        panic!("This cache requires the use of _var_name_deny_lr function!")
+    }
+    fn check_LR(&self, rule: Rules, start_position: u32) -> Option<(Option<bool>, u32, Key)> {
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
         //println!("Index: {:?}, Start_Position: {:?}, Rule: {:?}", index, start_position, rule);
-        let is_true: bool = match self.is_true[index] {
-            None => panic!("Left Recursion detected"),
-            Some(value) => value,
-        };
+        let is_true: Option<bool> = self.is_true[index];
         let end_position: u32 = self.end_position[index];
         let indexed: Key = self.indexes[index];
+        if is_true.is_none() {
+            return Some((is_true, end_position, indexed));
+        }
         if end_position != 0 {
             // Result is returned to callee to unwrap
             Some((is_true, end_position, indexed))
@@ -84,9 +87,6 @@ impl Cache for DenyLeftRecursionCache {
             // Tells callee to simply run the actual code instead of using cached value since one does not exist.
             None
         }
-    }
-    fn check_LR(&self, rule: Rules, start_position: u32) -> Option<(Option<bool>, u32, Key)> {
-        panic!("This cache requires the use of _var_name function!")
     }
     fn get_lr_detected(&self) -> bool {
         false

@@ -70,13 +70,12 @@ mod tests {
 
     #[test]
     fn test_recursion_deny_left_recursion_cache() {
-        // Should panic but with Left Recursion Detected Panic.
         let src: String = "1-2-3".to_string();
 
-        let _x = catch_unwind(move || parse::<DenyLeftRecursionCache, Tree>(src, test_lr_expr));
-        // Should return a Left Recursion Detected error.
-        assert!(_x.is_err());
-        println!("{:?}", _x);
+        let x = parse::<DenyLeftRecursionCache, Tree>(src, test_lr_expr)
+            .expect("Should succeed on fallback Num but not on full expr");
+        assert_eq!(x, (true, 3));
+        println!("{:?}", x);
     }
 
     #[test]

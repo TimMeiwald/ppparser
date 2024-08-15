@@ -79,7 +79,7 @@ impl Cache for DirectLeftRecursionCache {
         //println!("Index: {:?}, Start_Position: {:?}, Rule: {:?}", index, start_position, rule);
         let is_true: Option<bool> = match self.is_true[index] {
             None => {
-                println!("LR Detected");
+                println!("DirectLeftRecursion: LR Detected");
                 self.is_true[index]
             }
             Some(value) => Some(value),
