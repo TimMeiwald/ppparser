@@ -204,7 +204,20 @@ pub fn grow_direct_lr<T: Cache, S: Publisher>(
     let mut last_result: (bool, u32) = (false, position);
     // Need to break one before the last result so that the Last Sequence can execute
     println!("Reference: {:?}", reference);
+    let mut temp_key: Option<Key>;
+    let mut curr_key: Key;
+    {
+        let mut tree = context.stack.borrow_mut();
+        tree.set_last_node(Some(reference));
+    }
+
     loop {
+        {
+            let mut tree = context.stack.borrow_mut();
+            temp_key = tree.last_node();
+            curr_key = tree.add_node(rule, position, 0, temp_key, false);
+            tree.set_last_node(Some(curr_key));
+        }
         result = func(context, source, position);
         if result.0 == false || result.1 <= last_result.1 {
             break;
@@ -215,6 +228,20 @@ pub fn grow_direct_lr<T: Cache, S: Publisher>(
         }
         last_result = result;
         println!("Result: {:?}", result);
+        {
+            let mut tree = context.stack.borrow_mut();
+            match temp_key {
+                None => {}
+                Some(tkey) => {
+                    tree.connect(tkey, curr_key);
+                }
+            }
+            // Return Result
+            tree.set_node_start_position(curr_key, position);
+            tree.set_node_end_position(curr_key, result.1);
+            tree.set_node_result(curr_key, result.0);
+            tree.set_last_node(Some(curr_key));
+        }
     }
 
     {
@@ -235,8 +262,8 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
 ) -> (bool, u32) {
     // println!("Rule: {:?}, Position: {:?}", rule, position);
     let cached_val: Option<(Option<bool>, u32, Key)>;
-    let mut temp_key: Option<Key>;
-    let mut curr_key: Key;
+    let temp_key: Option<Key>;
+    let curr_key: Key;
     {
         let cache = context.cache.borrow();
         cached_val = cache.check_LR(rule, position);
@@ -258,7 +285,6 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
                 // println!("Setting LR Detected to '{:?}'", rule);
             }
             cached_val.0 = Some(false);
-            return (false, 0);
         }
 
         // Make cached subtree a child of parent and current node parent of subtree
@@ -266,10 +292,7 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
         match temp_key {
             None => {}
             Some(tkey) => {
-                // To guard against any loops
-                if tkey != curr_key {
-                    tree.connect(tkey, curr_key);
-                }
+                tree.connect(tkey, curr_key);
             }
         }
         let result = (
@@ -308,9 +331,7 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
             lr_detected = cache.get_lr_detected(rule);
         }
         if lr_detected {
-            let res = grow_direct_lr(curr_key, rule, context, source, position, func);
-            result.0 = res.0;
-            result.1 = res.1;
+            result = grow_direct_lr(curr_key, rule, context, source, position, func);
         }
 
         // println!(
@@ -321,10 +342,7 @@ pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
         match temp_key {
             None => {}
             Some(tkey) => {
-                // To guard against any loops.
-                if tkey != curr_key {
-                    tree.connect(tkey, curr_key);
-                }
+                tree.connect(tkey, curr_key);
             }
         }
         // Return Result

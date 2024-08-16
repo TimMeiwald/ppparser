@@ -28,7 +28,7 @@ pub fn parse<T: Cache, S: Publisher>(
     let result = result(&source, 0);
     println!("Parse function Result: {:?}", result);
     let elapsed = now.elapsed();
-    context.stack.borrow().print(Key(0), Some(true));
+    context.stack.borrow().print(Key(0), None);
     // let only_true_tree = context.stack.borrow().clear_false();
     let elapsed2 = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
@@ -96,7 +96,7 @@ mod tests {
 
     #[test]
     fn test_recursion_direct_left_recursion_cache() {
-        let src: String = "1-2-3-7-9-10   ".to_string();
+        let src: String = "1-2-3-7-9-1   ".to_string();
         let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
         // Not it should be 5 not 3 since it should grow the seed.
         println!("Before assert");
