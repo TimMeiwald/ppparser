@@ -24,7 +24,7 @@ pub fn parse<T: Cache, S: Publisher>(
     let result = func(&context, &source, position);
     println!("Parse function Result: {:?}", result);
     let elapsed = now.elapsed();
-    //context.stack.borrow().print(Key(0), None);
+    context.stack.borrow().print(Key(0), Some(true));
     // let only_true_tree = context.stack.borrow().clear_false();
     let elapsed2 = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);

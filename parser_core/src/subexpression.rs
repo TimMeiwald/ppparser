@@ -7,7 +7,7 @@ pub fn _subexpression_kernel(
 ) -> (bool, u32) {
     let temp_position = position;
     let (valid, position) = func(source, temp_position);
-    println!("Subexpression: {:?}", (valid, position));
+    // println!("Subexpression: {:?}", (valid, position));
     if !valid {
         return (false, temp_position);
     }
