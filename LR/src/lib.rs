@@ -3,16 +3,19 @@ use cache::*;
 use grammar_parser::{grammar, test_lr_expr};
 use parser_core::Context;
 use parser_core::Source;
+use parser_core::_var_name;
 use publisher::*;
 use rules::Key;
+use rules::Rules;
 use rules::RULES_SIZE;
 use std::fs::canonicalize;
 use std::fs::read_to_string;
 use std::path::Path;
+use std::result;
 use std::time::Instant;
-
 pub fn parse<T: Cache, S: Publisher>(
     src: String,
+    rule: Rules,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
 ) -> Result<(bool, u32)> {
     let string = src;
@@ -21,7 +24,8 @@ pub fn parse<T: Cache, S: Publisher>(
     let position: u32 = 0;
     let context = Context::<T, S>::new(src_len, RULES_SIZE);
     let now = Instant::now();
-    let result = func(&context, &source, position);
+    let result = _var_name(rule, &context, func);
+    let result = result(&source, 0);
     println!("Parse function Result: {:?}", result);
     let elapsed = now.elapsed();
     context.stack.borrow().print(Key(0), Some(true));
@@ -45,7 +49,8 @@ pub fn parse<T: Cache, S: Publisher>(
 
 #[cfg(test)]
 mod tests {
-    use grammar_parser::integer;
+    use grammar_parser::{integer, num};
+    use parser_core::_var_name;
 
     use super::*;
     use std::panic::catch_unwind;
@@ -65,7 +70,8 @@ mod tests {
         // Should not fail.
         let src: String = "1-2-3".to_string();
 
-        let x = parse::<DenyLeftRecursionCache, Tree>(src, integer);
+        let x: result::Result<(bool, u32), anyhow::Error> =
+            parse::<DenyLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
         assert_eq!(x.unwrap(), (true, 1));
     }
 
@@ -73,8 +79,8 @@ mod tests {
     fn test_recursion_deny_left_recursion_cache() {
         let src: String = "1-2-3".to_string();
 
-        let x = parse::<DenyLeftRecursionCache, Tree>(src, test_lr_expr)
-            .expect("Should succeed on fallback Num but not on full expr");
+        let x = parse::<DenyLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr)
+            .expect("Should succeed");
         assert_eq!(x, (true, 3));
         println!("{:?}", x);
     }
@@ -84,14 +90,14 @@ mod tests {
         // Should not fail.
         let src: String = "1-2-3".to_string();
 
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, integer);
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, num);
         assert_eq!(x.unwrap(), (true, 1));
     }
 
     #[test]
     fn test_recursion_direct_left_recursion_cache() {
         let src: String = "1-2-3-7-9-10   ".to_string();
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, test_lr_expr);
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
         // Not it should be 5 not 3 since it should grow the seed.
         println!("Before assert");
         assert_eq!(x.unwrap(), (true, 11));
@@ -99,7 +105,7 @@ mod tests {
     #[test]
     fn test_recursion_direct_left_recursion_cache2() {
         let src: String = "1-2-3-7-9-   ".to_string();
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, test_lr_expr);
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
         // Not it should be 5 not 3 since it should grow the seed.
         println!("Before assert");
         assert_eq!(x.unwrap(), (true, 9));
@@ -107,7 +113,7 @@ mod tests {
     #[test]
     fn test_recursion_direct_left_recursion_cache3() {
         let src: String = "1-2-3-7-9".to_string();
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, test_lr_expr);
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
         // Not it should be 5 not 3 since it should grow the seed.
         println!("Before assert");
         assert_eq!(x.unwrap(), (true, 9));

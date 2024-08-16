@@ -67,5 +67,4 @@
 <test_LR_num> = <Num>;
 <test_LR_expr> = (<test_LR_expr>, '-', <test_LR_num>) / <test_LR_num>; # Should match 0-0-0-0-0-0-0-0 etc #
 
-<Minus> = "-";
-<numerical_expression_to_test_tree> = <maths_expr>;
+

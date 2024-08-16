@@ -201,22 +201,10 @@ pub fn grow_direct_lr<T: Cache, S: Publisher>(
     }
     println!("Cached Val: {:?}", cached_val);
     let mut result: (bool, u32);
-    let mut second_last_result: (bool, u32) = (false, position);
     let mut last_result: (bool, u32) = (false, position);
     // Need to break one before the last result so that the Last Sequence can execute
-    let mut temp_key: Option<Key> = Some(reference);
-    {
-        let mut tree = context.stack.borrow_mut();
-        tree.set_last_node(temp_key);
-    }
-    let mut curr_key: Key;
+    println!("Reference: {:?}", reference);
     loop {
-        {
-            let mut tree = context.stack.borrow_mut();
-            temp_key = tree.last_node();
-            curr_key = tree.add_node(rule, position, 0, temp_key, false);
-            tree.set_last_node(Some(curr_key));
-        }
         result = func(context, source, position);
         if result.0 == false || result.1 <= last_result.1 {
             break;
@@ -225,39 +213,8 @@ pub fn grow_direct_lr<T: Cache, S: Publisher>(
             let mut cache = context.cache.borrow_mut();
             cache.push(rule, result.0, position, result.1, reference);
         }
-        second_last_result = last_result;
         last_result = result;
         println!("Result: {:?}", result);
-
-        {
-            // Make cached subtree a child of parent and current node parent of subtree
-            let mut tree = context.stack.borrow_mut();
-            match temp_key {
-                None => {}
-                Some(tkey) => {
-                    // To guard against any loops
-                    if tkey != curr_key {
-                        tree.connect(tkey, curr_key);
-                    }
-                }
-            }
-            let result = (second_last_result.0, second_last_result.1);
-            tree.set_node_start_position(curr_key, position);
-            tree.set_node_end_position(curr_key, result.1);
-            tree.set_node_result(curr_key, result.0);
-            tree.set_last_node(temp_key);
-        }
-    }
-
-    {
-        // Make cached subtree a child of parent and current node parent of subtree
-        let mut tree = context.stack.borrow_mut();
-        tree.connect(reference, curr_key);
-        let result = (last_result.0, last_result.1);
-        tree.set_node_start_position(curr_key, position);
-        tree.set_node_end_position(curr_key, result.1);
-        tree.set_node_result(curr_key, result.0);
-        tree.set_last_node(temp_key);
     }
 
     {
@@ -265,8 +222,8 @@ pub fn grow_direct_lr<T: Cache, S: Publisher>(
         cache.set_lr_detected(None);
     }
 
-    println!("Returning: {:?}", second_last_result);
-    return (second_last_result.0, second_last_result.1);
+    println!("Returning: {:?}", last_result);
+    return (last_result.0, last_result.1);
 }
 
 pub fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
