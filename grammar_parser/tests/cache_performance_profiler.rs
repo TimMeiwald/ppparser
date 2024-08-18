@@ -3,6 +3,7 @@ use cache::{Cache, DenyLeftRecursionCache, MyCache4};
 use grammar_parser::grammar;
 use parser_core::{Context, Source};
 use publisher::{Publisher, Tree, Tree2, UnsafeTree, UnsafeTree2, NOOP};
+use rules::RULES_SIZE;
 use std::any::type_name;
 use std::fs::canonicalize;
 use std::fs::{read_to_string, write};
@@ -29,7 +30,7 @@ fn run_on_grammar<T: Cache, S: Publisher>(n: u32) -> (Duration, String, String) 
 
     // Context get's created once because some caches can reuse context and so amortize the initial
     // Memory allocations.
-    let context = Context::<T, S>::new(src_len, 52);
+    let context = Context::<T, S>::new(src_len, RULES_SIZE);
     for _i in 0..n {
         //let parse_time = Instant::now();
         let (bol, _position) = grammar(&context, &source, position);

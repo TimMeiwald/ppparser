@@ -2,6 +2,7 @@ use cache::MyCache4;
 use grammar_parser::*;
 use parser_core::Source;
 use publisher::Tree;
+use rules::RULES_SIZE;
 
 #[test]
 fn test_rule_true() {
@@ -9,7 +10,7 @@ fn test_rule_true() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -21,7 +22,7 @@ fn test_rule_true2() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -35,7 +36,7 @@ fn test_rule_true40() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -47,7 +48,7 @@ fn test_rule_true45() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -59,7 +60,7 @@ fn test_rule_true3() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -71,7 +72,7 @@ fn test_rule_true25() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -83,7 +84,7 @@ fn test_rule_true101() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -97,7 +98,7 @@ fn test_rule_true4() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -111,7 +112,7 @@ fn test_rule_true5() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -124,7 +125,7 @@ fn test_rule_true6() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));
@@ -135,7 +136,7 @@ fn test_rule_true7() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = rule(&context, &source, position);
     assert_eq!(result, (true, src_len));

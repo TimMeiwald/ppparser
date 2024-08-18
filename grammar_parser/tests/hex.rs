@@ -4,6 +4,7 @@ use parser_core::Source;
 use publisher::Publisher;
 use publisher::Tree;
 use rules::Key;
+use rules::RULES_SIZE;
 
 #[test]
 fn test_hex() {
@@ -12,7 +13,7 @@ fn test_hex() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = hex(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
@@ -26,7 +27,7 @@ fn test_hex2() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = hex(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
@@ -40,7 +41,7 @@ fn test_hex3() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = hex(&context, &source, position);
     context.stack.borrow().print(Key(0), None);

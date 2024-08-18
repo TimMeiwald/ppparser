@@ -4,7 +4,7 @@ use parser_core::Source;
 use publisher::Publisher;
 use publisher::Tree;
 use rules::Key;
-
+use rules::RULES_SIZE;
 #[test]
 fn test_terminal_false() {
     let string = "'a".to_string();
@@ -12,7 +12,7 @@ fn test_terminal_false() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = terminal(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
@@ -26,7 +26,7 @@ fn test_terminal_true() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = terminal(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
@@ -39,7 +39,7 @@ fn test_terminal_true1() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
@@ -51,7 +51,7 @@ fn test_terminal_true2() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
@@ -63,7 +63,7 @@ fn test_terminal_true3() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));
@@ -76,7 +76,7 @@ fn test_terminal_true4() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = terminal(&context, &source, position);
     assert_eq!(result, (true, 3));

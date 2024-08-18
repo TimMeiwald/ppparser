@@ -124,8 +124,10 @@ mod tests {
     use parser_core::Context;
     use parser_core::Source;
     use publisher::Tree;
+    use rules::RULES_SIZE;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
+
     #[test]
     fn test() {
         println!("{:?}", env::current_dir().unwrap());
@@ -136,7 +138,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -164,7 +166,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -192,7 +194,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {

@@ -4,6 +4,8 @@ use parser_core::Source;
 use publisher::Publisher;
 use publisher::Tree;
 use rules::Key;
+use rules::RULES_SIZE;
+
 #[test]
 fn test_atom_true() {
     let string = "'A'/\"B\"/\"C\"/\"D\"/\"E\"/\"F\"/\"G\"/\"H\"/\"I\"/\"J\"/\"K\"/\"L\"/\"M\"/\"N\"/\"O\"/\"P\"/\"Q\"/\"R\"/\"S\"/\"T\"/\"U\"/\"V\"/\"W\"/\"X\"/\"Y\"/\"Z\"".to_string();
@@ -11,7 +13,7 @@ fn test_atom_true() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = atom(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
@@ -25,7 +27,7 @@ fn test_atom_char() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = atom(&context, &source, position);
     context.stack.borrow().print(Key(0), Some(true));
@@ -39,7 +41,7 @@ fn test_atom_string_term() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = atom(&context, &source, position);
     context.stack.borrow().print(Key(0), Some(true));
@@ -53,7 +55,7 @@ fn test_atom_string_termfalse() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = atom(&context, &source, position);
     context.stack.borrow().print(Key(0), Some(true));

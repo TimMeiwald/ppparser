@@ -4,6 +4,7 @@ use parser_core::Source;
 use publisher::Publisher;
 use publisher::Tree;
 use rules::Key;
+use rules::RULES_SIZE;
 
 #[test]
 fn test_var_name_false() {
@@ -12,7 +13,7 @@ fn test_var_name_false() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let result = var_name(&context, &source, position);
     assert_eq!(result, (false, 0));
@@ -24,7 +25,7 @@ fn test_var_name_true() {
 
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
     let result = var_name(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
     assert_eq!(result, (true, 26));
@@ -34,7 +35,7 @@ fn test_var_name_true2() {
     let string = "<Alphabet_Upper>".to_string();
 
     let src_len = string.len() as u32;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let source = Source::new(&string);
     let position: u32 = 0;
@@ -47,7 +48,7 @@ fn test_var_name_false2() {
     let string = " ".to_string();
 
     let src_len = string.len() as u32;
-    let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
 
     let source = Source::new(&string);
     let position: u32 = 0;

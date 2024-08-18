@@ -29,4 +29,4 @@
 <TempRule> = <LeafNode>;
 <OneOf> = <Whitespace>, "(", "o", "n", "e", " ", "o", "f", ")", " "*, "\r"?, "\n", <Whitespace>, (<TempRule>, !":", <Whitespace>)+;
 <VarExpression> = <Whitespace>, <VarDecl>, (<OneOf>/<Expression>), <Whitespace>;
-<Grammar> = <VarExpression>+;
+<Grammar> = <VarExpression>+; #This grammar specifies parser necessary to read Java Grammar definition to then generate a parser.#
