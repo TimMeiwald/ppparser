@@ -49,10 +49,10 @@ pub fn parse<T: Cache, S: Publisher>(
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use grammar_parser::test_indirect_lr_expr;
     use grammar_parser::{integer, num};
     use parser_core::_var_name;
-
-    use super::*;
     use std::panic::catch_unwind;
     use std::path::Path;
 
@@ -117,5 +117,27 @@ mod tests {
         // Not it should be 5 not 3 since it should grow the seed.
         println!("Before assert");
         assert_eq!(x.unwrap(), (true, 9));
+    }
+
+    #[test]
+    fn test_no_recursion_indirect_left_recursion_cache() {
+        // Should not fail.
+        let src: String = "1-2-3".to_string();
+
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, num);
+        assert_eq!(x.unwrap(), (true, 1));
+    }
+
+    #[test]
+    fn test_recursion_indirect_left_recursion_cache() {
+        let src: String = "1-2-3-7-9-1   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(
+            src,
+            Rules::test_LR_expr,
+            test_indirect_lr_expr,
+        );
+        // Not it should be 5 not 3 since it should grow the seed.
+        println!("Before assert");
+        assert_eq!(x.unwrap(), (true, 11));
     }
 }
