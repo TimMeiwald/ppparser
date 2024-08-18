@@ -67,4 +67,5 @@
 <test_LR_num> = <Num>;
 <test_LR_expr> = (<test_LR_expr>, '-', <test_LR_num>) / <test_LR_num>; # Should match 0-0-0-0-0-0-0-0 etc #
 
-
+<test_indirect_LR_num> = <test_indirect_LR_expr>;
+<test_indirect_LR_expr> = (<test_indirect_LR_num>, '-', <test_LR_num>) / <test_LR_num>; # Should match 0-0-0-0-0-0-0-0 etc #

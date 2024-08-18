@@ -633,6 +633,7 @@ impl GeneratedCode {
 mod tests {
     use super::*;
     use crate::count_lines;
+    use cache::DirectLeftRecursionCache;
     use cache::MyCache4;
     use grammar_parser::grammar;
     use parser_core::Context;

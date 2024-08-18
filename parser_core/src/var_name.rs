@@ -9,7 +9,7 @@ use publisher::Publisher;
 use rules::{Key, Rules};
 
 // Rename to _var_name temporarily for testing.
-pub fn _var_name_no_lr<T: Cache, S: Publisher>(
+pub fn _var_name<T: Cache, S: Publisher>(
     // Temporary rename from _var_name for testing.
     rule: Rules,
     context: &Context<T, S>,
@@ -30,7 +30,7 @@ pub fn _var_name_deny_lr<T: Cache, S: Publisher>(
     }
 }
 
-pub fn _var_name<T: Cache, S: Publisher>(
+pub fn _var_name_direct_lr<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),

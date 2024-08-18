@@ -719,4 +719,29 @@ pub fn test_lr_expr<T: Cache, S: Publisher>(
     // );
     // return (f.0.expect("Should exist"), f.1);
     return result;
+
+    pub fn test_indirect_lr_num<T: Cache, S: Publisher>(
+        context: &Context<T, S>,
+        source: &Source,
+        position: u32,
+    ) -> (bool, u32) {
+        let closure_1 = _var_name(Rules::test_indirect_LR_expr, context, test_indirect_lr_expr);
+        closure_1(source, position)
+    }
+    pub fn test_indirect_lr_expr<T: Cache, S: Publisher>(
+        context: &Context<T, S>,
+        source: &Source,
+        position: u32,
+    ) -> (bool, u32) {
+        //  Should match 0-0-0-0-0-0-0-0 etc
+        let closure_1 = _var_name(Rules::test_indirect_LR_num, context, test_indirect_lr_num);
+        let closure_2 = _terminal(b'-');
+        let closure_3 = _sequence(&closure_1, &closure_2);
+        let closure_4 = _var_name(Rules::test_LR_num, context, test_lr_num);
+        let closure_5 = _sequence(&closure_3, &closure_4);
+        let closure_6 = _subexpression(&closure_5);
+        let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
+        let closure_8 = _ordered_choice(&closure_6, &closure_7);
+        closure_8(source, position)
+    }
 }
