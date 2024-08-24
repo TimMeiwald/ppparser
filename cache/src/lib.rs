@@ -15,7 +15,7 @@ mod direct_left_recursion_cache;
 // pub use btreemap_cache::BTreeCache;
 // pub use deny_left_recursion_cache::DenyLeftRecursionCache;
 pub use direct_left_recursion_cache::DirectLeftRecursionCache;
-pub use direct_left_recursion_cache::{MemoEntry, AST};
+pub use direct_left_recursion_cache::{ASTOrLR, MemoEntry, AST, LR};
 // pub use indirect_left_recursion_cache::Head;
 // pub use indirect_left_recursion_cache::IndirectLeftRecursionCache;
 // pub use my_cache1::MyCache1;

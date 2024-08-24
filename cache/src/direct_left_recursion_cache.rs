@@ -7,7 +7,21 @@ use rules::{Key, Rules};
 pub enum AST {
     FAIL,
     SUCCESS(Key),
-    LR(bool),
+    IGNORE,
+}
+
+#[derive(Clone, Copy)]
+pub struct LR {
+    detected: bool,
+}
+impl LR {
+    pub fn new(detected: bool) -> Self {
+        LR { detected }
+    }
+}
+pub enum ASTOrLR {
+    LR(LR),
+    AST(AST),
 }
 
 #[derive(Debug)]
@@ -33,7 +47,7 @@ pub struct DirectLeftRecursionCache {
     is_fail: Vec<bool>,
     number_of_structs: u32,
     last_node: Option<Key>,
-    lr_detected: Vec<bool>,
+    lr_detected: Vec<LR>,
 }
 // TODO: Last Node should probably be in the publisher not in Cache. Irrelevant to caching per se.
 impl Cache for DirectLeftRecursionCache {
@@ -54,7 +68,7 @@ impl Cache for DirectLeftRecursionCache {
         c.end_position.resize(capacity, 0);
         c.indexes.resize(capacity, Key(u32::MAX));
         c.is_fail.resize(capacity, false);
-        c.lr_detected.resize(capacity, false);
+        c.lr_detected.resize(capacity, LR::new(false));
         c
         // for every arg cache in c set size to <number_of_structs>
     }
@@ -64,13 +78,23 @@ impl Cache for DirectLeftRecursionCache {
     fn set_last_node(&mut self, key: Option<Key>) {
         self.last_node = key
     }
-    fn set_lr_detected(&mut self, rule: Rules, start_position: u32, detected: bool) {
+    fn set_lr_detected(&mut self, rule: Rules, start_position: u32, detected: LR) {
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
         self.lr_detected[index] = detected;
     }
-    fn get_lr_detected(&self, rule: Rules, start_position: u32) -> bool {
+    fn get_lr_detected(&self, rule: Rules, start_position: u32) -> LR {
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
         self.lr_detected[index]
+    }
+
+    fn get_is_fail(&self, rule: Rules, start_position: u32) -> bool {
+        let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
+        self.is_fail[index]
+    }
+
+    fn set_is_fail(&mut self, rule: Rules, start_position: u32, is_fail: bool) {
+        let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
+        self.is_fail[index] = is_fail;
     }
 
     fn push(
@@ -79,19 +103,23 @@ impl Cache for DirectLeftRecursionCache {
         is_true: bool,
         start_position: u32,
         end_position: u32,
-        reference: AST,
+        reference: ASTOrLR,
     ) {
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
         self.is_true[index] = is_true;
         self.end_position[index] = end_position;
+
         match reference {
-            AST::FAIL => self.is_fail[index] = true,
-            AST::SUCCESS(key) => {
-                self.is_fail[index] = false;
-                self.indexes[index] = key;
-            }
-            AST::LR(is_left_recursion) => {
-                self.lr_detected[index] = is_left_recursion;
+            ASTOrLR::AST(ast) => match ast {
+                AST::FAIL => self.is_fail[index] = true,
+                AST::SUCCESS(key) => {
+                    self.is_fail[index] = false;
+                    self.indexes[index] = key;
+                }
+                AST::IGNORE => panic!("Should never occur I think albeit not sure!"),
+            },
+            ASTOrLR::LR(lr) => {
+                self.lr_detected[index] = lr;
             }
         }
     }

@@ -16,8 +16,8 @@ use std::time::Instant;
 pub fn parse<T: Cache, S: Publisher>(
     src: String,
     rule: Rules,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
-) -> Result<(bool, u32)> {
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
+) -> Result<(bool, u32, AST)> {
     let string = src;
     let src_len = string.len() as u32;
     let source = Source::new(&string);
@@ -90,30 +90,33 @@ mod tests {
         // Should not fail.
         let src: String = "1-2-3".to_string();
 
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::Num, num);
-        assert_eq!(x.unwrap(), (true, 1));
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::Num, num).unwrap();
+        assert_eq!((x.0, x.1), (true, 1));
     }
 
     #[test]
     fn test_recursion_direct_left_recursion_cache() {
         let src: String = "1-2-3-7-9-1   ".to_string();
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr)
+            .unwrap();
         println!("Before assert");
-        assert_eq!(x.unwrap(), (true, 11));
+        assert_eq!((x.0, x.1), (true, 11));
     }
     #[test]
     fn test_recursion_direct_left_recursion_cache2() {
         let src: String = "1-2-3-7-9-   ".to_string();
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr)
+            .unwrap();
         println!("Before assert");
-        assert_eq!(x.unwrap(), (true, 9));
+        assert_eq!((x.0, x.1), (true, 9));
     }
     #[test]
     fn test_recursion_direct_left_recursion_cache3() {
         let src: String = "1-2-3-7-9".to_string();
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr)
+            .unwrap();
         println!("Before assert");
-        assert_eq!(x.unwrap(), (true, 9));
+        assert_eq!((x.0, x.1), (true, 9));
     }
 
     // #[test]
