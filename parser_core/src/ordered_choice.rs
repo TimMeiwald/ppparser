@@ -13,7 +13,7 @@ pub fn _ordered_choice_kernel(
     // println!("Func LHS: {:?}", (valid, position));
     if valid {
         // println!("Should end here");
-        return (true, position, ast);
+        return (true, position, AST::IGNORE);
     }
     let position = temp_position;
     let (valid, position, ast) = func_rhs(source, position);
@@ -21,7 +21,7 @@ pub fn _ordered_choice_kernel(
         // println!("Wtf why");
         (true, position, ast)
     } else {
-        (false, temp_position, ast)
+        (false, temp_position, AST::FAIL)
     }
 }
 

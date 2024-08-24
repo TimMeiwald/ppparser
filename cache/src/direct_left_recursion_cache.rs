@@ -10,35 +10,47 @@ pub enum AST {
     IGNORE,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LR {
-    detected: bool,
+    pub detected: bool,
 }
 impl LR {
     pub fn new(detected: bool) -> Self {
         LR { detected }
     }
 }
+#[derive(Debug, Eq, PartialEq)]
+
 pub enum ASTOrLR {
     LR(LR),
     AST(AST),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct MemoEntry {
     pub position: u32,
-    pub ast: AST,
+    pub ast_or_lr: ASTOrLR,
     pub is_true: bool,
 }
 impl MemoEntry {
-    pub fn new(ast: AST, position: u32, is_true: bool) -> Self {
+    pub fn new(ast_or_lr: ASTOrLR, position: u32, is_true: bool) -> Self {
         MemoEntry {
             position,
-            ast,
+            ast_or_lr,
             is_true,
         }
     }
 }
+
+impl Into<AST> for ASTOrLR {
+    fn into(self) -> AST {
+        match self {
+            ASTOrLR::LR(_) => panic!("Not an AST"),
+            ASTOrLR::AST(ast) => return ast,
+        }
+    }
+}
+
 // This cache will completely flatten the cache to see if that improves performance.
 pub struct DirectLeftRecursionCache {
     end_position: Vec<u32>,
@@ -137,10 +149,18 @@ impl Cache for DirectLeftRecursionCache {
 
         if is_fail {
             // AST has been set to FAIL as per paper.
-            return Some(MemoEntry::new(AST::FAIL, end_position, is_true));
+            return Some(MemoEntry::new(
+                ASTOrLR::AST(AST::FAIL),
+                end_position,
+                is_true,
+            ));
         } else if end_position != 0 {
             // Result is returned to callee to unwrap
-            Some(MemoEntry::new(AST::SUCCESS(indexed), end_position, is_true))
+            Some(MemoEntry::new(
+                ASTOrLR::AST(AST::SUCCESS(indexed)),
+                end_position,
+                is_true,
+            ))
         } else {
             // Nil, I.E there is no cached entry
             None

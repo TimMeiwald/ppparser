@@ -10,13 +10,13 @@ fn _string_terminal_kernel_ascii_opt(
     let mut end_position = position;
     for char in data {
         let s = match source.get_char(end_position) {
-            None => return (false, position, AST::IGNORE),
+            None => return (false, position, AST::FAIL),
             Some(val) => val,
         };
         if *char == s {
             end_position += 1;
         } else {
-            return (false, position, AST::IGNORE);
+            return (false, position, AST::FAIL);
         }
     }
     (true, end_position, AST::IGNORE)

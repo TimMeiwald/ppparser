@@ -18,7 +18,7 @@ pub fn _sequence_kernel(
             return (true, position, ast);
         }
     }
-    (false, temp_position, ast)
+    (false, temp_position, AST::FAIL)
 }
 
 pub fn _sequence<'a>(

@@ -8,9 +8,9 @@ pub fn _optional_kernel(
     let temp_position = position;
     let (valid, position, ast) = func(source, temp_position);
     if !valid {
-        return (true, temp_position, ast);
+        return (true, temp_position, AST::IGNORE);
     }
-    (true, position, ast)
+    (true, position, AST::IGNORE)
 }
 
 pub fn _optional(

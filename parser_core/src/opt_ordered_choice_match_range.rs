@@ -10,12 +10,12 @@ fn _ordered_choice_match_range_kernel(
 ) -> (bool, u32, AST) {
     let chr = source.get_char(position);
     match chr {
-        None => (false, position, AST::IGNORE),
+        None => (false, position, AST::FAIL),
         Some(value) => {
             if (value as u32 >= start) && (value as u32 <= end) {
                 (true, position + 1, AST::IGNORE)
             } else {
-                (false, position, AST::IGNORE)
+                (false, position, AST::FAIL)
             }
         }
     }

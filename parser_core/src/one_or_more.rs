@@ -8,7 +8,7 @@ pub fn _one_or_more_kernel(
     let mut temp_position = position;
     let (valid, position, ast) = func(source, temp_position);
     if !valid {
-        return (false, temp_position, ast);
+        return (false, temp_position, AST::FAIL);
     }
     temp_position = position;
     loop {

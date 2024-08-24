@@ -10,7 +10,7 @@ pub fn _not_predicate_kernel(
     if !valid {
         return (true, temp_position, ast);
     }
-    (false, temp_position, ast)
+    (false, temp_position, AST::FAIL)
 }
 
 pub fn _not_predicate(

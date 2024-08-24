@@ -21,7 +21,7 @@ fn test_grammar_true() {
     let result = grammar(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
 
-    assert_eq!(result, (true, src_len));
+    assert_eq!((result.0, result.1), (true, src_len));
 }
 // #[test]
 // fn test_grammar_true2() {
@@ -46,8 +46,8 @@ fn test_grammar_true3() {
     let position: u32 = 0;
     let context = Context::<DirectLeftRecursionCache, Tree>::new(src_len, RULES_SIZE);
     let result = grammar(&context, &source, position);
-    //context.stack.borrow().print(Key(0), None);
-    assert_eq!(result, (true, src_len));
+    context.stack.borrow().print(Key(0), None);
+    assert_eq!((result.0, result.1), (true, src_len));
 }
 
 // // #[test]

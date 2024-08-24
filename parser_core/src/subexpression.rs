@@ -9,7 +9,7 @@ pub fn _subexpression_kernel(
     let (valid, position, ast) = func(source, temp_position);
     // println!("Subexpression: {:?}", (valid, position));
     if !valid {
-        return (false, temp_position, ast);
+        return (false, temp_position, AST::FAIL);
     }
     (true, position, ast)
 }

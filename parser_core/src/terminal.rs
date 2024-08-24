@@ -8,7 +8,7 @@ pub fn _terminal_kernel(source: &Source, position: u32, chr: u8) -> (bool, u32, 
     if char == Some(chr) {
         (true, position + 1, AST::IGNORE)
     } else {
-        (false, position, AST::IGNORE)
+        (false, position, AST::FAIL)
     }
 }
 
