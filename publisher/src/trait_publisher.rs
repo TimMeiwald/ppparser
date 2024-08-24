@@ -18,7 +18,6 @@ pub trait Publisher {
         rule: Rules,
         start_position: u32,
         end_position: u32,
-        parent: Option<Key>,
         result: bool,
     ) -> Key;
     fn connect(&mut self, parent_index: Key, child_index: Key);

@@ -34,18 +34,16 @@ impl Publisher for Tree {
         rule: Rules,
         start_position: u32,
         end_position: u32,
-        parent: Option<Key>,
         result: bool,
     ) -> Key {
         let len = self.nodes.len();
         let key = Key(len.try_into().unwrap());
-        let mut node = Node {
+        let node = Node {
             index: key,
             rule,
             start_position,
             end_position,
             result,
-            parent,
             children: Vec::new(),
         };
         self.nodes.push(node);
@@ -55,8 +53,6 @@ impl Publisher for Tree {
     fn connect(&mut self, parent_index: Key, child_index: Key) {
         let parent_node: &mut Node = self.get_mut_node(parent_index);
         parent_node.children.push(child_index);
-        let child_node: &mut Node = self.get_mut_node(child_index);
-        child_node.parent = Some(parent_index);
     }
 
     fn set_node_start_position(&mut self, index: Key, start_position: u32) {
@@ -95,7 +91,6 @@ impl Publisher for Tree {
                 node.rule,
                 node.start_position,
                 node.end_position,
-                node.parent,
                 node.result,
             );
             for i in &node.children {
@@ -129,7 +124,6 @@ impl Tree {
                 node.rule,
                 node.start_position,
                 node.end_position,
-                Some(parent_index),
                 node.result,
             );
             new_tree.connect(parent_index, child_index);
@@ -215,26 +209,18 @@ pub struct Node {
     pub start_position: u32,
     pub end_position: u32,
     pub result: bool,
-    pub parent: Option<Key>,
     children: Vec<Key>,
     // To minimize allocations maybe have a second struct that contains all child indices and have Node just contain a start_child_index and end_child_index
     // Because then we can preallocate a load of memory, means a pointer indirection which may or may not impact performance so needs profiling.
 }
 impl Node {
-    pub fn new(
-        rule: Rules,
-        start_position: u32,
-        end_position: u32,
-        parent: Option<Key>,
-        result: bool,
-    ) -> Self {
+    pub fn new(rule: Rules, start_position: u32, end_position: u32, result: bool) -> Self {
         Node {
             index: Key(0),
             rule,
             start_position,
             end_position,
             result,
-            parent,
             children: Vec::<Key>::new(),
         }
     }
@@ -252,14 +238,13 @@ impl Node {
 
     pub fn print(&self, indent: usize) {
         println!(
-            "{}{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}",
+            "{}{:?}, {:?}, {:?}, {:?}, {:?}, {:?}",
             "    ".repeat(indent),
             self.index,
             self.rule,
             self.start_position,
             self.end_position,
             self.result,
-            self.parent,
             self.children.len()
         )
     }

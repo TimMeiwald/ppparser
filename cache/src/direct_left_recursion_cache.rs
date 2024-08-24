@@ -1,16 +1,39 @@
 use core::panic;
 
-use crate::{Cache, Head};
+use crate::Cache;
 use rules::{Key, Rules};
+#[derive(Debug, Eq, PartialEq)]
 
+pub enum AST {
+    FAIL,
+    SUCCESS(Key),
+    LR(bool),
+}
+
+#[derive(Debug)]
+pub struct MemoEntry {
+    pub position: u32,
+    pub ast: AST,
+    pub is_true: bool,
+}
+impl MemoEntry {
+    pub fn new(ast: AST, position: u32, is_true: bool) -> Self {
+        MemoEntry {
+            position,
+            ast,
+            is_true,
+        }
+    }
+}
 // This cache will completely flatten the cache to see if that improves performance.
 pub struct DirectLeftRecursionCache {
     end_position: Vec<u32>,
     indexes: Vec<Key>,
-    is_true: Vec<Option<bool>>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
+    is_true: Vec<bool>, // Position encoded as start_position*src_length + struct_position // May be slower due to arithmetic who knows
+    is_fail: Vec<bool>,
     number_of_structs: u32,
     last_node: Option<Key>,
-    lr_detected: Option<Rules>,
+    lr_detected: Vec<bool>,
 }
 // TODO: Last Node should probably be in the publisher not in Cache. Irrelevant to caching per se.
 impl Cache for DirectLeftRecursionCache {
@@ -20,15 +43,18 @@ impl Cache for DirectLeftRecursionCache {
         let capacity = capacity as usize;
         let mut c = DirectLeftRecursionCache {
             is_true: Vec::with_capacity(capacity),
+            is_fail: Vec::with_capacity(capacity),
             end_position: Vec::with_capacity(capacity),
             indexes: Vec::with_capacity(capacity),
             number_of_structs,
             last_node: None,
-            lr_detected: None,
+            lr_detected: Vec::with_capacity(capacity),
         };
-        c.is_true.resize(capacity, Some(false));
+        c.is_true.resize(capacity, false);
         c.end_position.resize(capacity, 0);
         c.indexes.resize(capacity, Key(u32::MAX));
+        c.is_fail.resize(capacity, false);
+        c.lr_detected.resize(capacity, false);
         c
         // for every arg cache in c set size to <number_of_structs>
     }
@@ -38,19 +64,13 @@ impl Cache for DirectLeftRecursionCache {
     fn set_last_node(&mut self, key: Option<Key>) {
         self.last_node = key
     }
-
-    fn push_deny_LR(
-        &mut self,
-        rule: Rules,
-        is_true: Option<bool>,
-        start_position: u32,
-        end_position: u32,
-        reference: Key,
-    ) {
+    fn set_lr_detected(&mut self, rule: Rules, start_position: u32, detected: bool) {
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
-        self.is_true[index] = is_true;
-        self.end_position[index] = end_position;
-        self.indexes[index] = reference;
+        self.lr_detected[index] = detected;
+    }
+    fn get_lr_detected(&self, rule: Rules, start_position: u32) -> bool {
+        let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
+        self.lr_detected[index]
     }
 
     fn push(
@@ -59,57 +79,52 @@ impl Cache for DirectLeftRecursionCache {
         is_true: bool,
         start_position: u32,
         end_position: u32,
-        stack_index: Key,
+        reference: AST,
     ) {
-        // println!(
-        //     "DirectLRCache: Rule: {:?} End Position: {:?}",
-        //     rule, end_position
-        // );
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
-        self.is_true[index] = Some(is_true);
+        self.is_true[index] = is_true;
         self.end_position[index] = end_position;
-        self.indexes[index] = stack_index;
+        match reference {
+            AST::FAIL => self.is_fail[index] = true,
+            AST::SUCCESS(key) => {
+                self.is_fail[index] = false;
+                self.indexes[index] = key;
+            }
+            AST::LR(is_left_recursion) => {
+                self.lr_detected[index] = is_left_recursion;
+            }
+        }
     }
 
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         panic!("This cache requires the use of the _var_name_LR function.")
     }
-    fn check_LR(&self, rule: Rules, start_position: u32) -> Option<(Option<bool>, u32, Key)> {
+    fn check_lr(&self, rule: Rules, start_position: u32) -> Option<MemoEntry> {
         let index = (start_position * self.number_of_structs + (rule as u32)) as usize;
         //println!("Index: {:?}, Start_Position: {:?}, Rule: {:?}", index, start_position, rule);
-        let is_true: Option<bool> = self.is_true[index];
+        let is_true: bool = self.is_true[index];
         let end_position: u32 = self.end_position[index];
+        let is_fail: bool = self.is_fail[index];
         let indexed: Key = self.indexes[index];
-        if is_true.is_none() {
-            return Some((is_true, end_position, indexed));
-        }
-        if end_position != 0 {
+
+        if is_fail {
+            // AST has been set to FAIL as per paper.
+            return Some(MemoEntry::new(AST::FAIL, end_position, is_true));
+        } else if end_position != 0 {
             // Result is returned to callee to unwrap
-            Some((is_true, end_position, indexed))
+            Some(MemoEntry::new(AST::SUCCESS(indexed), end_position, is_true))
         } else {
-            // Tells callee to simply run the actual code instead of using cached value since one does not exist.
+            // Nil, I.E there is no cached entry
             None
         }
     }
-    fn set_lr_detected(&mut self, detected: Option<Rules>) {
-        self.lr_detected = detected;
-    }
-    fn get_lr_detected(&self, rule: Rules) -> bool {
-        if self.lr_detected == None {
-            return false;
-        }
-        if self.lr_detected.expect("Checked before") == rule {
-            true
-        } else {
-            false
-        }
-    }
+
     fn clear(&mut self) {}
     fn reinitialize(&mut self) {
         self.end_position.fill(0);
     }
-    fn set_indirect_lr_detected(&mut self, detected: Rules, start_position: u32) {}
-    fn get_indirect_lr_detected(&mut self, start_position: u32) -> Option<&mut Head> {
-        panic!("Cannot use this cache for Indirect Left Recursion")
-    }
+    // fn set_indirect_lr_detected(&mut self, detected: Rules, start_position: u32) {}
+    // fn get_indirect_lr_detected(&mut self, start_position: u32) -> Option<&mut Head> {
+    //     panic!("Cannot use this cache for Indirect Left Recursion")
+    // }
 }

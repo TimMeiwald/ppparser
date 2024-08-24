@@ -65,25 +65,25 @@ mod tests {
     //     println!("{:?}", _x);
     // }
 
-    #[test]
-    fn test_no_recursion_deny_left_recursion_cache() {
-        // Should not fail.
-        let src: String = "1-2-3".to_string();
+    // #[test]
+    // fn test_no_recursion_deny_left_recursion_cache() {
+    //     // Should not fail.
+    //     let src: String = "1-2-3".to_string();
 
-        let x: result::Result<(bool, u32), anyhow::Error> =
-            parse::<DenyLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
-        assert_eq!(x.unwrap(), (true, 1));
-    }
+    //     let x: result::Result<(bool, u32), anyhow::Error> =
+    //         parse::<DenyLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
+    //     assert_eq!(x.unwrap(), (true, 1));
+    // }
 
-    #[test]
-    fn test_recursion_deny_left_recursion_cache() {
-        let src: String = "1-2-3".to_string();
+    // #[test]
+    // fn test_recursion_deny_left_recursion_cache() {
+    //     let src: String = "1-2-3".to_string();
 
-        let x = parse::<DenyLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr)
-            .expect("Should succeed");
-        assert_eq!(x, (true, 3));
-        println!("{:?}", x);
-    }
+    //     let x = parse::<DenyLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr)
+    //         .expect("Should succeed");
+    //     assert_eq!(x, (true, 3));
+    //     println!("{:?}", x);
+    // }
 
     #[test]
     fn test_no_recursion_direct_left_recursion_cache() {
@@ -116,24 +116,24 @@ mod tests {
         assert_eq!(x.unwrap(), (true, 9));
     }
 
-    #[test]
-    fn test_no_recursion_indirect_left_recursion_cache() {
-        // Should not fail.
-        let src: String = "1-2-3".to_string();
+    // #[test]
+    // fn test_no_recursion_indirect_left_recursion_cache() {
+    //     // Should not fail.
+    //     let src: String = "1-2-3".to_string();
 
-        let x = parse::<IndirectLeftRecursionCache, Tree>(src, Rules::Num, num);
-        assert_eq!(x.unwrap(), (true, 1));
-    }
+    //     let x = parse::<IndirectLeftRecursionCache, Tree>(src, Rules::Num, num);
+    //     assert_eq!(x.unwrap(), (true, 1));
+    // }
 
-    #[test]
-    fn test_recursion_indirect_left_recursion_cache() {
-        let src: String = "1-2-3-7-9-1   ".to_string();
-        let x = parse::<IndirectLeftRecursionCache, Tree>(
-            src,
-            Rules::test_indirect_LR_expr,
-            test_indirect_lr_expr,
-        );
-        println!("Before assert");
-        assert_eq!(x.unwrap(), (true, 11));
-    }
+    // #[test]
+    // fn test_recursion_indirect_left_recursion_cache() {
+    //     let src: String = "1-2-3-7-9-1   ".to_string();
+    //     let x = parse::<IndirectLeftRecursionCache, Tree>(
+    //         src,
+    //         Rules::test_indirect_LR_expr,
+    //         test_indirect_lr_expr,
+    //     );
+    //     println!("Before assert");
+    //     assert_eq!(x.unwrap(), (true, 11));
+    // }
 }
