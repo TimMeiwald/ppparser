@@ -90,7 +90,7 @@ mod tests {
         // Should not fail.
         let src: String = "1-2-3".to_string();
 
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, num);
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::Num, num);
         assert_eq!(x.unwrap(), (true, 1));
     }
 
@@ -98,7 +98,6 @@ mod tests {
     fn test_recursion_direct_left_recursion_cache() {
         let src: String = "1-2-3-7-9-1   ".to_string();
         let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
-        // Not it should be 5 not 3 since it should grow the seed.
         println!("Before assert");
         assert_eq!(x.unwrap(), (true, 11));
     }
@@ -106,7 +105,6 @@ mod tests {
     fn test_recursion_direct_left_recursion_cache2() {
         let src: String = "1-2-3-7-9-   ".to_string();
         let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
-        // Not it should be 5 not 3 since it should grow the seed.
         println!("Before assert");
         assert_eq!(x.unwrap(), (true, 9));
     }
@@ -114,7 +112,6 @@ mod tests {
     fn test_recursion_direct_left_recursion_cache3() {
         let src: String = "1-2-3-7-9".to_string();
         let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_LR_expr, test_lr_expr);
-        // Not it should be 5 not 3 since it should grow the seed.
         println!("Before assert");
         assert_eq!(x.unwrap(), (true, 9));
     }
@@ -124,19 +121,18 @@ mod tests {
         // Should not fail.
         let src: String = "1-2-3".to_string();
 
-        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_indirect_LR_expr, num);
+        let x = parse::<IndirectLeftRecursionCache, Tree>(src, Rules::Num, num);
         assert_eq!(x.unwrap(), (true, 1));
     }
 
     #[test]
     fn test_recursion_indirect_left_recursion_cache() {
         let src: String = "1-2-3-7-9-1   ".to_string();
-        let x = parse::<DirectLeftRecursionCache, Tree>(
+        let x = parse::<IndirectLeftRecursionCache, Tree>(
             src,
             Rules::test_indirect_LR_expr,
             test_indirect_lr_expr,
         );
-        // Not it should be 5 not 3 since it should grow the seed.
         println!("Before assert");
         assert_eq!(x.unwrap(), (true, 11));
     }

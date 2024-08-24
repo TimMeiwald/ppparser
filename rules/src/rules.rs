@@ -2,7 +2,7 @@
 
 use num_derive::FromPrimitive;
 pub static RULES_SIZE: u32 = 54;
-#[derive(FromPrimitive, Clone, Copy, Debug)]
+#[derive(Eq, Hash, FromPrimitive, Clone, Copy, Debug)]
 pub enum Rules {
     ASCII,
     Alphabet_Lower,

@@ -1,4 +1,4 @@
-use crate::Cache;
+use crate::{Cache, Head};
 use rules::{Key, Rules};
 
 // This cache will completely flatten the cache to see if that improves performance.
@@ -84,5 +84,9 @@ impl Cache for MyCache4 {
     fn clear(&mut self) {}
     fn reinitialize(&mut self) {
         self.end_position.fill(0);
+    }
+    fn set_indirect_lr_detected(&mut self, detected: Rules, start_position: u32) {}
+    fn get_indirect_lr_detected(&mut self, start_position: u32) -> Option<&mut Head> {
+        panic!("Cannot use this cache for Indirect Or Direction Left Recursion")
     }
 }
