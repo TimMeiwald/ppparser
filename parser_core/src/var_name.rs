@@ -353,8 +353,11 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
     let mut temp_pos = position;
     let mut temp_ans: AST = AST::FAIL;
     let mut temp_bool: bool = false;
+    let mut temp_ckey: Key = Key(0);
+
     {
         let mut publisher = context.stack.borrow_mut();
+        publisher.disconnect(parent_root_key.expect("Should exist"), current_key);
         let last_node = publisher.last_node();
         publisher.set_last_node(Some(last_node.unwrap()));
     }
@@ -372,19 +375,29 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
 
         println!("GrowLR {:?} {:?} {:?}", ans.0, ans.1, ans.2);
         if ans.2 == AST::FAIL || (ans.1 <= temp_pos) {
+            publisher_update_node(
+                context,
+                position,
+                temp_pos,
+                temp_bool,
+                parent_root_key,
+                ckey,
+            );
             return (temp_bool, temp_pos, temp_ans);
         }
-        publisher_update_node(
-            context,
-            position,
-            ans.1,
-            ans.0,
-            Some(parent_root_key.unwrap()),
-            ckey,
-        );
+        publisher_update_node(context, position, ans.1, ans.0, None, ckey);
+        // publisher_update_node(
+        //     context,
+        //     position,
+        //     ans.1,
+        //     ans.0,
+        //     Some(parent_root_key.unwrap()),
+        //     ckey,
+        // );
         temp_pos = ans.1;
         temp_ans = ans.2;
         temp_bool = ans.0;
+        temp_ckey = ckey;
         {
             let mut cache: std::cell::RefMut<T> = context.cache.borrow_mut();
             cache.push(

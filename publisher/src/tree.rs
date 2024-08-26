@@ -55,6 +55,21 @@ impl Publisher for Tree {
         let parent_node: &mut Node = self.get_mut_node(parent_index);
         parent_node.children.push(child_index);
     }
+    fn disconnect(&mut self, parent_index: Key, child_index: Key) {
+        let parent_node: &mut Node = self.get_mut_node(parent_index);
+        let mut remove_pos: Option<usize> = None;
+        for (position, child) in parent_node.children.iter().enumerate() {
+            if *child == child_index {
+                remove_pos = Some(position);
+            }
+        }
+        match remove_pos {
+            None => {}
+            Some(remove_pos) => {
+                parent_node.children.remove(remove_pos);
+            }
+        }
+    }
 
     fn set_node_start_position(&mut self, index: Key, start_position: u32) {
         self.nodes[usize::from(index)].start_position = start_position
