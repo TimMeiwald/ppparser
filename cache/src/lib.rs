@@ -6,6 +6,7 @@ pub use cache_trait::Cache;
 // mod deny_left_recursion_cache;
 // mod direct_left_recursion_cache;
 mod vbasic_direct_left_recursion_cache;
+// mod vbasic_indirect_left_recursion_cache;
 // mod indirect_left_recursion_cache;
 // mod my_cache1;
 // mod my_cache2;
@@ -19,6 +20,9 @@ mod vbasic_direct_left_recursion_cache;
 // pub use direct_left_recursion_cache::{ASTOrLR, MemoEntry, AST, LR};
 pub use vbasic_direct_left_recursion_cache::DirectLeftRecursionCache;
 pub use vbasic_direct_left_recursion_cache::{ASTOrLR, MemoEntry, AST, LR};
+
+// pub use vbasic_indirect_left_recursion_cache::IndirectLeftRecursionCache;
+// pub use vbasic_indirect_left_recursion_cache::{Head, Heads, MemoEntry, AST, LR};
 // pub use indirect_left_recursion_cache::Head;
 // pub use indirect_left_recursion_cache::IndirectLeftRecursionCache;
 // pub use my_cache1::MyCache1;

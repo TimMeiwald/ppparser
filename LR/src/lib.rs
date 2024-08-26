@@ -129,15 +129,16 @@ mod tests {
     //     assert_eq!(x.unwrap(), (true, 1));
     // }
 
-    // #[test]
-    // fn test_recursion_indirect_left_recursion_cache() {
-    //     let src: String = "1-2-3-7-9-1   ".to_string();
-    //     let x = parse::<IndirectLeftRecursionCache, Tree>(
-    //         src,
-    //         Rules::test_indirect_LR_expr,
-    //         test_indirect_lr_expr,
-    //     );
-    //     println!("Before assert");
-    //     assert_eq!(x.unwrap(), (true, 11));
-    // }
+    #[test]
+    fn test_recursion_indirect_left_recursion_cache() {
+        let src: String = "1-2-3-7-9-1   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(
+            src,
+            Rules::test_indirect_LR_expr,
+            test_indirect_lr_expr,
+        )
+        .unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 11));
+    }
 }

@@ -1,9 +1,6 @@
 use rules::{Key, Rules};
 
-use crate::{
-    vbasic_direct_left_recursion_cache::{ASTOrLR, MemoEntry, AST},
-    LR,
-};
+use crate::vbasic_direct_left_recursion_cache::{ASTOrLR, MemoEntry, AST, LR};
 
 // use crate::indirect_left_recursion_cache::Head;
 

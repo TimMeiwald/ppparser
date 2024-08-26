@@ -363,7 +363,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
     }
 
     loop {
-        // Every Loop we need to replace the AST reference in our initial cached value
+        // Every Loop we need to replace the AST reference in our initial node value
         // With the new one which then uses the old one as a child.
         println!("GrowLR Before Func");
         let (pkey, ckey) = publisher_setup_node(context, rule);
@@ -387,14 +387,6 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
         }
         // Don't connect until complete using the last result
         publisher_update_node(context, position, ans.1, ans.0, None, ckey);
-        // publisher_update_node(
-        //     context,
-        //     position,
-        //     ans.1,
-        //     ans.0,
-        //     Some(parent_root_key.unwrap()),
-        //     ckey,
-        // );
         temp_pos = ans.1;
         temp_ans = ans.2;
         temp_bool = ans.0;

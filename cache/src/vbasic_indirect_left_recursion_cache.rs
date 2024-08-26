@@ -1,45 +1,15 @@
 use crate::Cache;
 use core::panic;
 use rules::{Key, Rules};
-use std::collections::HashMap;
-
-// Trait set below works with direct left recursion for reference.
-// // use crate::indirect_left_recursion_cache::Head;
-
-// pub trait Cache {
-//     fn new(size_of_source: u32, number_of_structs: u32) -> Self;
-//     fn push(
-//         &mut self,
-//         rule: Rules,
-//         is_true: bool,
-//         start_position: u32,
-//         end_position: u32,
-//         reference: ASTOrLR,
-//     );
-//     fn set_astOrLrAndPosition(
-//         &mut self,
-//         rule: Rules,
-//         start_position: u32,
-//         reference: ASTOrLR,
-//         end_position: u32,
-//     );
-
-//     fn check_lr(&mut self, rule: Rules, start_position: u32) -> Option<&MemoEntry>;
-//     fn set_lr_detected(&mut self, rule: Rules, start_position: u32, detected: LR);
-//     fn get_lr_detected(&self, rule: Rules, start_position: u32) -> bool;
-//     // // fn set_indirect_lr_detected(&mut self, detected: Rules, start_position: u32);
-//     // // fn get_indirect_lr_detected(&mut self, start_position: u32) -> Option<&mut Head>;
-//     // fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)>;
-//     fn clear(&mut self);
-//     fn reinitialize(&mut self); //Reset state without deallocating memory for reuse.
-//                                 // fn last_node(&self) -> Option<Key>;
-//                                 // fn set_last_node(&mut self, key: Option<Key>);
-//                                 // fn set_is_fail(&mut self, rule: Rules, start_position: u32, is_fail: bool);
-//                                 // fn get_is_fail(&self, rule: Rules, start_position: u32) -> bool;
-// }
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
+pub enum ASTOrLR {
+    LR(LR),
+    AST(AST),
+}
 
+#[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub enum AST {
     FAIL,
     SUCCESS(Key),
@@ -55,6 +25,15 @@ impl Into<Key> for AST {
     }
 }
 
+pub struct Head {
+    rule: Rules,
+    involved_set: HashSet<Rules>,
+    eval_set: HashSet<Rules>,
+}
+pub struct Heads {
+    heads: HashMap<u32, Head>,
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LR {
     pub detected: bool,
@@ -63,12 +42,6 @@ impl LR {
     pub fn new(detected: bool) -> Self {
         LR { detected }
     }
-}
-#[derive(Debug, Eq, PartialEq, Copy, Clone)]
-
-pub enum ASTOrLR {
-    LR(LR),
-    AST(AST),
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -96,12 +69,12 @@ impl Into<AST> for ASTOrLR {
     }
 }
 
-pub struct DirectLeftRecursionCache {
+pub struct IndirectLeftRecursionCache {
     memo_entries: HashMap<(Rules, u32), MemoEntry>,
 }
-impl Cache for DirectLeftRecursionCache {
-    fn new(size_of_source: u32, number_of_structs: u32) -> DirectLeftRecursionCache {
-        DirectLeftRecursionCache {
+impl Cache for IndirectLeftRecursionCache {
+    fn new(size_of_source: u32, number_of_structs: u32) -> IndirectLeftRecursionCache {
+        IndirectLeftRecursionCache {
             memo_entries: HashMap::new(),
         }
     }
@@ -170,17 +143,17 @@ mod tests {
 
     use crate::Cache;
 
-    use super::{DirectLeftRecursionCache, AST};
+    use super::{ASTOrLR, IndirectLeftRecursionCache, AST};
 
     #[test]
     fn test_cache() {
-        let mut cache = DirectLeftRecursionCache::new(0, 0);
+        let mut cache = IndirectLeftRecursionCache::new(0, 0);
         cache.push(
             Rules::Num,
             true,
             0,
             0,
-            crate::ASTOrLR::LR(crate::LR { detected: true }),
+            super::ASTOrLR::LR(crate::LR { detected: true }),
         );
         let f = cache.get_lr_detected(Rules::Num, 0);
         println!("{:?}", f);
