@@ -381,10 +381,11 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
                 temp_pos,
                 temp_bool,
                 parent_root_key,
-                ckey,
+                temp_ckey,
             );
             return (temp_bool, temp_pos, temp_ans);
         }
+        // Don't connect until complete using the last result
         publisher_update_node(context, position, ans.1, ans.0, None, ckey);
         // publisher_update_node(
         //     context,
