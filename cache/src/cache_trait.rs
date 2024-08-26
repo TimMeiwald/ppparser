@@ -24,6 +24,7 @@ pub trait Cache {
         reference: ASTOrLR,
         end_position: u32,
     );
+
     fn check_lr(&mut self, rule: Rules, start_position: u32) -> Option<&MemoEntry>;
     fn set_lr_detected(&mut self, rule: Rules, start_position: u32, detected: LR);
     fn get_lr_detected(&self, rule: Rules, start_position: u32) -> bool;

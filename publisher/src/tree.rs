@@ -51,6 +51,7 @@ impl Publisher for Tree {
     }
 
     fn connect(&mut self, parent_index: Key, child_index: Key) {
+        println!("Connecting: {:?} <- {:?}", parent_index, child_index);
         let parent_node: &mut Node = self.get_mut_node(parent_index);
         parent_node.children.push(child_index);
     }
@@ -104,6 +105,7 @@ impl Publisher for Tree {
         self.last_node
     }
     fn set_last_node(&mut self, key: Option<Key>) {
+        println!("Last Node set to : {:?}", self.last_node);
         self.last_node = key;
     }
 }

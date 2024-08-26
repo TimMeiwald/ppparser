@@ -28,6 +28,7 @@ pub fn parse<T: Cache, S: Publisher>(
     let result = result(&source, 0);
     println!("Parse function Result: {:?}", result);
     let elapsed = now.elapsed();
+    // Print cna also cause recursion sometimes
     context.stack.borrow().print(Key(0), None);
     // let only_true_tree = context.stack.borrow().clear_false();
     let elapsed2 = now.elapsed();

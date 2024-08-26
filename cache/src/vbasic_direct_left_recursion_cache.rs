@@ -9,6 +9,15 @@ pub enum AST {
     SUCCESS(Key),
     IGNORE,
 }
+impl Into<Key> for AST {
+    fn into(self) -> Key {
+        return match self {
+            AST::FAIL => panic!("Should never happen"),
+            AST::IGNORE => panic!("Should never happen 2"),
+            AST::SUCCESS(key) => key,
+        };
+    }
+}
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct LR {
@@ -60,6 +69,7 @@ impl Cache for DirectLeftRecursionCache {
             memo_entries: HashMap::new(),
         }
     }
+
     fn check_lr(&mut self, rule: Rules, start_position: u32) -> Option<&MemoEntry> {
         self.memo_entries.get(&(rule, start_position))
     }
