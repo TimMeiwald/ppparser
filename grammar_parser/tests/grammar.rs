@@ -1,4 +1,4 @@
-use cache::IndirectLeftRecursionCache;
+use cache::DirectLeftRecursionCache;
 use grammar_parser::*;
 //use cache::{BTreeCache, DenyLeftRecursionCache, MyCache4};
 // use cache::MyCache4;
@@ -16,7 +16,7 @@ fn test_grammar_true() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<IndirectLeftRecursionCache, Tree>::new(src_len, RULES_SIZE);
+    let context = Context::<DirectLeftRecursionCache, Tree>::new(src_len, RULES_SIZE);
 
     let result = grammar(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
@@ -44,7 +44,7 @@ fn test_grammar_true3() {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<IndirectLeftRecursionCache, Tree>::new(src_len, RULES_SIZE);
+    let context = Context::<DirectLeftRecursionCache, Tree>::new(src_len, RULES_SIZE);
     let result = grammar(&context, &source, position);
     context.stack.borrow().print(Key(0), None);
     assert_eq!((result.0, result.1), (true, src_len));

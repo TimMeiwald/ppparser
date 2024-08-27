@@ -307,7 +307,7 @@ fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     //     "Rule: {:?}, Position: {:?}, LR DETECTED: {:?}, AST: {:?},  {:?}, {:?}   ",
     //     rule, position, lr_detected, ans.2, ans.0, ans.1,
     // );
-    if lr_detected && ans.2 != AST::FAIL {
+    if lr_detected && ans.0 != false {
         // println!("Entering No Cached LR Detected");
         let ans = grow_lr_direct_lr(rule, context, source, position, func, current_key);
         let mut cache = context.cache.borrow_mut();
@@ -366,7 +366,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
         // Every Loop we need to replace the AST reference in our initial node value
         // With the new one which then uses the old one as a child.
         println!("GrowLR Before Func");
-        let (pkey, ckey) = publisher_setup_node(context, rule);
+        let (_pkey, ckey) = publisher_setup_node(context, rule);
         let ans = func(context, source, position);
         let last_node = publisher_get_last_node(context);
         println!("GrowLR: Last Node {:?}", last_node);
@@ -374,7 +374,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
         println!("GrowLR After Func");
 
         println!("GrowLR {:?} {:?} {:?}", ans.0, ans.1, ans.2);
-        if ans.2 == AST::FAIL || (ans.1 <= temp_pos) {
+        if ans.0 == false || (ans.1 <= temp_pos) {
             publisher_update_node(
                 context,
                 position,
