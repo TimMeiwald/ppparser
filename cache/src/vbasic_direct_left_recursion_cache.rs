@@ -1,7 +1,7 @@
 use crate::Cache;
 use core::panic;
 use rules::{Key, Rules};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 // Trait set below works with direct left recursion for reference.
 // // use crate::indirect_left_recursion_cache::Head;
@@ -98,12 +98,38 @@ impl Into<AST> for ASTOrLR {
 
 pub struct DirectLeftRecursionCache {
     memo_entries: HashMap<(Rules, u32), MemoEntry>,
+    recursion_setup_flag: bool,
+    // Replace involved_set, eval_set with hashmaps since nested recursions can happen but only one per position.
+    // Once it works for individual indirect left recursion.
+    involved_set: HashSet<Rules>,
+    eval_set: HashSet<Rules>,
 }
+
 impl Cache for DirectLeftRecursionCache {
     fn new(size_of_source: u32, number_of_structs: u32) -> DirectLeftRecursionCache {
         DirectLeftRecursionCache {
             memo_entries: HashMap::new(),
+            recursion_setup_flag: false,
+            involved_set: HashSet::new(),
+            eval_set: HashSet::new(),
         }
+    }
+    fn insert_into_involved_set(&mut self, rule: Rules) -> bool {
+        println!("Involved Set: {:?}", self.involved_set);
+        self.involved_set.insert(rule)
+    }
+    fn get_recursion_setup_flag(&self) -> bool {
+        return self.recursion_setup_flag;
+    }
+    fn copy_involved_set_into_eval_set(&mut self) {
+        self.eval_set.clone_from(&self.involved_set);
+    }
+
+    fn reset_recursion_setup_flag(&mut self) {
+        self.recursion_setup_flag = false;
+    }
+    fn set_recursion_setup_flag(&mut self) {
+        self.recursion_setup_flag = true;
     }
 
     fn check_lr(&mut self, rule: Rules, start_position: u32) -> Option<&MemoEntry> {

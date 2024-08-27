@@ -1,6 +1,7 @@
 #![allow(clippy::type_complexity)]
 
 use std::any::Any;
+use std::borrow::BorrowMut;
 use std::mem::ManuallyDrop;
 use std::process::exit;
 use std::u32;
@@ -226,6 +227,40 @@ fn _var_name_kernel_deny_lr<T: Cache, S: Publisher>(
     return ans;
 }
 
+fn setup_lr_var_name_kernel<T: Cache, S: Publisher>(
+    rule: Rules,
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
+) -> bool {
+    let recursion_flag: bool;
+    {
+        let mut cache = context.cache.borrow_mut();
+        recursion_flag = cache.get_recursion_setup_flag();
+        if recursion_flag {
+            let abort = !cache.insert_into_involved_set(rule);
+            if abort {
+                println!("Found all involved rules");
+                return true;
+            }
+        }
+    }
+    if recursion_flag {
+        // This gets set in grow_LR.
+        // We use this solely to setup LR by grabbing each rule that is triggered by a func call and
+        // pushing it into a stack.
+        println!("Rule on stack: {:?}", rule);
+
+        // We add the rule + func to stack until we're repeating ourselves.
+        func(context, source, position);
+
+        return true;
+    } else {
+        false
+    }
+}
+
 fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
@@ -234,7 +269,13 @@ fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
 ) -> (bool, u32, AST) {
     println!("{:?} Entering Var_Name Kernel", rule);
+    // Below code executes and runs when growLr sets up for indirect left recursion.
+    let recursion_flag: bool = setup_lr_var_name_kernel(rule, context, source, position, func);
+    if recursion_flag {
+        return (false, 0, AST::FAIL);
+    }
 
+    // Body of the _var_name_kernel_as_in_direct_kernel
     {
         let mut cache: std::cell::RefMut<T> = context.cache.borrow_mut();
         // Removes value from hashmap so we need to reinsert afterwards.
@@ -337,6 +378,27 @@ fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     }
 }
 
+fn setup_lr_grow_lr<T: Cache, S: Publisher>(
+    rule: Rules,
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
+    current_key: Key,
+) {
+    println!("\x1b[31mRecursion Flag Set");
+    {
+        let mut cache = context.cache.borrow_mut();
+        cache.set_recursion_setup_flag();
+    }
+    func(context, source, position);
+    {
+        let mut cache = context.cache.borrow_mut();
+        cache.reset_recursion_setup_flag();
+    }
+    println!("Recursion Flag Reset\x1b[0m");
+}
+
 fn grow_lr_direct_lr<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
@@ -354,7 +416,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
     let mut temp_ans: AST = AST::FAIL;
     let mut temp_bool: bool = false;
     let mut temp_ckey: Key = Key(0);
-
+    setup_lr_grow_lr(rule, context, source, position, func, current_key);
     {
         let mut publisher = context.stack.borrow_mut();
         publisher.disconnect(parent_root_key.expect("Should exist"), current_key);
@@ -367,6 +429,11 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
         // With the new one which then uses the old one as a child.
         println!("GrowLR Before Func");
         let (_pkey, ckey) = publisher_setup_node(context, rule);
+
+        {
+            let mut cache = context.cache.borrow_mut();
+            cache.copy_involved_set_into_eval_set();
+        }
         let ans = func(context, source, position);
         let last_node = publisher_get_last_node(context);
         println!("GrowLR: Last Node {:?}", last_node);
@@ -383,6 +450,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
                 parent_root_key,
                 temp_ckey,
             );
+
             return (temp_bool, temp_pos, temp_ans);
         }
         // Don't connect until complete using the last result

@@ -34,4 +34,9 @@ pub trait Cache {
                                 // fn set_last_node(&mut self, key: Option<Key>);
                                 // fn set_is_fail(&mut self, rule: Rules, start_position: u32, is_fail: bool);
                                 // fn get_is_fail(&self, rule: Rules, start_position: u32) -> bool;
+    fn set_recursion_setup_flag(&mut self);
+    fn reset_recursion_setup_flag(&mut self);
+    fn get_recursion_setup_flag(&self) -> bool;
+    fn insert_into_involved_set(&mut self, rule: Rules) -> bool;
+    fn copy_involved_set_into_eval_set(&mut self);
 }
