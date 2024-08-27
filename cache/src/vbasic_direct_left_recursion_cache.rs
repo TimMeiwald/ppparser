@@ -99,6 +99,7 @@ impl Into<AST> for ASTOrLR {
 pub struct DirectLeftRecursionCache {
     memo_entries: HashMap<(Rules, u32), MemoEntry>,
     recursion_setup_flag: bool,
+    recursion_execution_flag: bool,
     // Replace involved_set, eval_set with hashmaps since nested recursions can happen but only one per position.
     // Once it works for individual indirect left recursion.
     involved_set: HashSet<Rules>,
@@ -110,9 +111,25 @@ impl Cache for DirectLeftRecursionCache {
         DirectLeftRecursionCache {
             memo_entries: HashMap::new(),
             recursion_setup_flag: false,
+            recursion_execution_flag: false,
             involved_set: HashSet::new(),
             eval_set: HashSet::new(),
         }
+    }
+    fn remove_from_eval_set(&mut self, rule: Rules) {
+        self.eval_set.remove(&rule);
+    }
+    fn is_in_eval_set(&self, rule: Rules) -> bool {
+        self.eval_set.contains(&rule)
+    }
+    fn set_recursion_execution_flag(&mut self) {
+        self.recursion_execution_flag = true;
+    }
+    fn reset_recursion_execution_flag(&mut self) {
+        self.recursion_execution_flag = false;
+    }
+    fn get_recursion_execution_flag(&self) -> bool {
+        self.recursion_execution_flag
     }
     fn insert_into_involved_set(&mut self, rule: Rules) -> bool {
         println!("Involved Set: {:?}", self.involved_set);

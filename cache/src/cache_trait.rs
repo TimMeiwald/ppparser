@@ -37,6 +37,11 @@ pub trait Cache {
     fn set_recursion_setup_flag(&mut self);
     fn reset_recursion_setup_flag(&mut self);
     fn get_recursion_setup_flag(&self) -> bool;
+    fn set_recursion_execution_flag(&mut self);
+    fn reset_recursion_execution_flag(&mut self);
+    fn get_recursion_execution_flag(&self) -> bool;
     fn insert_into_involved_set(&mut self, rule: Rules) -> bool;
     fn copy_involved_set_into_eval_set(&mut self);
+    fn remove_from_eval_set(&mut self, rule: Rules);
+    fn is_in_eval_set(&self, rule: Rules) -> bool;
 }

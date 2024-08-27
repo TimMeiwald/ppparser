@@ -241,7 +241,6 @@ fn setup_lr_var_name_kernel<T: Cache, S: Publisher>(
         if recursion_flag {
             let abort = !cache.insert_into_involved_set(rule);
             if abort {
-                println!("Found all involved rules");
                 return true;
             }
         }
@@ -274,7 +273,35 @@ fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     if recursion_flag {
         return (false, 0, AST::FAIL);
     }
+    let recursion_execution_flag: bool;
+    {
+        let cache = context.cache.borrow();
+        recursion_execution_flag = cache.get_recursion_execution_flag();
+    }
+    if recursion_execution_flag {
+        let should_func_run: bool;
+        {
+            let cache = context.cache.borrow();
+            should_func_run = cache.is_in_eval_set(rule);
+        }
+        if should_func_run {
+            let result = _var_name_kernel_body(rule, context, source, position, func);
+            return result;
+        } else {
+            return (false, 0, AST::FAIL);
+        }
+    } else {
+        return _var_name_kernel_body(rule, context, source, position, func);
+    }
+}
 
+fn _var_name_kernel_body<T: Cache, S: Publisher>(
+    rule: Rules,
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
+) -> (bool, u32, AST) {
     // Body of the _var_name_kernel_as_in_direct_kernel
     {
         let mut cache: std::cell::RefMut<T> = context.cache.borrow_mut();
@@ -324,6 +351,7 @@ fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
             None => {}
         }
     }
+
     let (parent_key, current_key) = publisher_setup_node(context, rule);
     println!("{:?} Entering No Cached Value Block", rule);
     {
@@ -396,6 +424,7 @@ fn setup_lr_grow_lr<T: Cache, S: Publisher>(
         let mut cache = context.cache.borrow_mut();
         cache.reset_recursion_setup_flag();
     }
+    println!("Found all involved rules");
     println!("Recursion Flag Reset\x1b[0m");
 }
 
@@ -424,6 +453,11 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
         publisher.set_last_node(Some(last_node.unwrap()));
     }
 
+    // Set Execution Flag
+    {
+        let mut cache = context.cache.borrow_mut();
+        cache.set_recursion_execution_flag();
+    }
     loop {
         // Every Loop we need to replace the AST reference in our initial node value
         // With the new one which then uses the old one as a child.
@@ -431,6 +465,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
         let (_pkey, ckey) = publisher_setup_node(context, rule);
 
         {
+            // Every Growth Iteration we copy everything in involved set into eval set to prepare for the next growth iteration.
             let mut cache = context.cache.borrow_mut();
             cache.copy_involved_set_into_eval_set();
         }
@@ -450,7 +485,11 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
                 parent_root_key,
                 temp_ckey,
             );
-
+            // Reset Execution Flag
+            {
+                let mut cache = context.cache.borrow_mut();
+                cache.reset_recursion_execution_flag();
+            }
             return (temp_bool, temp_pos, temp_ans);
         }
         // Don't connect until complete using the last result
