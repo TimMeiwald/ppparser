@@ -103,7 +103,7 @@ pub struct DirectLeftRecursionCache {
     // Replace involved_set, eval_set with hashmaps since nested recursions can happen but only one per position.
     // Once it works for individual indirect left recursion.
     involved_set: BTreeSet<Rules>,
-    eval_set: VecDeque<Rules>,
+    eval_set: BTreeSet<Rules>,
     active_left_recursion_rule: Rules,
     involved_stack: VecDeque<Rules>,
 }
@@ -115,7 +115,7 @@ impl Cache for DirectLeftRecursionCache {
             recursion_setup_flag: false,
             recursion_execution_flag: false,
             involved_set: BTreeSet::new(),
-            eval_set: VecDeque::new(),
+            eval_set: BTreeSet::new(),
             active_left_recursion_rule: Rules::Grammar,
             involved_stack: VecDeque::new(),
         }
@@ -131,12 +131,13 @@ impl Cache for DirectLeftRecursionCache {
         self.eval_set.is_empty()
     }
     fn remove_from_eval_set(&mut self, rule: Rules) {
-        if *self.eval_set.front().unwrap() == rule {
-            self.eval_set.pop_front();
-        } else {
-            println!("rule: {:?}, {:?}", rule, self.eval_set);
-            panic!("Poppage in same order as pushing")
-        }
+        self.eval_set.remove(&rule);
+        // if *self.eval_set.front().unwrap() == rule {
+        //     self.eval_set.pop_front();
+        // } else {
+        //     println!("rule: {:?}, {:?}", rule, self.eval_set);
+        //     panic!("Poppage in same order as pushing")
+        // }
     }
     fn print_eval_set(&self) {
         println!("Eval Set: {:?}", self.eval_set);
@@ -168,16 +169,17 @@ impl Cache for DirectLeftRecursionCache {
         return self.recursion_setup_flag;
     }
     fn copy_involved_set_into_eval_set(&mut self) {
-        for rule in &self.involved_set {
-            self.eval_set.push_front(*rule);
-        }
+        // for rule in &self.involved_set {
+        //     self.eval_set.push_front(*rule);
+        // }
+        self.eval_set.clone_from(&self.involved_set);
         println!("Copied involved set into eval set");
         self.print_eval_set();
         self.print_involved_set();
     }
 
     fn reset_recursion_setup_flag(&mut self) {
-        // self.involved_set.remove(&self.active_left_recursion_rule);
+        self.involved_set.remove(&self.active_left_recursion_rule);
         self.print_involved_set();
         self.recursion_setup_flag = false;
     }

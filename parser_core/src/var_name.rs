@@ -281,13 +281,17 @@ fn _var_name_kernel_direct_lr<T: Cache, S: Publisher>(
     }
     if recursion_execution_flag {
         let should_func_run: bool;
+        let active_rule: Rules;
         {
             let cache = context.cache.borrow();
             should_func_run = cache.is_in_eval_set(rule);
             cache.print_eval_set();
+            active_rule = cache.get_active_rule();
+            println!("ACTIVE RULE: {:?}", active_rule);
         }
         if should_func_run {
             // Cacheless call
+
             let result = _var_name_kernel_body_cacheless(rule, context, source, position, func);
             {
                 let mut cache = context.cache.borrow_mut();
@@ -438,7 +442,6 @@ fn setup_lr_grow_lr<T: Cache, S: Publisher>(
         let mut cache = context.cache.borrow_mut();
         cache.set_active_rule(rule);
         cache.set_recursion_setup_flag();
-        // cache.insert_into_involved_set(rule);
     }
     func(context, source, position);
     {
