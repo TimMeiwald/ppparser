@@ -1,7 +1,7 @@
 use crate::Cache;
 use core::panic;
 use rules::{Key, Rules};
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet, VecDeque};
 
 // Trait set below works with direct left recursion for reference.
 // // use crate::indirect_left_recursion_cache::Head;
@@ -102,8 +102,10 @@ pub struct DirectLeftRecursionCache {
     recursion_execution_flag: bool,
     // Replace involved_set, eval_set with hashmaps since nested recursions can happen but only one per position.
     // Once it works for individual indirect left recursion.
-    involved_set: HashSet<Rules>,
-    eval_set: HashSet<Rules>,
+    involved_set: BTreeSet<Rules>,
+    eval_set: VecDeque<Rules>,
+    active_left_recursion_rule: Rules,
+    involved_stack: VecDeque<Rules>,
 }
 
 impl Cache for DirectLeftRecursionCache {
@@ -112,15 +114,38 @@ impl Cache for DirectLeftRecursionCache {
             memo_entries: HashMap::new(),
             recursion_setup_flag: false,
             recursion_execution_flag: false,
-            involved_set: HashSet::new(),
-            eval_set: HashSet::new(),
+            involved_set: BTreeSet::new(),
+            eval_set: VecDeque::new(),
+            active_left_recursion_rule: Rules::Grammar,
+            involved_stack: VecDeque::new(),
         }
     }
+    fn set_active_rule(&mut self, rule: Rules) {
+        println!("Active Left Recursion Rule: {:?}", rule);
+        self.active_left_recursion_rule = rule;
+    }
+    fn get_active_rule(&self) -> Rules {
+        self.active_left_recursion_rule
+    }
+    fn eval_set_is_empty(&self) -> bool {
+        self.eval_set.is_empty()
+    }
     fn remove_from_eval_set(&mut self, rule: Rules) {
-        self.eval_set.remove(&rule);
+        if *self.eval_set.front().unwrap() == rule {
+            self.eval_set.pop_front();
+        } else {
+            println!("rule: {:?}, {:?}", rule, self.eval_set);
+            panic!("Poppage in same order as pushing")
+        }
+    }
+    fn print_eval_set(&self) {
+        println!("Eval Set: {:?}", self.eval_set);
     }
     fn is_in_eval_set(&self, rule: Rules) -> bool {
         self.eval_set.contains(&rule)
+    }
+    fn print_involved_set(&self) {
+        println!("Involved Stack: {:?}", self.involved_stack)
     }
     fn set_recursion_execution_flag(&mut self) {
         self.recursion_execution_flag = true;
@@ -132,17 +157,28 @@ impl Cache for DirectLeftRecursionCache {
         self.recursion_execution_flag
     }
     fn insert_into_involved_set(&mut self, rule: Rules) -> bool {
+        let res = self.involved_stack.contains(&rule);
+        self.involved_stack.push_front(rule);
+        self.involved_set.insert(rule);
         println!("Involved Set: {:?}", self.involved_set);
-        self.involved_set.insert(rule)
+        println!("Involved Stack: {:?}", self.involved_stack);
+        return res;
     }
     fn get_recursion_setup_flag(&self) -> bool {
         return self.recursion_setup_flag;
     }
     fn copy_involved_set_into_eval_set(&mut self) {
-        self.eval_set.clone_from(&self.involved_set);
+        for rule in &self.involved_set {
+            self.eval_set.push_front(*rule);
+        }
+        println!("Copied involved set into eval set");
+        self.print_eval_set();
+        self.print_involved_set();
     }
 
     fn reset_recursion_setup_flag(&mut self) {
+        // self.involved_set.remove(&self.active_left_recursion_rule);
+        self.print_involved_set();
         self.recursion_setup_flag = false;
     }
     fn set_recursion_setup_flag(&mut self) {

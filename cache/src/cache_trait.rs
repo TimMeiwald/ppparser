@@ -44,4 +44,10 @@ pub trait Cache {
     fn copy_involved_set_into_eval_set(&mut self);
     fn remove_from_eval_set(&mut self, rule: Rules);
     fn is_in_eval_set(&self, rule: Rules) -> bool;
+    fn print_eval_set(&self);
+    fn print_involved_set(&self);
+
+    fn eval_set_is_empty(&self) -> bool;
+    fn set_active_rule(&mut self, rule: Rules);
+    fn get_active_rule(&self) -> Rules;
 }
