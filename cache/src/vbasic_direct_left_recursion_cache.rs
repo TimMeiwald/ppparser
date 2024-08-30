@@ -158,6 +158,10 @@ impl Cache for DirectLeftRecursionCache {
         self.recursion_execution_flag
     }
     fn insert_into_involved_set(&mut self, rule: Rules) -> bool {
+        println!(
+            "In Insert Into Involved Set: Active Rule : {:?}; Rule: {:?}",
+            self.active_left_recursion_rule, rule
+        );
         let res = self.involved_stack.contains(&rule);
         self.involved_stack.push_front(rule);
         self.involved_set.insert(rule);

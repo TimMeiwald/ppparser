@@ -744,3 +744,50 @@ pub fn test_indirect_lr_expr<T: Cache, S: Publisher>(
     let closure_8 = _ordered_choice(&closure_6, &closure_7);
     closure_8(source, position)
 }
+
+pub fn test_term<T: Cache, S: Publisher>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32, AST) {
+    //  Should match 0-0-0-0-0-0-0-0 etc
+    let test_term = _var_name(Rules::test_term, context, test_term);
+    let test_fact = _var_name(Rules::test_fact, context, test_fact);
+    let plus = _terminal(b'+');
+    let minus = _terminal(b'-');
+
+    let seq1 = _sequence(&test_term, &plus);
+    let seq_plus = _sequence(&seq1, &test_fact);
+    let sexpr_1 = _subexpression(&seq_plus);
+    let seq2 = _sequence(&test_term, &minus);
+    let seq_minus = _sequence(&seq2, &test_fact);
+    let sexpr_2 = _subexpression(&seq_minus);
+
+    let oc1 = _ordered_choice(&sexpr_1, &sexpr_2);
+    let oc2 = _ordered_choice(&oc1, &test_fact);
+    oc2(source, position)
+}
+
+pub fn test_fact<T: Cache, S: Publisher>(
+    context: &Context<T, S>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32, AST) {
+    //  Should match 0-0-0-0-0-0-0-0 etc
+    let test_num = _var_name(Rules::Num, context, num);
+    let test_fact = _var_name(Rules::test_fact, context, test_fact);
+    let star = _terminal(b'*');
+    let div = _terminal(b'/');
+
+    let seq1 = _sequence(&test_fact, &star);
+    let seq_plus = _sequence(&seq1, &test_num);
+    let sexpr_1 = _subexpression(&seq_plus);
+
+    let seq2 = _sequence(&test_fact, &div);
+    let seq_minus = _sequence(&seq2, &test_num);
+    let sexpr_2 = _subexpression(&seq_minus);
+
+    let oc1 = _ordered_choice(&sexpr_1, &sexpr_2);
+    let oc2 = _ordered_choice(&oc1, &test_num);
+    oc2(source, position)
+}

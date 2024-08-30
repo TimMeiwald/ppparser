@@ -18,7 +18,7 @@ pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
     let src_len = string.len() as u32;
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
+    let context = Context::<DirectLeftRecursionCache, Tree>::new(src_len, RULES_SIZE);
     let now = Instant::now();
     let result = grammar(&context, &source, position);
     let elapsed = now.elapsed();
@@ -38,6 +38,6 @@ pub fn parse(path: impl AsRef<Path>) -> Result<bool> {
     //     //println!("{}",i[0]);
     //     println!("{:?}: {}", i, &string2[(i[1] as usize)..(i[2] as usize)]);
     // }
-    assert_eq!(result, (true, src_len));
+    assert_eq!((result.0, result.1), (true, src_len));
     Ok(result.0)
 }

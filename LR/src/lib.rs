@@ -1,6 +1,7 @@
 use anyhow::Result;
 use cache::*;
 use grammar_parser::{grammar, test_lr_expr};
+use grammar_parser::{test_fact, test_term};
 use parser_core::Context;
 use parser_core::Source;
 use parser_core::_var_name;
@@ -138,6 +139,33 @@ mod tests {
             test_indirect_lr_expr,
         )
         .unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 11));
+    }
+    #[test]
+    fn test_recursion_indirect_left_recursion_cache_false() {
+        let src: String = "   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(
+            src,
+            Rules::test_indirect_LR_expr,
+            test_indirect_lr_expr,
+        )
+        .unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (false, 0));
+    }
+
+    #[test]
+    fn testt_fact() {
+        let src: String = "1*2/3*7/9/1   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_fact, test_fact).unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 11));
+    }
+    #[test]
+    fn testt_term() {
+        let src: String = "1*2-3-7-9/1   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_term, test_term).unwrap();
         println!("Before assert");
         assert_eq!((x.0, x.1), (true, 11));
     }

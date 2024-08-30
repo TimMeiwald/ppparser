@@ -1,7 +1,7 @@
 #![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually but not tha
 
 use num_derive::FromPrimitive;
-pub static RULES_SIZE: u32 = 55;
+pub static RULES_SIZE: u32 = 57;
 #[derive(Eq, Hash, FromPrimitive, Clone, Copy, Debug, Ord, PartialOrd)]
 
 pub enum Rules {
@@ -60,4 +60,6 @@ pub enum Rules {
     test_LR_num,
     test_indirect_LR_expr,
     test_indirect_LR_num,
+    test_term,
+    test_fact,
 }
