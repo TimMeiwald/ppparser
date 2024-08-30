@@ -268,6 +268,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
     let mut temp_bool: bool = false;
     let mut temp_ckey: Key = Key(0);
     println!("BEFORE SETUP LR IN GROW LR: {:?}", rule);
+
     setup_lr_grow_lr(rule, context, source, position, func, current_key);
 
     {

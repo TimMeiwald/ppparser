@@ -183,7 +183,7 @@ impl Head {
 
 pub struct DirectLeftRecursionCache {
     memo_entries: HashMap<(Rules, u32), MemoEntry>,
-    heads: HashMap<u32, Head>,
+    heads: HashMap<u32, Option<Head>>,
 }
 
 impl Cache for DirectLeftRecursionCache {
@@ -194,36 +194,49 @@ impl Cache for DirectLeftRecursionCache {
         }
     }
     fn set_active_rule(&mut self, rule: Rules, position: u32) {
+        // Called before anything else usign head so we create one here for the relevant position.
+        self.heads.insert(position, Some(Head::new()));
         println!("Active Left Recursion Rule: {:?} at {:?}", rule, position);
         self.heads
             .get_mut(&position)
             .expect("Should not get called until after head already exists.")
+            .as_mut()
+            .unwrap()
             .set_active_rule(rule);
     }
     fn get_active_rule(&self, position: u32) -> Rules {
-        self.heads[&position].get_active_rule()
+        let head = self.heads.get(&position).unwrap().as_ref().unwrap();
+        head.get_active_rule()
     }
     fn eval_set_is_empty(&self, position: u32) -> bool {
-        self.heads[&position].eval_set_is_empty()
+        let head = self.heads.get(&position).unwrap().as_ref().unwrap();
+        head.eval_set_is_empty()
     }
     fn remove_from_eval_set(&mut self, rule: Rules, position: u32) {
         self.heads
             .get_mut(&position)
             .unwrap()
+            .as_mut()
+            .unwrap()
             .remove_from_eval_set(rule);
     }
     fn print_eval_set(&self, position: u32) {
-        self.heads[&position].print_eval_set();
+        let head = self.heads.get(&position).unwrap().as_ref().unwrap();
+        head.print_eval_set();
     }
     fn is_in_eval_set(&self, rule: Rules, position: u32) -> bool {
-        self.heads[&position].is_in_eval_set(rule)
+        let head = self.heads.get(&position).unwrap().as_ref().unwrap();
+        head.is_in_eval_set(rule)
     }
     fn print_involved_set(&self, position: u32) {
-        self.heads[&position].print_involved_set();
+        let head = self.heads.get(&position).unwrap().as_ref().unwrap();
+        head.print_involved_set();
     }
     fn set_recursion_execution_flag(&mut self, position: u32) {
         self.heads
             .get_mut(&position)
+            .unwrap()
+            .as_mut()
             .unwrap()
             .set_recursion_execution_flag();
     }
@@ -231,23 +244,31 @@ impl Cache for DirectLeftRecursionCache {
         self.heads
             .get_mut(&position)
             .unwrap()
+            .as_mut()
+            .unwrap()
             .reset_recursion_execution_flag();
     }
     fn get_recursion_execution_flag(&self, position: u32) -> bool {
-        self.heads[&position].get_recursion_execution_flag()
+        let head = self.heads.get(&position).unwrap().as_ref().unwrap();
+        head.get_recursion_execution_flag()
     }
     fn insert_into_involved_set(&mut self, rule: Rules, position: u32) -> bool {
         self.heads
             .get_mut(&position)
             .unwrap()
+            .as_mut()
+            .unwrap()
             .insert_into_involved_set(rule)
     }
     fn get_recursion_setup_flag(&self, position: u32) -> bool {
-        self.heads[&position].get_recursion_setup_flag()
+        let head = self.heads.get(&position).unwrap().as_ref().unwrap();
+        head.get_recursion_setup_flag()
     }
     fn copy_involved_set_into_eval_set(&mut self, position: u32) {
         self.heads
             .get_mut(&position)
+            .unwrap()
+            .as_mut()
             .unwrap()
             .copy_involved_set_into_eval_set();
     }
@@ -256,11 +277,15 @@ impl Cache for DirectLeftRecursionCache {
         self.heads
             .get_mut(&position)
             .unwrap()
+            .as_mut()
+            .unwrap()
             .reset_recursion_setup_flag();
     }
     fn set_recursion_setup_flag(&mut self, position: u32) {
         self.heads
             .get_mut(&position)
+            .unwrap()
+            .as_mut()
             .unwrap()
             .set_recursion_setup_flag();
     }
@@ -275,7 +300,7 @@ impl Cache for DirectLeftRecursionCache {
         reference: ASTOrLR,
         end_position: u32,
     ) {
-        let mut memo_entry = self
+        let memo_entry = self
             .memo_entries
             .get_mut(&(rule, start_position))
             .expect("If using this should exist");
