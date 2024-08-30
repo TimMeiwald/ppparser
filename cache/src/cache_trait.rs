@@ -50,4 +50,7 @@ pub trait Cache {
     fn eval_set_is_empty(&self, position: u32) -> bool;
     fn set_active_rule(&mut self, rule: Rules, position: u32);
     fn get_active_rule(&self, position: u32) -> Rules;
+    fn get_current_active_lr_position(&self) -> Option<u32>;
+    fn set_current_active_lr_position(&mut self, position: Option<u32>);
+    fn head_exists(&self, position: u32) -> bool;
 }

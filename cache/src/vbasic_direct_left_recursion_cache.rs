@@ -102,7 +102,7 @@ struct Head {
     pub involved_set: BTreeSet<Rules>,
     pub eval_set: BTreeSet<Rules>,
     pub active_left_recursion_rule: Rules,
-    pub involved_stack: VecDeque<Rules>,
+    //pub involved_stack: VecDeque<Rules>,
 }
 impl Head {
     fn new() -> Self {
@@ -112,7 +112,7 @@ impl Head {
             involved_set: BTreeSet::new(),
             eval_set: BTreeSet::new(),
             active_left_recursion_rule: Rules::Grammar,
-            involved_stack: VecDeque::new(),
+            //involved_stack: VecDeque::new(),
         }
     }
 
@@ -132,10 +132,12 @@ impl Head {
         println!("Eval Set: {:?}", self.eval_set);
     }
     fn is_in_eval_set(&self, rule: Rules) -> bool {
+        println!("EVAL SET: {:?}: DOES IT CONTAIN: {:?}", self.eval_set, rule);
         self.eval_set.contains(&rule)
     }
     fn print_involved_set(&self) {
-        println!("Involved Stack: {:?}", self.involved_stack)
+        //println!("Involved Stack: {:?}", self.involved_stack);
+        println!("Involved Set: {:?}", self.involved_set);
     }
     fn set_recursion_execution_flag(&mut self) {
         self.recursion_execution_flag = true;
@@ -151,11 +153,11 @@ impl Head {
             "In Insert Into Involved Set: Active Rule : {:?}; Rule: {:?}",
             self.active_left_recursion_rule, rule
         );
-        if !self.involved_stack.contains(&rule) {
-            self.involved_stack.push_front(rule);
+        if !self.involved_set.contains(&rule) {
+            //self.involved_stack.push_front(rule);
             self.involved_set.insert(rule);
             println!("Involved Set: {:?}", self.involved_set);
-            println!("Involved Stack: {:?}", self.involved_stack);
+            //println!("Involved Stack: {:?}", self.involved_stack);
             return true;
         } else {
             return false;
@@ -165,10 +167,12 @@ impl Head {
         return self.recursion_setup_flag;
     }
     fn copy_involved_set_into_eval_set(&mut self) {
+        println!("COPIED involved set into eval set");
+
         self.eval_set.clone_from(&self.involved_set);
-        println!("Copied involved set into eval set");
         self.print_eval_set();
         self.print_involved_set();
+        println!("Copied iEnd");
     }
 
     fn reset_recursion_setup_flag(&mut self) {
@@ -184,6 +188,8 @@ impl Head {
 pub struct DirectLeftRecursionCache {
     memo_entries: HashMap<(Rules, u32), MemoEntry>,
     heads: HashMap<u32, Option<Head>>,
+    current_active_left_recursion: Option<u32>,
+    recursion_stack: VecDeque<Option<Head>>,
 }
 
 impl Cache for DirectLeftRecursionCache {
@@ -191,8 +197,17 @@ impl Cache for DirectLeftRecursionCache {
         DirectLeftRecursionCache {
             memo_entries: HashMap::new(),
             heads: HashMap::new(),
+            current_active_left_recursion: None,
+            recursion_stack: VecDeque::new(),
         }
     }
+    fn get_current_active_lr_position(&self) -> Option<u32> {
+        self.current_active_left_recursion
+    }
+    fn set_current_active_lr_position(&mut self, position: Option<u32>) {
+        self.current_active_left_recursion = position;
+    }
+
     fn set_active_rule(&mut self, rule: Rules, position: u32) {
         // Called before anything else usign head so we create one here for the relevant position.
         self.heads.insert(position, Some(Head::new()));
@@ -240,6 +255,12 @@ impl Cache for DirectLeftRecursionCache {
             .unwrap()
             .set_recursion_execution_flag();
     }
+    fn head_exists(&self, position: u32) -> bool {
+        match self.heads.get(&position) {
+            Some(_) => true,
+            None => false,
+        }
+    }
     fn reset_recursion_execution_flag(&mut self, position: u32) {
         self.heads
             .get_mut(&position)
@@ -247,10 +268,30 @@ impl Cache for DirectLeftRecursionCache {
             .as_mut()
             .unwrap()
             .reset_recursion_execution_flag();
+        let head = self.heads.remove(&position);
+        let last_head_on_stack = self.recursion_stack.pop_front();
+        match head {
+            Some(head) => self.recursion_stack.push_front(head),
+            None => {}
+        };
+        match last_head_on_stack {
+            None => {}
+            Some(last_head) => {
+                self.heads.insert(position, last_head);
+            }
+        };
     }
     fn get_recursion_execution_flag(&self, position: u32) -> bool {
-        let head = self.heads.get(&position).unwrap().as_ref().unwrap();
-        head.get_recursion_execution_flag()
+        let head = self.heads.get(&position);
+        match head {
+            Some(head) => {
+                return head.as_ref().unwrap().get_recursion_execution_flag();
+            }
+            None => {
+                // Key does not exist yet
+                return false;
+            }
+        }
     }
     fn insert_into_involved_set(&mut self, rule: Rules, position: u32) -> bool {
         self.heads
@@ -261,8 +302,16 @@ impl Cache for DirectLeftRecursionCache {
             .insert_into_involved_set(rule)
     }
     fn get_recursion_setup_flag(&self, position: u32) -> bool {
-        let head = self.heads.get(&position).unwrap().as_ref().unwrap();
-        head.get_recursion_setup_flag()
+        let head = self.heads.get(&position);
+        match head {
+            Some(head) => {
+                return head.as_ref().unwrap().get_recursion_setup_flag();
+            }
+            None => {
+                // Key does not exist yet
+                return false;
+            }
+        }
     }
     fn copy_involved_set_into_eval_set(&mut self, position: u32) {
         self.heads

@@ -131,7 +131,7 @@ mod tests {
     // }
 
     #[test]
-    fn test_recursion_indirect_left_recursion_cache() {
+    fn test_recursion_indirect_left_recursion_cache1() {
         let src: String = "1-2-3-7-9-1   ".to_string();
         let x = parse::<DirectLeftRecursionCache, Tree>(
             src,
@@ -141,6 +141,18 @@ mod tests {
         .unwrap();
         println!("Before assert");
         assert_eq!((x.0, x.1), (true, 11));
+    }
+    #[test]
+    fn test_recursion_indirect_left_recursion_cache_2() {
+        let src: String = "1-2   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(
+            src,
+            Rules::test_indirect_LR_expr,
+            test_indirect_lr_expr,
+        )
+        .unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 3));
     }
     #[test]
     fn test_recursion_indirect_left_recursion_cache_false() {
@@ -162,11 +174,19 @@ mod tests {
         println!("Before assert");
         assert_eq!((x.0, x.1), (true, 11));
     }
+
     #[test]
-    fn testt_term() {
-        let src: String = "1*2-3-7-9/1   ".to_string();
+    fn testt_term1() {
+        let src: String = "1   ".to_string();
         let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_term, test_term).unwrap();
         println!("Before assert");
-        assert_eq!((x.0, x.1), (true, 11));
+        assert_eq!((x.0, x.1), (true, 1));
+    }
+    #[test]
+    fn testt_term() {
+        let src: String = "1*2+3/7-20*7   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_term, test_term).unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 9));
     }
 }
