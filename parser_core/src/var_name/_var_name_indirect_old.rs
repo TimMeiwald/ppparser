@@ -34,9 +34,9 @@ fn setup_lr_var_name_kernel<T: Cache, S: Publisher>(
     let recursion_flag: bool;
     {
         let mut cache = context.cache.borrow_mut();
-        recursion_flag = cache.get_recursion_setup_flag(position);
+        recursion_flag = cache.get_recursion_setup_flag();
         if recursion_flag {
-            let abort = !cache.insert_into_involved_set(rule, position);
+            let abort = !cache.insert_into_involved_set(rule);
             if abort {
                 return true;
             }
@@ -74,16 +74,16 @@ pub fn _var_name_kernel_indirect_lr<T: Cache, S: Publisher>(
     let recursion_execution_flag: bool;
     {
         let cache = context.cache.borrow();
-        recursion_execution_flag = cache.get_recursion_execution_flag(position);
+        recursion_execution_flag = cache.get_recursion_execution_flag();
     }
     if recursion_execution_flag {
         let should_func_run: bool;
         let active_rule: Rules;
         {
             let cache = context.cache.borrow();
-            should_func_run = cache.is_in_eval_set(rule, position);
-            cache.print_eval_set(position);
-            active_rule = cache.get_active_rule(position);
+            should_func_run = cache.is_in_eval_set(rule);
+            cache.print_eval_set();
+            active_rule = cache.get_active_rule();
             println!("ACTIVE RULE: {:?}", active_rule);
         }
         if should_func_run {
@@ -93,7 +93,7 @@ pub fn _var_name_kernel_indirect_lr<T: Cache, S: Publisher>(
             {
                 let mut cache = context.cache.borrow_mut();
                 println!("Removing rule: {:?}", rule);
-                cache.remove_from_eval_set(rule, position);
+                cache.remove_from_eval_set(rule);
             }
             return result;
         } else {
@@ -237,14 +237,14 @@ fn setup_lr_grow_lr<T: Cache, S: Publisher>(
     println!("\x1b[31mRecursion Flag Set");
     {
         let mut cache = context.cache.borrow_mut();
-        cache.set_active_rule(rule, position);
-        cache.set_recursion_setup_flag(position);
+        cache.set_active_rule(rule);
+        cache.set_recursion_setup_flag();
     }
     func(context, source, position);
     {
         let mut cache = context.cache.borrow_mut();
-        cache.print_involved_set(position);
-        cache.reset_recursion_setup_flag(position);
+        cache.print_involved_set();
+        cache.reset_recursion_setup_flag();
     }
     println!("Found all involved rules");
     println!("Recursion Flag Reset\x1b[0m");
@@ -287,7 +287,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
         {
             // Every Growth Iteration we copy everything in involved set into eval set to prepare for the next growth iteration.
             let mut cache = context.cache.borrow_mut();
-            cache.copy_involved_set_into_eval_set(position);
+            cache.copy_involved_set_into_eval_set();
         }
         // Keep calling func until all are gone in eval set
         let mut ans: (bool, u32, AST);
@@ -295,7 +295,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
         {
             let mut cache = context.cache.borrow_mut();
             println!("\x1b[33mRecursion Execution Flag Set");
-            cache.set_recursion_execution_flag(position);
+            cache.set_recursion_execution_flag();
         }
         loop {
             println!("{:?}: GrowLR Before Func", rule);
@@ -304,8 +304,8 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
 
             {
                 let mut cache = context.cache.borrow();
-                cache.print_eval_set(position);
-                if cache.eval_set_is_empty(position) {
+                cache.print_eval_set();
+                if cache.eval_set_is_empty() {
                     println!("Eval Set is emtpy");
                     break;
                 }
@@ -332,7 +332,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
                 let mut cache = context.cache.borrow_mut();
                 println!("\x1b[0mRecursion Execution Flag Reset");
 
-                cache.reset_recursion_execution_flag(position);
+                cache.reset_recursion_execution_flag();
             }
             return (temp_bool, temp_pos, temp_ans);
         }

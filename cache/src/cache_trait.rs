@@ -34,20 +34,20 @@ pub trait Cache {
                                 // fn set_last_node(&mut self, key: Option<Key>);
                                 // fn set_is_fail(&mut self, rule: Rules, start_position: u32, is_fail: bool);
                                 // fn get_is_fail(&self, rule: Rules, start_position: u32) -> bool;
-    fn set_recursion_setup_flag(&mut self);
-    fn reset_recursion_setup_flag(&mut self);
-    fn get_recursion_setup_flag(&self) -> bool;
-    fn set_recursion_execution_flag(&mut self);
-    fn reset_recursion_execution_flag(&mut self);
-    fn get_recursion_execution_flag(&self) -> bool;
-    fn insert_into_involved_set(&mut self, rule: Rules) -> bool;
-    fn copy_involved_set_into_eval_set(&mut self);
-    fn remove_from_eval_set(&mut self, rule: Rules);
-    fn is_in_eval_set(&self, rule: Rules) -> bool;
-    fn print_eval_set(&self);
-    fn print_involved_set(&self);
+    fn set_recursion_setup_flag(&mut self, position: u32);
+    fn reset_recursion_setup_flag(&mut self, position: u32);
+    fn get_recursion_setup_flag(&self, position: u32) -> bool;
+    fn set_recursion_execution_flag(&mut self, position: u32);
+    fn reset_recursion_execution_flag(&mut self, position: u32);
+    fn get_recursion_execution_flag(&self, position: u32) -> bool;
+    fn insert_into_involved_set(&mut self, rule: Rules, position: u32) -> bool;
+    fn copy_involved_set_into_eval_set(&mut self, position: u32);
+    fn remove_from_eval_set(&mut self, rule: Rules, position: u32);
+    fn is_in_eval_set(&self, rule: Rules, position: u32) -> bool;
+    fn print_eval_set(&self, position: u32);
+    fn print_involved_set(&self, position: u32);
 
-    fn eval_set_is_empty(&self) -> bool;
-    fn set_active_rule(&mut self, rule: Rules);
-    fn get_active_rule(&self) -> Rules;
+    fn eval_set_is_empty(&self, position: u32) -> bool;
+    fn set_active_rule(&mut self, rule: Rules, position: u32);
+    fn get_active_rule(&self, position: u32) -> Rules;
 }

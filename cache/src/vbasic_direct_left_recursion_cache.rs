@@ -96,22 +96,17 @@ impl Into<AST> for ASTOrLR {
     }
 }
 
-pub struct DirectLeftRecursionCache {
-    memo_entries: HashMap<(Rules, u32), MemoEntry>,
-    recursion_setup_flag: bool,
-    recursion_execution_flag: bool,
-    // Replace involved_set, eval_set with hashmaps since nested recursions can happen but only one per position.
-    // Once it works for individual indirect left recursion.
-    involved_set: BTreeSet<Rules>,
-    eval_set: BTreeSet<Rules>,
-    active_left_recursion_rule: Rules,
-    involved_stack: VecDeque<Rules>,
+struct Head {
+    pub recursion_setup_flag: bool,
+    pub recursion_execution_flag: bool,
+    pub involved_set: BTreeSet<Rules>,
+    pub eval_set: BTreeSet<Rules>,
+    pub active_left_recursion_rule: Rules,
+    pub involved_stack: VecDeque<Rules>,
 }
-
-impl Cache for DirectLeftRecursionCache {
-    fn new(size_of_source: u32, number_of_structs: u32) -> DirectLeftRecursionCache {
-        DirectLeftRecursionCache {
-            memo_entries: HashMap::new(),
+impl Head {
+    fn new() -> Self {
+        Head {
             recursion_setup_flag: false,
             recursion_execution_flag: false,
             involved_set: BTreeSet::new(),
@@ -120,8 +115,8 @@ impl Cache for DirectLeftRecursionCache {
             involved_stack: VecDeque::new(),
         }
     }
+
     fn set_active_rule(&mut self, rule: Rules) {
-        println!("Active Left Recursion Rule: {:?}", rule);
         self.active_left_recursion_rule = rule;
     }
     fn get_active_rule(&self) -> Rules {
@@ -132,12 +127,6 @@ impl Cache for DirectLeftRecursionCache {
     }
     fn remove_from_eval_set(&mut self, rule: Rules) {
         self.eval_set.remove(&rule);
-        // if *self.eval_set.front().unwrap() == rule {
-        //     self.eval_set.pop_front();
-        // } else {
-        //     println!("rule: {:?}, {:?}", rule, self.eval_set);
-        //     panic!("Poppage in same order as pushing")
-        // }
     }
     fn print_eval_set(&self) {
         println!("Eval Set: {:?}", self.eval_set);
@@ -176,9 +165,6 @@ impl Cache for DirectLeftRecursionCache {
         return self.recursion_setup_flag;
     }
     fn copy_involved_set_into_eval_set(&mut self) {
-        // for rule in &self.involved_set {
-        //     self.eval_set.push_front(*rule);
-        // }
         self.eval_set.clone_from(&self.involved_set);
         println!("Copied involved set into eval set");
         self.print_eval_set();
@@ -192,6 +178,91 @@ impl Cache for DirectLeftRecursionCache {
     }
     fn set_recursion_setup_flag(&mut self) {
         self.recursion_setup_flag = true;
+    }
+}
+
+pub struct DirectLeftRecursionCache {
+    memo_entries: HashMap<(Rules, u32), MemoEntry>,
+    heads: HashMap<u32, Head>,
+}
+
+impl Cache for DirectLeftRecursionCache {
+    fn new(size_of_source: u32, number_of_structs: u32) -> DirectLeftRecursionCache {
+        DirectLeftRecursionCache {
+            memo_entries: HashMap::new(),
+            heads: HashMap::new(),
+        }
+    }
+    fn set_active_rule(&mut self, rule: Rules, position: u32) {
+        println!("Active Left Recursion Rule: {:?} at {:?}", rule, position);
+        self.heads
+            .get_mut(&position)
+            .expect("Should not get called until after head already exists.")
+            .set_active_rule(rule);
+    }
+    fn get_active_rule(&self, position: u32) -> Rules {
+        self.heads[&position].get_active_rule()
+    }
+    fn eval_set_is_empty(&self, position: u32) -> bool {
+        self.heads[&position].eval_set_is_empty()
+    }
+    fn remove_from_eval_set(&mut self, rule: Rules, position: u32) {
+        self.heads
+            .get_mut(&position)
+            .unwrap()
+            .remove_from_eval_set(rule);
+    }
+    fn print_eval_set(&self, position: u32) {
+        self.heads[&position].print_eval_set();
+    }
+    fn is_in_eval_set(&self, rule: Rules, position: u32) -> bool {
+        self.heads[&position].is_in_eval_set(rule)
+    }
+    fn print_involved_set(&self, position: u32) {
+        self.heads[&position].print_involved_set();
+    }
+    fn set_recursion_execution_flag(&mut self, position: u32) {
+        self.heads
+            .get_mut(&position)
+            .unwrap()
+            .set_recursion_execution_flag();
+    }
+    fn reset_recursion_execution_flag(&mut self, position: u32) {
+        self.heads
+            .get_mut(&position)
+            .unwrap()
+            .reset_recursion_execution_flag();
+    }
+    fn get_recursion_execution_flag(&self, position: u32) -> bool {
+        self.heads[&position].get_recursion_execution_flag()
+    }
+    fn insert_into_involved_set(&mut self, rule: Rules, position: u32) -> bool {
+        self.heads
+            .get_mut(&position)
+            .unwrap()
+            .insert_into_involved_set(rule)
+    }
+    fn get_recursion_setup_flag(&self, position: u32) -> bool {
+        self.heads[&position].get_recursion_setup_flag()
+    }
+    fn copy_involved_set_into_eval_set(&mut self, position: u32) {
+        self.heads
+            .get_mut(&position)
+            .unwrap()
+            .copy_involved_set_into_eval_set();
+    }
+
+    fn reset_recursion_setup_flag(&mut self, position: u32) {
+        self.heads
+            .get_mut(&position)
+            .unwrap()
+            .reset_recursion_setup_flag();
+    }
+    fn set_recursion_setup_flag(&mut self, position: u32) {
+        self.heads
+            .get_mut(&position)
+            .unwrap()
+            .set_recursion_setup_flag();
     }
 
     fn check_lr(&mut self, rule: Rules, start_position: u32) -> Option<&MemoEntry> {
