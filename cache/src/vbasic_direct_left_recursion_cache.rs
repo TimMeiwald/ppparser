@@ -162,12 +162,15 @@ impl Cache for DirectLeftRecursionCache {
             "In Insert Into Involved Set: Active Rule : {:?}; Rule: {:?}",
             self.active_left_recursion_rule, rule
         );
-        let res = self.involved_stack.contains(&rule);
-        self.involved_stack.push_front(rule);
-        self.involved_set.insert(rule);
-        println!("Involved Set: {:?}", self.involved_set);
-        println!("Involved Stack: {:?}", self.involved_stack);
-        return res;
+        if !self.involved_stack.contains(&rule) {
+            self.involved_stack.push_front(rule);
+            self.involved_set.insert(rule);
+            println!("Involved Set: {:?}", self.involved_set);
+            println!("Involved Stack: {:?}", self.involved_stack);
+            return true;
+        } else {
+            return false;
+        }
     }
     fn get_recursion_setup_flag(&self) -> bool {
         return self.recursion_setup_flag;
