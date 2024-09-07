@@ -174,6 +174,27 @@ mod tests {
         println!("Before assert");
         assert_eq!((x.0, x.1), (true, 11));
     }
+    #[test]
+    fn testt_fact_short() {
+        let src: String = "1*2   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_fact, test_fact).unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 3));
+    }
+    #[test]
+    fn testt_fact_short2() {
+        let src: String = "1*2*3   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_fact, test_fact).unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 5));
+    }
+    #[test]
+    fn testt_fact_short3() {
+        let src: String = "1*2/3   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_fact, test_fact).unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 5));
+    }
 
     #[test]
     fn testt_term1() {

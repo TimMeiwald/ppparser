@@ -195,3 +195,5 @@ LR: (seed: AST, rule: Rule, involvedSet: Set<Rule>, evalSet: Set<Rule>)
 
 // Not sure why we can't just handle it all from grow_lr tbh. 
 // Handle it with flags?
+
+# TODO Add Recursive branch test so can do full tests without manual inspection of output
