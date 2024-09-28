@@ -7,24 +7,21 @@ fn _ordered_choice_match_range_kernel(
     position: u32,
     start: u32,
     end: u32,
-) -> (bool, u32, AST) {
+) -> (bool, u32) {
     let chr = source.get_char(position);
     match chr {
-        None => (false, position, AST::FAIL),
         Some(value) => {
             if (value as u32 >= start) && (value as u32 <= end) {
-                (true, position + 1, AST::IGNORE)
+                (true, position + 1)
             } else {
-                (false, position, AST::FAIL)
+                (false, position)
             }
         }
+        None => (false, position),
     }
 }
 
-pub fn _ordered_choice_match_range(
-    start: u32,
-    end: u32,
-) -> impl Fn(&Source, u32) -> (bool, u32, AST) {
+pub fn _ordered_choice_match_range(start: u32, end: u32) -> impl Fn(&Source, u32) -> (bool, u32) {
     move |source: &Source, position: u32| {
         _ordered_choice_match_range_kernel(source, position, start, end)
     }

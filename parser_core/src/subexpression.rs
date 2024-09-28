@@ -3,20 +3,19 @@ use cache::AST;
 pub fn _subexpression_kernel(
     source: &Source,
     position: u32,
-    func: impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let temp_position = position;
-    let (valid, position, ast) = func(source, temp_position);
-    // println!("Subexpression: {:?}", (valid, position));
+    let (valid, position) = func(source, temp_position);
     if !valid {
-        return (false, temp_position, AST::FAIL);
+        return (false, temp_position);
     }
-    (true, position, ast)
+    (true, position)
 }
 
 pub fn _subexpression(
-    func: &impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> impl Fn(&Source, u32) -> (bool, u32, AST) + '_ {
+    func: &impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _subexpression_kernel(source, position, func)
 }
 

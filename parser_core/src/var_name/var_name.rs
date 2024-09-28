@@ -22,8 +22,8 @@ use rules::{Key, Rules};
 pub fn _var_name<T: Cache, S: Publisher>(
     rule: Rules,
     context: &Context<T, S>,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
-) -> impl Fn(&Source, u32) -> (bool, u32, AST) + '_ {
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| {
         _var_name_kernel_indirect_lr(rule, context, source, position, func)
     }

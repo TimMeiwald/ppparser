@@ -3,27 +3,27 @@ use cache::AST;
 pub fn _one_or_more_kernel(
     source: &Source,
     position: u32,
-    func: impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let mut temp_position = position;
-    let (valid, position, ast) = func(source, temp_position);
+    let (valid, position) = func(source, temp_position);
     if !valid {
-        return (false, temp_position, AST::FAIL);
+        return (false, temp_position);
     }
     temp_position = position;
     loop {
-        let (valid, position, ast) = func(source, temp_position);
+        let (valid, position) = func(source, temp_position);
         if !valid {
             break;
         }
         temp_position = position;
     }
-    (true, temp_position, ast)
+    (true, temp_position)
 }
 
 pub fn _one_or_more(
-    func: &impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> impl Fn(&Source, u32) -> (bool, u32, AST) + '_ {
+    func: &impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _one_or_more_kernel(source, position, func)
 }
 

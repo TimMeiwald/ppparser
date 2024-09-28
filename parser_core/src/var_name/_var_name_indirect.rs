@@ -29,7 +29,7 @@ fn setup_lr_var_name_kernel<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
     current_active_lr_position: u32,
 ) -> bool {
     let recursion_flag: bool;
@@ -63,8 +63,8 @@ pub fn _var_name_kernel_indirect_lr<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     println!("{:?} Entering Var_Name Kernel", rule);
     // Below code executes and runs when growLr sets up for indirect left recursion.
     let current_active_lr_position: Option<u32>;
@@ -87,7 +87,7 @@ pub fn _var_name_kernel_indirect_lr<T: Cache, S: Publisher>(
     let recursion_setup_flag: bool =
         setup_lr_var_name_kernel(rule, context, source, position, func, active_lr_position);
     if recursion_setup_flag {
-        return (false, 0, AST::FAIL);
+        return (false, 0);
     }
     let recursion_execution_flag: bool;
     {
@@ -137,8 +137,8 @@ fn _var_name_kernel_body<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     // Body of the _var_name_kernel_as_in_direct_kernel
 
     {
@@ -164,7 +164,7 @@ fn _var_name_kernel_body<T: Cache, S: Publisher>(
                             // println!("{:?} Exiting ASTORLR LR Var_Name Kernel", rule);
                         }
                         // println!("{:?} Exiting Var_Name Kernel", rule);
-                        return (false, 0, AST::FAIL);
+                        return (false, 0);
                     }
                     ASTOrLR::AST(ast) => {
                         // println!("{:?} Exiting Cached Value Block", rule);
@@ -172,7 +172,7 @@ fn _var_name_kernel_body<T: Cache, S: Publisher>(
                         // START Publisher: If cached we connect the parent to the existing key.
                         let current_key_ast: AST = memo_entry.ast_or_lr.into();
                         let current_key: Key = current_key_ast.into();
-                        publisher_update_node(
+                        publisher_update_node_only_connect_if_not_connected(
                             context,
                             position,
                             memo_entry.position,
@@ -182,7 +182,7 @@ fn _var_name_kernel_body<T: Cache, S: Publisher>(
                         );
                         // END PUBLISHER
                         // println!("{:?} Exiting Var_Name Kernel", rule);
-                        return (memo_entry.is_true, memo_entry.position, current_key_ast);
+                        return (memo_entry.is_true, memo_entry.position);
                     }
                 }
             }
@@ -197,8 +197,8 @@ fn _var_name_kernel_body_cacheless<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let (parent_key, current_key) = publisher_setup_node(context, rule);
     // println!("{:?} Entering No Cached Value Block", rule);
     {
@@ -236,7 +236,7 @@ fn _var_name_kernel_body_cacheless<T: Cache, S: Publisher>(
         );
         // println!("{:?} Exiting No Cached Value Block", rule);
         // println!("{:?} Exiting Var_Name Kernel in GrowLR", rule);
-        return (ans.0, ans.1, AST::SUCCESS(current_key));
+        return (ans.0, ans.1);
     } else {
         // println!("Entering No Cached No LR Detected");
         let mut cache = context.cache.borrow_mut();
@@ -249,7 +249,7 @@ fn _var_name_kernel_body_cacheless<T: Cache, S: Publisher>(
         );
         // println!("{:?} Exiting No Cached Value Block", rule);
         // println!("{:?} Exiting Var_Name Kernel", rule);
-        return (ans.0, ans.1, AST::SUCCESS(current_key));
+        return (ans.0, ans.1);
     }
 }
 
@@ -258,7 +258,7 @@ fn setup_lr_grow_lr<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
     current_key: Key,
 ) {
     println!("\x1b[31mRecursion Flag Set");
@@ -283,9 +283,9 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
     context: &Context<T, S>,
     source: &Source,
     position: u32,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
     current_key: Key,
-) -> (bool, u32, AST) {
+) -> (bool, u32) {
     println!("{:?} In GrowLR", position);
     println!("{:?}", rule);
     let parent_root_key = publisher_get_last_node(context);
@@ -327,11 +327,12 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
             cache.copy_involved_set_into_eval_set(position);
         }
         // Keep calling func until all are gone in eval set
-        let mut ans: (bool, u32, AST);
+        let mut ans: (bool, u32);
         // ans = func(context, source, position);
 
         loop {
             println!("{:?}: GrowLR Before Func", rule);
+
             ans = func(context, source, position);
             println!("{:?}: GrowLR After Func", rule);
 
@@ -351,7 +352,7 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
 
         println!("GrowLR After Func");
 
-        println!("GrowLR {:?} {:?} {:?}", ans.0, ans.1, ans.2);
+        println!("GrowLR {:?} {:?}", ans.0, ans.1);
         if ans.0 == false || (ans.1 <= temp_pos) {
             publisher_update_node(
                 context,
@@ -368,17 +369,24 @@ fn grow_lr_direct_lr<T: Cache, S: Publisher>(
                 cache.set_current_active_lr_position(previous_active_lr_position);
                 cache.reset_recursion_execution_flag(position);
             }
+
+            println!("GROW DIRECT LR RESULT: {:?}", (ans.0, ans.1));
             println!(
-                "GROW DIRECT LR RESULT: {:?}",
+                "GROW DIRECT LR RETURNING RESULT: {:?}",
                 (temp_bool, temp_pos, temp_ans)
             );
-            return (temp_bool, temp_pos, temp_ans);
+            println!(
+                "PARENT ROOT KEY: {:?}, ROOT KEY {:?}",
+                parent_root_key, root_key
+            );
+            return (temp_bool, temp_pos);
         }
         println!("PUBLISHER");
         // Don't connect until complete using the last result
+
         publisher_update_node(context, position, ans.1, ans.0, None, ckey);
+
         temp_pos = ans.1;
-        temp_ans = ans.2;
         temp_bool = ans.0;
         temp_ckey = ckey;
         {

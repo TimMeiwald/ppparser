@@ -3,25 +3,23 @@ use cache::AST;
 pub fn _zero_or_more_kernel(
     source: &Source,
     position: u32,
-    func: impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let mut temp_position = position;
-    let mut ast: AST;
     loop {
-        let (valid, position, ast2) = func(source, temp_position);
-        ast = ast2;
+        let (valid, position) = func(source, temp_position);
         if !valid {
             break;
         }
         temp_position = position;
     }
     // Always true but may consume zero positions
-    (true, temp_position, ast)
+    (true, temp_position)
 }
 
 pub fn _zero_or_more(
-    func: &impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> impl Fn(&Source, u32) -> (bool, u32, AST) + '_ {
+    func: &impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _zero_or_more_kernel(source, position, func)
 }
 

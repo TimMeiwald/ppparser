@@ -5,30 +5,27 @@ use std::result;
 pub fn _ordered_choice_kernel(
     source: &Source,
     position: u32,
-    func_lhs: impl Fn(&Source, u32) -> (bool, u32, AST),
-    func_rhs: impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func_lhs: impl Fn(&Source, u32) -> (bool, u32),
+    func_rhs: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let temp_position = position;
-    let (valid, position, ast) = func_lhs(source, position);
-    // println!("Func LHS: {:?}", (valid, position));
+    let (valid, position) = func_lhs(source, position);
     if valid {
-        // println!("Should end here");
-        return (true, position, ast);
+        return (true, position);
     }
     let position = temp_position;
-    let (valid, position, ast) = func_rhs(source, position);
+    let (valid, position) = func_rhs(source, position);
     if valid {
-        // println!("Wtf why");
-        (true, position, ast)
+        (true, position)
     } else {
-        (false, temp_position, AST::FAIL)
+        (false, temp_position)
     }
 }
 
 pub fn _ordered_choice<'a>(
-    func_lhs: &'a impl Fn(&Source, u32) -> (bool, u32, AST),
-    func_rhs: &'a impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> impl Fn(&Source, u32) -> (bool, u32, AST) + 'a {
+    func_lhs: &'a impl Fn(&Source, u32) -> (bool, u32),
+    func_rhs: &'a impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + 'a {
     move |source: &Source, position: u32| {
         _ordered_choice_kernel(source, position, func_lhs, func_rhs)
     }

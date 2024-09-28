@@ -2,17 +2,17 @@
 // u8 because ascii could be modified for utf-8 eventually.
 use crate::source::Source;
 use cache::AST;
-pub fn _terminal_kernel(source: &Source, position: u32, chr: u8) -> (bool, u32, AST) {
+pub fn _terminal_kernel(source: &Source, position: u32, chr: u8) -> (bool, u32) {
     let char = source.get_char(position);
     //let char = char.expect("\nThis error only happens with invalid grammar. E.g **. This should be disallowed at generation time!!\n");
     if char == Some(chr) {
-        (true, position + 1, AST::IGNORE)
+        (true, position + 1)
     } else {
-        (false, position, AST::FAIL)
+        (false, position)
     }
 }
 
-pub fn _terminal(chr: u8) -> impl Fn(&Source, u32) -> (bool, u32, AST) {
+pub fn _terminal(chr: u8) -> impl Fn(&Source, u32) -> (bool, u32) {
     move |source: &Source, position: u32| _terminal_kernel(source, position, chr)
 }
 

@@ -3,19 +3,19 @@ use cache::AST;
 pub fn _optional_kernel(
     source: &Source,
     position: u32,
-    func: impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let temp_position = position;
-    let (valid, position, ast) = func(source, temp_position);
+    let (valid, position) = func(source, temp_position);
     if !valid {
-        return (true, temp_position, AST::IGNORE);
+        return (true, temp_position);
     }
-    (true, position, AST::IGNORE)
+    (true, position)
 }
 
 pub fn _optional(
-    func: &impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> impl Fn(&Source, u32) -> (bool, u32, AST) + '_ {
+    func: &impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _optional_kernel(source, position, func)
 }
 

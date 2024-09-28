@@ -3,19 +3,19 @@ use cache::AST;
 pub fn _and_predicate_kernel(
     source: &Source,
     position: u32,
-    func: impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let temp_position = position;
-    let (valid, _position, ast) = func(source, temp_position);
+    let (valid, _position) = func(source, temp_position);
     if !valid {
-        return (false, temp_position, ast);
+        return (false, temp_position);
     }
-    (true, temp_position, ast)
+    (true, temp_position)
 }
 
 pub fn _and_predicate(
-    func: &impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> impl Fn(&Source, u32) -> (bool, u32, AST) + '_ {
+    func: &impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + '_ {
     move |source: &Source, position: u32| _and_predicate_kernel(source, position, func)
 }
 

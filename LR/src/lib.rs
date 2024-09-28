@@ -17,8 +17,8 @@ use std::time::Instant;
 pub fn parse<T: Cache, S: Publisher>(
     src: String,
     rule: Rules,
-    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32, AST),
-) -> Result<(bool, u32, AST)> {
+    func: fn(&Context<T, S>, &Source, u32) -> (bool, u32),
+) -> Result<(bool, u32)> {
     let string = src;
     let src_len = string.len() as u32;
     let source = Source::new(&string);
@@ -209,5 +209,35 @@ mod tests {
         let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_term, test_term).unwrap();
         println!("Before assert");
         assert_eq!((x.0, x.1), (true, 9));
+    }
+    #[test]
+    fn testt_term2() {
+        let src: String = "1/2/3/4+5+7+9  ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_term, test_term).unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 13));
+    }
+    #[test]
+    fn testt_term3() {
+        let src: String = "4+5+7+9/1/2/3 ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_term, test_term).unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 13));
+    }
+
+    #[test]
+    fn testt_term_short1() {
+        let src: String = "1+2+3   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_term, test_term).unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 5));
+    }
+
+    #[test]
+    fn testt_term_short2() {
+        let src: String = "1+2-3   ".to_string();
+        let x = parse::<DirectLeftRecursionCache, Tree>(src, Rules::test_term, test_term).unwrap();
+        println!("Before assert");
+        assert_eq!((x.0, x.1), (true, 5));
     }
 }

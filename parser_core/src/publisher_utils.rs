@@ -59,3 +59,27 @@ pub fn publisher_update_node<T: Cache, S: Publisher>(
     publisher.set_node_result(current_key, is_true);
     publisher.set_last_node(parent_key);
 }
+pub fn publisher_update_node_only_connect_if_not_connected<T: Cache, S: Publisher>(
+    context: &Context<T, S>,
+    start_position: u32,
+    end_position: u32,
+    is_true: bool,
+    parent_key: Option<Key>,
+    current_key: Key,
+) {
+    let mut publisher = context.stack.borrow_mut();
+    match parent_key {
+        None => {}
+        Some(pkey) => {
+            // REMOVE THIS IF STATEMENT IF YOU ALSO WANT TO SEE ERRORS,
+            // E.G FOR LINTERS SO THEY CAN FIND THE LONGEST MATCH AND SUGGEST A FIX.
+            if is_true {
+                publisher.connect_if_not_connected(pkey, current_key);
+            }
+        }
+    }
+    publisher.set_node_start_position(current_key, start_position);
+    publisher.set_node_end_position(current_key, end_position);
+    publisher.set_node_result(current_key, is_true);
+    publisher.set_last_node(parent_key);
+}

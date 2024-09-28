@@ -55,6 +55,16 @@ impl Publisher for Tree {
         let parent_node: &mut Node = self.get_mut_node(parent_index);
         parent_node.children.push(child_index);
     }
+    fn connect_if_not_connected(&mut self, parent_index: Key, child_index: Key) {
+        println!("Connecting: {:?} <- {:?}", parent_index, child_index);
+        let parent_node: &mut Node = self.get_mut_node(parent_index);
+        for child in &parent_node.children {
+            if *child == child_index {
+                return;
+            }
+        }
+        parent_node.children.push(child_index);
+    }
     fn disconnect(&mut self, parent_index: Key, child_index: Key) {
         let parent_node: &mut Node = self.get_mut_node(parent_index);
         let mut remove_pos: Option<usize> = None;

@@ -3,28 +3,26 @@ use cache::AST;
 pub fn _sequence_kernel(
     source: &Source,
     position: u32,
-    func_lhs: impl Fn(&Source, u32) -> (bool, u32, AST),
-    func_rhs: impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> (bool, u32, AST) {
+    func_lhs: impl Fn(&Source, u32) -> (bool, u32),
+    func_rhs: impl Fn(&Source, u32) -> (bool, u32),
+) -> (bool, u32) {
     let temp_position = position;
 
-    let (lhs_bool, position, ast) = func_lhs(source, position);
-    // println!("Sequence LHS: {:?}", (lhs_bool, position));
+    let (lhs_bool, position) = func_lhs(source, position);
 
     if lhs_bool {
-        let (rhs_bool, position, ast) = func_rhs(source, position);
-        // println!("Sequence RHS: {:?}", (lhs_bool, position));
+        let (rhs_bool, position) = func_rhs(source, position);
         if rhs_bool {
-            return (true, position, ast);
+            return (true, position);
         }
     }
-    (false, temp_position, AST::FAIL)
+    (false, temp_position)
 }
 
 pub fn _sequence<'a>(
-    func_lhs: &'a impl Fn(&Source, u32) -> (bool, u32, AST),
-    func_rhs: &'a impl Fn(&Source, u32) -> (bool, u32, AST),
-) -> impl Fn(&Source, u32) -> (bool, u32, AST) + 'a {
+    func_lhs: &'a impl Fn(&Source, u32) -> (bool, u32),
+    func_rhs: &'a impl Fn(&Source, u32) -> (bool, u32),
+) -> impl Fn(&Source, u32) -> (bool, u32) + 'a {
     move |source: &Source, position: u32| _sequence_kernel(source, position, func_lhs, func_rhs)
 }
 
