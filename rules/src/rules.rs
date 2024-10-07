@@ -1,8 +1,9 @@
-#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually but not that relevant right now
+#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually but not tha
 
 use num_derive::FromPrimitive;
+pub static RULES_SIZE: u32 = 57;
+#[derive(Eq, Hash, FromPrimitive, Clone, Copy, Debug, Ord, PartialOrd)]
 
-#[derive(FromPrimitive, Clone, Copy, Debug)]
 pub enum Rules {
     ASCII,
     Alphabet_Lower,
@@ -54,6 +55,11 @@ pub enum Rules {
     Terminal,
     Var_Name,
     Var_Name_Decl,
-    Whitespace,
     Zero_Or_More,
+    test_LR_expr,
+    test_LR_num,
+    test_indirect_LR_expr,
+    test_indirect_LR_num,
+    test_term,
+    test_fact,
 }

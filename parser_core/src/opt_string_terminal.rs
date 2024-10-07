@@ -1,6 +1,6 @@
 #![allow(unused_variables)]
 use crate::source::Source;
-use cache::Cache;
+use cache::{Cache, AST};
 use publisher::Publisher;
 
 fn _string_terminal_kernel(source: &Source, position: u32, data: &[char]) -> (bool, u32) {

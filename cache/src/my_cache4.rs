@@ -1,4 +1,4 @@
-use crate::Cache;
+use crate::{Cache, Head};
 use rules::{Key, Rules};
 
 // This cache will completely flatten the cache to see if that improves performance.
@@ -34,6 +34,16 @@ impl Cache for MyCache4 {
     fn set_last_node(&mut self, key: Option<Key>) {
         self.last_node = key
     }
+    fn push_deny_LR(
+        &mut self,
+        rule: Rules,
+        is_true: Option<bool>,
+        start_position: u32,
+        end_position: u32,
+        reference: Key,
+    ) {
+        // Noop
+    }
 
     fn push(
         &mut self,
@@ -62,8 +72,21 @@ impl Cache for MyCache4 {
             None
         }
     }
+    fn check_LR(&self, rule: Rules, start_position: u32) -> Option<(Option<bool>, u32, Key)> {
+        panic!("This cache requires the use of _var_name function!")
+    }
+    fn get_lr_detected(&self, rule: Rules) -> bool {
+        panic!("");
+    }
+    fn set_lr_detected(&mut self, detected: Option<Rules>) {
+        panic!("");
+    }
     fn clear(&mut self) {}
     fn reinitialize(&mut self) {
         self.end_position.fill(0);
+    }
+    fn set_indirect_lr_detected(&mut self, detected: Rules, start_position: u32) {}
+    fn get_indirect_lr_detected(&mut self, start_position: u32) -> Option<&mut Head> {
+        panic!("Cannot use this cache for Indirect Or Direction Left Recursion")
     }
 }

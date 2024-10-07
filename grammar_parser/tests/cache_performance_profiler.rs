@@ -1,8 +1,9 @@
 // use cache::{Cache, MyCache1, MyCache2, MyCache3, MyCache4};
-use cache::{Cache, MyCache4};
+use cache::{Cache, DenyLeftRecursionCache, MyCache4};
 use grammar_parser::grammar;
 use parser_core::{Context, Source};
 use publisher::{Publisher, Tree, Tree2, UnsafeTree, UnsafeTree2, NOOP};
+use rules::RULES_SIZE;
 use std::any::type_name;
 use std::fs::canonicalize;
 use std::fs::{read_to_string, write};
@@ -23,13 +24,13 @@ fn write_to_performance_profile(data: Vec<String>, path: &str) {
 fn run_on_grammar<T: Cache, S: Publisher>(n: u32) -> (Duration, String, String) {
     let src = get_grammar_string();
     let src_len = src.len() as u32;
-    let source = Source::new(src);
+    let source = Source::new(&src);
     let position: u32 = 0;
     let time = Instant::now();
 
     // Context get's created once because some caches can reuse context and so amortize the initial
     // Memory allocations.
-    let context = Context::<T, S>::new(src_len, 52);
+    let context = Context::<T, S>::new(src_len, RULES_SIZE);
     for _i in 0..n {
         //let parse_time = Instant::now();
         let (bol, _position) = grammar(&context, &source, position);
@@ -88,6 +89,14 @@ fn profile_cache_kernel(n_release: u32, n_debug: u32, release_path: &str, debug_
 
     // MyCache4
     let res = run_on_grammar::<MyCache4, Tree>(n);
+    let perf_str = create_performance_string(res.0, res.1, res.2);
+    data.push(perf_str);
+
+    let res = run_on_grammar::<DenyLeftRecursionCache, NOOP>(n);
+    let perf_str = create_performance_string(res.0, res.1, res.2);
+    data.push(perf_str);
+
+    let res = run_on_grammar::<DenyLeftRecursionCache, Tree>(n);
     let perf_str = create_performance_string(res.0, res.1, res.2);
     data.push(perf_str);
 

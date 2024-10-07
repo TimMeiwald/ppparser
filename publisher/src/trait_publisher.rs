@@ -18,10 +18,11 @@ pub trait Publisher {
         rule: Rules,
         start_position: u32,
         end_position: u32,
-        parent: Option<Key>,
         result: bool,
     ) -> Key;
     fn connect(&mut self, parent_index: Key, child_index: Key);
+    fn connect_if_not_connected(&mut self, parent_index: Key, child_index: Key);
+    fn disconnect(&mut self, parent_index: Key, child_index: Key);
     fn set_node_start_position(&mut self, index: Key, start_position: u32);
     fn set_node_end_position(&mut self, index: Key, end_position: u32);
     fn set_node_result(&mut self, index: Key, result: bool);

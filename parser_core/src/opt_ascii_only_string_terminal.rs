@@ -1,3 +1,5 @@
+use cache::AST;
+
 use crate::source::Source;
 
 fn _string_terminal_kernel_ascii_opt(source: &Source, position: u32, data: &[u8]) -> (bool, u32) {

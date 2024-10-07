@@ -7,6 +7,7 @@ mod opt_ordered_choice_match_range;
 mod opt_string_terminal;
 mod optional;
 mod ordered_choice;
+mod publisher_utils;
 mod sequence;
 mod source;
 mod subexpression;

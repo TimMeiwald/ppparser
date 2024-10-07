@@ -177,3 +177,23 @@ PERF=/usr/lib/linux-tools/6.8.0-39-generic/perf cargo flamegraph --root -- -s ..
 /usr/lib/linux-tools/6.8.0-39-generic/perf script -i perf.data >
 ffperf.data
 
+
+
+# Indirect LR#
+Fundamentally you can have nested Left Recursion but only one Left Recursion can be grown at a time for any given position. 
+Hence
+Heads: Position -> Head
+LR: (seed: AST, rule: Rule, head: Head, next: LR)
+where 
+Head:(rule: Rule, involvedSet: Set<Rule>, evalSet: Set<Rule>)
+
+This is equivalent to 
+
+Heads: Position -> Option<LR>
+LR: (seed: AST, rule: Rule, involvedSet: Set<Rule>, evalSet: Set<Rule>)
+
+
+// Not sure why we can't just handle it all from grow_lr tbh. 
+// Handle it with flags?
+
+# TODO Add Recursive branch test so can do full tests without manual inspection of output

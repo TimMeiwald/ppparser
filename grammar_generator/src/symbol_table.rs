@@ -124,8 +124,10 @@ mod tests {
     use parser_core::Context;
     use parser_core::Source;
     use publisher::Tree;
+    use rules::RULES_SIZE;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
+
     #[test]
     fn test() {
         println!("{:?}", env::current_dir().unwrap());
@@ -134,9 +136,9 @@ mod tests {
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -162,9 +164,9 @@ mod tests {
         let string = "<Rule>='A'/'B';".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -187,12 +189,12 @@ mod tests {
 
     #[test]
     fn test_3() {
-        let string = "<Rule> INLINE ='A'/'B';".to_string();
+        let string = "<Rule> Inline ='A'/'B';".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {

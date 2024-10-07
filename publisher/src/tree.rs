@@ -34,18 +34,16 @@ impl Publisher for Tree {
         rule: Rules,
         start_position: u32,
         end_position: u32,
-        parent: Option<Key>,
         result: bool,
     ) -> Key {
         let len = self.nodes.len();
         let key = Key(len.try_into().unwrap());
-        let mut node = Node {
+        let node = Node {
             index: key,
             rule,
             start_position,
             end_position,
             result,
-            parent,
             children: Vec::new(),
         };
         self.nodes.push(node);
@@ -53,10 +51,34 @@ impl Publisher for Tree {
     }
 
     fn connect(&mut self, parent_index: Key, child_index: Key) {
+        println!("Connecting: {:?} <- {:?}", parent_index, child_index);
         let parent_node: &mut Node = self.get_mut_node(parent_index);
         parent_node.children.push(child_index);
-        let child_node: &mut Node = self.get_mut_node(child_index);
-        child_node.parent = Some(parent_index);
+    }
+    fn connect_if_not_connected(&mut self, parent_index: Key, child_index: Key) {
+        println!("Connecting: {:?} <- {:?}", parent_index, child_index);
+        let parent_node: &mut Node = self.get_mut_node(parent_index);
+        for child in &parent_node.children {
+            if *child == child_index {
+                return;
+            }
+        }
+        parent_node.children.push(child_index);
+    }
+    fn disconnect(&mut self, parent_index: Key, child_index: Key) {
+        let parent_node: &mut Node = self.get_mut_node(parent_index);
+        let mut remove_pos: Option<usize> = None;
+        for (position, child) in parent_node.children.iter().enumerate() {
+            if *child == child_index {
+                remove_pos = Some(position);
+            }
+        }
+        match remove_pos {
+            None => {}
+            Some(remove_pos) => {
+                parent_node.children.remove(remove_pos);
+            }
+        }
     }
 
     fn set_node_start_position(&mut self, index: Key, start_position: u32) {
@@ -95,7 +117,6 @@ impl Publisher for Tree {
                 node.rule,
                 node.start_position,
                 node.end_position,
-                node.parent,
                 node.result,
             );
             for i in &node.children {
@@ -109,6 +130,7 @@ impl Publisher for Tree {
         self.last_node
     }
     fn set_last_node(&mut self, key: Option<Key>) {
+        println!("Last Node set to : {:?}", self.last_node);
         self.last_node = key;
     }
 }
@@ -129,7 +151,6 @@ impl Tree {
                 node.rule,
                 node.start_position,
                 node.end_position,
-                Some(parent_index),
                 node.result,
             );
             new_tree.connect(parent_index, child_index);
@@ -215,26 +236,18 @@ pub struct Node {
     pub start_position: u32,
     pub end_position: u32,
     pub result: bool,
-    pub parent: Option<Key>,
     children: Vec<Key>,
     // To minimize allocations maybe have a second struct that contains all child indices and have Node just contain a start_child_index and end_child_index
     // Because then we can preallocate a load of memory, means a pointer indirection which may or may not impact performance so needs profiling.
 }
 impl Node {
-    pub fn new(
-        rule: Rules,
-        start_position: u32,
-        end_position: u32,
-        parent: Option<Key>,
-        result: bool,
-    ) -> Self {
+    pub fn new(rule: Rules, start_position: u32, end_position: u32, result: bool) -> Self {
         Node {
             index: Key(0),
             rule,
             start_position,
             end_position,
             result,
-            parent,
             children: Vec::<Key>::new(),
         }
     }
@@ -252,14 +265,13 @@ impl Node {
 
     pub fn print(&self, indent: usize) {
         println!(
-            "{}{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}",
+            "{}{:?}, {:?}, {:?}, {:?}, {:?}, {:?}",
             "    ".repeat(indent),
             self.index,
             self.rule,
             self.start_position,
             self.end_position,
             self.result,
-            self.parent,
             self.children.len()
         )
     }

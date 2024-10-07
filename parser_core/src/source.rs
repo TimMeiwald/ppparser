@@ -1,23 +1,26 @@
-pub struct Source {
+pub struct Source<'a> {
     // Acts as immutable string since Source should never be modified.
-    source: String,
+    source: &'a str,
     source_len: u32,
 }
-impl From<Source> for String {
+impl<'a> From<Source<'a>> for String {
     fn from(i: Source) -> String {
-        i.source
+        i.source.to_string()
     }
 }
-impl From<&Source> for String {
+impl<'a> From<&Source<'a>> for String {
     fn from(i: &Source) -> String {
-        i.source.clone()
+        i.source.to_string()
     }
 }
 
-impl Source {
-    pub fn new(source: String) -> Source {
+impl<'a> Source<'a> {
+    pub fn new(source: &'a str) -> Source<'a> {
         let source_len = source.len() as u32;
-        Source { source, source_len }
+        Source {
+            source: &source,
+            source_len,
+        }
     }
 
     pub fn get_char(&self, position: u32) -> Option<u8> {
@@ -50,7 +53,7 @@ mod tests {
     #[test]
     fn test_source() {
         let string = "aaa".to_string();
-        let source = Source::new(string);
+        let source = Source::new(&string);
         if let Some(chr) = source.get_char(0) {
             assert_eq!(chr, "a".to_string().as_bytes()[0])
         }

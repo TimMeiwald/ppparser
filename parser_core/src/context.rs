@@ -1,6 +1,6 @@
 #[allow(unused_imports)] // So that I don't need to keep adding or removing whilst testing
 //use cache::{BTreeCache, Cache, DenyLeftRecursionCache, MyCache1, MyCache2, MyCache3, MyCache4};
-use cache::{Cache, MyCache4};
+use cache::Cache;
 use publisher::Publisher;
 use rules::{Key, Rules};
 use std::cell::UnsafeCell;
@@ -17,7 +17,7 @@ impl<T: Cache, S: Publisher> Context<T, S> {
             RefCell::new(S::new(size_of_source as usize, number_of_structs as usize));
         let phantom = PhantomData::<S>;
         let root_node = stack.get_mut();
-        root_node.add_node(Rules::Grammar, 0, size_of_source, None, true);
+        root_node.add_node(Rules::Grammar, 0, size_of_source, true);
         stack.get_mut().set_last_node(Some(Key(0)));
         Context {
             cache,

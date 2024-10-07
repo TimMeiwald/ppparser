@@ -213,7 +213,7 @@ impl GeneratedCode {
                     count += 1;
                     last_key = key;
                 }
-                Rules::Backslash | Rules::Whitespace => {}
+                Rules::Backslash => {}
                 _ => panic!("ordered_choice"),
             }
         }
@@ -241,7 +241,7 @@ impl GeneratedCode {
                     count += 1;
                     last_key = key;
                 }
-                Rules::Comma | Rules::Whitespace => {}
+                Rules::Comma => {}
                 _ => panic!("sequence"),
             }
         }
@@ -297,7 +297,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Question_Mark => {}
+                Rules::Question_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::Optional, Some(key), None)
@@ -320,7 +320,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Plus => {}
+                Rules::Plus => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::OneOrMore, Some(key), None)
@@ -343,7 +343,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Star => {}
+                Rules::Star => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::ZeroOrMore, Some(key), None)
@@ -367,7 +367,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Ampersand => {}
+                Rules::Ampersand => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::AndPredicate, Some(key), None);
@@ -390,7 +390,7 @@ impl GeneratedCode {
         let mut ret_key = Key(0);
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Whitespace | Rules::Exclamation_Mark => {}
+                Rules::Exclamation_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::NotPredicate, Some(key), None)
@@ -423,7 +423,6 @@ impl GeneratedCode {
                 Rules::Var_Name => {
                     ret_key = Self::var_name(out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::Whitespace => {}
                 Rules::OrderedChoiceMatchRange => {
                     ret_key =
                         Self::ordered_choice_match_range(out_tree, symbol_table, tree, source, *i)
@@ -549,7 +548,6 @@ impl GeneratedCode {
                         )
                     }
                 }
-                Rules::Whitespace => {}
 
                 _ => {
                     let err_msg = format!("ordered choice match range, Rule: {:?}", child_rule);
@@ -635,11 +633,13 @@ impl GeneratedCode {
 mod tests {
     use super::*;
     use crate::count_lines;
+    use cache::DirectLeftRecursionCache;
     use cache::MyCache4;
     use grammar_parser::grammar;
     use parser_core::Context;
     use parser_core::Source;
     use publisher::Tree;
+    use rules::RULES_SIZE;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
 
@@ -653,7 +653,7 @@ mod tests {
     //     let src_len = string.len() as u32;
     //     let source = Source::new(string);
     //     let position: u32 = 0;
-    //     let context = Context::<MyCache4, Tree>::new(src_len, 52);
+    //     let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
     //     let result = grammar(&context, &source, position);
 
     //     // Checks full file was parsed.
@@ -683,9 +683,9 @@ mod tests {
         let string = "<Rule>='A'/'B'/'C'/'D';   #   Ein Kommentar   #  ".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -712,9 +712,9 @@ mod tests {
         let string = "<Rule>='A','B','';   #   Ein Kommentar   #  ".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -741,9 +741,9 @@ mod tests {
         let string = "<Rule>='A'/'B'/'C';   #   Ein Kommentar   #  ".to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -771,9 +771,9 @@ mod tests {
         "#.to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -803,9 +803,9 @@ mod tests {
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
         let tree = &context.stack.borrow();
         //tree.print(Key(0), None);
@@ -838,9 +838,9 @@ mod tests {
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
         let tree = &context.stack.borrow();
         //tree.print(Key(0), None);
@@ -872,9 +872,9 @@ mod tests {
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -902,14 +902,14 @@ mod tests {
 
     #[test]
     fn test_ordered_choice_match_range2() {
-        let string = r#"<Atom> PASSTHROUGH = [0x20..0xFF];
+        let string = r#"<Atom> = [0x20..0xFF];
         "#
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -942,9 +942,9 @@ mod tests {
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -977,9 +977,9 @@ mod tests {
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
@@ -1007,15 +1007,15 @@ mod tests {
 
     #[test]
     fn test_inline() {
-        let string = r#"<Atom> INLINE = ['A'..'Z'];
+        let string = r#"<Atom> Inline = ['A'..'Z'];
                                 <Uses_Atom> = <Atom>;
         "#
         .to_string();
         let string2 = string.clone();
         let src_len = string.len() as u32;
-        let source = Source::new(string);
+        let source = Source::new(&string);
         let position: u32 = 0;
-        let context = Context::<MyCache4, Tree>::new(src_len, 52);
+        let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
         let result = grammar(&context, &source, position);
 
         // Checks full file was parsed.
