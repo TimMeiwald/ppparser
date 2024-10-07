@@ -1,8 +1,10 @@
 #![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually
-use num_derive::FromPrimitive;
 
-pub static RULES_SIZE: u32 = 57;
-#[derive(Eq, Hash, FromPrimitive, Clone, Copy, Debug, Ord, PartialOrd)]
+use num_derive::FromPrimitive;
+#[allow(dead_code)]
+pub static RULES_SIZE: u32 = 57; // Used in tests to know what size the cache needs(sometimes, cache dependent)
+#[derive(PartialEq, Eq, Hash, FromPrimitive, Clone, Copy, Debug, Ord, PartialOrd)]
+#[allow(clippy::upper_case_acronyms)] // Again due to generation -> Might solve eventually
 
 pub enum Rules {
     ASCII,
@@ -71,11 +73,5 @@ impl From<u32> for Rules {
             Some(rule) => rule,
             None => panic!("Not a valid Rule"),
         }
-    }
-}
-
-impl PartialEq for Rules {
-    fn eq(&self, other: &Self) -> bool {
-        (*self as u32) == (*other as u32)
     }
 }

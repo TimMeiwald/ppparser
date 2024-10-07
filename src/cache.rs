@@ -1,5 +1,3 @@
-use num_traits::ops::inv;
-
 use crate::{Key, Rules};
 use std::collections::{BTreeSet, HashMap};
 
@@ -11,8 +9,8 @@ pub struct Head {
 }
 #[derive(Debug, Copy, Clone)]
 pub enum LR {
-    SET,
-    UNSET,
+    Set,
+    Unset,
 }
 
 #[derive(Debug)]
@@ -68,10 +66,11 @@ impl BasicCache {
 
     pub fn check_head(&self, start_position: u32) -> Option<Rules> {
         let head = self.heads.get(&start_position);
-        return match head {
+        #[allow(clippy::manual_map)]
+        match head {
             None => None, // Not yet exists therefore no Left Recursion at this position
             Some(head) => Some(head.active_left_recursion_rule), // Return head rule since that's necessary information.
-        };
+        }
     }
 
     pub fn set_head(
@@ -122,9 +121,12 @@ impl BasicCache {
             .remove(&rule);
     }
 }
+
+#[allow(dead_code)]
 #[derive(Debug)]
 
 pub struct DirectLeftRecursionCache;
+#[allow(dead_code)]
 #[derive(Debug)]
 
 pub struct IndirectLeftRecursionCache;

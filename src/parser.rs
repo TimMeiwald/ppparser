@@ -1,5 +1,7 @@
-#[allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
-#[warn(unused_variables)] // Generated Code also, since everything passes stuff
+#![allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
+#![allow(unused_variables)] // Generated Code also, since everything passes stuff
+#![allow(unused_imports)] // Generated Code also, since everything passes stuff
+
 use super::{Context, Rules, Source};
 use crate::keys::Key;
 use crate::parser_core::{
@@ -11,6 +13,7 @@ use crate::var_name::{
     _var_name, _var_name_direct_left_recursion, _var_name_indirect_left_recursion,
 };
 use core::cell::RefCell;
+#[allow(dead_code)]
 pub fn alphabet_upper<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -21,6 +24,7 @@ pub fn alphabet_upper<T: Context>(
     let closure_1 = _ordered_choice_match_range(65, 90);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn alphabet_lower<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -30,6 +34,7 @@ pub fn alphabet_lower<T: Context>(
     let closure_1 = _ordered_choice_match_range(97, 122);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn num<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -39,6 +44,7 @@ pub fn num<T: Context>(
     let closure_1 = _ordered_choice_match_range(48, 57);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn numnozero<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -48,6 +54,7 @@ pub fn numnozero<T: Context>(
     let closure_1 = _ordered_choice_match_range(49, 57);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn hexval<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -59,6 +66,7 @@ pub fn hexval<T: Context>(
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
     closure_3(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn spaces<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -74,6 +82,7 @@ pub fn spaces<T: Context>(
     let closure_7 = _ordered_choice(&closure_5, &closure_6);
     closure_7(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn specials<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -93,6 +102,7 @@ pub fn specials<T: Context>(
     let closure_11 = _sequence(&closure_9, &closure_10);
     closure_11(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn ascii<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -102,6 +112,7 @@ pub fn ascii<T: Context>(
     let closure_1 = _ordered_choice_match_range(0, 255);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn apostrophe<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -111,6 +122,7 @@ pub fn apostrophe<T: Context>(
     let closure_1 = _terminal(b'"');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn quotationmark<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -120,6 +132,7 @@ pub fn quotationmark<T: Context>(
     let closure_1 = _terminal(b'\'');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn left_angle_bracket<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -129,6 +142,7 @@ pub fn left_angle_bracket<T: Context>(
     let closure_1 = _terminal(b'<');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn right_angle_bracket<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -138,6 +152,7 @@ pub fn right_angle_bracket<T: Context>(
     let closure_1 = _terminal(b'>');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn left_bracket<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -147,6 +162,7 @@ pub fn left_bracket<T: Context>(
     let closure_1 = _terminal(b'(');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn right_bracket<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -156,6 +172,7 @@ pub fn right_bracket<T: Context>(
     let closure_1 = _terminal(b')');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn assignment<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -165,6 +182,7 @@ pub fn assignment<T: Context>(
     let closure_1 = _terminal(b'=');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn end_rule<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -174,6 +192,7 @@ pub fn end_rule<T: Context>(
     let closure_1 = _terminal(b';');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn ampersand<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -183,6 +202,7 @@ pub fn ampersand<T: Context>(
     let closure_1 = _terminal(b'&');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn exclamation_mark<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -192,6 +212,7 @@ pub fn exclamation_mark<T: Context>(
     let closure_1 = _terminal(b'!');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn plus<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -201,6 +222,7 @@ pub fn plus<T: Context>(
     let closure_1 = _terminal(b'+');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn star<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -210,6 +232,7 @@ pub fn star<T: Context>(
     let closure_1 = _terminal(b'*');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn question_mark<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -219,6 +242,7 @@ pub fn question_mark<T: Context>(
     let closure_1 = _terminal(b'?');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn comma<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -228,6 +252,7 @@ pub fn comma<T: Context>(
     let closure_1 = _terminal(b',');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn newline<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -237,6 +262,7 @@ pub fn newline<T: Context>(
     let closure_1 = _terminal(b'\n');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn backslash<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -246,6 +272,7 @@ pub fn backslash<T: Context>(
     let closure_1 = _terminal(b'/');
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn var_name<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -271,6 +298,7 @@ pub fn var_name<T: Context>(
     let closure_16 = _sequence(&closure_14, &closure_15);
     closure_16(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn var_name_decl<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -280,6 +308,7 @@ pub fn var_name_decl<T: Context>(
     let closure_1 = _var_name(Rules::Var_Name, context, var_name);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn hex<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -295,6 +324,7 @@ pub fn hex<T: Context>(
     let closure_6 = _sequence(&closure_3, &closure_5);
     closure_6(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn integer<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -308,6 +338,7 @@ pub fn integer<T: Context>(
     let closure_4 = _sequence(&closure_1, &closure_3);
     closure_4(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn orderedchoicematchrange<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -353,6 +384,7 @@ pub fn orderedchoicematchrange<T: Context>(
     let closure_29 = _sequence(&closure_27, &closure_28);
     closure_29(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn subexpression<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -366,6 +398,7 @@ pub fn subexpression<T: Context>(
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn epsilon<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -377,6 +410,7 @@ pub fn epsilon<T: Context>(
     let closure_3 = _sequence(&closure_1, &closure_2);
     closure_3(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn stringterminal<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -407,6 +441,7 @@ pub fn stringterminal<T: Context>(
     let closure_21 = _ordered_choice(&closure_19, &closure_20);
     closure_21(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn terminal<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -437,6 +472,7 @@ pub fn terminal<T: Context>(
     let closure_22 = _ordered_choice(&closure_20, &closure_21);
     closure_22(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn nucleus<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -463,6 +499,7 @@ pub fn nucleus<T: Context>(
     let closure_12 = _sequence(&closure_10, &closure_11);
     closure_12(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn atom<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -487,6 +524,7 @@ pub fn atom<T: Context>(
     let closure_14 = _sequence(&closure_12, &closure_13);
     closure_14(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn and_predicate<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -498,6 +536,7 @@ pub fn and_predicate<T: Context>(
     let closure_3 = _sequence(&closure_1, &closure_2);
     closure_3(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn not_predicate<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -509,6 +548,7 @@ pub fn not_predicate<T: Context>(
     let closure_3 = _sequence(&closure_1, &closure_2);
     closure_3(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn sequence<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -540,6 +580,7 @@ pub fn sequence<T: Context>(
     let closure_17 = _sequence(&closure_9, &closure_16);
     closure_17(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn ordered_choice<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -571,6 +612,7 @@ pub fn ordered_choice<T: Context>(
     let closure_17 = _sequence(&closure_9, &closure_16);
     closure_17(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn one_or_more<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -586,6 +628,7 @@ pub fn one_or_more<T: Context>(
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn zero_or_more<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -601,6 +644,7 @@ pub fn zero_or_more<T: Context>(
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn optional<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -616,6 +660,7 @@ pub fn optional<T: Context>(
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn whitespace<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -633,6 +678,7 @@ pub fn whitespace<T: Context>(
     let closure_9 = _zero_or_more(&closure_8);
     closure_9(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn rhs<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -646,6 +692,7 @@ pub fn rhs<T: Context>(
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn lhs<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -667,6 +714,7 @@ pub fn lhs<T: Context>(
     let closure_9 = _sequence(&closure_1, &closure_8);
     closure_9(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn rule<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -702,6 +750,7 @@ pub fn rule<T: Context>(
     closure_18(parent, source, position)
 }
 
+#[allow(dead_code)]
 pub fn grammar<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -718,6 +767,7 @@ pub fn grammar<T: Context>(
     let closure_5 = _sequence(&closure_2, &closure_4);
     closure_5(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn comment<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -744,6 +794,7 @@ pub fn comment<T: Context>(
     let closure_14 = _sequence(&closure_12, &closure_13);
     closure_14(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn semantic_instructions<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -757,6 +808,7 @@ pub fn semantic_instructions<T: Context>(
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn delete<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -766,6 +818,7 @@ pub fn delete<T: Context>(
     let closure_1 = _string_terminal_opt_ascii(&[b'D', b'E', b'L', b'E', b'T', b'E']);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn passthrough<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -777,6 +830,7 @@ pub fn passthrough<T: Context>(
     ]);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn inline<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -787,6 +841,7 @@ pub fn inline<T: Context>(
     let closure_1 = _string_terminal_opt_ascii(&[b'I', b'n', b'l', b'i', b'n', b'e']);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn test_lr_num<T: Context>(
     parent: Key,
     context: &RefCell<T>,
@@ -796,13 +851,13 @@ pub fn test_lr_num<T: Context>(
     let closure_1 = _var_name(Rules::Num, context, num);
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn test_lr_expr<T: Context>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    //  Should match 0-0-0-0-0-0-0-0 etc
     let closure_1 = _var_name_direct_left_recursion(Rules::test_LR_expr, context, test_lr_expr);
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
@@ -811,22 +866,9 @@ pub fn test_lr_expr<T: Context>(
     let closure_6 = _subexpression(&closure_5);
     let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
     let closure_8 = _ordered_choice(&closure_6, &closure_7);
-    let result = closure_8(parent, source, position);
-    // The 2nd half of the sequence always fails because it's already been consumed ahead of time.
-    // We need to therefore get the result from the cache instead.
-    // To handle LR we need to just get the cached value for the Rules.
-    // let f = context
-    //     .cache
-    //     .borrow_mut()
-    //     .check_LR(Rules::test_LR_expr, position)
-    //     .expect("We expect it to exist since we just did it");
-    // println!(
-    //     "test_lr_expr Response: {:?}",
-    //     (f.0.expect("Should exist"), f.1)
-    // );
-    // return (f.0.expect("Should exist"), f.1);
-    return result;
+    closure_8(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn test_indirect_lr_num<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
@@ -842,6 +884,7 @@ pub fn test_indirect_lr_num<T: Context + 'static>(
     );
     closure_1(parent, source, position)
 }
+#[allow(dead_code)]
 pub fn test_indirect_lr_expr<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
@@ -866,6 +909,7 @@ pub fn test_indirect_lr_expr<T: Context + 'static>(
     closure_8(parent, source, position)
 }
 
+#[allow(dead_code)]
 pub fn test_term<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
@@ -891,6 +935,7 @@ pub fn test_term<T: Context + 'static>(
     oc2(parent, source, position)
 }
 
+#[allow(dead_code)]
 pub fn test_fact<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,

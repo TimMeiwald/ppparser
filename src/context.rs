@@ -1,11 +1,10 @@
 #[allow(unused_imports)] // So that I don't need to keep adding or removing whilst testing
 use super::Key;
 use crate::{
-    cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache, LR},
+    cache::{DirectLeftRecursionCache, IndirectLeftRecursionCache, LR},
     publisher::{DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher},
     Rules,
 };
-use core::fmt::Debug;
 use std::collections::BTreeSet;
 
 use super::{BasicCache, BasicPublisher};
@@ -20,9 +19,12 @@ where
     type C;
 
     type P;
+    #[allow(dead_code)]
 
     fn new(size_of_source: usize, number_of_rules: usize) -> Self;
     fn print_cache(&self);
+    #[allow(dead_code)]
+
     fn print_publisher(&self);
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)>;
     fn check_lr(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key, LR)>;
@@ -39,15 +41,6 @@ where
         key: Key,
     );
     fn create_cache_entry_direct_lr(
-        &mut self,
-        rule: Rules,
-        is_true: bool,
-        start_position: u32,
-        end_position: u32,
-        key: Key,
-        lr: LR,
-    );
-    fn create_cache_entry_indirect_lr(
         &mut self,
         rule: Rules,
         is_true: bool,
@@ -76,10 +69,14 @@ pub struct BasicContext {
     cache: BasicCache,
     publisher: BasicPublisher,
 }
+#[allow(dead_code)]
+
 pub struct DirectLeftRecursionContext {
     cache: DirectLeftRecursionCache,
     publisher: DirectLeftRecursionPublisher,
 }
+#[allow(dead_code)]
+
 pub struct IndirectLeftRecursionContext {
     cache: IndirectLeftRecursionCache,
     publisher: IndirectLeftRecursionPublisher,
@@ -127,18 +124,6 @@ impl Context for BasicContext {
             .insert(rule, is_true, start_position, end_position, key);
     }
     fn create_cache_entry_direct_lr(
-        &mut self,
-        rule: Rules,
-        is_true: bool,
-        start_position: u32,
-        end_position: u32,
-        key: Key,
-        lr: LR,
-    ) {
-        self.cache
-            .insert_direct_lr(rule, is_true, start_position, end_position, key, lr);
-    }
-    fn create_cache_entry_indirect_lr(
         &mut self,
         rule: Rules,
         is_true: bool,

@@ -17,10 +17,7 @@ impl<'a> From<&Source<'a>> for String {
 impl<'a> Source<'a> {
     pub fn new(source: &'a str) -> Source<'a> {
         let source_len = source.len() as u32;
-        Source {
-            source: &source,
-            source_len,
-        }
+        Source { source, source_len }
     }
 
     pub fn get_char(&self, position: u32) -> Option<u8> {

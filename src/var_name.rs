@@ -50,11 +50,11 @@ pub fn _var_name_kernel<T: Context>(
     };
 }
 
-pub fn _var_name_direct_left_recursion<'a, T: Context>(
+pub fn _var_name_direct_left_recursion<T: Context>(
     rule: Rules,
-    context: &'a RefCell<T>,
+    context: &RefCell<T>,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
-) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'a {
+) -> impl Fn(Key, &Source, u32) -> (bool, u32) + '_ {
     move |parent: Key, source: &Source, position: u32| {
         _var_name_kernel_direct_left_recursion(rule, context, parent, source, position, func)
     }
@@ -86,7 +86,7 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
             println!("Is Cached Value");
             // Change to only connect on success to makes things a little faster
             match lr {
-                LR::SET => {
+                LR::Set => {
                     println!("In SET: {:?}", (is_true, end_position));
                     context.borrow_mut().create_cache_entry_direct_lr(
                         rule,
@@ -94,12 +94,12 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
                         position,
                         end_position,
                         memoized_key,
-                        LR::UNSET,
+                        LR::Unset,
                     );
 
                     return (is_true, end_position);
                 } // This forces an evaluation of other branches
-                LR::UNSET => {
+                LR::Unset => {
                     println!("In UNSET: {:?}", (is_true, end_position));
                     return (is_true, end_position);
                 }
@@ -119,11 +119,11 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
                     let mut c = context.borrow_mut();
                     current_key = c.reserve_publisher_entry(rule);
                     println!("Current Key: {:?}", current_key);
-                    c.create_cache_entry_direct_lr(rule, f.0, position, f.1, current_key, LR::SET);
+                    c.create_cache_entry_direct_lr(rule, f.0, position, f.1, current_key, LR::Set);
                 }
                 f = func(current_key, context, source, position);
                 println!("Function Result: {:?}", f);
-                if f.0 == false || (f.1 <= last_f.1) {
+                if !f.0 || (f.1 <= last_f.1) {
                     f = last_f;
                     break;
                 }
@@ -209,7 +209,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
 
                 // Set Involved Set
 
-                c.create_cache_entry_indirect_lr(rule, f.0, position, f.1, current_key, LR::SET);
+                c.create_cache_entry(rule, f.0, position, f.1, current_key);
             }
             f = func(current_key, context, source, position);
             println!("{:?}", context.borrow().print_cache());
@@ -217,7 +217,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
             println!("{:?}", context.borrow().print_cache());
 
             println!("Function Result: {:?}", f);
-            if f.0 == false || (f.1 <= last_f.1) {
+            if !f.0 || (f.1 <= last_f.1) {
                 f = last_f;
                 break;
             }
@@ -259,18 +259,18 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
 
         let f = func(current_key, context, source, position);
         let mut c = context.borrow_mut();
-        c.create_cache_entry_direct_lr(rule, f.0, position, f.1, current_key, LR::SET);
+        c.create_cache_entry(rule, f.0, position, f.1, current_key);
         c.update_publisher_entry(current_key, f.0, position, f.1);
         // Change to only connect on success to makes things a little faster
         c.connect(parent, current_key);
         f
     } else {
-        let memo = context.borrow().check_lr(rule, position);
+        let memo = context.borrow().check(rule, position);
         match memo {
             None => (false, 0),
-            Some((is_true, end_position, memoized_key, lr)) => {
+            Some((is_true, end_position, memoized_key)) => {
                 context.borrow_mut().connect(parent, memoized_key);
-                return (is_true, end_position);
+                (is_true, end_position)
             }
         }
     }

@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 mod cache;
 mod context;
 mod keys;

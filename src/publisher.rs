@@ -107,9 +107,9 @@ impl BasicPublisher {
 
     pub fn print(&self, index: Key, boolean: Option<bool>) {
         let indent = 0;
-        if boolean.is_some() && boolean.unwrap() == true {
+        if boolean.is_some() && boolean.unwrap() {
             self.print_kernel_true(index, indent);
-        } else if boolean.is_some() && boolean.unwrap() == false {
+        } else if boolean.is_some() && !boolean.unwrap() {
             self.print_kernel_false(index, indent);
         } else {
             self.print_kernel_all(index, indent);
@@ -127,7 +127,7 @@ impl BasicPublisher {
         let node = self.get_node(Key(index));
 
         if node.result {
-            let new_node = new_tree.add_node(
+            new_tree.add_node(
                 node.rule,
                 node.start_position,
                 node.end_position,
@@ -182,9 +182,6 @@ impl BasicPublisher {
         self.nodes.len()
     }
 
-    fn get_key(&self, node: &Node) -> Key {
-        node.index
-    }
     fn print_kernel_true(&self, index: Key, indent: usize) {
         let node = &self.nodes[usize::from(index)];
         if !node.result {

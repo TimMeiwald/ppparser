@@ -178,7 +178,7 @@ pub fn _subexpression(
     }
 }
 
-pub fn _terminal_kernel(parent: Key, source: &Source, position: u32, chr: u8) -> (bool, u32) {
+pub fn _terminal_kernel(source: &Source, position: u32, chr: u8) -> (bool, u32) {
     let char = source.get_char(position);
     //let char = char.expect("\nThis error only happens with invalid grammar. E.g **. This should be disallowed at generation time!!\n");
     if char == Some(chr) {
@@ -189,9 +189,7 @@ pub fn _terminal_kernel(parent: Key, source: &Source, position: u32, chr: u8) ->
 }
 
 pub fn _terminal(chr: u8) -> impl Fn(Key, &Source, u32) -> (bool, u32) {
-    move |parent: Key, source: &Source, position: u32| {
-        _terminal_kernel(parent, source, position, chr)
-    }
+    move |_parent: Key, source: &Source, position: u32| _terminal_kernel(source, position, chr)
 }
 
 pub fn _zero_or_more_kernel(
@@ -222,12 +220,7 @@ pub fn _zero_or_more(
 
 // Optimizations
 
-fn _string_terminal_kernel_ascii_opt(
-    parent: Key,
-    source: &Source,
-    position: u32,
-    data: &[u8],
-) -> (bool, u32) {
+fn _string_terminal_kernel_ascii_opt(source: &Source, position: u32, data: &[u8]) -> (bool, u32) {
     let mut end_position = position;
     for char in data {
         let s = match source.get_char(end_position) {
@@ -244,13 +237,12 @@ fn _string_terminal_kernel_ascii_opt(
 }
 
 pub fn _string_terminal_opt_ascii(data: &[u8]) -> impl Fn(Key, &Source, u32) -> (bool, u32) + '_ {
-    move |parent: Key, source: &Source, position: u32| {
-        _string_terminal_kernel_ascii_opt(parent, source, position, data)
+    move |_parent: Key, source: &Source, position: u32| {
+        _string_terminal_kernel_ascii_opt(source, position, data)
     }
 }
 
 fn _ordered_choice_match_range_kernel(
-    parent: Key,
     source: &Source,
     position: u32,
     start: u32,
@@ -273,7 +265,7 @@ pub fn _ordered_choice_match_range(
     start: u32,
     end: u32,
 ) -> impl Fn(Key, &Source, u32) -> (bool, u32) {
-    move |parent: Key, source: &Source, position: u32| {
-        _ordered_choice_match_range_kernel(parent, source, position, start, end)
+    move |_parent: Key, source: &Source, position: u32| {
+        _ordered_choice_match_range_kernel(source, position, start, end)
     }
 }
