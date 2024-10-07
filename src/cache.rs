@@ -105,13 +105,6 @@ impl BasicCache {
             .expect("Should always exist when calling rule_in_eval_set");
         println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
         head.eval_set.contains(&rule)
-        // let is_in_eval_set = head.eval_set.contains(&rule);
-        // let active_rule = head.active_left_recursion_rule;
-        // if is_in_eval_set && rule != active_rule {
-        //     return true;
-        // } else {
-        //     return false;
-        // }
     }
     pub fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules) {
         self.heads

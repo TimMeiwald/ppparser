@@ -22,6 +22,7 @@ where
     #[allow(dead_code)]
 
     fn new(size_of_source: usize, number_of_rules: usize) -> Self;
+    #[allow(dead_code)]
     fn print_cache(&self);
     #[allow(dead_code)]
 
@@ -95,7 +96,7 @@ impl Context for BasicContext {
     fn reinitialize_eval_set(&mut self, start_position: u32) {
         self.cache.reinitialize_eval_set(start_position);
     }
-
+    #[allow(dead_code)]
     fn print_cache(&self) {
         println!("{:?}", &self.cache)
     }
@@ -167,39 +168,6 @@ impl Context for BasicContext {
         self.cache.remove_from_eval_set(start_position, rule);
     }
 }
-
-// impl Context for DirectLeftRecursionContext {
-//     type C = DirectLeftRecursionCache;
-//     type P = DirectLeftRecursionPublisher;
-//     fn new() -> Self {
-//         DirectLeftRecursionContext {
-//             cache: Self::C {},
-//             publisher: Self::P {},
-//         }
-//     }
-//     fn print_cache(&self) {
-//         println!("{:?}", &self.cache)
-//     }
-//     fn print_publisher(&self) {
-//         println!("{:?}", self.publisher)
-//     }
-// }
-// impl Context for IndirectLeftRecursionContext {
-//     type C = IndirectLeftRecursionCache;
-//     type P = IndirectLeftRecursionPublisher;
-//     fn new() -> Self {
-//         IndirectLeftRecursionContext {
-//             cache: Self::C {},
-//             publisher: Self::P {},
-//         }
-//     }
-//     fn print_cache(&self) {
-//         println!("{:?}", &self.cache)
-//     }
-//     fn print_publisher(&self) {
-//         println!("{:?}", self.publisher)
-//     }
-// }
 
 #[cfg(test)]
 mod tests {

@@ -8,18 +8,16 @@ use crate::Rules;
 #[derive(Debug)]
 
 pub struct BasicPublisher {
-    last_node: Option<Key>,
     nodes: Vec<Node>,
 }
 
 impl BasicPublisher {
     pub fn new(size_of_source: usize, number_of_rules: usize) -> Self {
-        let memory_to_allocate = ((size_of_source * number_of_rules) * 64) / 128;
-        println!("Publisher Allocating {} KB", {
-            memory_to_allocate / (1024)
-        });
+        //let memory_to_allocate = ((size_of_source * number_of_rules) * 64) / 128;
+        // println!("Publisher Allocating {} KB", {
+        //     memory_to_allocate / (1024)
+        // });
         let mut p = BasicPublisher {
-            last_node: None,
             nodes: Vec::<Node>::with_capacity((size_of_source * number_of_rules) / 64),
         };
         p.add_node(Rules::Grammar, 0, 0, true);
@@ -27,7 +25,6 @@ impl BasicPublisher {
     }
 
     pub fn clear_tree(&mut self) {
-        self.last_node = None;
         self.nodes.clear();
     }
 
@@ -138,14 +135,6 @@ impl BasicPublisher {
             }
         }
         new_tree
-    }
-
-    pub fn last_node(&self) -> Option<Key> {
-        self.last_node
-    }
-    pub fn set_last_node(&mut self, key: Option<Key>) {
-        println!("Last Node set to : {:?}", self.last_node);
-        self.last_node = key;
     }
 }
 

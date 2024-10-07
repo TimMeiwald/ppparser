@@ -7,3 +7,10 @@ edition = "2021"
 num = "0.4.1"
 num-derive = "0.4.2"
 num-traits = "0.2.18"
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "ppparser_dsl_benchmark"
+harness = false
