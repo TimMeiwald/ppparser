@@ -1,5 +1,1 @@
 /target
-# /Cargo.lock
-/generation_test
-.vscode
-logfile

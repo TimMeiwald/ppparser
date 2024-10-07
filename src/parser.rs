@@ -1,0 +1,1088 @@
+#[allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
+#[warn(unused_variables)] // Generated Code also, since everything passes stuff
+use super::{Context, Rules, Source};
+use crate::keys::Key;
+use crate::parser_core::{
+    _and_predicate, _not_predicate, _one_or_more, _optional, _ordered_choice,
+    _ordered_choice_match_range, _sequence, _string_terminal_opt_ascii, _subexpression, _terminal,
+    _zero_or_more,
+};
+use crate::var_name::{
+    _var_name, _var_name_direct_left_recursion, _var_name_indirect_left_recursion,
+};
+use core::cell::RefCell;
+pub fn alphabet_upper<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    // We all love commments
+    let closure_1 = _ordered_choice_match_range(65, 90);
+    closure_1(parent, source, position)
+}
+pub fn alphabet_lower<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _ordered_choice_match_range(97, 122);
+    closure_1(parent, source, position)
+}
+pub fn num<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _ordered_choice_match_range(48, 57);
+    closure_1(parent, source, position)
+}
+pub fn numnozero<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _ordered_choice_match_range(49, 57);
+    closure_1(parent, source, position)
+}
+pub fn hexval<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _ordered_choice_match_range(48, 57);
+    let closure_2 = _ordered_choice_match_range(65, 70);
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    closure_3(parent, source, position)
+}
+pub fn spaces<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'\n');
+    let closure_2 = _terminal(b'\t');
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _terminal(b'\r');
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    let closure_6 = _terminal(b' ');
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    closure_7(parent, source, position)
+}
+pub fn specials<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
+    let closure_2 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Num, context, num);
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    let closure_6 = _var_name(Rules::Spaces, context, spaces);
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 = _not_predicate(&closure_8);
+    let closure_10 = _ordered_choice_match_range(0, 255);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    closure_11(parent, source, position)
+}
+pub fn ascii<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _ordered_choice_match_range(0, 255);
+    closure_1(parent, source, position)
+}
+pub fn apostrophe<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'"');
+    closure_1(parent, source, position)
+}
+pub fn quotationmark<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'\'');
+    closure_1(parent, source, position)
+}
+pub fn left_angle_bracket<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'<');
+    closure_1(parent, source, position)
+}
+pub fn right_angle_bracket<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'>');
+    closure_1(parent, source, position)
+}
+pub fn left_bracket<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'(');
+    closure_1(parent, source, position)
+}
+pub fn right_bracket<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b')');
+    closure_1(parent, source, position)
+}
+pub fn assignment<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'=');
+    closure_1(parent, source, position)
+}
+pub fn end_rule<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b';');
+    closure_1(parent, source, position)
+}
+pub fn ampersand<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'&');
+    closure_1(parent, source, position)
+}
+pub fn exclamation_mark<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'!');
+    closure_1(parent, source, position)
+}
+pub fn plus<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'+');
+    closure_1(parent, source, position)
+}
+pub fn star<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'*');
+    closure_1(parent, source, position)
+}
+pub fn question_mark<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'?');
+    closure_1(parent, source, position)
+}
+pub fn comma<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b',');
+    closure_1(parent, source, position)
+}
+pub fn newline<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'\n');
+    closure_1(parent, source, position)
+}
+pub fn backslash<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'/');
+    closure_1(parent, source, position)
+}
+pub fn var_name<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    // Not whitespace dependent, feel free to use multiple lines for readability
+    let closure_1 = _var_name(Rules::Left_Angle_Bracket, context, left_angle_bracket);
+    let closure_2 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
+    let closure_3 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
+    let closure_4 = _ordered_choice(&closure_2, &closure_3);
+    let closure_5 = _subexpression(&closure_4);
+    let closure_6 = _sequence(&closure_1, &closure_5);
+    let closure_7 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
+    let closure_8 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
+    let closure_9 = _ordered_choice(&closure_7, &closure_8);
+    let closure_10 = _terminal(b'_');
+    let closure_11 = _ordered_choice(&closure_9, &closure_10);
+    let closure_12 = _subexpression(&closure_11);
+    let closure_13 = _zero_or_more(&closure_12);
+    let closure_14 = _sequence(&closure_6, &closure_13);
+    let closure_15 = _var_name(Rules::Right_Angle_Bracket, context, right_angle_bracket);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    closure_16(parent, source, position)
+}
+pub fn var_name_decl<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Var_Name, context, var_name);
+    closure_1(parent, source, position)
+}
+pub fn hex<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    // Replace with custom code
+    let closure_1 = _terminal(b'0');
+    let closure_2 = _terminal(b'x');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::HexVal, context, hexval);
+    let closure_5 = _one_or_more(&closure_4);
+    let closure_6 = _sequence(&closure_3, &closure_5);
+    closure_6(parent, source, position)
+}
+pub fn integer<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    // No negative values since that is meaningless in this context
+    let closure_1 = _var_name(Rules::NumNoZero, context, numnozero);
+    let closure_2 = _var_name(Rules::Num, context, num);
+    let closure_3 = _zero_or_more(&closure_2);
+    let closure_4 = _sequence(&closure_1, &closure_3);
+    closure_4(parent, source, position)
+}
+pub fn orderedchoicematchrange<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_2 = _terminal(b'[');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _var_name(Rules::Terminal, context, terminal);
+    let closure_7 = _var_name(Rules::Integer, context, integer);
+    let closure_8 = _ordered_choice(&closure_6, &closure_7);
+    let closure_9 = _var_name(Rules::Hex, context, hex);
+    let closure_10 = _ordered_choice(&closure_8, &closure_9);
+    let closure_11 = _subexpression(&closure_10);
+    let closure_12 = _sequence(&closure_5, &closure_11);
+    let closure_13 = _terminal(b'.');
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let closure_15 = _terminal(b'.');
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 = _var_name(Rules::Terminal, context, terminal);
+    let closure_18 = _var_name(Rules::Integer, context, integer);
+    let closure_19 = _ordered_choice(&closure_17, &closure_18);
+    let closure_20 = _var_name(Rules::Hex, context, hex);
+    let closure_21 = _ordered_choice(&closure_19, &closure_20);
+    let closure_22 = _subexpression(&closure_21);
+    let closure_23 = _sequence(&closure_16, &closure_22);
+    let closure_24 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_25 = _sequence(&closure_23, &closure_24);
+    let closure_26 = _terminal(b']');
+    let closure_27 = _sequence(&closure_25, &closure_26);
+    let closure_28 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_29 = _sequence(&closure_27, &closure_28);
+    closure_29(parent, source, position)
+}
+pub fn subexpression<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Left_Bracket, context, left_bracket);
+    let closure_2 = _var_name(Rules::RHS, context, rhs);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Right_Bracket, context, right_bracket);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    closure_5(parent, source, position)
+}
+pub fn epsilon<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_2 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    closure_3(parent, source, position)
+}
+pub fn stringterminal<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    // Multibyte matches essentially
+    let closure_1 = _var_name(Rules::Apostrophe, context, apostrophe);
+    let closure_2 = _var_name(Rules::Apostrophe, context, apostrophe);
+    let closure_3 = _not_predicate(&closure_2);
+    let closure_4 = _sequence(&closure_1, &closure_3);
+    let closure_5 = _var_name(Rules::ASCII, context, ascii);
+    let closure_6 = _var_name(Rules::Apostrophe, context, apostrophe);
+    let closure_7 = _not_predicate(&closure_6);
+    let closure_8 = _var_name(Rules::ASCII, context, ascii);
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _subexpression(&closure_9);
+    let closure_11 = _one_or_more(&closure_10);
+    let closure_12 = _sequence(&closure_5, &closure_11);
+    let closure_13 = _subexpression(&closure_12);
+    let closure_14 = _sequence(&closure_4, &closure_13);
+    let closure_15 = _var_name(Rules::Apostrophe, context, apostrophe);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 = _subexpression(&closure_16);
+    let closure_18 = _var_name(Rules::Hex, context, hex);
+    let closure_19 = _ordered_choice(&closure_17, &closure_18);
+    let closure_20 = _var_name(Rules::Integer, context, integer);
+    let closure_21 = _ordered_choice(&closure_19, &closure_20);
+    closure_21(parent, source, position)
+}
+pub fn terminal<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_2 = _var_name(Rules::ASCII, context, ascii);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_8 = _terminal(b'\\');
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _terminal(b'n');
+    let closure_11 = _terminal(b'r');
+    let closure_12 = _ordered_choice(&closure_10, &closure_11);
+    let closure_13 = _terminal(b't');
+    let closure_14 = _ordered_choice(&closure_12, &closure_13);
+    let closure_15 = _subexpression(&closure_14);
+    let closure_16 = _sequence(&closure_9, &closure_15);
+    let closure_17 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_18 = _sequence(&closure_16, &closure_17);
+    let closure_19 = _subexpression(&closure_18);
+    let closure_20 = _ordered_choice(&closure_6, &closure_19);
+    let closure_21 = _var_name(Rules::Epsilon, context, epsilon);
+    let closure_22 = _ordered_choice(&closure_20, &closure_21);
+    closure_22(parent, source, position)
+}
+pub fn nucleus<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(
+        Rules::OrderedChoiceMatchRange,
+        context,
+        orderedchoicematchrange,
+    );
+    let closure_2 = _var_name(Rules::Subexpression, context, subexpression);
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Terminal, context, terminal);
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    let closure_6 = _var_name(Rules::StringTerminal, context, stringterminal);
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    let closure_8 = _var_name(Rules::Var_Name, context, var_name);
+    let closure_9 = _ordered_choice(&closure_7, &closure_8);
+    let closure_10 = _subexpression(&closure_9);
+    let closure_11 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    closure_12(parent, source, position)
+}
+pub fn atom<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::And_Predicate, context, and_predicate);
+    let closure_2 = _var_name(Rules::Not_Predicate, context, not_predicate);
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::One_Or_More, context, one_or_more);
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    let closure_6 = _var_name(Rules::Zero_Or_More, context, zero_or_more);
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    let closure_8 = _var_name(Rules::Optional, context, optional);
+    let closure_9 = _ordered_choice(&closure_7, &closure_8);
+    let closure_10 = _var_name(Rules::Nucleus, context, nucleus);
+    let closure_11 = _ordered_choice(&closure_9, &closure_10);
+    let closure_12 = _subexpression(&closure_11);
+    let closure_13 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    closure_14(parent, source, position)
+}
+pub fn and_predicate<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Ampersand, context, ampersand);
+    let closure_2 = _var_name(Rules::Nucleus, context, nucleus);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    closure_3(parent, source, position)
+}
+pub fn not_predicate<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Exclamation_Mark, context, exclamation_mark);
+    let closure_2 = _var_name(Rules::Nucleus, context, nucleus);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    closure_3(parent, source, position)
+}
+pub fn sequence<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Atom, context, atom);
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Comma, context, comma);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _var_name(Rules::Atom, context, atom);
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _var_name(Rules::Comma, context, comma);
+    let closure_11 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    let closure_13 = _var_name(Rules::Atom, context, atom);
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let closure_15 = _subexpression(&closure_14);
+    let closure_16 = _zero_or_more(&closure_15);
+    let closure_17 = _sequence(&closure_9, &closure_16);
+    closure_17(parent, source, position)
+}
+pub fn ordered_choice<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Atom, context, atom);
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Backslash, context, backslash);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _var_name(Rules::Atom, context, atom);
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _var_name(Rules::Backslash, context, backslash);
+    let closure_11 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    let closure_13 = _var_name(Rules::Atom, context, atom);
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let closure_15 = _subexpression(&closure_14);
+    let closure_16 = _zero_or_more(&closure_15);
+    let closure_17 = _sequence(&closure_9, &closure_16);
+    closure_17(parent, source, position)
+}
+pub fn one_or_more<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Nucleus, context, nucleus);
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Plus, context, plus);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    closure_5(parent, source, position)
+}
+pub fn zero_or_more<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Nucleus, context, nucleus);
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Star, context, star);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    closure_5(parent, source, position)
+}
+pub fn optional<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Nucleus, context, nucleus);
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Question_Mark, context, question_mark);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    closure_5(parent, source, position)
+}
+pub fn whitespace<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b' ');
+    let closure_2 = _terminal(b'\n');
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _terminal(b'\r');
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    let closure_6 = _terminal(b'\t');
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 = _zero_or_more(&closure_8);
+    closure_9(parent, source, position)
+}
+pub fn rhs<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Sequence, context, sequence);
+    let closure_2 = _var_name(Rules::Ordered_Choice, context, ordered_choice);
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Atom, context, atom);
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    closure_5(parent, source, position)
+}
+pub fn lhs<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Var_Name_Decl, context, var_name_decl);
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_3 = _var_name(Rules::Semantic_Instructions, context, semantic_instructions);
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_6 = _sequence(&closure_4, &closure_5);
+    let closure_7 = _subexpression(&closure_6);
+    let closure_8 = _optional(&closure_7);
+    let closure_9 = _sequence(&closure_1, &closure_8);
+    closure_9(parent, source, position)
+}
+pub fn rule<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::LHS, context, lhs);
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Assignment, context, assignment);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _var_name(Rules::RHS, context, rhs);
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = _var_name(Rules::End_Rule, context, end_rule);
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    let closure_14 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_15 = _sequence(&closure_13, &closure_14);
+    let closure_16 = _var_name(Rules::Comment, context, comment);
+    let closure_17 = _zero_or_more(&closure_16);
+    let closure_18 = _sequence(&closure_15, &closure_17);
+    closure_18(parent, source, position)
+}
+
+pub fn grammar<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    // Double up dem comments
+    let closure_1 = _var_name(Rules::Rule, context, rule);
+    let closure_2 = _one_or_more(&closure_1);
+    let closure_3 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_4 = _optional(&closure_3);
+    let closure_5 = _sequence(&closure_2, &closure_4);
+    closure_5(parent, source, position)
+}
+pub fn comment<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_2 = _terminal(b'#');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _terminal(b'#');
+    let closure_5 = _not_predicate(&closure_4);
+    let closure_6 = _var_name(Rules::ASCII, context, ascii);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 = _zero_or_more(&closure_8);
+    let closure_10 = _sequence(&closure_3, &closure_9);
+    let closure_11 = _terminal(b'#');
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    let closure_13 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    closure_14(parent, source, position)
+}
+pub fn semantic_instructions<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Delete, context, delete);
+    let closure_2 = _var_name(Rules::Passthrough, context, passthrough);
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Inline, context, inline);
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    closure_5(parent, source, position)
+}
+pub fn delete<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _string_terminal_opt_ascii(&[b'D', b'E', b'L', b'E', b'T', b'E']);
+    closure_1(parent, source, position)
+}
+pub fn passthrough<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _string_terminal_opt_ascii(&[
+        b'P', b'A', b'S', b'S', b'T', b'H', b'R', b'O', b'U', b'G', b'H',
+    ]);
+    closure_1(parent, source, position)
+}
+pub fn inline<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    // Comment
+    let closure_1 = _string_terminal_opt_ascii(&[b'I', b'n', b'l', b'i', b'n', b'e']);
+    closure_1(parent, source, position)
+}
+pub fn test_lr_num<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Num, context, num);
+    closure_1(parent, source, position)
+}
+pub fn test_lr_expr<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    //  Should match 0-0-0-0-0-0-0-0 etc
+    let closure_1 = _var_name_direct_left_recursion(Rules::test_LR_expr, context, test_lr_expr);
+    let closure_2 = _terminal(b'-');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_8 = _ordered_choice(&closure_6, &closure_7);
+    let result = closure_8(parent, source, position);
+    // The 2nd half of the sequence always fails because it's already been consumed ahead of time.
+    // We need to therefore get the result from the cache instead.
+    // To handle LR we need to just get the cached value for the Rules.
+    // let f = context
+    //     .cache
+    //     .borrow_mut()
+    //     .check_LR(Rules::test_LR_expr, position)
+    //     .expect("We expect it to exist since we just did it");
+    // println!(
+    //     "test_lr_expr Response: {:?}",
+    //     (f.0.expect("Should exist"), f.1)
+    // );
+    // return (f.0.expect("Should exist"), f.1);
+    return result;
+}
+pub fn test_indirect_lr_num<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let involved_set = vec![Rules::test_indirect_LR_expr];
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::test_indirect_LR_expr,
+        context,
+        test_indirect_lr_expr,
+    );
+    closure_1(parent, source, position)
+}
+pub fn test_indirect_lr_expr<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    //  Should match 0-0-0-0-0-0-0-0 etc
+    let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::test_indirect_LR_num,
+        context,
+        test_indirect_lr_num,
+    );
+    let closure_2 = _terminal(b'-');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_8 = _ordered_choice(&closure_6, &closure_7);
+    closure_8(parent, source, position)
+}
+
+pub fn test_term<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    //  Should match 0-0-0-0-0-0-0-0 etc
+    let test_term = _var_name_direct_left_recursion(Rules::test_term, context, test_term);
+
+    let test_fact = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let plus = _terminal(b'+');
+    let minus = _terminal(b'-');
+
+    let seq1 = _sequence(&test_term, &plus);
+    let seq_plus = _sequence(&seq1, &test_fact);
+    let sexpr_1 = _subexpression(&seq_plus);
+    let seq2 = _sequence(&test_term, &minus);
+    let seq_minus = _sequence(&seq2, &test_fact);
+    let sexpr_2 = _subexpression(&seq_minus);
+
+    let oc1 = _ordered_choice(&sexpr_1, &sexpr_2);
+    let oc2 = _ordered_choice(&oc1, &test_fact);
+    oc2(parent, source, position)
+}
+
+pub fn test_fact<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    //  Should match 0-0-0-0-0-0-0-0 etc
+    let test_num = _var_name(Rules::Num, context, num);
+    let test_fact = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let star = _terminal(b'*');
+    let div = _terminal(b'/');
+
+    let seq1 = _sequence(&test_fact, &star);
+    let seq_plus = _sequence(&seq1, &test_num);
+    let sexpr_1 = _subexpression(&seq_plus);
+
+    let seq2 = _sequence(&test_fact, &div);
+    let seq_minus = _sequence(&seq2, &test_num);
+    let sexpr_2 = _subexpression(&seq_minus);
+
+    let oc1 = _ordered_choice(&sexpr_1, &sexpr_2);
+    let oc2 = _ordered_choice(&oc1, &test_num);
+    oc2(parent, source, position)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{context::BasicContext, rules::RULES_SIZE, Key};
+
+    use super::*;
+    use core::cell::RefCell;
+    use std::env;
+    use std::fs::{canonicalize, read_to_string};
+
+    #[test]
+    fn test_grammar_true() {
+        let string = "<Spaces> PASSTHROUGH = '\n'/'\t'/'\r'/' ';".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let executor = _var_name(Rules::Grammar, &context, grammar);
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, src_len));
+    }
+
+    #[test]
+    fn test_grammar_true3() {
+        println!("{:?}", env::current_dir().unwrap());
+        let path = "tests/test_data/Grammar.txt";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let executor = _var_name(Rules::Grammar, &context, grammar);
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, src_len));
+    }
+    #[test]
+    fn test_left_recursion_direct_1() {
+        let string = "1-2-3-7-9-1   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let executor = _var_name_direct_left_recursion(Rules::test_LR_expr, &context, test_lr_expr);
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, 11));
+    }
+    #[test]
+    fn test_left_recursion_direct_2() {
+        let string = "1-2   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let executor = _var_name_direct_left_recursion(Rules::test_LR_expr, &context, test_lr_expr);
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, 3));
+    }
+
+    #[test]
+    fn test_left_recursion_indirect_1() {
+        let string = "1-2  ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
+        let executor = _var_name_indirect_left_recursion(
+            &involved_set,
+            Rules::test_indirect_LR_expr,
+            &context,
+            test_indirect_lr_expr,
+        );
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, 3));
+    }
+
+    #[test]
+    fn test_left_recursion_indirect_2() {
+        let string = "1-2-3-7-9-1   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
+        let executor = _var_name_indirect_left_recursion(
+            &involved_set,
+            Rules::test_indirect_LR_expr,
+            &context,
+            test_indirect_lr_expr,
+        );
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, 11));
+    }
+
+    #[test]
+    fn test_left_recursion_direct_3() {
+        let string = "1*2/3*7/9   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let executor = _var_name_direct_left_recursion(Rules::test_fact, &context, test_fact);
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, 9));
+    }
+    #[test]
+    fn test_left_recursion_direct_4() {
+        let string = "1/2/3/4+5+7+9   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, 13));
+    }
+    #[test]
+    fn test_left_recursion_direct_5() {
+        let string = "1+2+3+4/5/7/9   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, 13));
+    }
+    #[test]
+    fn test_left_recursion_direct_6() {
+        let string = "1+2/3+4/5   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
+        let result = executor(Key(0), &source, position);
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, 9));
+    }
+}

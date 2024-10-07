@@ -1,26 +1,9 @@
-[workspace]
-resolver = "2"
-members = [
-    "parser_core",
-    "grammar_parser",
-    "grammar_runner",
-    "grammar_generator",
-    "cache",
-    "publisher",
-    "rules",
-    "parser",
-    "LR",
+[package]
+name = "ppparser"
+version = "2.0.0"
+edition = "2021"
 
-]
-
-[profile.dev]
-panic = "unwind"
-debug = true
-
-[profile.release]
-# strip = true  # Automatically strip symbols from the binary.
-opt-level = 3  
-lto = "fat"
-codegen-units = 1
-panic = "abort"
-
+[dependencies]
+num = "0.4.1"
+num-derive = "0.4.2"
+num-traits = "0.2.18"

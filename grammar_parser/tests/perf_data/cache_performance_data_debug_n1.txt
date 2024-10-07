@@ -1,9 +1,0 @@
-DEBUG
-n = 1
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree::UnsafeTree" 9.5827ms
-"cache::my_cache4::MyCache4" "publisher::unsafe_tree2::UnsafeTree2" 8.086ms
-"cache::my_cache4::MyCache4" "publisher::tree2::Tree2" 9.4897ms
-"cache::my_cache4::MyCache4" "publisher::noop::NOOP" 7.407ms
-"cache::my_cache4::MyCache4" "publisher::tree::Tree" 8.6378ms
-"cache::deny_left_recursion_cache::DenyLeftRecursionCache" "publisher::noop::NOOP" 7.7325ms
-"cache::deny_left_recursion_cache::DenyLeftRecursionCache" "publisher::tree::Tree" 10.2697ms
