@@ -14,7 +14,7 @@ pub use context::{BasicContext, Context};
 pub use keys::Key;
 pub use parse::parse;
 pub use parser::*;
-use publisher::{BasicPublisher, DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher};
+pub use publisher::{BasicPublisher, DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher};
 pub use rules::Rules;
 pub use rules::RULES_SIZE;
 pub use source::Source;
