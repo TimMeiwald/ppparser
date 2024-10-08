@@ -114,7 +114,7 @@ impl BinaryTreeWO {
             Reference::Exec => {
                 let child_index = node.lhs.expect("Should always have child");
                 let key = self.match_ref(stack, child_index);
-                stack.push(format!("closure_{}(source, position)", key.0));
+                stack.push(format!("closure_{}(parent, source, position)", key.0));
                 key
             }
 

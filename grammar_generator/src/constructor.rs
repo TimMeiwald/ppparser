@@ -120,7 +120,8 @@ impl GeneratedCode {
         }
 
         let rule_header = format!(
-            "pub fn {}<T: Cache, S: Publisher>(context: &Context<T, S>, source: &Source, position: u32) -> (bool, u32) {{",
+
+            "#[allow(dead_code)]\npub fn {}<T: Context>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{",
             name.expect("Must have name")
         );
         let builder = format!(
@@ -708,6 +709,7 @@ mod tests {
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
         let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        _gen_code.print();
     }
 
     #[test]
@@ -798,12 +800,46 @@ mod tests {
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
         let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        _gen_code.print();
+    }
+    #[test]
+    fn test_9() {
+        let string = r#"<Whitespace> Inline = (' '/'\n'/'\r'/'\t')*;
+            <LHS> = <Var_Name_Decl>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
+        "#
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len();
+        let source = Source::new(&string);
+        let position = 0;
+        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let result = grammar(Key(0), &context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = context.borrow();
+        let tree = &tree.clear_false();
+
+        //tree.print(Key(0), None);
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        //sym_table.print();
+        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        _gen_code.print();
     }
 
     #[test]
     fn test() {
         println!("{:?}", env::current_dir().unwrap());
-        let path = "../grammar_parser/tests/newGrammar_test_only_dont_modify.dsl";
+        let path = "../parser/tests/test_data/Grammar.txt";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
@@ -830,10 +866,11 @@ mod tests {
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
         let gen_code = GeneratedCode::new(&sym_table, &tree, src);
-        for i in gen_code.rules {
+        for i in &gen_code.rules {
             println!("{}", i)
         }
-        println!("{}", gen_code.rules_enum)
+        println!("{}", gen_code.rules_enum);
+        gen_code.print();
     }
 
     #[test]

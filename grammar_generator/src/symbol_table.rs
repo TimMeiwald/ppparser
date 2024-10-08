@@ -66,7 +66,7 @@ impl<'a> SymbolTable<'a> {
             }
             let child_index = node.get_children()[counter];
             // Recurse.
-            self.create_symbol_table_from_tree_kernel(tree, child_index);
+            self.create_symbol_table_from_tree_kernel(child_index, tree, child_index);
             counter += 1;
         }
     }
@@ -80,8 +80,9 @@ impl<'a> SymbolTable<'a> {
         parent_index: Key,
         name: &str,
         tree: &BasicPublisher,
-        _index: Key,
+        index: Key,
     ) {
+        let lhs = tree.get_node(index);
         let node = tree.get_node(parent_index);
         for child in node.get_children() {
             let child_node = tree.get_node(*child);
@@ -95,7 +96,12 @@ impl<'a> SymbolTable<'a> {
         }
     }
 
-    fn create_symbol_table_from_tree_kernel(&mut self, tree: &BasicPublisher, index: Key) {
+    fn create_symbol_table_from_tree_kernel(
+        &mut self,
+        parent_index: Key,
+        tree: &BasicPublisher,
+        index: Key,
+    ) {
         let node = tree.get_node(index);
         let mut counter = 0;
         if node.rule == Rules::Var_Name_Decl {
@@ -106,7 +112,7 @@ impl<'a> SymbolTable<'a> {
                 [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)];
             self.names.push(name.to_string());
 
-            self.check_semantic_instructions(index, name, tree, index);
+            self.check_semantic_instructions(parent_index, name, tree, index);
         }
         loop {
             if counter >= node.get_children().len() {
@@ -114,7 +120,7 @@ impl<'a> SymbolTable<'a> {
             }
             let child_index = node.get_children()[counter];
             // Recurse.
-            self.create_symbol_table_from_tree_kernel(tree, child_index);
+            self.create_symbol_table_from_tree_kernel(index, tree, child_index);
             counter += 1;
         }
     }
@@ -191,6 +197,39 @@ mod tests {
     #[test]
     fn test_3() {
         let string = "<Rule> Inline ='A'/'B';".to_string();
+        let string2 = string.clone();
+        let src_len = string.len();
+        let source = Source::new(&string);
+        let position = 0;
+        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let result = grammar(Key(0), &context, &source, position);
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = &context.borrow();
+        let src = &String::from(source);
+        //tree.print(Key(0), Some(true));
+        println!("\nCLEAN TREE\n");
+        let clean_tree = tree.clear_false();
+        clean_tree.print(Key(0), Some(true));
+        let sym_table = SymbolTable::new(&clean_tree, src);
+        sym_table.print();
+        println!("Inlined Rules:");
+        sym_table.print_inlined_rules();
+    }
+
+    #[test]
+    fn test_4() {
+        let string = "<Whitespace> Inline = (' '/'\n'/'\r'/'\t')*;
+"
+        .to_string();
         let string2 = string.clone();
         let src_len = string.len();
         let source = Source::new(&string);
