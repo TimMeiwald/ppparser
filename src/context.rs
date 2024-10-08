@@ -101,7 +101,7 @@ impl Context for BasicContext {
         println!("{:?}", &self.cache)
     }
     fn print_publisher(&self) {
-        self.publisher.print(Key(0), None);
+        self.publisher.print(Key(0), Some(true));
         //println!("\n\n{:?}", &self.publisher)
     }
     fn reserve_publisher_entry(&mut self, rule: Rules) -> Key {

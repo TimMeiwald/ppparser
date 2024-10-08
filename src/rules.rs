@@ -2,7 +2,7 @@
 
 use num_derive::FromPrimitive;
 #[allow(dead_code)]
-pub static RULES_SIZE: u32 = 57; // Used in tests to know what size the cache needs(sometimes, cache dependent)
+pub static RULES_SIZE: u32 = 58; // Used in tests to know what size the cache needs(sometimes, cache dependent)
 #[derive(PartialEq, Eq, Hash, FromPrimitive, Clone, Copy, Debug, Ord, PartialOrd)]
 #[allow(clippy::upper_case_acronyms)] // Again due to generation -> Might solve eventually
 
@@ -57,6 +57,7 @@ pub enum Rules {
     Terminal,
     Var_Name,
     Var_Name_Decl,
+    Var_Name_Ref,
     Zero_Or_More,
     test_LR_expr,
     test_LR_num,
