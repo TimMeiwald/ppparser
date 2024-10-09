@@ -12,6 +12,7 @@ pub struct GeneratedCode<'a> {
     pub num_rules: usize,
     pub rules: Vec<String>,
     pub rules_enum: String,
+    pub rules_enum_header_2: &'a str,
 }
 
 impl GeneratedCode<'_> {
@@ -22,7 +23,6 @@ impl GeneratedCode<'_> {
         let rules_enum_header = indoc! {
             r##"#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually
             use num_derive::FromPrimitive;
-            pub static RULES_SIZE: u32 = 41; // Used in tests to know what size the cache needs(sometimes, cache dependent)
             impl From<u32> for Rules {
                 fn from(i: u32) -> Rules {
                     let element = num::FromPrimitive::from_u32(i);
@@ -33,6 +33,10 @@ impl GeneratedCode<'_> {
                 }
             }"##
         };
+        let rules_enum_header_2 = indoc! {r##"
+            #[allow(clippy::upper_case_acronyms)] // Again due to generation -> Might solve eventually
+            #[derive(PartialEq, Eq, Hash, FromPrimitive, Clone, Copy, Debug, Ord, PartialOrd)]
+        "##};
         let rules_size_header = indoc! {
             r##"#[allow(dead_code)]
                 pub static RULES_SIZE: u32 = "##
@@ -52,6 +56,7 @@ impl GeneratedCode<'_> {
             rules,
             rules_enum,
             num_rules,
+            rules_enum_header_2,
         };
         println!("Code generation complete");
         s
@@ -68,8 +73,8 @@ impl GeneratedCode<'_> {
     pub fn rules_enum_file_content(&self) -> String {
         let rules_size = format!("{} {};", self.rules_size_header, self.num_rules);
         format!(
-            "{}\n{}\n{}",
-            self.rules_enum_header, rules_size, self.rules_enum
+            "{}\n{}\n{}\n{}",
+            self.rules_enum_header, rules_size, self.rules_enum_header_2, self.rules_enum
         )
     }
 

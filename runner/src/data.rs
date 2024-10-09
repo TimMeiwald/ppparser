@@ -1,7 +1,10 @@
 use anyhow::{bail, Ok, Result};
+use generator::GeneratedCode;
 use std::fs::{self, create_dir, File};
+use std::io::ErrorKind;
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use std::process::{exit, Command};
 use std::str::FromStr;
 pub fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> Result<()> {
     fs::create_dir_all(&dst)?;
@@ -23,13 +26,15 @@ pub fn copy_file(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> Result<u64> {
 }
 
 pub struct DataGenerator {
+    name: String,
     target_dir: PathBuf,
     parser_core_dir: PathBuf,
     source: PathBuf,
 }
 impl DataGenerator {
-    pub fn new(target_dir: PathBuf, parser_core_dir: &str, source: PathBuf) -> Self {
+    pub fn new(target_dir: PathBuf, parser_core_dir: &str, source: PathBuf, name: String) -> Self {
         let dir_data = DataGenerator {
+            name,
             parser_core_dir: PathBuf::from(parser_core_dir),
             target_dir,
             source,
@@ -46,56 +51,114 @@ impl DataGenerator {
         Ok(())
     }
 
-    pub fn generate_parser(&self) -> Result<()> {
+    pub fn generate_parser(&self) -> GeneratedCode<'_> {
         let parser = generator::generate_parser(&self.source);
         match parser {
-            Some(p) => {
-                let rules_enum = p.rules_enum;
-                let rules = p.rules;
-                let mut f = self.make_file(&PathBuf::from_str("./parser/src/lib.rs").unwrap())?;
-                let s2 = "use cache::*;
-use parser_core::*;
-use publisher::*;
-use rules::Rules;
-
-pub use parser_core::Context;
-pub use parser_core::Source;";
-                f.write_all(s2.as_bytes())?;
-                for rule in rules {
-                    f.write_all(rule.as_bytes())?;
-                }
-                self.remove_file(&PathBuf::from_str("./rules/src/rules.rs").unwrap())?;
-                let mut f2 = self.make_file(&PathBuf::from_str("./rules/src/rules.rs").unwrap())?;
-
-                let header = "use num_derive::FromPrimitive;
-#[derive(FromPrimitive, Clone, Copy, Debug)]";
-                f2.write_all(header.as_bytes())?;
-                f2.write_all(rules_enum.as_bytes())?;
-
-                Ok(())
-            }
-            None => {
-                bail!("Failed to generate parser");
-            }
+            None => panic!("Failed to generate parser!"),
+            Some(parser) => parser,
         }
     }
 
     pub fn generate_data(&self) -> Result<()> {
-        self.copy_all(&self.parser_core_dir)?;
-        self.copy_all(&PathBuf::from_str("./parser").unwrap())?;
+        println!("Step 1");
+        let parser = self.generate_parser();
+        let path = &self.target_dir.canonicalize().unwrap().join(&self.name);
+        let r = self.create_dir(&path);
 
-        self.copy_file(&PathBuf::from_str("Cargo.toml").unwrap())?;
-        self.copy_file_with_dst(
-            &PathBuf::from_str("./data/Cargo.toml").unwrap(),
-            &PathBuf::from_str("Cargo.toml").unwrap(),
-        )?;
-        self.copy_file(&PathBuf::from_str("Cargo.lock").unwrap())?;
-        self.copy_file(&PathBuf::from_str(".gitignore").unwrap())?;
-        self.create_dir(&PathBuf::from_str("./grammar_parser/").unwrap())?;
-        self.create_dir(&PathBuf::from_str("./grammar_parser/src/").unwrap())?;
-        self.copy_file(&PathBuf::from_str("./grammar_parser/Cargo.toml").unwrap())?;
-        self.generate_parser()?;
+        match r {
+            Err(e) => {
+                println!("{}", e);
+                exit(1)
+            }
+            std::result::Result::Ok(_) => {
+                println!("Path to Init {:?}", path);
+                println!("Step 2");
+
+                let mut f = Command::new("cargo")
+                    .arg("init")
+                    .arg(path)
+                    .spawn()
+                    .expect("Failed to run Cargo Init");
+                let r = f.wait();
+                println!("Cargo Dir: {:?}", path);
+                let mut f = Command::new("cargo")
+                    .current_dir(path)
+                    .arg("add")
+                    .arg("num")
+                    .spawn()
+                    .expect("Failed to add package num");
+                let r = f.wait();
+                let mut f = Command::new("cargo")
+                    .current_dir(path)
+                    .arg("add")
+                    .arg("num-derive")
+                    .spawn()
+                    .expect("Failed to add package num-derive");
+                let r = f.wait();
+                let mut f = Command::new("cargo")
+                    .current_dir(path)
+                    .arg("add")
+                    .arg("num-traits")
+                    .spawn()
+                    .expect("Failed to add package num-traits");
+                let r = f.wait();
+
+                let copy_folder = self.parser_core_dir.join("src");
+                let path = path.join("src");
+                println!("{:?} {:?}", self.source, path);
+                let _ = self.copy_dir_contents_to_dir(&path, &copy_folder);
+                let rules_enum_file = path.join("rules.rs");
+                let parser_rs = path.join("parser.rs");
+                let _ = fs::write(rules_enum_file, parser.rules_enum_file_content());
+                let _ = fs::write(parser_rs, parser.parser_file_content());
+            }
+        }
+
+        // println!("Step 3");
+
+        // self.copy_all(&self.parser_core_dir)?;
+        // self.copy_all(&PathBuf::from_str("./parser").unwrap())?;
+
+        // self.copy_file(&PathBuf::from_str("Cargo.toml").unwrap())?;
+        // self.copy_file_with_dst(
+        //     &PathBuf::from_str("./data/Cargo.toml").unwrap(),
+        //     &PathBuf::from_str("Cargo.toml").unwrap(),
+        // )?;
+        // self.copy_file(&PathBuf::from_str("Cargo.lock").unwrap())?;
+        // self.copy_file(&PathBuf::from_str(".gitignore").unwrap())?;
+        // self.create_dir(&PathBuf::from_str("./parser/").unwrap())?;
+        // self.create_dir(&PathBuf::from_str("./parser/src/").unwrap())?;
+        // self.copy_file(&PathBuf::from_str("./parser/Cargo.toml").unwrap())?;
         Ok(())
+    }
+
+    fn copy_dir_contents_to_dir(&self, target_dir: &PathBuf, source_dir: &PathBuf) -> Result<()> {
+        if source_dir.is_dir() {
+            for entry in fs::read_dir(source_dir)? {
+                println!("{:?}", entry);
+                let mut e = &entry?.path();
+                let file_name = e.file_name().expect("Should exist");
+                let new_file_path = target_dir.join(file_name);
+
+                println!("Creating File: {:?}", new_file_path);
+                let res = std::fs::File::create(&new_file_path);
+                match res {
+                    std::result::Result::Ok(_) => {}
+                    Err(e) => {
+                        println!("{:?}", e)
+                    }
+                }
+                println!(
+                    "Attempting to copy contents from {:?} to {:?}",
+                    e, new_file_path
+                );
+                let res = fs::copy(e, new_file_path)?;
+            }
+
+            Ok(())
+        } else {
+            panic!("Source Dir is not a directory!")
+        }
     }
 
     fn copy_all(&self, pathbuf: &Path) -> Result<()> {
@@ -150,7 +213,11 @@ pub use parser_core::Source;";
         match success {
             std::result::Result::Ok(()) => Ok(()),
             Err(e) => {
-                bail!("Failed to create {:?}: {:?}", f, e)
+                if e.kind() != ErrorKind::AlreadyExists {
+                    bail!("Failed to create {:?}: {:?}", f, e)
+                } else {
+                    Ok(())
+                }
             }
         }
     }

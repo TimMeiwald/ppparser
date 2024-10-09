@@ -9,7 +9,7 @@ struct Args {
     /// Path to Grammar file you would like to generate a parser for.
     #[arg(short, long)]
     source: PathBuf,
-    /// Target Directory to place generated parser code.
+    /// Target Directory to place generated parser code. Note this should be the directory in which you'd place the whole parser folder.
     #[arg(short, long)]
     target: PathBuf,
     /// Name of parser.
@@ -44,7 +44,12 @@ fn main() {
     println!("Target Directory: {:?}", target);
     println!("Source File: {:?}", source);
 
-    let data = DataGenerator::new(target.to_str().unwrap().into(), "./parser", source);
+    let data = DataGenerator::new(
+        target.to_str().unwrap().into(),
+        "./parser",
+        source,
+        args.name.into(),
+    );
     match data.generate_data() {
         Ok(()) => println!("Success"),
         Err(e) => println!("Error: {:?}", e),

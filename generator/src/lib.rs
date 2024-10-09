@@ -4,7 +4,7 @@ use std::path::PathBuf;
 mod binary_wo;
 mod constructor;
 mod symbol_table;
-use crate::constructor::GeneratedCode;
+pub use crate::constructor::GeneratedCode;
 use crate::symbol_table::SymbolTable;
 use parser::*;
 
