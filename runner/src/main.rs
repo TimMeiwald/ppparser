@@ -44,16 +44,7 @@ fn main() {
     println!("Target Directory: {:?}", target);
     println!("Source File: {:?}", source);
 
-    let data = DataGenerator::new(
-        "./cache",
-        "./rules",
-        "./publisher",
-        // "./grammar_generator",
-        // "./grammar_runner",
-        target.to_str().unwrap().into(),
-        "./parser_core",
-        source,
-    );
+    let data = DataGenerator::new(target.to_str().unwrap().into(), "./parser", source);
     match data.generate_data() {
         Ok(()) => println!("Success"),
         Err(e) => println!("Error: {:?}", e),

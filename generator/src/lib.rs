@@ -50,3 +50,29 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
     let gen_code = GeneratedCode::new(&sym_table, tree, src);
     Some(gen_code)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::count_lines;
+    use parser::*;
+    use std::cell::RefCell;
+    use std::env;
+    use std::fs::{canonicalize, read_to_string};
+    #[test]
+    fn test() {
+        let path = "../parser/tests/test_data/Grammar.txt";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let gen_code = generate_parser(&pathbuf);
+        match gen_code {
+            Some(gen_code) => {
+                //gen_code.print();
+                print!("{}\n", gen_code.parser_file_content());
+                print!("{}\n", gen_code.rules_enum_file_content());
+            }
+            None => {
+                panic!("Something went wrong")
+            }
+        }
+    }
+}

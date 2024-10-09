@@ -4,30 +4,51 @@ use indoc::indoc;
 use parser::*;
 use std::panic::panic_any;
 
-pub struct GeneratedCode {
+pub struct GeneratedCode<'a> {
     // String per rule so we can seperate into files per rule.
-    pub rules_header: String,
+    pub rules_enum_header: &'a str,
+    pub rules_size_header: &'a str,
+    pub parser_header: &'a str,
     pub num_rules: usize,
     pub rules: Vec<String>,
     pub rules_enum: String,
 }
 
-impl GeneratedCode {
+impl GeneratedCode<'_> {
     pub fn new(symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str) -> Self {
         println!("Generating Code");
         let rules = Self::generate(symbol_table, tree, source);
         let (rules_enum, num_rules) = Self::generate_rules_enum(symbol_table);
-        let rules_header = indoc! {
+        let rules_enum_header = indoc! {
+            r##"#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually
+            use num_derive::FromPrimitive;
+            pub static RULES_SIZE: u32 = 41; // Used in tests to know what size the cache needs(sometimes, cache dependent)
+            impl From<u32> for Rules {
+                fn from(i: u32) -> Rules {
+                    let element = num::FromPrimitive::from_u32(i);
+                    match element {
+                        Some(rule) => rule,
+                        None => panic!("Not a valid Rule"),
+                    }
+                }
+            }"##
+        };
+        let rules_size_header = indoc! {
+            r##"#[allow(dead_code)]
+                pub static RULES_SIZE: u32 = "##
+        };
+        let parser_header = indoc! {
             r##"#![allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
             #![allow(unused_variables)] // Generated Code also, since everything passes stuff
             #![allow(unused_imports)] // Generated Code also, since everything passes stuff
             use crate::*;
             use std::cell::RefCell;"##
-        }
-        .to_string();
+        };
 
         let s = GeneratedCode {
-            rules_header,
+            rules_enum_header,
+            rules_size_header,
+            parser_header,
             rules,
             rules_enum,
             num_rules,
@@ -36,12 +57,28 @@ impl GeneratedCode {
         s
     }
 
+    pub fn parser_file_content(&self) -> String {
+        let mut rules: String = "".to_string();
+        for i in &self.rules {
+            rules.push_str(i);
+        }
+        format!("{}\n{}", self.parser_header, rules)
+    }
+
+    pub fn rules_enum_file_content(&self) -> String {
+        let rules_size = format!("{} {};", self.rules_size_header, self.num_rules);
+        format!(
+            "{}\n{}\n{}",
+            self.rules_enum_header, rules_size, self.rules_enum
+        )
+    }
+
     pub fn print(&self) {
         println!("Number of Rules: {}", self.num_rules);
         println!("Rules Enum: \n");
         println!("{}\n", self.rules_enum);
         println!("Rules:\n");
-        print!("{}", self.rules_header);
+        print!("{}", self.parser_header);
         for i in &self.rules {
             println!("{}", i)
         }

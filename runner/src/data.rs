@@ -23,32 +23,13 @@ pub fn copy_file(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> Result<u64> {
 }
 
 pub struct DataGenerator {
-    //cache_dir: PathBuf,
-    //rules_dir: PathBuf,
-    //publisher_dir: PathBuf,
-    // generator_dir: PathBuf,
-    // runner_dir: PathBuf,
     target_dir: PathBuf,
     parser_core_dir: PathBuf,
     source: PathBuf,
 }
 impl DataGenerator {
-    pub fn new(
-        cache_dir: &str,
-        rules_dir: &str,
-        publisher_dir: &str,
-        // generator_dir: &str,
-        // runner_dir: &str,
-        target_dir: PathBuf,
-        parser_core_dir: &str,
-        source: PathBuf,
-    ) -> Self {
+    pub fn new(target_dir: PathBuf, parser_core_dir: &str, source: PathBuf) -> Self {
         let dir_data = DataGenerator {
-            //cache_dir: PathBuf::from(cache_dir),
-            //rules_dir: PathBuf::from(rules_dir),
-            //publisher_dir: PathBuf::from(publisher_dir),
-            // generator_dir: PathBuf::from(generator_dir),
-            // runner_dir: PathBuf::from(runner_dir),
             parser_core_dir: PathBuf::from(parser_core_dir),
             target_dir,
             source,
@@ -60,11 +41,6 @@ impl DataGenerator {
     }
 
     fn verify(&self) -> Result<()> {
-        // self.cache_dir.canonicalize()?;
-        // self.rules_dir.canonicalize()?;
-        // self.publisher_dir.canonicalize()?;
-        // self.generator_dir.canonicalize()?;
-        // self.runner_dir.canonicalize()?;
         self.parser_core_dir.canonicalize()?;
 
         Ok(())
@@ -76,8 +52,7 @@ impl DataGenerator {
             Some(p) => {
                 let rules_enum = p.rules_enum;
                 let rules = p.rules;
-                let mut f =
-                    self.make_file(&PathBuf::from_str("./grammar_parser/src/lib.rs").unwrap())?;
+                let mut f = self.make_file(&PathBuf::from_str("./parser/src/lib.rs").unwrap())?;
                 let s2 = "use cache::*;
 use parser_core::*;
 use publisher::*;
@@ -106,11 +81,6 @@ pub use parser_core::Source;";
     }
 
     pub fn generate_data(&self) -> Result<()> {
-        // self.copy_all(&self.cache_dir)?;
-        // self.copy_all(&self.publisher_dir)?;
-        // self.copy_all(&self.generator_dir)?;
-        // self.copy_all(&self.runner_dir)?;
-        // self.copy_all(&self.rules_dir)?;
         self.copy_all(&self.parser_core_dir)?;
         self.copy_all(&PathBuf::from_str("./parser").unwrap())?;
 
