@@ -1,10 +1,12 @@
 use super::binary_wo::{BinaryTreeWO, Reference};
 use crate::symbol_table::SymbolTable;
+use indoc::indoc;
 use parser::*;
 use std::panic::panic_any;
 
 pub struct GeneratedCode {
     // String per rule so we can seperate into files per rule.
+    pub rules_header: String,
     pub num_rules: usize,
     pub rules: Vec<String>,
     pub rules_enum: String,
@@ -15,7 +17,17 @@ impl GeneratedCode {
         println!("Generating Code");
         let rules = Self::generate(symbol_table, tree, source);
         let (rules_enum, num_rules) = Self::generate_rules_enum(symbol_table);
+        let rules_header = indoc! {
+            r##"#![allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
+            #![allow(unused_variables)] // Generated Code also, since everything passes stuff
+            #![allow(unused_imports)] // Generated Code also, since everything passes stuff
+            use crate::*;
+            use std::cell::RefCell;"##
+        }
+        .to_string();
+
         let s = GeneratedCode {
+            rules_header,
             rules,
             rules_enum,
             num_rules,
@@ -29,6 +41,7 @@ impl GeneratedCode {
         println!("Rules Enum: \n");
         println!("{}\n", self.rules_enum);
         println!("Rules:\n");
+        print!("{}", self.rules_header);
         for i in &self.rules {
             println!("{}", i)
         }
@@ -139,9 +152,9 @@ impl GeneratedCode {
         let lhs_children = lhs_node.get_children();
         let var_name_decl_key = lhs_children[0];
         let var_name_decl = tree.get_node(var_name_decl_key);
-        let var_name_key = var_name_decl.get_children()[0];
-        let var_name = tree.get_node(var_name_key);
-        let name = var_name.get_string(source);
+        // let var_name_key = var_name_decl.get_children()[0];
+        // let var_name = tree.get_node(var_name_key);
+        let name = var_name_decl.get_string(source);
         // name still has angle brackets but cba to create string from subnodes
         // so simply remove first and last char
         let mut s = name;
@@ -221,7 +234,7 @@ impl GeneratedCode {
                     count += 1;
                     last_key = key;
                 }
-                Rules::Backslash => {}
+                //Rules::Backslash => {}
                 _ => panic!("ordered_choice"),
             }
         }
@@ -249,7 +262,7 @@ impl GeneratedCode {
                     count += 1;
                     last_key = key;
                 }
-                Rules::Comma => {}
+                //Rules::Comma => {}
                 _ => panic!("sequence"),
             }
         }
@@ -305,7 +318,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Question_Mark => {}
+                //Rules::Question_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::Optional, Some(key), None)
@@ -328,7 +341,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Plus => {}
+                //Rules::Plus => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::OneOrMore, Some(key), None)
@@ -351,7 +364,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Star => {}
+                //Rules::Star => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::ZeroOrMore, Some(key), None)
@@ -375,7 +388,7 @@ impl GeneratedCode {
 
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Ampersand => {}
+                //Rules::Ampersand => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::AndPredicate, Some(key), None);
@@ -398,7 +411,7 @@ impl GeneratedCode {
         let mut ret_key = Key(0);
         for i in node.get_children() {
             match tree.get_node(*i).rule {
-                Rules::Exclamation_Mark => {}
+                //Rules::Exclamation_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::NotPredicate, Some(key), None)
@@ -428,7 +441,7 @@ impl GeneratedCode {
                 Rules::Terminal => {
                     ret_key = Self::terminal(out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::Var_Name => {
+                Rules::Var_Name_Ref => {
                     ret_key = Self::var_name(out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::OrderedChoiceMatchRange => {
@@ -478,7 +491,7 @@ impl GeneratedCode {
                             .expect("Should be valid codepoint"),
                     );
                 }
-                Rules::Apostrophe => {}
+                //Rules::Apostrophe => {}
                 _ => {
                     let err_msg = format!("string_terminal, Rule: {:?}", child_rule);
                     panic_any(err_msg);
@@ -582,7 +595,7 @@ impl GeneratedCode {
                     let key = Self::rhs(out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::Subexpression, Some(key), None);
                 }
-                Rules::Left_Bracket | Rules::Right_Bracket => {}
+                //Rules::Left_Bracket | Rules::Right_Bracket => {}
                 _ => panic!("subexpression"),
             }
         }
@@ -740,6 +753,7 @@ mod tests {
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
         let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        _gen_code.print();
     }
 
     #[test]
@@ -831,7 +845,7 @@ mod tests {
         //tree.print(Key(0), None);
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
-        //sym_table.print();
+        sym_table.print();
         let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
         _gen_code.print();
     }
@@ -866,47 +880,50 @@ mod tests {
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
         let gen_code = GeneratedCode::new(&sym_table, &tree, src);
-        for i in &gen_code.rules {
-            println!("{}", i)
-        }
-        println!("{}", gen_code.rules_enum);
+        // for i in &gen_code.rules {
+        //     println!("{}", i)
+        // }
+        // println!("{}", gen_code.rules_enum);
+        println!("Inlined Rules:");
+        sym_table.print_inlined_rules();
+        println!("End Inlined Rules: \n");
         gen_code.print();
     }
 
-    #[test]
-    fn test25() {
-        println!("{:?}", env::current_dir().unwrap());
-        let path = "../json_parser/json.dsl";
-        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
-        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
-        let string2 = string.clone();
-        let src_len = string.len();
-        let source = Source::new(&string);
-        let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-        //tree.print(Key(0), None);
-        // Checks full file was parsed.
-        if result.1 != string2.len() as u32 {
-            panic!(
-                "Failed to parse grammar due to syntax error on Line: {:?}",
-                count_lines(&string2, result.1)
-            )
-        } else {
-            println!("Successfully parsed")
-        }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
-        let src = &String::from(source);
-        let sym_table = SymbolTable::new(tree, src);
-        //sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
-        for i in gen_code.rules {
-            println!("{}", i)
-        }
-        println!("{}", gen_code.rules_enum)
-    }
+    // #[test]
+    // fn test25() {
+    //     println!("{:?}", env::current_dir().unwrap());
+    //     let path = "../json_parser/json.dsl";
+    //     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+    //     let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+    //     let string2 = string.clone();
+    //     let src_len = string.len();
+    //     let source = Source::new(&string);
+    //     let position = 0;
+    //     let context = BasicContext::new(src_len, RULES_SIZE as usize);
+    //     let context: RefCell<BasicContext> = context.into();
+    //     let result = grammar(Key(0), &context, &source, position);
+    //     //tree.print(Key(0), None);
+    //     // Checks full file was parsed.
+    //     if result.1 != string2.len() as u32 {
+    //         panic!(
+    //             "Failed to parse grammar due to syntax error on Line: {:?}",
+    //             count_lines(&string2, result.1)
+    //         )
+    //     } else {
+    //         println!("Successfully parsed")
+    //     }
+    //     let tree = context.borrow();
+    //     let tree = &tree.clear_false();
+    //     let src = &String::from(source);
+    //     let sym_table = SymbolTable::new(tree, src);
+    //     //sym_table.print();
+    //     let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+    //     for i in gen_code.rules {
+    //         println!("{}", i)
+    //     }
+    //     println!("{}", gen_code.rules_enum)
+    // }
 
     #[test]
     fn test_ordered_choice_match_range() {

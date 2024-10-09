@@ -35,7 +35,9 @@ mod tests {
         let result = executor(Key(0), &source, position);
         println!("Result: {:?}", result);
         //context.borrow().print_cache();
-        context.borrow().print_publisher();
+        let tree = context.borrow_mut().clear_false();
+        tree.print(Key(0), Some(true));
+        //context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, src_len));
     }
     #[test]

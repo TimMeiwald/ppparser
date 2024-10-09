@@ -1,18 +1,8 @@
 #![allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
 #![allow(unused_variables)] // Generated Code also, since everything passes stuff
 #![allow(unused_imports)] // Generated Code also, since everything passes stuff
-
-use super::{Context, Rules, Source};
-use crate::keys::Key;
-use crate::parser_core::{
-    _and_predicate, _not_predicate, _one_or_more, _optional, _ordered_choice,
-    _ordered_choice_match_range, _sequence, _string_terminal_opt_ascii, _subexpression, _terminal,
-    _zero_or_more,
-};
-use crate::var_name::{
-    _var_name, _var_name_direct_left_recursion, _var_name_indirect_left_recursion,
-};
-use core::cell::RefCell;
+use crate::*;
+use std::cell::RefCell;
 #[allow(dead_code)]
 pub fn alphabet_upper<T: Context>(
     parent: Key,
@@ -89,12 +79,18 @@ pub fn specials<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
-    let closure_2 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        alphabet_upper(parent, context, source, position)
+    };
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        alphabet_lower(parent, context, source, position)
+    };
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Num, context, num);
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::Spaces, context, spaces);
+    let closure_6 = move |parent: Key, source: &Source, position: u32| {
+        spaces(parent, context, source, position)
+    };
     let closure_7 = _ordered_choice(&closure_5, &closure_6);
     let closure_8 = _subexpression(&closure_7);
     let closure_9 = _not_predicate(&closure_8);
@@ -279,24 +275,27 @@ pub fn var_name<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    // Not whitespace dependent, feel free to use multiple lines for readability
-    let closure_1 = _var_name(Rules::Left_Angle_Bracket, context, left_angle_bracket);
-    let closure_2 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
-    let closure_3 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
-    let closure_4 = _ordered_choice(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _sequence(&closure_1, &closure_5);
-    let closure_7 = _var_name(Rules::Alphabet_Lower, context, alphabet_lower);
-    let closure_8 = _var_name(Rules::Alphabet_Upper, context, alphabet_upper);
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        alphabet_lower(parent, context, source, position)
+    };
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        alphabet_upper(parent, context, source, position)
+    };
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _subexpression(&closure_3);
+    let closure_5 = move |parent: Key, source: &Source, position: u32| {
+        alphabet_lower(parent, context, source, position)
+    };
+    let closure_6 = move |parent: Key, source: &Source, position: u32| {
+        alphabet_upper(parent, context, source, position)
+    };
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    let closure_8 = _terminal(b'_');
     let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    let closure_10 = _terminal(b'_');
-    let closure_11 = _ordered_choice(&closure_9, &closure_10);
-    let closure_12 = _subexpression(&closure_11);
-    let closure_13 = _zero_or_more(&closure_12);
-    let closure_14 = _sequence(&closure_6, &closure_13);
-    let closure_15 = _var_name(Rules::Right_Angle_Bracket, context, right_angle_bracket);
-    let closure_16 = _sequence(&closure_14, &closure_15);
-    closure_16(parent, source, position)
+    let closure_10 = _subexpression(&closure_9);
+    let closure_11 = _zero_or_more(&closure_10);
+    let closure_12 = _sequence(&closure_4, &closure_11);
+    closure_12(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn var_name_decl<T: Context>(
@@ -305,8 +304,38 @@ pub fn var_name_decl<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Var_Name, context, var_name);
-    closure_1(parent, source, position)
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        left_angle_bracket(parent, context, source, position)
+    };
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        var_name(parent, context, source, position)
+    };
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+        right_angle_bracket(parent, context, source, position)
+    };
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    closure_5(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn var_name_ref<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        left_angle_bracket(parent, context, source, position)
+    };
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        var_name(parent, context, source, position)
+    };
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+        right_angle_bracket(parent, context, source, position)
+    };
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    closure_5(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn hex<T: Context>(
@@ -391,10 +420,14 @@ pub fn subexpression<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Left_Bracket, context, left_bracket);
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        left_bracket(parent, context, source, position)
+    };
     let closure_2 = _var_name(Rules::RHS, context, rhs);
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Right_Bracket, context, right_bracket);
+    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+        right_bracket(parent, context, source, position)
+    };
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
@@ -405,8 +438,12 @@ pub fn epsilon<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::QuotationMark, context, quotationmark);
-    let closure_2 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        quotationmark(parent, context, source, position)
+    };
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        quotationmark(parent, context, source, position)
+    };
     let closure_3 = _sequence(&closure_1, &closure_2);
     closure_3(parent, source, position)
 }
@@ -418,12 +455,18 @@ pub fn stringterminal<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     // Multibyte matches essentially
-    let closure_1 = _var_name(Rules::Apostrophe, context, apostrophe);
-    let closure_2 = _var_name(Rules::Apostrophe, context, apostrophe);
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        apostrophe(parent, context, source, position)
+    };
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        apostrophe(parent, context, source, position)
+    };
     let closure_3 = _not_predicate(&closure_2);
     let closure_4 = _sequence(&closure_1, &closure_3);
     let closure_5 = _var_name(Rules::ASCII, context, ascii);
-    let closure_6 = _var_name(Rules::Apostrophe, context, apostrophe);
+    let closure_6 = move |parent: Key, source: &Source, position: u32| {
+        apostrophe(parent, context, source, position)
+    };
     let closure_7 = _not_predicate(&closure_6);
     let closure_8 = _var_name(Rules::ASCII, context, ascii);
     let closure_9 = _sequence(&closure_7, &closure_8);
@@ -432,7 +475,9 @@ pub fn stringterminal<T: Context>(
     let closure_12 = _sequence(&closure_5, &closure_11);
     let closure_13 = _subexpression(&closure_12);
     let closure_14 = _sequence(&closure_4, &closure_13);
-    let closure_15 = _var_name(Rules::Apostrophe, context, apostrophe);
+    let closure_15 = move |parent: Key, source: &Source, position: u32| {
+        apostrophe(parent, context, source, position)
+    };
     let closure_16 = _sequence(&closure_14, &closure_15);
     let closure_17 = _subexpression(&closure_16);
     let closure_18 = _var_name(Rules::Hex, context, hex);
@@ -448,13 +493,19 @@ pub fn terminal<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        quotationmark(parent, context, source, position)
+    };
     let closure_2 = _var_name(Rules::ASCII, context, ascii);
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+        quotationmark(parent, context, source, position)
+    };
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_7 = move |parent: Key, source: &Source, position: u32| {
+        quotationmark(parent, context, source, position)
+    };
     let closure_8 = _terminal(b'\\');
     let closure_9 = _sequence(&closure_7, &closure_8);
     let closure_10 = _terminal(b'n');
@@ -464,7 +515,9 @@ pub fn terminal<T: Context>(
     let closure_14 = _ordered_choice(&closure_12, &closure_13);
     let closure_15 = _subexpression(&closure_14);
     let closure_16 = _sequence(&closure_9, &closure_15);
-    let closure_17 = _var_name(Rules::QuotationMark, context, quotationmark);
+    let closure_17 = move |parent: Key, source: &Source, position: u32| {
+        quotationmark(parent, context, source, position)
+    };
     let closure_18 = _sequence(&closure_16, &closure_17);
     let closure_19 = _subexpression(&closure_18);
     let closure_20 = _ordered_choice(&closure_6, &closure_19);
@@ -490,7 +543,7 @@ pub fn nucleus<T: Context>(
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
     let closure_6 = _var_name(Rules::StringTerminal, context, stringterminal);
     let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    let closure_8 = _var_name(Rules::Var_Name, context, var_name);
+    let closure_8 = _var_name(Rules::Var_Name_Ref, context, var_name_ref);
     let closure_9 = _ordered_choice(&closure_7, &closure_8);
     let closure_10 = _subexpression(&closure_9);
     let closure_11 = move |parent: Key, source: &Source, position: u32| {
@@ -531,7 +584,9 @@ pub fn and_predicate<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Ampersand, context, ampersand);
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        ampersand(parent, context, source, position)
+    };
     let closure_2 = _var_name(Rules::Nucleus, context, nucleus);
     let closure_3 = _sequence(&closure_1, &closure_2);
     closure_3(parent, source, position)
@@ -543,7 +598,9 @@ pub fn not_predicate<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Exclamation_Mark, context, exclamation_mark);
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        exclamation_mark(parent, context, source, position)
+    };
     let closure_2 = _var_name(Rules::Nucleus, context, nucleus);
     let closure_3 = _sequence(&closure_1, &closure_2);
     closure_3(parent, source, position)
@@ -560,7 +617,8 @@ pub fn sequence<T: Context>(
         whitespace(parent, context, source, position)
     };
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Comma, context, comma);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| comma(parent, context, source, position);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = move |parent: Key, source: &Source, position: u32| {
         whitespace(parent, context, source, position)
@@ -568,7 +626,8 @@ pub fn sequence<T: Context>(
     let closure_7 = _sequence(&closure_5, &closure_6);
     let closure_8 = _var_name(Rules::Atom, context, atom);
     let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::Comma, context, comma);
+    let closure_10 =
+        move |parent: Key, source: &Source, position: u32| comma(parent, context, source, position);
     let closure_11 = move |parent: Key, source: &Source, position: u32| {
         whitespace(parent, context, source, position)
     };
@@ -592,7 +651,9 @@ pub fn ordered_choice<T: Context>(
         whitespace(parent, context, source, position)
     };
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Backslash, context, backslash);
+    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+        backslash(parent, context, source, position)
+    };
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = move |parent: Key, source: &Source, position: u32| {
         whitespace(parent, context, source, position)
@@ -600,7 +661,9 @@ pub fn ordered_choice<T: Context>(
     let closure_7 = _sequence(&closure_5, &closure_6);
     let closure_8 = _var_name(Rules::Atom, context, atom);
     let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::Backslash, context, backslash);
+    let closure_10 = move |parent: Key, source: &Source, position: u32| {
+        backslash(parent, context, source, position)
+    };
     let closure_11 = move |parent: Key, source: &Source, position: u32| {
         whitespace(parent, context, source, position)
     };
@@ -624,7 +687,8 @@ pub fn one_or_more<T: Context>(
         whitespace(parent, context, source, position)
     };
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Plus, context, plus);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| plus(parent, context, source, position);
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
@@ -640,7 +704,8 @@ pub fn zero_or_more<T: Context>(
         whitespace(parent, context, source, position)
     };
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Star, context, star);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| star(parent, context, source, position);
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
@@ -656,7 +721,9 @@ pub fn optional<T: Context>(
         whitespace(parent, context, source, position)
     };
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Question_Mark, context, question_mark);
+    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+        question_mark(parent, context, source, position)
+    };
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
@@ -692,7 +759,6 @@ pub fn rhs<T: Context>(
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
-
 #[allow(dead_code)]
 pub fn lhs<T: Context>(
     parent: Key,
@@ -727,7 +793,9 @@ pub fn rule<T: Context>(
         whitespace(parent, context, source, position)
     };
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Assignment, context, assignment);
+    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+        assignment(parent, context, source, position)
+    };
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = move |parent: Key, source: &Source, position: u32| {
         whitespace(parent, context, source, position)
@@ -739,7 +807,9 @@ pub fn rule<T: Context>(
         whitespace(parent, context, source, position)
     };
     let closure_11 = _sequence(&closure_9, &closure_10);
-    let closure_12 = _var_name(Rules::End_Rule, context, end_rule);
+    let closure_12 = move |parent: Key, source: &Source, position: u32| {
+        end_rule(parent, context, source, position)
+    };
     let closure_13 = _sequence(&closure_11, &closure_12);
     let closure_14 = move |parent: Key, source: &Source, position: u32| {
         whitespace(parent, context, source, position)
@@ -750,7 +820,6 @@ pub fn rule<T: Context>(
     let closure_18 = _sequence(&closure_15, &closure_17);
     closure_18(parent, source, position)
 }
-
 #[allow(dead_code)]
 pub fn grammar<T: Context>(
     parent: Key,
@@ -859,6 +928,7 @@ pub fn test_lr_expr<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
+    //  Should match 0-0-0-0-0-0-0-0 etc
     let closure_1 = _var_name_direct_left_recursion(Rules::test_LR_expr, context, test_lr_expr);
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
@@ -876,7 +946,8 @@ pub fn test_indirect_lr_num<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![Rules::test_indirect_LR_expr];
+    let involved_set: Vec<Rules> =
+        [Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::test_indirect_LR_expr,
@@ -893,7 +964,8 @@ pub fn test_indirect_lr_expr<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     //  Should match 0-0-0-0-0-0-0-0 etc
-    let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
+    let involved_set: Vec<Rules> =
+        [Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::test_indirect_LR_num,
@@ -909,55 +981,100 @@ pub fn test_indirect_lr_expr<T: Context + 'static>(
     let closure_8 = _ordered_choice(&closure_6, &closure_7);
     closure_8(parent, source, position)
 }
-
 #[allow(dead_code)]
-pub fn test_term<T: Context + 'static>(
+pub fn test_term<T: Context>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    //  Should match 0-0-0-0-0-0-0-0 etc
-    let test_term = _var_name_direct_left_recursion(Rules::test_term, context, test_term);
-
-    let test_fact = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
-    let plus = _terminal(b'+');
-    let minus = _terminal(b'-');
-
-    let seq1 = _sequence(&test_term, &plus);
-    let seq_plus = _sequence(&seq1, &test_fact);
-    let sexpr_1 = _subexpression(&seq_plus);
-    let seq2 = _sequence(&test_term, &minus);
-    let seq_minus = _sequence(&seq2, &test_fact);
-    let sexpr_2 = _subexpression(&seq_minus);
-
-    let oc1 = _ordered_choice(&sexpr_1, &sexpr_2);
-    let oc2 = _ordered_choice(&oc1, &test_fact);
-    oc2(parent, source, position)
+    let closure_1 = _var_name_direct_left_recursion(Rules::test_term, context, test_term);
+    let closure_2 = _terminal(b'+');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _var_name_direct_left_recursion(Rules::test_term, context, test_term);
+    let closure_8 = _terminal(b'-');
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = _subexpression(&closure_11);
+    let closure_13 = _ordered_choice(&closure_6, &closure_12);
+    let closure_14 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let closure_15 = _ordered_choice(&closure_13, &closure_14);
+    closure_15(parent, source, position)
 }
-
 #[allow(dead_code)]
-pub fn test_fact<T: Context + 'static>(
+pub fn test_fact<T: Context>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    //  Should match 0-0-0-0-0-0-0-0 etc
-    let test_num = _var_name(Rules::Num, context, num);
-    let test_fact = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
-    let star = _terminal(b'*');
-    let div = _terminal(b'/');
-
-    let seq1 = _sequence(&test_fact, &star);
-    let seq_plus = _sequence(&seq1, &test_num);
-    let sexpr_1 = _subexpression(&seq_plus);
-
-    let seq2 = _sequence(&test_fact, &div);
-    let seq_minus = _sequence(&seq2, &test_num);
-    let sexpr_2 = _subexpression(&seq_minus);
-
-    let oc1 = _ordered_choice(&sexpr_1, &sexpr_2);
-    let oc2 = _ordered_choice(&oc1, &test_num);
-    oc2(parent, source, position)
+    let closure_1 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let closure_2 = _terminal(b'*');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Num, context, num);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let closure_8 = _terminal(b'/');
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _var_name(Rules::Num, context, num);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = _subexpression(&closure_11);
+    let closure_13 = _ordered_choice(&closure_6, &closure_12);
+    let closure_14 = _var_name(Rules::Num, context, num);
+    let closure_15 = _ordered_choice(&closure_13, &closure_14);
+    closure_15(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn test_indirect_three_level_a<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(
+        Rules::test_indirect_three_level_B,
+        context,
+        test_indirect_three_level_b,
+    );
+    let closure_2 = _terminal(b'-');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_8 = _ordered_choice(&closure_6, &closure_7);
+    closure_8(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn test_indirect_three_level_b<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(
+        Rules::test_indirect_three_level_C,
+        context,
+        test_indirect_three_level_c,
+    );
+    closure_1(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn test_indirect_three_level_c<T: Context>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(
+        Rules::test_indirect_three_level_A,
+        context,
+        test_indirect_three_level_a,
+    );
+    closure_1(parent, source, position)
 }

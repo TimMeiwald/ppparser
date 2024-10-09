@@ -349,7 +349,7 @@ impl BinaryTreeWO {
         match &node.reference {
             Reference::InlinedRule(content) => {
                 let contents = format!(
-                    "let closure_{} = move |source: &Source, position: u32| {}(context, source, position);",
+                    "let closure_{} = move |parent: Key, source: &Source, position: u32| {}(parent, context, source, position);",
                     index.0,
                     content.to_lowercase()
                 );

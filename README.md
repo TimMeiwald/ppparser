@@ -1,5 +1,5 @@
 # PackratParserGenerator 
-
+Issues -> Not Predicate and And Predicate still create a Node and attach it on their relevant success. Not sure whether this should or should not happen. 
 ## Introduction 
 PackratParserGenerator is a packrat parsing expression grammar(PEG) parser generator.   
 

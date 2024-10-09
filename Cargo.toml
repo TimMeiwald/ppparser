@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["parser", "grammar_generator"]
+members = ["parser", "generator", "runner"]
 
 [profile.dev]
 panic = "unwind"

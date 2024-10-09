@@ -1,29 +1,29 @@
-<Alphabet_Upper> PASSTHROUGH = ['A'..'Z']; #We all love commments#
-<Alphabet_Lower> PASSTHROUGH =['a'..'z'];
-<Num> PASSTHROUGH = [0x30..0x39];
+<Alphabet_Upper> Inline = ['A'..'Z']; #We all love commments#
+<Alphabet_Lower> Inline =['a'..'z'];
+<Num> = [0x30..0x39];
 <NumNoZero> = [0x31..0x39];
 <HexVal>= [0x30..0x39]/[0x41..0x46];
-<Spaces> PASSTHROUGH = '\n'/'\t'/'\r'/' ';
-<Specials> PASSTHROUGH = !(<Alphabet_Upper>/<Alphabet_Lower>/<Num>/<Spaces>),[0x0..0xFF] ;
-<ASCII> PASSTHROUGH = [0x00..0xFF];
-<Apostrophe> DELETE = '"';
-<QuotationMark> = ''';
-<Left_Angle_Bracket> DELETE = '<';
-<Right_Angle_Bracket> DELETE = '>';
-<Left_Bracket> DELETE = '(';
-<Right_Bracket> DELETE = ')';
-<Assignment> DELETE = '=';
-<End_Rule> DELETE = ';';
-<Ampersand> DELETE = '&';
-<Exclamation_Mark> DELETE = '!';
-<Plus> DELETE = '+';
-<Star> DELETE = '*';
-<Question_Mark> DELETE = '?';
-<Comma> DELETE = ',';
+<Spaces> Inline = '\n'/'\t'/'\r'/' ';
+<Specials> Inline = !(<Alphabet_Upper>/<Alphabet_Lower>/<Num>/<Spaces>),[0x0..0xFF] ;
+<ASCII> = [0x00..0xFF];
+<Apostrophe> Inline = '"';
+<QuotationMark> Inline = ''';
+<Left_Angle_Bracket> Inline = '<';
+<Right_Angle_Bracket> Inline = '>';
+<Left_Bracket> Inline = '(';
+<Right_Bracket> Inline = ')';
+<Assignment> Inline = '=';
+<End_Rule> Inline = ';';
+<Ampersand> Inline = '&';
+<Exclamation_Mark> Inline = '!';
+<Plus> Inline = '+';
+<Star> Inline = '*';
+<Question_Mark> Inline = '?';
+<Comma> Inline = ',';
 <Newline> = '\n';
-<Backslash> DELETE = '/';
+<Backslash> Inline = '/';
 
-<Var_Name> = (<Alphabet_Lower>/<Alphabet_Upper>),(<Alphabet_Lower>/<Alphabet_Upper>/'_')*;
+<Var_Name> Inline = (<Alphabet_Lower>/<Alphabet_Upper>),(<Alphabet_Lower>/<Alphabet_Upper>/'_')*;
 <Var_Name_Decl> = <Left_Angle_Bracket>, <Var_Name>, <Right_Angle_Bracket>;
 <Var_Name_Ref>= <Left_Angle_Bracket>, <Var_Name>, <Right_Angle_Bracket>;
 <Hex> = '0', 'x', <HexVal>+; #Replace with custom code#
@@ -54,7 +54,7 @@
 <Grammar> = <Rule>+, <Whitespace>?;
 #Lemme just check comments work# #Double up dem comments#
 <Comment> = <Whitespace>, '#', (!'#',<ASCII>)*, '#', <Whitespace>;
-<Semantic_Instructions> PASSTHROUGH = <Delete>/<Passthrough>/<Inline>;
+<Semantic_Instructions> = <Delete>/<Passthrough>/<Inline>;
 <Delete> = "DELETE";
 <Passthrough> = "PASSTHROUGH";
 <Inline> = "Inline"; #Comment#
