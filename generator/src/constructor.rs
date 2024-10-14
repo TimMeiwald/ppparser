@@ -58,8 +58,13 @@ impl GeneratedCode<'_> {
             num_rules,
             rules_enum_header_2,
         };
+
         println!("Code generation complete");
         s
+    }
+
+    pub fn sample_main_header(&self, name: &str) -> String {
+        format!("use {}::*;\n", name)
     }
 
     pub fn parser_file_content(&self) -> String {
@@ -756,8 +761,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
 
         //tree.print(Key(0), None);
         let src = &String::from(source);
@@ -787,8 +792,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
 
         //tree.print(Key(0), None);
         let src = &String::from(source);
@@ -817,9 +822,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
-
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
         //tree.print(Key(0), Some(true));
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
@@ -848,8 +852,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
 
         //tree.print(Key(0), None);
         let src = &String::from(source);
@@ -881,8 +885,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
 
         //tree.print(Key(0), None);
         let src = &String::from(source);
@@ -905,7 +909,6 @@ mod tests {
         let context = BasicContext::new(src_len, RULES_SIZE as usize);
         let context: RefCell<BasicContext> = context.into();
         let result = grammar(Key(0), &context, &source, position);
-        let tree = context.borrow();
         //tree.print(Key(0), None);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -917,7 +920,8 @@ mod tests {
             println!("Successfully parsed")
         }
 
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
@@ -989,8 +993,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
 
         tree.print(Key(0), None);
         let src = &String::from(source);
@@ -1025,8 +1029,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
 
         tree.print(Key(0), None);
         let src = &String::from(source);
@@ -1061,8 +1065,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
 
         tree.print(Key(0), None);
         let src = &String::from(source);
@@ -1096,8 +1100,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
 
         tree.print(Key(0), None);
         let src = &String::from(source);
@@ -1133,8 +1137,8 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = context.borrow();
-        let tree = &tree.clear_false();
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
 
         tree.print(Key(0), None);
         let src = &String::from(source);

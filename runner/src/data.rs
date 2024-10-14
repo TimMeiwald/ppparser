@@ -102,6 +102,15 @@ impl DataGenerator {
                     .spawn()
                     .expect("Failed to add package num-traits");
                 let r = f.wait();
+                let mut f = Command::new("cargo")
+                    .current_dir(path)
+                    .arg("add")
+                    .arg("clap")
+                    .arg("--features")
+                    .arg("derive")
+                    .spawn()
+                    .expect("Failed to add package clap");
+                let r = f.wait();
 
                 let copy_folder = self.parser_core_dir.join("src");
                 let path = path.join("src");
@@ -109,8 +118,14 @@ impl DataGenerator {
                 let _ = self.copy_dir_contents_to_dir(&path, &copy_folder);
                 let rules_enum_file = path.join("rules.rs");
                 let parser_rs = path.join("parser.rs");
+                let sample_main = path.join("main.rs");
                 let _ = fs::write(rules_enum_file, parser.rules_enum_file_content());
                 let _ = fs::write(parser_rs, parser.parser_file_content());
+                let header = parser.sample_main_header(&self.name);
+                let content = fs::read(&copy_folder.join("sample_main.txt"))?;
+                let sample_main_content = header + &String::from_utf8(content)?;
+                let _ = fs::write(sample_main, sample_main_content);
+                fs::remove_file(&path.join("sample_main.txt"))?;
             }
         }
 

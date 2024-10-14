@@ -157,9 +157,9 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = &context.borrow();
+        let tree = context.into_inner();
         let src = &String::from(source);
-        let clean_tree = tree.clear_false();
+        let clean_tree = tree.get_publisher().clear_false();
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
@@ -185,10 +185,9 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = &context.borrow();
+        let tree = context.into_inner();
         let src = &String::from(source);
-        println!("\nCLEAN TREE\n");
-        let clean_tree = tree.clear_false();
+        let clean_tree = tree.get_publisher().clear_false();
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
@@ -213,11 +212,9 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = &context.borrow();
+        let tree = context.into_inner();
         let src = &String::from(source);
-        //tree.print(Key(0), Some(true));
-        println!("\nCLEAN TREE\n");
-        let clean_tree = tree.clear_false();
+        let clean_tree = tree.get_publisher().clear_false();
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();
@@ -246,11 +243,9 @@ mod tests {
         } else {
             println!("Successfully parsed")
         }
-        let tree = &context.borrow();
+        let tree = context.into_inner();
         let src = &String::from(source);
-        //tree.print(Key(0), Some(true));
-        println!("\nCLEAN TREE\n");
-        let clean_tree = tree.clear_false();
+        let clean_tree = tree.get_publisher().clear_false();
         clean_tree.print(Key(0), Some(true));
         let sym_table = SymbolTable::new(&clean_tree, src);
         sym_table.print();

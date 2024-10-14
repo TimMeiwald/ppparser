@@ -1,3 +1,5 @@
+use num::range;
+
 use crate::Key;
 use crate::Rules;
 // Tree needs to be able to swap existing structures into other locations
@@ -11,7 +13,33 @@ pub struct BasicPublisher {
     nodes: Vec<Node>,
 }
 
+impl PartialEq for BasicPublisher {
+    fn eq(&self, other: &Self) -> bool {
+        self.partial_eq_kernel(other, Key(0), Key(0))
+    }
+}
+
 impl BasicPublisher {
+    fn partial_eq_kernel(&self, other: &Self, self_index: Key, other_index: Key) -> bool {
+        let self_node = self.get_node(self_index);
+        let other_node = other.get_node(other_index);
+        if self_node == other_node {
+            for index in range(0, self_node.children.len()) {
+                if self_node.get_children().len() != other_node.get_children().len() {
+                    return false;
+                }
+                let self_child_key = self_node.get_children()[index];
+                let other_child_key = other_node.get_children()[index];
+                if !self.partial_eq_kernel(other, self_child_key, other_child_key) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     pub fn new(size_of_source: usize, number_of_rules: usize) -> Self {
         //let memory_to_allocate = ((size_of_source * number_of_rules) * 64) / 128;
         // println!("Publisher Allocating {} KB", {
@@ -253,6 +281,43 @@ pub struct Node {
     // To minimize allocations maybe have a second struct that contains all child indices and have Node just contain a start_child_index and end_child_index
     // Because then we can preallocate a load of memory, means a pointer indirection which may or may not impact performance so needs profiling.
 }
+
+impl PartialEq for Node {
+    fn eq(&self, other: &Self) -> bool {
+        // Custom Eq because we don't care about the Key value, We care about
+        // Matching rule, start_position, end_position, result and the structure of the children.
+
+        if self.rule != other.rule {
+            println!("Rule must match!");
+            self.print(0);
+            other.print(0);
+            return false;
+        } else if self.start_position != other.start_position {
+            println!("Start Position must match!");
+            self.print(0);
+            other.print(0);
+            return false;
+        } else if self.end_position != other.end_position {
+            println!("End Position must match!");
+            self.print(0);
+            other.print(0);
+            return false;
+        } else if self.result != other.result {
+            println!("Result(boolean) must be identical!");
+            self.print(0);
+            other.print(0);
+            return false;
+        } else if self.children.len() != other.children.len() {
+            println!("Number of children must be identical!.");
+            self.print(0);
+            other.print(0);
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
+
 impl Node {
     pub fn new(rule: Rules, start_position: u32, end_position: u32, result: bool) -> Self {
         Node {

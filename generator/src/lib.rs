@@ -41,13 +41,12 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
     } else {
         println!("Successfully parsed")
     }
-    let tree = &context.borrow();
-    //tree.print(Key(0), None);
-    let tree = &tree.clear_false();
+    let tree = context.into_inner();
     let src = &String::from(source);
-    let sym_table = SymbolTable::new(tree, src);
+    let clean_tree = tree.get_publisher().clear_false();
+    let sym_table = SymbolTable::new(&clean_tree, src);
     //sym_table.print();
-    let gen_code = GeneratedCode::new(&sym_table, tree, src);
+    let gen_code = GeneratedCode::new(&sym_table, &clean_tree, src);
     Some(gen_code)
 }
 

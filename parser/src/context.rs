@@ -64,7 +64,7 @@ where
     fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool;
     fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules);
     fn reinitialize_eval_set(&mut self, start_position: u32);
-    fn clear_false(&self) -> Self::P;
+    fn get_publisher(self) -> Self::P;
 }
 
 pub struct BasicContext {
@@ -169,8 +169,8 @@ impl Context for BasicContext {
         self.cache.remove_from_eval_set(start_position, rule);
     }
 
-    fn clear_false(&self) -> BasicPublisher {
-        self.publisher.clear_false()
+    fn get_publisher(self) -> Self::P {
+        self.publisher
     }
 }
 
