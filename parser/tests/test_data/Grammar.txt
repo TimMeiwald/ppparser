@@ -68,6 +68,8 @@
 <test_term> = (<test_term>, '+', <test_fact>)/(<test_term>, '-', <test_fact>)/<test_fact>;
 <test_fact> = (<test_fact>, '*', <Num>)/(<test_fact>, '/', <Num>)/<Num>;
 
+<test_term_indirect> = (<test_term_indirect>, '+', <test_fact_indirect>)/(<test_term_indirect>, '-', <test_fact_indirect>)/<test_fact_indirect>;
+<test_fact_indirect> = (<test_fact_indirect>, '*', <Num>)/(<test_fact_indirect>, '/', <Num>)/<Num>;
 
 <test_indirect_three_level_A> = (<test_indirect_three_level_B>, '-', <test_LR_num>) / <test_LR_num>;
 <test_indirect_three_level_B> = <test_indirect_three_level_C>;
