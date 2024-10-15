@@ -205,10 +205,11 @@ mod tests {
         }
         println!("Result: {:?}", result);
         // context.borrow().print_cache();
-        context.borrow().print_publisher();
+        //context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 3));
 
-        let result_tree = context.into_inner().get_publisher();
+        let result_tree = context.into_inner().get_publisher().clear_false();
+        result_tree.print(Key(0), Some(true));
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
         // Key(0), Grammar, 0, 0, true, 1
@@ -259,10 +260,12 @@ mod tests {
         }
         println!("Result: {:?}", result);
         // context.borrow().print_cache();
-        context.borrow().print_publisher();
+        // context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 5));
 
-        let result_tree = context.into_inner().get_publisher();
+        let result_tree = context.into_inner().get_publisher().clear_false();
+
+        result_tree.print(Key(0), Some(true));
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
         // Key(0), Grammar, 0, 0, true, 1
@@ -311,17 +314,21 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
-        let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
-        let executor = _var_name_indirect_left_recursion(
-            &involved_set,
-            Rules::test_indirect_LR_expr,
-            &context,
-            test_indirect_lr_expr,
-        );
-        let result = executor(Key(0), &source, position);
+        let result: (bool, u32);
+        {
+            let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
+            let executor = _var_name_indirect_left_recursion(
+                &involved_set,
+                Rules::test_indirect_LR_expr,
+                &context,
+                test_indirect_lr_expr,
+            );
+            result = executor(Key(0), &source, position);
+        }
         println!("Result: {:?}", result);
         // context.borrow().print_cache();
-        context.borrow().print_publisher();
+        let p = context.into_inner().get_publisher();
+        p.print(Key(0), Some(true));
         assert_eq!((result.0, result.1), (true, 11));
     }
 
@@ -339,7 +346,7 @@ mod tests {
         }
         println!("Result: {:?}", result);
         // context.borrow().print_cache();
-        context.borrow().print_publisher();
+        //context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 9));
         let result_tree = context.into_inner().get_publisher();
         // Create comparative BasicPublisher
@@ -403,11 +410,12 @@ mod tests {
         println!("Result: {:?}", result);
         // context.borrow().print_cache();
 
-        //context.borrow().print_publisher();
+        // context.borrow().print_publisher();
 
         assert_eq!((result.0, result.1), (true, 9));
         let result_tree = context.into_inner().get_publisher();
-        result_tree.print(Key(0), Some(true));
+        println!("Result Tree:\n");
+        result_tree.print(Key(0), None);
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
         // Key(0), Grammar, 0, 0, true, 1
@@ -549,7 +557,7 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
         {
-            let involved_set = vec![Rules::test_term_indirect, Rules::test_fact_indirect];
+            let involved_set = vec![Rules::test_term_indirect];
             let executor = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_term_indirect,
@@ -577,7 +585,7 @@ mod tests {
         //             Key(12), test_fact, 6, 7, true, 1
         //                 Key(13), Num, 6, 7, true, 0
         //             Key(15), Num, 8, 9, true, 0
-        let result_tree = context.into_inner().get_publisher();
+        let result_tree = context.into_inner().get_publisher().clear_false();
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
         let key_1 = expected_tree.add_node(Rules::test_term, 0, 9, true);

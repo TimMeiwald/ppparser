@@ -21,9 +21,26 @@ pub fn _var_name_kernel<T: Context>(
     position: u32,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
+    #[cfg(debug_assertions)]
+    {
+        println!(
+            "Regular Kernel Start: Rule: {:?}, Position: {:?}, Parent: {:?}",
+            rule, position, parent
+        )
+    }
     let memo = context.borrow().check(rule, position);
     return match memo {
         Some((is_true, end_position, memoized_key)) => {
+            #[cfg(debug_assertions)]
+            {
+                println!(
+                    "Regular Kernel Memoized: Rule: {:?}, Position: {:?}, Parent: {:?}, Result: {:?}",
+                    rule,
+                    position,
+                    parent,
+                    (is_true, end_position)
+                )
+            }
             context.borrow_mut().connect(parent, memoized_key);
             (is_true, end_position)
         }
@@ -35,6 +52,16 @@ pub fn _var_name_kernel<T: Context>(
             c.update_publisher_entry(current_key, f.0, position, f.1);
             // Change to only connect on success to makes things a little faster
             c.connect(parent, current_key);
+            #[cfg(debug_assertions)]
+            {
+                println!(
+                    "Regular Kernel Not Memoized: Rule: {:?}, Position: {:?}, Parent: {:?}, Result: {:?}",
+                    rule,
+                    position,
+                    parent,
+                    f
+                )
+            }
             f
         }
     };
@@ -144,6 +171,13 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
 ) -> (bool, u32) {
     let head_rule = context.borrow().check_head(position);
     if head_rule.is_none() {
+        #[cfg(debug_assertions)]
+        {
+            println!(
+                "Rule: {:?}, Position: {:?}, Starting Left Recursion",
+                rule, position
+            )
+        }
         let mut involved: BTreeSet<Rules> = BTreeSet::new();
         for r in involved_set {
             involved.insert(*r);
@@ -161,45 +195,106 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
                 current_key = c.reserve_publisher_entry(rule);
                 c.create_cache_entry(rule, f.0, position, f.1, current_key);
             }
+            println!("CURRENT KEY: {:?}", current_key);
             f = func(current_key, context, source, position);
+            #[cfg(debug_assertions)]
+            {
+                println!(
+                    "Rule: {:?}, Position: {:?}, Core Loop Last Result: {:?}, Last Key: {:?}",
+                    rule, position, last_f, last_key
+                );
+                println!(
+                    "Rule: {:?}, Position: {:?}, Core Loop Result: {:?}, Key: {:?}",
+                    rule, position, f, current_key
+                )
+            }
             context.borrow_mut().reinitialize_eval_set(position);
 
             if !f.0 || (f.1 <= last_f.1) {
-                f = last_f;
                 break;
             }
+
+            
+            println!("f: {:?}, Last f: {:?}", f, last_f);
             last_f = f;
             last_key = current_key;
             let mut c = context.borrow_mut();
-            c.update_publisher_entry(last_key, f.0, position, f.1);
+            c.update_publisher_entry(last_key, last_f.0, position, last_f.1);
             // Change to only connect on success to makes things a little faster
         }
-        context
-            .borrow_mut()
-            .update_publisher_entry(current_key, f.0, position, f.1);
-        context.borrow_mut().connect(parent, last_key);
+        let memo = context.borrow().check(rule, position);
+        println!("Memo: {:?}", memo);
+        match memo{
+            None => panic!("Should not happen!"),
+            Some(memo) => {
+                    context.borrow_mut().connect(memo.2, current_key);
 
-        return f;
+                   context.borrow_mut().connect(parent, memo.2);
+                    #[cfg(debug_assertions)]
+                    {
+                        println!(
+                            "Rule: {:?}, Position: {:?}, Returning Indirect Left Recursion Result: {:?}, Key: {:?}",
+                            rule, position, last_f, last_key
+                        )
+                    }
+                    return (memo.0, memo.1);
+                    }
+    }
     }
 
     let should_run_function = context.borrow().rule_in_eval_set(position, rule);
     if should_run_function {
+        {
+            println!(
+                "Rule: {:?}, Position: {:?}, Function should run!",
+                rule, position,
+            )
+        }
         let current_key = context.borrow_mut().reserve_publisher_entry(rule);
         context.borrow_mut().remove_from_eval_set(position, rule); // So it only runs once. Then recreate evalset in the original core loop above.
 
         let f = func(current_key, context, source, position);
+
         let mut c = context.borrow_mut();
         c.create_cache_entry(rule, f.0, position, f.1, current_key);
         c.update_publisher_entry(current_key, f.0, position, f.1);
         // Change to only connect on success to makes things a little faster
         c.connect(parent, current_key);
+        {
+            println!(
+                "Rule: {:?}, Position: {:?}, Should Run: Returning Non Memoized Result: {:?}, Parent: {:?}",
+                rule, position, f, parent
+            )
+        }
         f
     } else {
         let memo = context.borrow().check(rule, position);
         match memo {
-            None => (false, 0),
+            None => {
+                #[cfg(debug_assertions)]
+                {
+                    println!(
+                        "Rule: {:?}, Position: {:?}, Returning Non Memoized Result: {:?}",
+                        rule,
+                        position,
+                        (false, 0)
+                    )
+                }
+                (false, 0)
+            }
             Some((is_true, end_position, memoized_key)) => {
                 context.borrow_mut().connect(parent, memoized_key);
+                #[cfg(debug_assertions)]
+                {
+                    println!(
+                        "Rule: {:?}, Position: {:?}, Returning Memoized Result: {:?}, Key: {:?}, Parent: {:?}",
+                        rule,
+                        position,
+                        (is_true, end_position),
+                        memoized_key, 
+                        parent
+                    )
+                }
                 (is_true, end_position)
             }
         }
