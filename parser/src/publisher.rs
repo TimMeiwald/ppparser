@@ -150,7 +150,7 @@ impl BasicPublisher {
         let index = 0;
 
         let node = self.get_node(Key(index));
-        println!("Clear_False Index: {:?}", index);
+        //println!("Clear_False Index: {:?}", index);
         if node.result {
             new_tree.add_node(
                 node.rule,
@@ -176,7 +176,7 @@ impl BasicPublisher {
     }
 
     fn clear_false_kernel(&self, new_tree: &mut BasicPublisher, parent_index: Key, index: Key) {
-        println!("Clear_False_Kernel Index: {:?}", index);
+        //println!("Clear_False_Kernel Index: {:?}", index);
 
         let node = self.get_node(index);
         if node.result && (node.start_position != node.end_position) {

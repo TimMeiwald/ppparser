@@ -18,6 +18,7 @@ pub struct BasicCache {
     cache: HashMap<(Rules, u32), (bool, u32, Key)>,
     left_recursion_cache: HashMap<(Rules, u32), (bool, u32, Key, LR)>,
     heads: HashMap<u32, Head>,
+    last_used: Key,
 }
 
 impl BasicCache {
@@ -26,6 +27,7 @@ impl BasicCache {
             cache: HashMap::new(),
             left_recursion_cache: HashMap::new(),
             heads: HashMap::new(),
+            last_used: Key(0),
         }
     }
     pub fn insert(
@@ -41,6 +43,12 @@ impl BasicCache {
     }
     pub fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         self.cache.get(&(rule, start_position)).copied()
+    }
+    pub fn last_key(&self) -> Key {
+        self.last_used
+    }
+    pub fn set_last_key(&mut self, last_used: Key) {
+        self.last_used = last_used
     }
     pub fn insert_direct_lr(
         &mut self,
@@ -71,6 +79,9 @@ impl BasicCache {
             None => None, // Not yet exists therefore no Left Recursion at this position
             Some(head) => Some(head.active_left_recursion_rule), // Return head rule since that's necessary information.
         }
+    }
+    pub fn remove_head(&mut self, start_position: u32) {
+        self.heads.remove_entry(&start_position);
     }
 
     pub fn set_head(

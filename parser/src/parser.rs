@@ -949,7 +949,7 @@ pub fn test_indirect_lr_num<T: Context + 'static>(
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> =
         [Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(
+    let closure_1 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_indirect_LR_expr,
         context,
@@ -967,7 +967,7 @@ pub fn test_indirect_lr_expr<T: Context + 'static>(
     //  Should match 0-0-0-0-0-0-0-0 etc
     let involved_set: Vec<Rules> =
         [Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(
+    let closure_1 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_indirect_LR_num,
         context,
@@ -1039,7 +1039,7 @@ pub fn test_term_indirect<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set = vec![Rules::test_term];
-    let closure_1 = _var_name_indirect_left_recursion(
+    let closure_1 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_term_indirect,
         context,
@@ -1050,7 +1050,7 @@ pub fn test_term_indirect<T: Context + 'static>(
     let closure_4 = _var_name(Rules::test_fact_indirect, context, test_fact_indirect);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name_indirect_left_recursion(
+    let closure_7 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_term_indirect,
         context,
@@ -1074,7 +1074,7 @@ pub fn test_fact_indirect<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set = vec![Rules::test_fact];
-    let closure_1 = _var_name_indirect_left_recursion(
+    let closure_1 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_fact_indirect,
         context,
@@ -1085,7 +1085,7 @@ pub fn test_fact_indirect<T: Context + 'static>(
     let closure_4 = _var_name(Rules::Num, context, num);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name_indirect_left_recursion(
+    let closure_7 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_fact_indirect,
         context,

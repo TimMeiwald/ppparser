@@ -65,6 +65,9 @@ where
     fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules);
     fn reinitialize_eval_set(&mut self, start_position: u32);
     fn get_publisher(self) -> Self::P;
+    fn remove_head(&mut self, start_position: u32);
+    fn last_key(&self) -> Key;
+    fn set_last_key(&mut self, last_used: Key);
 }
 
 pub struct BasicContext {
@@ -93,6 +96,12 @@ impl Context for BasicContext {
             cache: Self::C::new(),
             publisher: Self::P::new(size_of_source, number_of_rules),
         }
+    }
+    fn last_key(&self) -> Key {
+        self.cache.last_key()
+    }
+    fn set_last_key(&mut self, last_used: Key) {
+        self.cache.set_last_key(last_used);
     }
     fn reinitialize_eval_set(&mut self, start_position: u32) {
         self.cache.reinitialize_eval_set(start_position);
@@ -158,7 +167,9 @@ impl Context for BasicContext {
     fn check_head(&self, start_position: u32) -> Option<Rules> {
         self.cache.check_head(start_position)
     }
-
+    fn remove_head(&mut self, start_position: u32) {
+        self.cache.remove_head(start_position);
+    }
     fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>) {
         self.cache.set_head(start_position, head_rule, involved_set);
     }

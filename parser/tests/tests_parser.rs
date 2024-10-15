@@ -195,7 +195,7 @@ mod tests {
         let result: (bool, u32);
         {
             let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
-            let executor = _var_name_indirect_left_recursion(
+            let executor = _var_name_indirect_left_recursion2(
                 &involved_set,
                 Rules::test_indirect_LR_expr,
                 &context,
@@ -206,10 +206,11 @@ mod tests {
         println!("Result: {:?}", result);
         // context.borrow().print_cache();
         //context.borrow().print_publisher();
-        assert_eq!((result.0, result.1), (true, 3));
 
         let result_tree = context.into_inner().get_publisher().clear_false();
         result_tree.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, 3));
+
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
         // Key(0), Grammar, 0, 0, true, 1
@@ -250,7 +251,7 @@ mod tests {
         let result: (bool, u32);
         {
             let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
-            let executor = _var_name_indirect_left_recursion(
+            let executor = _var_name_indirect_left_recursion2(
                 &involved_set,
                 Rules::test_indirect_LR_expr,
                 &context,
@@ -261,11 +262,12 @@ mod tests {
         println!("Result: {:?}", result);
         // context.borrow().print_cache();
         // context.borrow().print_publisher();
-        assert_eq!((result.0, result.1), (true, 5));
 
         let result_tree = context.into_inner().get_publisher().clear_false();
 
         result_tree.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, 5));
+
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
         // Key(0), Grammar, 0, 0, true, 1
@@ -317,7 +319,7 @@ mod tests {
         let result: (bool, u32);
         {
             let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
-            let executor = _var_name_indirect_left_recursion(
+            let executor = _var_name_indirect_left_recursion2(
                 &involved_set,
                 Rules::test_indirect_LR_expr,
                 &context,
@@ -399,7 +401,7 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
             let involved_set = vec![Rules::test_fact_indirect];
-            let executor = _var_name_indirect_left_recursion(
+            let executor = _var_name_indirect_left_recursion2(
                 &involved_set,
                 Rules::test_fact_indirect,
                 &context,
@@ -412,10 +414,11 @@ mod tests {
 
         // context.borrow().print_publisher();
 
-        assert_eq!((result.0, result.1), (true, 9));
         let result_tree = context.into_inner().get_publisher();
         println!("Result Tree:\n");
         result_tree.print(Key(0), None);
+        assert_eq!((result.0, result.1), (true, 9));
+
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
         // Key(0), Grammar, 0, 0, true, 1
@@ -558,7 +561,7 @@ mod tests {
         let result: (bool, u32);
         {
             let involved_set = vec![Rules::test_term_indirect];
-            let executor = _var_name_indirect_left_recursion(
+            let executor = _var_name_indirect_left_recursion2(
                 &involved_set,
                 Rules::test_term_indirect,
                 &context,
@@ -568,7 +571,7 @@ mod tests {
         }
         println!("Result: {:?}", result);
         // context.borrow().print_cache();
-        //context.borrow().print_publisher();
+        context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 9));
 
         // Key(0), Grammar, 0, 0, true, 1
@@ -588,27 +591,27 @@ mod tests {
         let result_tree = context.into_inner().get_publisher().clear_false();
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
-        let key_1 = expected_tree.add_node(Rules::test_term, 0, 9, true);
+        let key_1 = expected_tree.add_node(Rules::test_term_indirect, 0, 9, true);
         expected_tree.connect(Key(0), key_1);
-        let key_2 = expected_tree.add_node(Rules::test_term, 0, 5, true);
+        let key_2 = expected_tree.add_node(Rules::test_term_indirect, 0, 5, true);
         expected_tree.connect(key_1, key_2);
-        let key_3 = expected_tree.add_node(Rules::test_term, 0, 1, true);
+        let key_3 = expected_tree.add_node(Rules::test_term_indirect, 0, 1, true);
         expected_tree.connect(key_2, key_3);
-        let key_4 = expected_tree.add_node(Rules::test_fact, 0, 1, true);
+        let key_4 = expected_tree.add_node(Rules::test_fact_indirect, 0, 1, true);
         expected_tree.connect(key_3, key_4);
         let key_5 = expected_tree.add_node(Rules::Num, 0, 1, true);
         expected_tree.connect(key_4, key_5);
-        let key_6 = expected_tree.add_node(Rules::test_fact, 2, 5, true);
+        let key_6 = expected_tree.add_node(Rules::test_fact_indirect, 2, 5, true);
         expected_tree.connect(key_2, key_6);
-        let key_7 = expected_tree.add_node(Rules::test_fact, 2, 3, true);
+        let key_7 = expected_tree.add_node(Rules::test_fact_indirect, 2, 3, true);
         expected_tree.connect(key_6, key_7);
         let key_8 = expected_tree.add_node(Rules::Num, 2, 3, true);
         expected_tree.connect(key_7, key_8);
         let key_9 = expected_tree.add_node(Rules::Num, 4, 5, true);
         expected_tree.connect(key_6, key_9);
-        let key_10 = expected_tree.add_node(Rules::test_fact, 6, 9, true);
+        let key_10 = expected_tree.add_node(Rules::test_fact_indirect, 6, 9, true);
         expected_tree.connect(key_1, key_10);
-        let key_11 = expected_tree.add_node(Rules::test_fact, 6, 7, true);
+        let key_11 = expected_tree.add_node(Rules::test_fact_indirect, 6, 7, true);
         expected_tree.connect(key_10, key_11);
         let key_12 = expected_tree.add_node(Rules::Num, 6, 7, true);
         expected_tree.connect(key_11, key_12);
