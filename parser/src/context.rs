@@ -65,9 +65,11 @@ where
     fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules);
     fn reinitialize_eval_set(&mut self, start_position: u32);
     fn get_publisher(self) -> Self::P;
+    fn clear_node_of_children(&mut self, node: Key);
     fn remove_head(&mut self, start_position: u32);
     fn last_key(&self) -> Key;
     fn set_last_key(&mut self, last_used: Key);
+    fn disconnect(&mut self, parent: Key, child: Key);
 }
 
 pub struct BasicContext {
@@ -110,9 +112,16 @@ impl Context for BasicContext {
     fn print_cache(&self) {
         println!("{:?}", &self.cache)
     }
+    fn clear_node_of_children(&mut self, node: Key) {
+        self.publisher.clear_node_of_children(node);
+    }
+    fn disconnect(&mut self, parent: Key, child: Key) {
+        self.publisher.disconnect(parent, child);
+    }
+
     fn print_publisher(&self) {
-        self.publisher.print(Key(0), Some(true));
-        //println!("\n\n{:?}", &self.publisher)
+        //self.publisher.print(Key(0), Some(true));
+        println!("\n\n{:?}", &self.publisher)
     }
     fn reserve_publisher_entry(&mut self, rule: Rules) -> Key {
         self.publisher.add_node(rule, 0, 0, false)
@@ -170,7 +179,14 @@ impl Context for BasicContext {
     fn remove_head(&mut self, start_position: u32) {
         self.cache.remove_head(start_position);
     }
-    fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>) {
+    fn set_head(
+        &mut self,
+        start_position: u32,
+        head_rule: Rules,
+        mut involved_set: BTreeSet<Rules>,
+    ) {
+        // involved_set.remove(&head_rule);
+        println!("SET HEAD! {:?}", (start_position, head_rule));
         self.cache.set_head(start_position, head_rule, involved_set);
     }
     fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool {

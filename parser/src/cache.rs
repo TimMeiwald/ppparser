@@ -1,7 +1,8 @@
 use crate::{Key, Rules};
+use std::collections::VecDeque;
 use std::collections::{BTreeSet, HashMap};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Head {
     pub active_left_recursion_rule: Rules,
     pub involved_set: BTreeSet<Rules>,
@@ -18,6 +19,7 @@ pub struct BasicCache {
     cache: HashMap<(Rules, u32), (bool, u32, Key)>,
     left_recursion_cache: HashMap<(Rules, u32), (bool, u32, Key, LR)>,
     heads: HashMap<u32, Head>,
+    recursion_stack: VecDeque<Head>,
     last_used: Key,
 }
 
@@ -27,6 +29,7 @@ impl BasicCache {
             cache: HashMap::new(),
             left_recursion_cache: HashMap::new(),
             heads: HashMap::new(),
+            recursion_stack: VecDeque::new(),
             last_used: Key(0),
         }
     }
@@ -81,7 +84,17 @@ impl BasicCache {
         }
     }
     pub fn remove_head(&mut self, start_position: u32) {
-        self.heads.remove_entry(&start_position);
+        // println!("IN REMOVE HEAD");
+        // println!("Recursion Stack: {:?}", self.recursion_stack);
+
+        // Remove head
+        self.heads.remove(&start_position);
+        // match self.recursion_stack.pop_front() {
+        //     None => {}
+        //     Some(head) => {
+        //         self.heads.insert(start_position, head);
+        //     }
+        // };
     }
 
     pub fn set_head(
@@ -90,15 +103,23 @@ impl BasicCache {
         head_rule: Rules,
         involved_set: BTreeSet<Rules>,
     ) {
+        // println!("IN SET HEAD");
+        // println!("Recursion Stack: {:?}", self.recursion_stack);
+
         let eval_set = involved_set.clone();
-        self.heads.insert(
-            start_position,
-            Head {
-                active_left_recursion_rule: head_rule,
-                involved_set,
-                eval_set,
-            },
-        );
+        let head = Head {
+            active_left_recursion_rule: head_rule,
+            involved_set,
+            eval_set,
+        };
+        // If a head exists push it onto the recursion stack.
+        // match self.heads.remove(&start_position) {
+        //     None => {}
+        //     Some(head) => {
+        //         //self.recursion_stack.push_front(head);
+        //     }
+        // }
+        self.heads.insert(start_position, head);
     }
     pub fn reinitialize_eval_set(&mut self, start_position: u32) {
         let head = self
@@ -114,7 +135,7 @@ impl BasicCache {
             .heads
             .get(&start_position)
             .expect("Should always exist when calling rule_in_eval_set");
-        println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
+        // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
         head.eval_set.contains(&rule)
     }
     pub fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules) {

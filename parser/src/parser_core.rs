@@ -111,6 +111,7 @@ pub fn _ordered_choice_kernel(
     }
     let position = temp_position;
     let (valid, position) = func_rhs(parent, source, position);
+
     if valid {
         (true, position)
     } else {
