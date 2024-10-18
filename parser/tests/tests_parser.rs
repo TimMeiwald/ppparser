@@ -576,7 +576,7 @@ mod tests {
     }
     #[test]
     fn test_test_term_indirect_1() {
-        let string = "1+2/3+4/5   ".to_string();
+        let string = "1+2/3+4/5+9   ".to_string();
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
@@ -584,7 +584,7 @@ mod tests {
         let result: (bool, u32);
 
         {
-            let involved_set = vec![Rules::test_fact_indirect, Rules::test_term_indirect];
+            let involved_set = vec![Rules::test_term_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
             let closure = _var_name_indirect_left_recursion2(
                 &involved_set,
@@ -659,7 +659,7 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
         {
-            let involved_set = vec![Rules::test_fact_indirect, Rules::test_term_indirect];
+            let involved_set = vec![Rules::test_term_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
             let closure = _var_name_indirect_left_recursion2(
                 &involved_set,

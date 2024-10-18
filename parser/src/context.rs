@@ -67,10 +67,13 @@ where
     fn reinitialize_eval_set(&mut self, start_position: u32);
     fn get_publisher(self) -> Self::P;
     fn clear_node_of_children(&mut self, node: Key);
-    fn remove_head(&mut self, start_position: u32);
+    // fn remove_head(&mut self, start_position: u32);
     fn last_key(&self) -> Key;
     fn set_last_key(&mut self, last_used: Key);
+    fn reset_head(&mut self, start_position: u32);
     fn disconnect(&mut self, parent: Key, child: Key);
+    // fn get_currently_active_head(&self) -> Option<u32>;
+    // fn set_currently_active_head(&mut self, position: Option<u32>);
 }
 
 pub struct BasicContext {
@@ -119,7 +122,12 @@ impl Context for BasicContext {
     fn disconnect(&mut self, parent: Key, child: Key) {
         self.publisher.disconnect(parent, child);
     }
-
+    // fn get_currently_active_head(&self) -> Option<u32> {
+    //     self.cache.get_currently_active_head()
+    // }
+    // fn set_currently_active_head(&mut self, position: Option<u32>) {
+    //     self.cache.set_currently_active_head(position);
+    // }
     fn print_publisher(&self) {
         //self.publisher.print(Key(0), Some(true));
         println!("\n\n{:?}", &self.publisher)
@@ -177,19 +185,15 @@ impl Context for BasicContext {
     fn check_head(&self, start_position: u32) -> Option<Rules> {
         self.cache.check_head(start_position)
     }
-    fn remove_head(&mut self, start_position: u32) {
-        println!("REMOVE HEAD! {:?}\x1b[0m", (start_position));
+    // fn remove_head(&mut self, start_position: u32) {
+    //     println!("REMOVE HEAD! {:?}\x1b[0m", (start_position));
 
-        self.cache.remove_head(start_position);
+    //     self.cache.remove_head(start_position);
+    // }
+    fn reset_head(&mut self, start_position: u32) {
+        self.cache.reset_head(start_position);
     }
-
-    fn set_head(
-        &mut self,
-        start_position: u32,
-        head_rule: Rules,
-        mut involved_set: BTreeSet<Rules>,
-    ) {
-        println!("\x1b[31mSET HEAD! {:?}", (start_position, head_rule));
+    fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>) {
         self.cache.set_head(start_position, head_rule, involved_set);
     }
     fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool {

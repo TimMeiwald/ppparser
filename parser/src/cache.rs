@@ -33,6 +33,7 @@ impl BasicCache {
             last_used: Key(0),
         }
     }
+
     pub fn insert(
         &mut self,
         rule: Rules,
@@ -83,18 +84,30 @@ impl BasicCache {
             Some(head) => Some(head.active_left_recursion_rule), // Return head rule since that's necessary information.
         }
     }
-    pub fn remove_head(&mut self, start_position: u32) {
-        // println!("IN REMOVE HEAD");
-        // println!("Recursion Stack: {:?}", self.recursion_stack);
+    // pub fn remove_head(&mut self, start_position: u32) {
+    //     // println!("IN REMOVE HEAD");
+    //     // println!("Recursion Stack: {:?}", self.recursion_stack);
 
-        // Remove head
-        self.heads.remove(&start_position);
-        // match self.recursion_stack.pop_front() {
-        //     None => {}
-        //     Some(head) => {
-        //         self.heads.insert(start_position, head);
-        //     }
-        // };
+    //     // Remove head
+    //     self.heads.remove(&start_position);
+    //     // match self.recursion_stack.pop_front() {
+    //     //     None => {}
+    //     //     Some(head) => {
+    //     //         self.heads.insert(start_position, head);
+    //     //     }
+    //     // };
+    // }
+    pub fn reset_head(&mut self, start_position: u32) {
+        println!("RESET HEAD!");
+        println!("\x1b[0m");
+        self.heads.remove(&start_position); // Remove this head
+        let past_head = self.recursion_stack.pop_front();
+        match past_head {
+            None => {}
+            Some(past_head) => {
+                self.heads.insert(start_position, past_head);
+            }
+        };
     }
 
     pub fn set_head(
@@ -103,22 +116,22 @@ impl BasicCache {
         head_rule: Rules,
         involved_set: BTreeSet<Rules>,
     ) {
-        // println!("IN SET HEAD");
-        // println!("Recursion Stack: {:?}", self.recursion_stack);
-
+        println!("\x1b[31m");
+        println!("SET HEAD! {:?}", (start_position, head_rule));
+        let current_head_at_position = self.heads.remove(&start_position);
+        match current_head_at_position {
+            None => {}
+            Some(current_head) => {
+                self.recursion_stack.push_front(current_head);
+            }
+        }
+        println!("Recursion Stack: {:?}", self.recursion_stack);
         let eval_set = involved_set.clone();
         let head = Head {
             active_left_recursion_rule: head_rule,
             involved_set,
             eval_set,
         };
-        // If a head exists push it onto the recursion stack.
-        // match self.heads.remove(&start_position) {
-        //     None => {}
-        //     Some(head) => {
-        //         //self.recursion_stack.push_front(head);
-        //     }
-        // }
         self.heads.insert(start_position, head);
     }
     pub fn reinitialize_eval_set(&mut self, start_position: u32) {
