@@ -391,23 +391,48 @@ mod tests {
     }
 
     #[test]
-    fn test_fact_indirect_1() {
-        let string = "1*2/3*7/9".to_string();
+    fn test_fact_indirect_2() {
+        let string = "1*2/5".to_string();
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
-            test_fact_indirect(Key(0), &context, &source, position);
             let involved_set = vec![Rules::test_fact_indirect];
-            let executor = _var_name_indirect_left_recursion2(
+            //result = test_fact_indirect(Key(0), &context, &source, position);
+            let closure = _var_name_indirect_left_recursion2(
                 &involved_set,
                 Rules::test_fact_indirect,
                 &context,
                 test_fact_indirect,
             );
-            result = executor(Key(0), &source, position);
+            result = closure(Key(0), &source, 0);
+        }
+        // context.borrow().print_cache();
+
+        // context.borrow().print_publisher();
+
+        assert_eq!((result.0, result.1), (true, 5));
+    }
+    #[test]
+    fn test_fact_indirect_1() {
+        let string = "1*2/3*7/9".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let mut result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let involved_set = vec![Rules::test_fact_indirect];
+            //result = test_fact_indirect(Key(0), &context, &source, position);
+            let closure = _var_name_indirect_left_recursion2(
+                &involved_set,
+                Rules::test_fact_indirect,
+                &context,
+                test_fact_indirect,
+            );
+            result = closure(Key(0), &source, 0);
         }
         // context.borrow().print_cache();
 
@@ -557,16 +582,19 @@ mod tests {
         let position: u32 = 0;
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
+
         {
             let involved_set = vec![Rules::test_fact_indirect, Rules::test_term_indirect];
-            let executor = _var_name_indirect_left_recursion2(
+            //result = test_fact_indirect(Key(0), &context, &source, position);
+            let closure = _var_name_indirect_left_recursion2(
                 &involved_set,
                 Rules::test_term_indirect,
                 &context,
                 test_term_indirect,
             );
-            result = executor(Key(0), &source, position);
+            result = closure(Key(0), &source, 0);
         }
+
         println!("Result: {:?}", result);
         // context.borrow().print_cache();
 
@@ -621,5 +649,29 @@ mod tests {
         println!("Expected tree:");
         expected_tree.print(Key(0), Some(true));
         assert_eq!(expected_tree, result_tree);
+    }
+    #[test]
+    fn test_test_term_indirect_2() {
+        let string = "1+2/3+4/5/7/9   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let result: (bool, u32);
+        {
+            let involved_set = vec![Rules::test_fact_indirect, Rules::test_term_indirect];
+            //result = test_fact_indirect(Key(0), &context, &source, position);
+            let closure = _var_name_indirect_left_recursion2(
+                &involved_set,
+                Rules::test_term_indirect,
+                &context,
+                test_term_indirect,
+            );
+            result = closure(Key(0), &source, 0);
+        }
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+
+        assert_eq!((result.0, result.1), (true, 13));
     }
 }

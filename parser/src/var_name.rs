@@ -343,7 +343,7 @@ pub fn _var_name_indirect_left_recursion2<'a, T: Context + 'static>(
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'a {
     move |parent: Key, source: &Source, position: u32| {
-        _var_name_kernel_indirect_left_recursion2(
+        _var_name_kernel_indirect_left_recursion3(
             involved_set,
             rule,
             context,
@@ -391,6 +391,7 @@ pub fn _var_name_kernel_indirect_left_recursion2<T: Context>(
             context.borrow_mut().reinitialize_eval_set(position);
             // println!("Going into func");
             println!("Before Func Count: {:?}, Current Key: {:?}", count, current_key);
+            // Probs need a 2nd loop where it checks for whether there's anything left in eval set.
             result = func(current_key, context, source, position);
             println!("After Func Count: {:?}", count);
 
@@ -458,6 +459,99 @@ pub fn _var_name_kernel_indirect_left_recursion2<T: Context>(
 
 
                 }
+            }
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
+    involved_set: &Vec<Rules>,
+    rule: Rules,
+    context: &RefCell<T>,
+    parent: Key,
+    source: &Source,
+    position: u32,
+    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+) -> (bool, u32) {
+
+    let head = context.borrow().check_head(position);
+    println!("Head: {:?}", head);
+    if head.is_none(){
+        // If head is none, return what is stored in the memo table. 
+        let mut result: (bool, u32);
+        let mut last_result = (false, position);
+        let mut last_key: Key = parent;
+        {   
+            let involved_btree = convert_vec_to_btree_set(involved_set);
+            // Creates head so on calling func again it goes to other branch 
+            context.borrow_mut().set_head(position, rule, involved_btree);
+
+            loop{
+                let current_key = context.borrow_mut().reserve_publisher_entry(rule);
+                println!("Entering Func: {:?} {:?}", rule, position);
+                println!("Parent: {:?} Child: {:?}", parent, current_key);
+                // context.borrow_mut().create_cache_entry(rule, false, position, 0, current_key);
+
+                result = func(parent, context, source, position);
+                println!("Leaving Func: {:?} {:?} with response {:?}", rule, position, result);
+                if !result.0 || (result.1 <= last_result.1) {
+                    context.borrow_mut().create_cache_entry(rule, last_result.0, position, last_result.1, current_key);
+                    context.borrow_mut().update_publisher_entry(current_key, last_result.0, position, last_result.1);
+                    break;
+                }
+                context.borrow_mut().create_cache_entry(rule, result.0, position, result.1, current_key);
+                context.borrow_mut().update_publisher_entry(current_key, result.0, position, result.1);
+                last_result = result;
+                last_key = current_key;
+            }
+            
+          
+        }
+        let memo = context.borrow().check(rule, position);
+        let memo = memo.expect("Should there always be a cached entry at this point?");
+        println!("Head is None returning {:?} ", last_result);
+        // We need to reset the head, in that if there was a head before we need to push it back onto the stack. 
+        context.borrow_mut().remove_head(position);
+        return last_result;
+
+    }
+    else{
+        // Runs if head is Some
+        // Do not evaluate any rule that is not involved in this left recursion(i.e is not in the involved set.)
+        let memo = context.borrow().check(rule, position);
+        match memo{
+            Some((is_true, end_position, key)) => {
+                println!("Memoized Result {:?}", (is_true, end_position));
+                return (is_true, end_position);
+            },
+            None => {
+                println!("Entering Non Memoized");
+                // println!("Rule {:?}, Position {:?}", rule, position);
+                let current_key = context.borrow_mut().reserve_publisher_entry(rule);
+                // Setting cache entry to false causes first iteration to fail and run alternate paths
+                context.borrow_mut().create_cache_entry(rule, false, position, 0, current_key);
+
+                println!("Entering Func: {:?} {:?}", rule, position);
+                println!("Parent: {:?} Child: {:?}", parent, current_key);
+                let result = func(parent, context, source, position);
+                println!("Leaving Func: {:?} {:?}", rule, position);
+
+                // Update cache entry to true result
+                context.borrow_mut().create_cache_entry(rule, result.0, position, result.1, current_key);
+                context.borrow_mut().update_publisher_entry(current_key, result.0, position, result.1);
+                println!("Non Memoized Result {:?}", result);
+                return result;
+
             }
         }
 

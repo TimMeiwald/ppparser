@@ -62,6 +62,7 @@ where
     fn check_head(&self, start_position: u32) -> Option<Rules>;
     fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>);
     fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool;
+
     fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules);
     fn reinitialize_eval_set(&mut self, start_position: u32);
     fn get_publisher(self) -> Self::P;
@@ -177,16 +178,18 @@ impl Context for BasicContext {
         self.cache.check_head(start_position)
     }
     fn remove_head(&mut self, start_position: u32) {
+        println!("REMOVE HEAD! {:?}\x1b[0m", (start_position));
+
         self.cache.remove_head(start_position);
     }
+
     fn set_head(
         &mut self,
         start_position: u32,
         head_rule: Rules,
         mut involved_set: BTreeSet<Rules>,
     ) {
-        // involved_set.remove(&head_rule);
-        println!("SET HEAD! {:?}", (start_position, head_rule));
+        println!("\x1b[31mSET HEAD! {:?}", (start_position, head_rule));
         self.cache.set_head(start_position, head_rule, involved_set);
     }
     fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool {
