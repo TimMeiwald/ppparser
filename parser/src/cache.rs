@@ -127,6 +127,7 @@ impl BasicCache {
             .get_mut(&start_position)
             .expect("Should exist by now");
         head.eval_set = head.involved_set.clone();
+        println!("Eval Set: {:?}", head.eval_set);
     }
 
     pub fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool {

@@ -1038,7 +1038,7 @@ pub fn test_term_indirect<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![Rules::test_term_indirect, Rules::test_fact_indirect];
+    let involved_set = vec![Rules::test_term_indirect];
     let involved_set_for_test_fact = vec![Rules::test_fact_indirect];
 
     let closure_1 = _var_name_indirect_left_recursion2(
