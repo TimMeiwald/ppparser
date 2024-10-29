@@ -4,6 +4,7 @@ use std::collections::{BTreeSet, HashMap};
 
 #[derive(Debug, Clone)]
 pub struct Head {
+    pub start_position: u32,
     pub active_left_recursion_rule: Rules,
     pub involved_set: BTreeSet<Rules>,
     pub eval_set: BTreeSet<Rules>,
@@ -76,12 +77,12 @@ impl BasicCache {
             .copied()
     }
 
-    pub fn check_head(&self, start_position: u32) -> Option<Rules> {
+    pub fn check_head(&self, start_position: u32) -> Option<&Head> {
         let head = self.heads.get(&start_position);
         #[allow(clippy::manual_map)]
         match head {
             None => None, // Not yet exists therefore no Left Recursion at this position
-            Some(head) => Some(head.active_left_recursion_rule), // Return head rule since that's necessary information.
+            Some(head) => Some(&head), // Return head rule since that's necessary information.
         }
     }
     // pub fn remove_head(&mut self, start_position: u32) {
@@ -128,6 +129,7 @@ impl BasicCache {
         println!("Recursion Stack: {:?}", self.recursion_stack);
         let eval_set = involved_set.clone();
         let head = Head {
+            start_position: start_position,
             active_left_recursion_rule: head_rule,
             involved_set,
             eval_set,
@@ -140,11 +142,29 @@ impl BasicCache {
             .get_mut(&start_position)
             .expect("Should exist by now");
         head.eval_set = head.involved_set.clone();
-        println!("Eval Set: {:?}", head.eval_set);
+        println!("Reinit Eval Set: {:?}", head.eval_set);
+    }
+
+    pub fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool {
+        let head = self
+            .heads
+            .get(&start_position)
+            .expect("Should always exist when calling rule_in_eval_set");
+        // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
+        head.eval_set.is_empty()
+    }
+    pub fn rule_in_involved_set(&self, start_position: u32, rule: Rules) -> bool {
+        // Return true if it's in eval set
+        let head = self
+            .heads
+            .get(&start_position)
+            .expect("Should always exist when calling rule_in_eval_set");
+        // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
+        head.involved_set.contains(&rule)
     }
 
     pub fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool {
-        // Return true if it's in eval set and not currently active left recursive rule.
+        // Return true if it's in eval set
         let head = self
             .heads
             .get(&start_position)

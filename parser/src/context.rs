@@ -1,7 +1,7 @@
 #[allow(unused_imports)] // So that I don't need to keep adding or removing whilst testing
 use super::Key;
 use crate::{
-    cache::{DirectLeftRecursionCache, IndirectLeftRecursionCache, LR},
+    cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache, LR},
     publisher::{DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher},
     Rules,
 };
@@ -59,9 +59,10 @@ where
         end_position: u32,
     );
 
-    fn check_head(&self, start_position: u32) -> Option<Rules>;
+    fn check_head(&self, start_position: u32) -> Option<&Head>;
     fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>);
     fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool;
+    fn rule_in_involved_set(&self, start_position: u32, rule: Rules) -> bool;
 
     fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules);
     fn reinitialize_eval_set(&mut self, start_position: u32);
@@ -69,6 +70,7 @@ where
     fn clear_node_of_children(&mut self, node: Key);
     // fn remove_head(&mut self, start_position: u32);
     fn last_key(&self) -> Key;
+    fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool;
     fn set_last_key(&mut self, last_used: Key);
     fn reset_head(&mut self, start_position: u32);
     fn disconnect(&mut self, parent: Key, child: Key);
@@ -115,6 +117,9 @@ impl Context for BasicContext {
     #[allow(dead_code)]
     fn print_cache(&self) {
         println!("{:?}", &self.cache)
+    }
+    fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool {
+        self.cache.eval_set_is_empty(start_position, rule)
     }
     fn clear_node_of_children(&mut self, node: Key) {
         self.publisher.clear_node_of_children(node);
@@ -182,7 +187,7 @@ impl Context for BasicContext {
     fn check_lr(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key, LR)> {
         self.cache.check_direct_lr(rule, start_position)
     }
-    fn check_head(&self, start_position: u32) -> Option<Rules> {
+    fn check_head(&self, start_position: u32) -> Option<&Head> {
         self.cache.check_head(start_position)
     }
     // fn remove_head(&mut self, start_position: u32) {
@@ -190,6 +195,10 @@ impl Context for BasicContext {
 
     //     self.cache.remove_head(start_position);
     // }
+    fn rule_in_involved_set(&self, start_position: u32, rule: Rules) -> bool {
+        self.cache.rule_in_involved_set(start_position, rule)
+    }
+
     fn reset_head(&mut self, start_position: u32) {
         self.cache.reset_head(start_position);
     }
