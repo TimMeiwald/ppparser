@@ -28,7 +28,33 @@ mod tests {
             .clear_false()
             .print(Key(0), Some(true));
         assert_eq!((result.0, result.1), (true, src_len));
-        todo!("Add AST test")
+        // Key(0), Grammar, 0, 0, true, 1
+        //     Key(2), Grammar, 0, 39, true, 1
+        //         Key(3), Rule, 0, 39, true, 2
+        //             Key(4), LHS, 0, 21, true, 2
+        //                 Key(5), Var_Name_Decl, 0, 8, true, 0
+        //                 Key(6), Semantic_Instructions, 9, 20, true, 1
+        //                     Key(7), Passthrough, 9, 20, true, 0
+        //             Key(8), RHS, 23, 38, true, 1
+        //                 Key(9), Ordered_Choice, 23, 38, true, 4
+        //                     Key(10), Atom, 23, 26, true, 1
+        //                         Key(11), Nucleus, 23, 26, true, 1
+        //                             Key(12), Terminal, 23, 26, true, 1
+        //                                 Key(13), ASCII, 24, 25, true, 0
+        //                     Key(14), Atom, 27, 30, true, 1
+        //                         Key(15), Nucleus, 27, 30, true, 1
+        //                             Key(16), Terminal, 27, 30, true, 1
+        //                                 Key(17), ASCII, 28, 29, true, 0
+        //                     Key(18), Atom, 31, 34, true, 1
+        //                         Key(19), Nucleus, 31, 34, true, 1
+        //                             Key(20), Terminal, 31, 34, true, 1
+        //                                 Key(21), ASCII, 32, 33, true, 0
+        //                     Key(22), Atom, 35, 38, true, 1
+        //                         Key(23), Nucleus, 35, 38, true, 1
+        //                             Key(24), Terminal, 35, 38, true, 1
+        //                                 Key(25), ASCII, 36, 37, true, 0
+
+        todo!("Add AST test - Need to make a test AST builder tool really.")
     }
 
     #[test]
@@ -617,7 +643,27 @@ mod tests {
 
         // context.borrow().print_publisher();
 
-        assert_eq!((result.0, result.1), (true, 7));
-        todo!("Add AST")
+        assert_eq!((result.0, result.1), (true, 5));
+
+        let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
+
+        let key_1 = expected_tree.add_node(Rules::test_fact_indirect, 0, 5, true);
+        expected_tree.connect(Key(0), key_1);
+        let key_2 = expected_tree.add_node(Rules::test_fact_indirect, 0, 3, true);
+        expected_tree.connect(key_1, key_2);
+        let key_3 = expected_tree.add_node(Rules::test_fact_indirect, 0, 1, true);
+        expected_tree.connect(key_2, key_3);
+        let key_4 = expected_tree.add_node(Rules::Num, 0, 1, true);
+        expected_tree.connect(key_3, key_4);
+        let key_5 = expected_tree.add_node(Rules::Num, 2, 3, true);
+        expected_tree.connect(key_2, key_5);
+        let key_6 = expected_tree.add_node(Rules::Num, 4, 5, true);
+        expected_tree.connect(key_1, key_6);
+
+        let result_tree = context.into_inner().get_publisher().clear_false();
+        result_tree.print(Key(0), Some(true));
+        println!("Expected tree:");
+        expected_tree.print(Key(0), Some(true));
+        assert_eq!(expected_tree, result_tree);
     }
 }
