@@ -464,9 +464,9 @@ pub fn _var_name_kernel_growth_function<T: Context>(
     let mut result: (bool, u32);
     let mut last_result = (false, position);
     let mut last_key: Key = context.borrow_mut().reserve_publisher_entry(rule);
-    let first_last_key = last_key;
-    let first_current_key: Key = context.borrow_mut().reserve_publisher_entry(rule);
+    let first_current_key = context.borrow_mut().reserve_publisher_entry(rule);
     let mut current_key = first_current_key;
+
     {
         let involved_btree = convert_vec_to_btree_set(involved_set);
 
@@ -479,47 +479,31 @@ pub fn _var_name_kernel_growth_function<T: Context>(
         loop {
             println!("LOOP COUNT: {:?}", count);
             context.borrow_mut().reinitialize_eval_set(position);
-
-            println!("Entering Func: {:?} {:?}", rule, position);
-            println!("Parent: {:?} Child: {:?}", parent, current_key);
-
-            let memo = context.borrow().check(rule, position);
-            let memo = memo;
-            match memo {
-                Some(memo) => {
-                    println!(
-                        "JUSTBEFOREFUNCMEMO {:?}, Memo Entry: {:?} ",
-                        last_result, memo
-                    );
-                }
-                None => {}
-            }
-
+            // println!("Entering Func: {:?} {:?}", rule, position);
+            // println!("Parent: {:?} Child: {:?}", parent, current_key);
             result = func(current_key, context, source, position);
-
-            println!(
-                "RESULT: {:?}, Current Key: {:?}, Last Key: {:?}",
-                result, current_key, last_key
-            );
-
-            println!(
-                "Leaving Func: {:?} {:?} with response {:?}",
-                rule, position, result
-            );
+            // println!(
+            //     "RESULT: {:?}, Current Key: {:?}, Last Key: {:?}",
+            //     result, current_key, last_key
+            // );
+            // println!(
+            //     "Leaving Func: {:?} {:?} with response {:?}",
+            //     rule, position, result
+            // );
             if !result.0 || (result.1 <= last_result.1) {
-                context.borrow_mut().create_cache_entry(
-                    rule,
-                    last_result.0,
-                    position,
-                    last_result.1,
-                    last_key,
-                );
-                context.borrow_mut().update_publisher_entry(
-                    last_key,
-                    last_result.0,
-                    position,
-                    last_result.1,
-                );
+                // context.borrow_mut().create_cache_entry(
+                //     rule,
+                //     last_result.0,
+                //     position,
+                //     last_result.1,
+                //     last_key,
+                // );
+                // context.borrow_mut().update_publisher_entry(
+                //     last_key,
+                //     last_result.0,
+                //     position,
+                //     last_result.1,
+                // );
                 context.borrow_mut().connect(parent, last_key);
 
                 // Updates the first initial sidestepping parse.
@@ -555,12 +539,6 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             current_key = context.borrow_mut().reserve_publisher_entry(rule);
         }
     }
-    let memo = context.borrow().check(rule, position);
-    let memo = memo.expect("Should there always be a cached entry at this point?");
-    println!(
-        "In Growth Function, returning {:?}, Memo Entry: {:?} ",
-        last_result, memo
-    );
     // We need to reset the head, in that if there was a head before we need to push it back onto the stack.
     //context.borrow_mut().remove_head(position);
     context.borrow_mut().reset_head(position);
@@ -579,6 +557,8 @@ pub fn should_go_into_growth_function<T: Context>(
     return match head {
         Some(head) => {
             if ctx.rule_in_involved_set(position, rule) {
+                false
+            } else if head.active_left_recursion_rule == rule {
                 false
             } else {
                 true
@@ -638,7 +618,10 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
                 }
                 Some(memo) => {
                     println!("Not in Growth Result(2): {:?}", (rule, memo.0, memo.1));
+                    context.borrow_mut().remove_from_eval_set(position, rule);
+
                     context.borrow_mut().connect(parent, memo.2);
+
                     (memo.0, memo.1)
                 }
             }
@@ -653,7 +636,7 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
                 None => {
                     println!("Returning(2) {:?}", (false, 0));
                     println!("RULE: {:?} in Returning(2)", rule);
-                    (false, 0)
+                    (false, position)
                 }
             }
         }

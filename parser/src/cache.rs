@@ -106,6 +106,7 @@ impl BasicCache {
         match past_head {
             None => {}
             Some(past_head) => {
+                println!("REINSERTING HEAD RECURSION");
                 self.heads.insert(start_position, past_head);
             }
         };

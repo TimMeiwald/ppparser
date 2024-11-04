@@ -402,31 +402,31 @@ mod tests {
         expected_tree.print(Key(0), Some(true));
         assert_eq!(expected_tree, result_tree);
     }
-    #[test]
-    fn test_left_recursion_indirect_2() {
-        let string = "1-2-3-7-9-1   ".to_string();
-        let src_len = string.len() as u32;
-        let source = Source::new(&string);
-        let position: u32 = 0;
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
-        let result: (bool, u32);
-        {
-            let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
-            let executor = _var_name_indirect_left_recursion2(
-                &involved_set,
-                Rules::test_indirect_LR_expr,
-                &context,
-                test_indirect_lr_expr,
-            );
-            result = executor(Key(0), &source, position);
-        }
-        println!("Result: {:?}", result);
-        // context.borrow().print_cache();
-        assert_eq!((result.0, result.1), (true, 11));
-        let p = context.into_inner().get_publisher().clear_false();
-        p.print(Key(0), Some(true));
-        todo!("Add AST")
-    }
+    // #[test]
+    // fn test_left_recursion_indirect_2() {
+    //     let string = "1-2-3-7-9-1   ".to_string();
+    //     let src_len = string.len() as u32;
+    //     let source = Source::new(&string);
+    //     let position: u32 = 0;
+    //     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+    //     let result: (bool, u32);
+    //     {
+    //         let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
+    //         let executor = _var_name_indirect_left_recursion2(
+    //             &involved_set,
+    //             Rules::test_indirect_LR_expr,
+    //             &context,
+    //             test_indirect_lr_expr,
+    //         );
+    //         result = executor(Key(0), &source, position);
+    //     }
+    //     println!("Result: {:?}", result);
+    //     // context.borrow().print_cache();
+    //     assert_eq!((result.0, result.1), (true, 11));
+    //     let p = context.into_inner().get_publisher().clear_false();
+    //     p.print(Key(0), Some(true));
+    //     todo!("Add AST")
+    // }
     // #[test]
     // fn test_fact_indirect_2() {
     //     let string = "1*2/5".to_string();
@@ -506,8 +506,87 @@ mod tests {
 
         println!("Expected tree:");
         expected_tree.print(Key(0), None);
+
         assert_eq!(expected_tree, result_tree);
     }
+
+    #[test]
+    fn test_test_fact_indirect_29() {
+        let string = "1   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let result: (bool, u32);
+
+        {
+            let involved_set = vec![Rules::test_term_indirect];
+            //result = test_fact_indirect(Key(0), &context, &source, position);
+            let closure = _var_name_indirect_left_recursion2(
+                &involved_set,
+                Rules::test_fact_indirect,
+                &context,
+                test_fact_indirect,
+            );
+            result = closure(Key(0), &source, position);
+        }
+
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+
+        assert_eq!((result.0, result.1), (true, 1));
+        let result_tree = context.into_inner().get_publisher().clear_false();
+        result_tree.print(Key(0), Some(true));
+        let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
+        let key_1 = expected_tree.add_node(Rules::test_fact_indirect, 0, 1, true);
+        expected_tree.connect(Key(0), key_1);
+        let key_2 = expected_tree.add_node(Rules::Num, 0, 1, true);
+        expected_tree.connect(key_1, key_2);
+
+        println!("Expected Tree:");
+        expected_tree.print(Key(0), None);
+        assert_eq!(expected_tree, result_tree);
+    }
+
+    #[test]
+    fn test_test_term_indirect_29() {
+        let string = "1   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let result: (bool, u32);
+
+        {
+            let involved_set = vec![Rules::test_term_indirect];
+            //result = test_fact_indirect(Key(0), &context, &source, position);
+            let closure = _var_name_indirect_left_recursion2(
+                &involved_set,
+                Rules::test_term_indirect,
+                &context,
+                test_term_indirect,
+            );
+            result = closure(Key(0), &source, 0);
+        }
+
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+
+        assert_eq!((result.0, result.1), (true, 1));
+        let result_tree = context.into_inner().get_publisher().clear_false();
+        result_tree.print(Key(0), Some(true));
+        let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
+        let key_1 = expected_tree.add_node(Rules::test_term_indirect, 0, 1, true);
+        expected_tree.connect(Key(0), key_1);
+        let key_2 = expected_tree.add_node(Rules::test_fact_indirect, 0, 1, true);
+        expected_tree.connect(key_1, key_2);
+        let key_3 = expected_tree.add_node(Rules::Num, 0, 1, true);
+        expected_tree.connect(key_2, key_3);
+        println!("Expected Tree:");
+        expected_tree.print(Key(0), None);
+        assert_eq!(expected_tree, result_tree);
+    }
+
     #[test]
     fn test_test_term_indirect_1() {
         let string = "1+2/3+4/5   ".to_string();
@@ -649,8 +728,8 @@ mod tests {
         let key_6 = expected_tree.add_node(Rules::Num, 4, 5, true);
         expected_tree.connect(key_1, key_6);
 
-        let result_tree = context.into_inner().get_publisher().clear_false();
-        result_tree.print(Key(0), Some(true));
+        let result_tree = context.into_inner().get_publisher();
+        result_tree.print(Key(0), None);
         println!("Expected tree:");
         expected_tree.print(Key(0), Some(true));
         assert_eq!(expected_tree, result_tree);

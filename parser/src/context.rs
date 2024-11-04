@@ -141,6 +141,10 @@ impl Context for BasicContext {
         self.publisher.add_node(rule, 0, 0, false)
     }
     fn connect(&mut self, parent_key: Key, child_key: Key) {
+        println!(
+            "Connecting Child: {:?} to Parent: {:?}",
+            child_key, parent_key
+        );
         self.publisher.connect(parent_key, child_key);
     }
     fn connect_front(&mut self, parent_key: Key, child_key: Key) {

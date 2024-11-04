@@ -91,6 +91,28 @@ mod tests {
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 3));
+        let result_tree = context.into_inner().get_publisher().clear_false();
+        result_tree.print(Key(0), None);
+    }
+    #[test]
+    fn test_left_recursion_direct_99() {
+        let string = "1   ".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let result: (bool, u32);
+        {
+            let executor =
+                _var_name_direct_left_recursion(Rules::test_LR_expr, &context, test_lr_expr);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        // context.borrow().print_cache();
+        context.borrow().print_publisher();
+        assert_eq!((result.0, result.1), (true, 1));
+        let result_tree = context.into_inner().get_publisher().clear_false();
+        result_tree.print(Key(0), None);
     }
 
     #[test]
