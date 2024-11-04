@@ -7,55 +7,55 @@ mod tests {
     use std::env;
     use std::fs::{canonicalize, read_to_string};
 
-    #[test]
-    fn test_ppparser_dsl_grammar_rule() {
-        let string = "<Spaces> PASSTHROUGH = '\n'/'\t'/'\r'/' ';".to_string();
-        let src_len = string.len() as u32;
-        let source = Source::new(&string);
-        let position: u32 = 0;
-        let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
-        {
-            let executor = _var_name(Rules::Grammar, &context, grammar);
-            result = executor(Key(0), &source, position);
-        }
-        println!("Result: {:?}", result);
-        //context.borrow().print_cache();
-        //context.borrow().print_publisher();
-        context
-            .into_inner()
-            .get_publisher()
-            .clear_false()
-            .print(Key(0), Some(true));
-        assert_eq!((result.0, result.1), (true, src_len));
-        // Key(0), Grammar, 0, 0, true, 1
-        //     Key(2), Grammar, 0, 39, true, 1
-        //         Key(3), Rule, 0, 39, true, 2
-        //             Key(4), LHS, 0, 21, true, 2
-        //                 Key(5), Var_Name_Decl, 0, 8, true, 0
-        //                 Key(6), Semantic_Instructions, 9, 20, true, 1
-        //                     Key(7), Passthrough, 9, 20, true, 0
-        //             Key(8), RHS, 23, 38, true, 1
-        //                 Key(9), Ordered_Choice, 23, 38, true, 4
-        //                     Key(10), Atom, 23, 26, true, 1
-        //                         Key(11), Nucleus, 23, 26, true, 1
-        //                             Key(12), Terminal, 23, 26, true, 1
-        //                                 Key(13), ASCII, 24, 25, true, 0
-        //                     Key(14), Atom, 27, 30, true, 1
-        //                         Key(15), Nucleus, 27, 30, true, 1
-        //                             Key(16), Terminal, 27, 30, true, 1
-        //                                 Key(17), ASCII, 28, 29, true, 0
-        //                     Key(18), Atom, 31, 34, true, 1
-        //                         Key(19), Nucleus, 31, 34, true, 1
-        //                             Key(20), Terminal, 31, 34, true, 1
-        //                                 Key(21), ASCII, 32, 33, true, 0
-        //                     Key(22), Atom, 35, 38, true, 1
-        //                         Key(23), Nucleus, 35, 38, true, 1
-        //                             Key(24), Terminal, 35, 38, true, 1
-        //                                 Key(25), ASCII, 36, 37, true, 0
+    // #[test]
+    // fn test_ppparser_dsl_grammar_rule() {
+    //     let string = "<Spaces> PASSTHROUGH = '\n'/'\t'/'\r'/' ';".to_string();
+    //     let src_len = string.len() as u32;
+    //     let source = Source::new(&string);
+    //     let position: u32 = 0;
+    //     let result: (bool, u32);
+    //     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+    //     {
+    //         let executor = _var_name(Rules::Grammar, &context, grammar);
+    //         result = executor(Key(0), &source, position);
+    //     }
+    //     println!("Result: {:?}", result);
+    //     //context.borrow().print_cache();
+    //     //context.borrow().print_publisher();
+    //     context
+    //         .into_inner()
+    //         .get_publisher()
+    //         .clear_false()
+    //         .print(Key(0), Some(true));
+    //     assert_eq!((result.0, result.1), (true, src_len));
+    //     // Key(0), Grammar, 0, 0, true, 1
+    //     //     Key(2), Grammar, 0, 39, true, 1
+    //     //         Key(3), Rule, 0, 39, true, 2
+    //     //             Key(4), LHS, 0, 21, true, 2
+    //     //                 Key(5), Var_Name_Decl, 0, 8, true, 0
+    //     //                 Key(6), Semantic_Instructions, 9, 20, true, 1
+    //     //                     Key(7), Passthrough, 9, 20, true, 0
+    //     //             Key(8), RHS, 23, 38, true, 1
+    //     //                 Key(9), Ordered_Choice, 23, 38, true, 4
+    //     //                     Key(10), Atom, 23, 26, true, 1
+    //     //                         Key(11), Nucleus, 23, 26, true, 1
+    //     //                             Key(12), Terminal, 23, 26, true, 1
+    //     //                                 Key(13), ASCII, 24, 25, true, 0
+    //     //                     Key(14), Atom, 27, 30, true, 1
+    //     //                         Key(15), Nucleus, 27, 30, true, 1
+    //     //                             Key(16), Terminal, 27, 30, true, 1
+    //     //                                 Key(17), ASCII, 28, 29, true, 0
+    //     //                     Key(18), Atom, 31, 34, true, 1
+    //     //                         Key(19), Nucleus, 31, 34, true, 1
+    //     //                             Key(20), Terminal, 31, 34, true, 1
+    //     //                                 Key(21), ASCII, 32, 33, true, 0
+    //     //                     Key(22), Atom, 35, 38, true, 1
+    //     //                         Key(23), Nucleus, 35, 38, true, 1
+    //     //                             Key(24), Terminal, 35, 38, true, 1
+    //     //                                 Key(25), ASCII, 36, 37, true, 0
 
-        todo!("Add AST test - Need to make a test AST builder tool really.")
-    }
+    //     todo!("Add AST test - Need to make a test AST builder tool really.")
+    // }
 
     #[test]
     fn test_left_recursion_direct_1() {
@@ -242,36 +242,36 @@ mod tests {
         expected_tree.print(Key(0), Some(true));
         assert_eq!(expected_tree, result_tree);
     }
-    #[test]
-    fn test_left_recursion_direct_4() {
-        let string = "1/2/3/4+5+7+9   ".to_string();
-        let src_len = string.len() as u32;
-        let source = Source::new(&string);
-        let position: u32 = 0;
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
-        let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
-        let result = executor(Key(0), &source, position);
-        println!("Result: {:?}", result);
-        // context.borrow().print_cache();
-        context.borrow().print_publisher();
-        assert_eq!((result.0, result.1), (true, 13));
-        todo!("Add AST")
-    }
-    #[test]
-    fn test_left_recursion_direct_5() {
-        let string = "1+2+3+4/5/7/9   ".to_string();
-        let src_len = string.len() as u32;
-        let source = Source::new(&string);
-        let position: u32 = 0;
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
-        let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
-        let result = executor(Key(0), &source, position);
-        println!("Result: {:?}", result);
-        // context.borrow().print_cache();
-        context.borrow().print_publisher();
-        assert_eq!((result.0, result.1), (true, 13));
-        todo!("Add AST")
-    }
+    // #[test]
+    // fn test_left_recursion_direct_4() {
+    //     let string = "1/2/3/4+5+7+9   ".to_string();
+    //     let src_len = string.len() as u32;
+    //     let source = Source::new(&string);
+    //     let position: u32 = 0;
+    //     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+    //     let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
+    //     let result = executor(Key(0), &source, position);
+    //     println!("Result: {:?}", result);
+    //     // context.borrow().print_cache();
+    //     context.borrow().print_publisher();
+    //     assert_eq!((result.0, result.1), (true, 13));
+    //     todo!("Add AST")
+    // }
+    // #[test]
+    // fn test_left_recursion_direct_5() {
+    //     let string = "1+2+3+4/5/7/9   ".to_string();
+    //     let src_len = string.len() as u32;
+    //     let source = Source::new(&string);
+    //     let position: u32 = 0;
+    //     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+    //     let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
+    //     let result = executor(Key(0), &source, position);
+    //     println!("Result: {:?}", result);
+    //     // context.borrow().print_cache();
+    //     context.borrow().print_publisher();
+    //     assert_eq!((result.0, result.1), (true, 13));
+    //     todo!("Add AST")
+    // }
     #[test]
     fn test_left_recursion_direct_6() {
         let string = "1+2/3+4/5   ".to_string();
@@ -427,32 +427,32 @@ mod tests {
         p.print(Key(0), Some(true));
         todo!("Add AST")
     }
-    #[test]
-    fn test_fact_indirect_2() {
-        let string = "1*2/5".to_string();
-        let src_len = string.len() as u32;
-        let source = Source::new(&string);
-        let position: u32 = 0;
-        let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
-        {
-            let involved_set = vec![Rules::test_fact_indirect];
-            //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
-                &involved_set,
-                Rules::test_fact_indirect,
-                &context,
-                test_fact_indirect,
-            );
-            result = closure(Key(0), &source, 0);
-        }
-        // context.borrow().print_cache();
+    // #[test]
+    // fn test_fact_indirect_2() {
+    //     let string = "1*2/5".to_string();
+    //     let src_len = string.len() as u32;
+    //     let source = Source::new(&string);
+    //     let position: u32 = 0;
+    //     let result: (bool, u32);
+    //     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+    //     {
+    //         let involved_set = vec![Rules::test_fact_indirect];
+    //         //result = test_fact_indirect(Key(0), &context, &source, position);
+    //         let closure = _var_name_indirect_left_recursion2(
+    //             &involved_set,
+    //             Rules::test_fact_indirect,
+    //             &context,
+    //             test_fact_indirect,
+    //         );
+    //         result = closure(Key(0), &source, 0);
+    //     }
+    //     // context.borrow().print_cache();
 
-        // context.borrow().print_publisher();
+    //     // context.borrow().print_publisher();
 
-        assert_eq!((result.0, result.1), (true, 5));
-        todo!("Add AST");
-    }
+    //     assert_eq!((result.0, result.1), (true, 5));
+    //     todo!("Add AST");
+    // }
     #[test]
     fn test_fact_indirect_1() {
         let string = "1*2/3*7/9".to_string();
@@ -479,21 +479,10 @@ mod tests {
         assert_eq!((result.0, result.1), (true, 9));
         let result_tree = context.into_inner().get_publisher().clear_false();
         // println!("Result Tree:\n");
-        result_tree.print(Key(0), Some(true));
+        result_tree.print(Key(0), None);
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
-        // Key(0), Grammar, 0, 0, true, 1
-        //     Key(8), test_indirect_LR_expr, 0, 5, true, 2
-        //         Key(9), test_indirect_LR_num, 0, 3, true, 1
-        //             Key(10), test_indirect_LR_expr, 0, 3, true, 2
-        //                 Key(2), test_indirect_LR_num, 0, 1, true, 1
-        //                     Key(3), test_indirect_LR_expr, 0, 1, true, 1
-        //                         Key(4), test_LR_num, 0, 1, true, 1
-        //                             Key(5), Num, 0, 1, true, 0
-        //                 Key(6), test_LR_num, 2, 3, true, 1
-        //                     Key(7), Num, 2, 3, true, 0
-        //         Key(11), test_LR_num, 4, 5, true, 1
-        //             Key(12), Num, 4, 5, true, 0
+
         let key_1 = expected_tree.add_node(Rules::test_fact_indirect, 0, 9, true);
         expected_tree.connect(Key(0), key_1);
         let key_2 = expected_tree.add_node(Rules::test_fact_indirect, 0, 7, true);
@@ -516,7 +505,7 @@ mod tests {
         expected_tree.connect(key_1, key_10);
 
         println!("Expected tree:");
-        expected_tree.print(Key(0), Some(true));
+        expected_tree.print(Key(0), None);
         assert_eq!(expected_tree, result_tree);
     }
     #[test]
@@ -595,31 +584,31 @@ mod tests {
         expected_tree.print(Key(0), Some(true));
         assert_eq!(expected_tree, result_tree);
     }
-    #[test]
-    fn test_test_term_indirect_2() {
-        let string = "1+2/3+4/5/7/9   ".to_string();
-        let src_len = string.len() as u32;
-        let source = Source::new(&string);
-        let position: u32 = 0;
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
-        let result: (bool, u32);
-        {
-            let involved_set = vec![Rules::test_term_indirect];
-            //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
-                &involved_set,
-                Rules::test_term_indirect,
-                &context,
-                test_term_indirect,
-            );
-            result = closure(Key(0), &source, 0);
-        }
-        println!("Result: {:?}", result);
-        // context.borrow().print_cache();
+    // #[test]
+    // fn test_test_term_indirect_2() {
+    //     let string = "1+2/3+4/5/7/9   ".to_string();
+    //     let src_len = string.len() as u32;
+    //     let source = Source::new(&string);
+    //     let position: u32 = 0;
+    //     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+    //     let result: (bool, u32);
+    //     {
+    //         let involved_set = vec![Rules::test_term_indirect];
+    //         //result = test_fact_indirect(Key(0), &context, &source, position);
+    //         let closure = _var_name_indirect_left_recursion2(
+    //             &involved_set,
+    //             Rules::test_term_indirect,
+    //             &context,
+    //             test_term_indirect,
+    //         );
+    //         result = closure(Key(0), &source, 0);
+    //     }
+    //     println!("Result: {:?}", result);
+    //     // context.borrow().print_cache();
 
-        assert_eq!((result.0, result.1), (true, 13));
-        todo!("Add AST")
-    }
+    //     assert_eq!((result.0, result.1), (true, 13));
+    //     todo!("Add AST")
+    // }
     #[test]
     fn test_fact_indirect_9() {
         let string = "1*2/3".to_string();

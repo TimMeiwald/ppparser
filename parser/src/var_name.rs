@@ -463,7 +463,10 @@ pub fn _var_name_kernel_growth_function<T: Context>(
     // If head is none, return what is stored in the memo table.
     let mut result: (bool, u32);
     let mut last_result = (false, position);
-    let mut last_key: Key = parent;
+    let mut last_key: Key = context.borrow_mut().reserve_publisher_entry(rule);
+    let first_last_key = last_key;
+    let first_current_key: Key = context.borrow_mut().reserve_publisher_entry(rule);
+    let mut current_key = first_current_key;
     {
         let involved_btree = convert_vec_to_btree_set(involved_set);
 
@@ -475,20 +478,11 @@ pub fn _var_name_kernel_growth_function<T: Context>(
 
         loop {
             println!("LOOP COUNT: {:?}", count);
-            let current_key = context.borrow_mut().reserve_publisher_entry(rule);
             context.borrow_mut().reinitialize_eval_set(position);
 
             println!("Entering Func: {:?} {:?}", rule, position);
             println!("Parent: {:?} Child: {:?}", parent, current_key);
-            // context.borrow_mut().create_cache_entry(rule, false, position, 0, current_key);
-            // loop {
-            //     println!("Inner Count: {:?}", count);
-            //     result = func(parent, context, source, position);
-            //     if context.borrow().eval_set_is_empty(position, rule) {
-            //         break;
-            //     }
-            //     count += 1;
-            // }
+
             let memo = context.borrow().check(rule, position);
             let memo = memo;
             match memo {
@@ -501,9 +495,12 @@ pub fn _var_name_kernel_growth_function<T: Context>(
                 None => {}
             }
 
-            result = func(parent, context, source, position);
+            result = func(current_key, context, source, position);
 
-            println!("RESULT: {:?}", result);
+            println!(
+                "RESULT: {:?}, Current Key: {:?}, Last Key: {:?}",
+                result, current_key, last_key
+            );
 
             println!(
                 "Leaving Func: {:?} {:?} with response {:?}",
@@ -523,6 +520,19 @@ pub fn _var_name_kernel_growth_function<T: Context>(
                     position,
                     last_result.1,
                 );
+                context.borrow_mut().connect(parent, last_key);
+
+                // Updates the first initial sidestepping parse.
+                // context
+                //     .borrow_mut()
+                //     .disconnect(first_current_key, first_last_key);
+                // context
+                //     .borrow_mut()
+                //     .connect_front(first_current_key, current_key);
+                // context
+                //     .borrow_mut()
+                //     .update_publisher_entry(current_key, true, position, result.1);
+
                 break;
             }
             context.borrow_mut().create_cache_entry(
@@ -535,9 +545,14 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             context
                 .borrow_mut()
                 .update_publisher_entry(current_key, result.0, position, result.1);
+            // Because of the left recursion we need to insert the new connection at the front to maintain associativity.
+            // Initially last_key is Parent so we lose one layer of the tree.
+            //context.borrow_mut().connect_front(current_key, last_key);
+
             last_result = result;
             last_key = current_key;
             count += 1;
+            current_key = context.borrow_mut().reserve_publisher_entry(rule);
         }
     }
     let memo = context.borrow().check(rule, position);
@@ -609,13 +624,21 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
                 None => {
                     let current_key = context.borrow_mut().reserve_publisher_entry(rule); // I need it for the keys even though they don't necessarily make sense currently/ Might need a NULL key.
                     context.borrow_mut().remove_from_eval_set(position, rule);
+
                     println!("RUNNING FUNCTION: {:?}", rule);
+                    // The first time we evaluate we just pass throught he parent function.
                     let f = func(current_key, context, source, position);
-                    println!("Not in Growth Result: {:?}", (rule, f));
+                    context.borrow_mut().connect(parent, current_key);
+                    context
+                        .borrow_mut()
+                        .update_publisher_entry(current_key, f.0, position, f.1);
+                    println!("FIRST TIME RESULT: {:?}", f);
+                    println!("Not in Growth Result(1): {:?}", (rule, f));
                     f
                 }
                 Some(memo) => {
-                    println!("Not in Growth Result: {:?}", (rule, memo.0, memo.1));
+                    println!("Not in Growth Result(2): {:?}", (rule, memo.0, memo.1));
+                    context.borrow_mut().connect(parent, memo.2);
                     (memo.0, memo.1)
                 }
             }
