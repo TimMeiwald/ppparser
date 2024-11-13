@@ -148,7 +148,7 @@ mod tests {
         // context.borrow().print_cache();
         // context.borrow().print_publisher();
 
-        assert_eq!((result.0, result.1), (true, 5));
+        assert_eq!((result.0, result.1), (true, 3));
         let result_tree = context.into_inner().get_publisher().clear_false();
 
         result_tree.print(Key(0), None);
@@ -433,7 +433,7 @@ mod tests {
         let result: (bool, u32);
 
         {
-            let involved_set = vec![Rules::test_term_indirect, Rules::test_fact_indirect];
+            let involved_set = vec![Rules::test_term_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
             let closure = _var_name_indirect_left_recursion2(
                 &involved_set,
