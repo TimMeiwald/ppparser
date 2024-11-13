@@ -12,16 +12,16 @@ fn memoized_behaviour<T: Context>(
     end_position: u32,
     memoized_key: Key,
 ) -> (bool, u32) {
-    #[cfg(debug_assertions)]
-    {
-        println!(
-            "Memoized: Rule: {:?}, Position: {:?}, Parent: {:?}, Result: {:?}",
-            rule,
-            start_position,
-            parent,
-            (is_true, end_position)
-        )
-    }
+    // #[cfg(debug_assertions)]
+    // {
+    //     println!(
+    //         "Memoized: Rule: {:?}, Position: {:?}, Parent: {:?}, Result: {:?}",
+    //         rule,
+    //         start_position,
+    //         parent,
+    //         (is_true, end_position)
+    //     )
+    // }
     context.borrow_mut().connect(parent, memoized_key);
     (is_true, end_position)
 }
@@ -41,13 +41,13 @@ fn default_behaviour<T: Context>(
     c.update_publisher_entry(current_key, f.0, start_position, f.1);
     // Change to only connect on success to makes things a little faster
     c.connect(parent, current_key);
-    #[cfg(debug_assertions)]
-    {
-        println!(
-            "Default Behaviour: Rule: {:?}, Position: {:?}, Parent: {:?}, Result: {:?}",
-            rule, start_position, parent, f
-        )
-    }
+    // #[cfg(debug_assertions)]
+    // {
+    //     println!(
+    //         "Default Behaviour: Rule: {:?}, Position: {:?}, Parent: {:?}, Result: {:?}",
+    //         rule, start_position, parent, f
+    //     )
+    // }
     f
 }
 
@@ -69,13 +69,13 @@ pub fn _var_name_kernel<T: Context>(
     position: u32,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
-    #[cfg(debug_assertions)]
-    {
-        println!(
-            "Regular Kernel Start: Rule: {:?}, Position: {:?}, Parent: {:?}",
-            rule, position, parent
-        )
-    }
+    // #[cfg(debug_assertions)]
+    // {
+    //     println!(
+    //         "Regular Kernel Start: Rule: {:?}, Position: {:?}, Parent: {:?}",
+    //         rule, position, parent
+    //     )
+    // }
     let memo = context.borrow().check(rule, position);
     return match memo {
         Some((is_true, end_position, memoized_key)) => memoized_behaviour(
@@ -352,104 +352,6 @@ fn convert_vec_to_btree_set(involved_set: &Vec<Rules>) -> BTreeSet<Rules> {
     involved
 }
 
-// pub fn _var_name_kernel_indirect_left_recursion2<T: Context>(
-//     involved_set: &Vec<Rules>,
-//     rule: Rules,
-//     context: &RefCell<T>,
-//     parent: Key,
-//     source: &Source,
-//     position: u32,
-//     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
-// ) -> (bool, u32) {
-//     // println!("In Indirect Left Recursion 2");
-//     let head = context.borrow().check_head(position);
-//     if head.is_none(){
-//         println!("Entering Core Loop");
-//         // println!("Active Left Recursion Rule: {:?}", rule);
-//         // Sets head otherwise does nothing and just calls it again.
-//         let involved_btree = convert_vec_to_btree_set(involved_set);
-//         context.borrow_mut().set_head(position, rule, involved_btree);
-//         let mut result: (bool, u32);
-//         let mut last_result: (bool, u32) = (true, position);
-//         let mut current_key: Key =  context.borrow_mut().reserve_publisher_entry(rule);
-
-//         let mut last_key = parent;
-//         let mut count = 0;
-//         loop {
-//             context.borrow_mut().reinitialize_eval_set(position);
-//             // println!("Going into func");
-//             println!("Before Func Count: {:?}, Current Key: {:?}", count, current_key);
-//             // Probs need a 2nd loop where it checks for whether there's anything left in eval set.
-//             result = func(current_key, context, source, position);
-//             println!("After Func Count: {:?}", count);
-
-//             // println!("Result: {:?}, Last Result: {:?}, {:?}, {:?}, {:?}", result, last_result, !result.0, (result.1 <= last_result.1), !result.0 || (result.1 <= last_result.1));
-//             context.borrow_mut().update_publisher_entry(current_key, result.0, position, result.1);
-
-//             if !result.0 || (result.1 <= last_result.1) {
-//                 break;
-//             }
-//             context.borrow_mut().create_cache_entry(rule, result.0, position, result.1, current_key);
-//             last_result = result;
-//             last_key = current_key;
-//             current_key = context.borrow_mut().reserve_publisher_entry(rule);
-//             count += 1;
-//             context.borrow_mut().connect(current_key, last_key);
-
-//         }
-
-//         context.borrow_mut().remove_head(position);
-//         // Clear Nodes children here and then connect last node?
-//         context.borrow_mut().clear_node_of_children(parent);
-//         context.borrow_mut().connect(parent, last_key);
-//         println!("Indirect Core Loop: Rule: {:?}: {:?}, Parent: {:?}, Current: {:?}", rule, last_result, parent, last_key);
-//         return last_result;
-//     }
-//     else{
-//         println!("Entering Alternate Path");
-//         let head = head.expect("Should exist since we checked none above");
-//         // println!("Head Rule is {:?}, Current Rule is {:?}, At Position: {:?}", head, rule, position);
-//         // If head is some it will go here.
-//         // println!("In default behaviour");
-//         let is_in_eval_set = context.borrow().rule_in_eval_set(position, rule);
-//         if is_in_eval_set{
-//             println!("Entering Is In Eval Set: {:?}", rule);
-//             // println!("{:?}, Is In Eval Set", rule);
-//             context.borrow_mut().remove_from_eval_set(position, rule);
-//             let current_key = context.borrow_mut().reserve_publisher_entry(rule);
-//             let f = func(current_key, context, source, position);
-//             let mut c = context.borrow_mut();
-//             c.create_cache_entry(rule, f.0, position, f.1, current_key);
-//             c.update_publisher_entry(current_key, f.0, position, f.1);
-//             // Change to only connect on success to makes things a little faster
-//             c.connect(parent, current_key);
-//             println!("Indirect Is In Eval Set: Rule: {:?}: {:?}",rule, f);
-
-//             f
-
-//         }
-//         else{
-//             // println!("Not in Eval Set");
-
-//             let memo = context.borrow().check(rule, position);
-//             return match memo{
-//                 None => {
-//                     println!("Returning False, 0");
-//                         (false, 0)
-//                     }
-//                 Some((is_true, end_position, memoized_key)) => {
-//                     context.borrow_mut().connect(parent, memoized_key);
-//                     println!("Indirect Memoized: Rule: {:?}: {:?}", rule, (is_true, end_position));
-
-//                     (is_true, end_position)
-
-//                 }
-//             }
-//         }
-
-//     }
-// }
-
 pub fn _var_name_kernel_growth_function<T: Context>(
     involved_set: &Vec<Rules>,
     rule: Rules,
@@ -458,14 +360,18 @@ pub fn _var_name_kernel_growth_function<T: Context>(
     source: &Source,
     position: u32,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    last_lr_position: Option<u32>,
 ) -> (bool, u32) {
-    println!("ENTERING GROWTH FUNCTION!");
+    println!("ENTERING GROWTH FUNCTION!: {:?}", (rule, position));
     // If head is none, return what is stored in the memo table.
     let mut result: (bool, u32);
     let mut last_result = (false, position);
     let mut last_key: Key = context.borrow_mut().reserve_publisher_entry(rule);
-    let first_current_key = context.borrow_mut().reserve_publisher_entry(rule);
-    let mut current_key = first_current_key;
+    context
+        .borrow_mut()
+        .update_publisher_entry(last_key, false, 0, 0);
+    let mut current_key = context.borrow_mut().reserve_publisher_entry(rule);
+    let previous_active_lr_position = last_lr_position;
 
     {
         let involved_btree = convert_vec_to_btree_set(involved_set);
@@ -477,72 +383,70 @@ pub fn _var_name_kernel_growth_function<T: Context>(
         let mut count = 0;
 
         loop {
-            println!("LOOP COUNT: {:?}", count);
+            println!(
+                "GROWTH RULE: {:?}, POSITION: {:?}, LOOP COUNT: {:?}",
+                rule, position, count
+            );
             context.borrow_mut().reinitialize_eval_set(position);
             // println!("Entering Func: {:?} {:?}", rule, position);
             // println!("Parent: {:?} Child: {:?}", parent, current_key);
+
             result = func(current_key, context, source, position);
-            // println!(
-            //     "RESULT: {:?}, Current Key: {:?}, Last Key: {:?}",
-            //     result, current_key, last_key
-            // );
-            // println!(
-            //     "Leaving Func: {:?} {:?} with response {:?}",
-            //     rule, position, result
-            // );
-            if !result.0 || (result.1 <= last_result.1) {
-                // context.borrow_mut().create_cache_entry(
-                //     rule,
-                //     last_result.0,
-                //     position,
-                //     last_result.1,
-                //     last_key,
-                // );
-                // context.borrow_mut().update_publisher_entry(
-                //     last_key,
-                //     last_result.0,
-                //     position,
-                //     last_result.1,
-                // );
-                context.borrow_mut().connect(parent, last_key);
 
-                // Updates the first initial sidestepping parse.
-                // context
-                //     .borrow_mut()
-                //     .disconnect(first_current_key, first_last_key);
-                // context
-                //     .borrow_mut()
-                //     .connect_front(first_current_key, current_key);
-                // context
-                //     .borrow_mut()
-                //     .update_publisher_entry(current_key, true, position, result.1);
+            let memo_result = context.borrow_mut().check(rule, position);
+            println!("Current");
+            //context.borrow_mut().print_node(current_key);
+            println!("Memo");
 
-                break;
+            match memo_result {
+                None => {
+                    println!("Is this expected?")
+                }
+                Some(memo_result) => {
+                    //context.borrow_mut().print_node(memo_result.2);
+                    current_key = memo_result.2;
+                    result = (memo_result.0, memo_result.1);
+                }
             }
-            context.borrow_mut().create_cache_entry(
-                rule,
-                result.0,
-                position,
-                result.1,
-                current_key,
-            );
+            context.borrow_mut().connect_front(current_key, last_key);
+
             context
                 .borrow_mut()
                 .update_publisher_entry(current_key, result.0, position, result.1);
-            // Because of the left recursion we need to insert the new connection at the front to maintain associativity.
-            // Initially last_key is Parent so we lose one layer of the tree.
-            //context.borrow_mut().connect_front(current_key, last_key);
+            context.borrow_mut().print_node(current_key);
+            // context
+            //     .borrow_mut()
+            //     .update_publisher_entry(current_key, result.0, position, result.1);
+
+            if !result.0 || (result.1 <= last_result.1) {
+                context.borrow_mut().connect_front(parent, last_key);
+
+                context
+                    .borrow_mut()
+                    .set_current_active_lr_position(previous_active_lr_position);
+                context.borrow_mut().create_cache_entry(
+                    rule,
+                    last_result.0,
+                    position,
+                    last_result.1,
+                    last_key,
+                );
+
+                println!("LOOP: {:?}, Result: {:?}", count, result);
+                break;
+            }
 
             last_result = result;
             last_key = current_key;
-            count += 1;
             current_key = context.borrow_mut().reserve_publisher_entry(rule);
+            println!("LOOP: {:?}, Result: {:?}", count, result);
+            count += 1;
         }
     }
     // We need to reset the head, in that if there was a head before we need to push it back onto the stack.
     //context.borrow_mut().remove_head(position);
     context.borrow_mut().reset_head(position);
-
+    println!("EXITING GROWTH FUNCTION: {:?}", (rule, position));
     return last_result;
 }
 
@@ -550,23 +454,62 @@ pub fn should_go_into_growth_function<T: Context>(
     rule: Rules,
     context: &RefCell<T>,
     position: u32,
-) -> bool {
-    let ctx = context.borrow();
-    let head = ctx.check_head(position);
-    //println!("Head: {:?}", head);
-    return match head {
-        Some(head) => {
-            if ctx.rule_in_involved_set(position, rule) {
-                false
+) -> (bool, Option<u32>) {
+    // Keeps triggering everytime which it should not do.
+    let mut ctx = context.borrow_mut();
+    let active_lr_position = ctx.get_current_active_lr_position();
+    match active_lr_position {
+        None => {
+            println!("No head?");
+            let last_lr_position = ctx.get_current_active_lr_position();
+            ctx.set_current_active_lr_position(Some(position));
+            (true, last_lr_position)
+        }
+        Some(lr_position) => {
+            let head = ctx.check_head(lr_position).expect("Should exist");
+            println!("{:?}", head);
+            println!(
+                "In involved set? {:?}",
+                ctx.rule_in_involved_set(lr_position, rule)
+            );
+            if ctx.rule_in_involved_set(lr_position, rule) {
+                (false, None)
             } else if head.active_left_recursion_rule == rule {
-                false
+                (false, None)
             } else {
-                true
+                let last_lr_position = ctx.get_current_active_lr_position();
+                ctx.set_current_active_lr_position(Some(position));
+                (true, last_lr_position)
             }
         }
-        None => true,
-    };
+    }
 }
+// let head = ctx.check_head(position);
+// //println!("SHOULD GROWTH HEAD IS CURRENTLY: {:?}", head);
+// println!("Head: {:?}", head);
+// return match head {
+//     Some(head) => {
+//         println!(
+//             "In involved set? {:?}",
+//             ctx.rule_in_involved_set(position, rule)
+//         );
+//         if ctx.rule_in_involved_set(position, rule) {
+//             (false, None)
+//         } else if head.active_left_recursion_rule == rule {
+//             (false, None)
+//         } else {
+//             let last_lr_position = ctx.get_current_active_lr_position();
+//             ctx.set_current_active_lr_position(Some(position));
+//             (true, last_lr_position)
+//         }
+//     }
+//     None => {
+//         println!("No head?");
+//         let last_lr_position = ctx.get_current_active_lr_position();
+//         ctx.set_current_active_lr_position(Some(position));
+//         (true, last_lr_position)
+//     }
+// };
 
 pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
     involved_set: &Vec<Rules>,
@@ -578,11 +521,7 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let should = should_go_into_growth_function(rule, context, position);
-    println!(
-        "Rule: {:?}, Position: {:?} should go into growth: {:?} ",
-        rule, position, should
-    );
-    if should {
+    if should.0 {
         let result = _var_name_kernel_growth_function(
             involved_set,
             rule,
@@ -591,53 +530,44 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
             source,
             position,
             func,
+            should.1,
         );
         return result;
     } else {
         // Runs if head is Some
-        // Do not evaluate any rule that is not involved in this left recursion(i.e is not in the involved set.)
-        let is_in_eval_set = context.borrow().rule_in_eval_set(position, rule);
-        println!("{:?} is in Eval Set: {:?}", rule, is_in_eval_set);
+        // Do not evaluate any rule that is not involved in this left recursion(i.e is not in the eval set.)
+        let active_lr_position = context
+            .borrow()
+            .get_current_active_lr_position()
+            .expect("Active LR Should exist when in LR code.");
+        let is_in_eval_set = context.borrow().rule_in_eval_set(active_lr_position, rule);
+        // println!("{:?} is in Eval Set: {:?}", rule, is_in_eval_set);
         if is_in_eval_set {
-            let memo = context.borrow().check(rule, position);
-            match memo {
-                None => {
-                    let current_key = context.borrow_mut().reserve_publisher_entry(rule); // I need it for the keys even though they don't necessarily make sense currently/ Might need a NULL key.
-                    context.borrow_mut().remove_from_eval_set(position, rule);
-
-                    println!("RUNNING FUNCTION: {:?}", rule);
-                    // The first time we evaluate we just pass throught he parent function.
-                    let f = func(current_key, context, source, position);
-                    context.borrow_mut().connect(parent, current_key);
-                    context
-                        .borrow_mut()
-                        .update_publisher_entry(current_key, f.0, position, f.1);
-                    println!("FIRST TIME RESULT: {:?}", f);
-                    println!("Not in Growth Result(1): {:?}", (rule, f));
-                    f
-                }
-                Some(memo) => {
-                    println!("Not in Growth Result(2): {:?}", (rule, memo.0, memo.1));
-                    context.borrow_mut().remove_from_eval_set(position, rule);
-
-                    context.borrow_mut().connect(parent, memo.2);
-
-                    (memo.0, memo.1)
-                }
-            }
+            //println!("IS IN EVAL SET\nRUNNING FUNCTION: {:?}", rule);
+            let current_key = context.borrow_mut().reserve_publisher_entry(rule);
+            context
+                .borrow_mut()
+                .remove_from_eval_set(active_lr_position, rule);
+            let result = func(current_key, context, source, position);
+            // println!(
+            //     "RESULT OF RUNNING FUNCTION: {:?} {:?} {:?}",
+            //     position, rule, result
+            // );
+            context.borrow_mut().create_cache_entry(
+                rule,
+                result.0,
+                position,
+                result.1,
+                current_key,
+            );
+            context.borrow_mut().connect(parent, current_key);
+            result
         } else {
-            println!("{:?} NOT IN EVAL SET RETURNING {:?}", rule, position);
+            //println!("{:?} NOT IN EVAL SET RETURNING {:?}", rule, position);
             let memo = context.borrow().check(rule, position);
             match memo {
-                Some(memo) => {
-                    println!("Returning(1) {:?}", (memo.0, memo.1));
-                    (memo.0, memo.1)
-                }
-                None => {
-                    println!("Returning(2) {:?}", (false, 0));
-                    println!("RULE: {:?} in Returning(2)", rule);
-                    (false, position)
-                }
+                Some(memo) => (memo.0, memo.1),
+                None => (false, position),
             }
         }
     }

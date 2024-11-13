@@ -20,6 +20,7 @@ pub struct BasicCache {
     cache: HashMap<(Rules, u32), (bool, u32, Key)>,
     left_recursion_cache: HashMap<(Rules, u32), (bool, u32, Key, LR)>,
     heads: HashMap<u32, Head>,
+    current_active_left_recursion: Option<u32>,
     recursion_stack: VecDeque<Head>,
     last_used: Key,
 }
@@ -30,9 +31,29 @@ impl BasicCache {
             cache: HashMap::new(),
             left_recursion_cache: HashMap::new(),
             heads: HashMap::new(),
+            current_active_left_recursion: None,
             recursion_stack: VecDeque::new(),
             last_used: Key(0),
         }
+    }
+
+    pub fn get_current_active_lr_position(&self) -> Option<u32> {
+        // println!(
+        //     "Current Active LR: {:?}",
+        //     self.current_active_left_recursion
+        // );
+        self.current_active_left_recursion
+    }
+    pub fn set_current_active_lr_position(&mut self, position: Option<u32>) {
+        // println!(
+        //     "Current Active LR: {:?}",
+        //     self.current_active_left_recursion
+        // );
+        self.current_active_left_recursion = position;
+        // println!(
+        //     "Setting Active LR to: {:?}",
+        //     self.current_active_left_recursion
+        // );
     }
 
     pub fn insert(
@@ -43,8 +64,15 @@ impl BasicCache {
         end_position: u32,
         key: Key,
     ) {
-        self.cache
+        let x = self
+            .cache
             .insert((rule, start_position), (is_true, end_position, key));
+        match x {
+            Some(x) => {
+                println!("Overwriting Key: {:?} with Key: {:?}", x.2, key)
+            }
+            None => {}
+        }
     }
     pub fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         self.cache.get(&(rule, start_position)).copied()
@@ -99,14 +127,15 @@ impl BasicCache {
     //     // };
     // }
     pub fn reset_head(&mut self, start_position: u32) {
-        println!("RESET HEAD!");
-        println!("\x1b[0m");
-        self.heads.remove(&start_position); // Remove this head
+        // println!("RESET HEAD!");
+        // println!("\x1b[0m");
+        //self.heads.remove(&start_position); // Remove this head
         let past_head = self.recursion_stack.pop_front();
+
         match past_head {
             None => {}
             Some(past_head) => {
-                println!("REINSERTING HEAD RECURSION");
+                // println!("REINSERTING HEAD RECURSION");
                 self.heads.insert(start_position, past_head);
             }
         };
@@ -118,17 +147,21 @@ impl BasicCache {
         head_rule: Rules,
         involved_set: BTreeSet<Rules>,
     ) {
-        println!("\x1b[31m");
-        println!("SET HEAD! {:?}", (start_position, head_rule));
-        let current_head_at_position = self.heads.remove(&start_position);
-        match current_head_at_position {
+        // println!("\x1b[31m");
+        // println!("SET HEAD! {:?}", (start_position, head_rule));
+
+        // println!("Recursion Stack: {:?}", self.recursion_stack);
+
+        let old_value = self.heads.remove(&start_position);
+        let eval_set = involved_set.clone();
+
+        match old_value {
             None => {}
-            Some(current_head) => {
-                self.recursion_stack.push_front(current_head);
+            Some(old_head) => {
+                self.recursion_stack.push_front(old_head);
             }
         }
-        println!("Recursion Stack: {:?}", self.recursion_stack);
-        let eval_set = involved_set.clone();
+
         let head = Head {
             start_position: start_position,
             active_left_recursion_rule: head_rule,
@@ -137,13 +170,14 @@ impl BasicCache {
         };
         self.heads.insert(start_position, head);
     }
+
     pub fn reinitialize_eval_set(&mut self, start_position: u32) {
         let head = self
             .heads
             .get_mut(&start_position)
             .expect("Should exist by now");
         head.eval_set = head.involved_set.clone();
-        println!("Reinit Eval Set: {:?}", head.eval_set);
+        // println!("Reinit Eval Set: {:?}", head.eval_set);
     }
 
     pub fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool {
@@ -159,7 +193,7 @@ impl BasicCache {
         let head = self
             .heads
             .get(&start_position)
-            .expect("Should always exist when calling rule_in_eval_set");
+            .expect("Should always exist when calling rule_in_involved_set");
         // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
         head.involved_set.contains(&rule)
     }

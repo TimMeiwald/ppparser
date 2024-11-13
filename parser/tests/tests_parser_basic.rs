@@ -300,6 +300,10 @@ mod tests {
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 11));
+        context
+            .into_inner()
+            .get_publisher()
+            .print(Key(0), Some(true));
     }
     #[test]
     fn test_test_term_indirect_26() {
@@ -326,6 +330,10 @@ mod tests {
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 3));
+        context
+            .into_inner()
+            .get_publisher()
+            .print(Key(0), Some(true));
     }
     #[test]
     fn test_test_term_indirect_29() {
@@ -352,6 +360,10 @@ mod tests {
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 1));
+        context
+            .into_inner()
+            .get_publisher()
+            .print(Key(0), Some(true));
     }
     #[test]
     fn test_test_fact_indirect_26() {

@@ -41,6 +41,7 @@ where
         end_position: u32,
         key: Key,
     );
+    fn connect_if_not_connected(&mut self, parent_index: Key, child_index: Key);
     fn create_cache_entry_direct_lr(
         &mut self,
         rule: Rules,
@@ -74,6 +75,9 @@ where
     fn set_last_key(&mut self, last_used: Key);
     fn reset_head(&mut self, start_position: u32);
     fn disconnect(&mut self, parent: Key, child: Key);
+    fn print_node(&self, node: Key);
+    fn get_current_active_lr_position(&self) -> Option<u32>;
+    fn set_current_active_lr_position(&mut self, position: Option<u32>);
     // fn get_currently_active_head(&self) -> Option<u32>;
     // fn set_currently_active_head(&mut self, position: Option<u32>);
 }
@@ -104,6 +108,12 @@ impl Context for BasicContext {
             cache: Self::C::new(),
             publisher: Self::P::new(size_of_source, number_of_rules),
         }
+    }
+    fn get_current_active_lr_position(&self) -> Option<u32> {
+        self.cache.get_current_active_lr_position()
+    }
+    fn set_current_active_lr_position(&mut self, position: Option<u32>) {
+        self.cache.set_current_active_lr_position(position);
     }
     fn last_key(&self) -> Key {
         self.cache.last_key()
@@ -137,14 +147,18 @@ impl Context for BasicContext {
         //self.publisher.print(Key(0), Some(true));
         println!("\n\n{:?}", &self.publisher)
     }
+    fn print_node(&self, node: Key) {
+        self.publisher.print(node, None);
+    }
+
     fn reserve_publisher_entry(&mut self, rule: Rules) -> Key {
         self.publisher.add_node(rule, 0, 0, false)
     }
     fn connect(&mut self, parent_key: Key, child_key: Key) {
-        println!(
-            "Connecting Child: {:?} to Parent: {:?}",
-            child_key, parent_key
-        );
+        // println!(
+        //     "Connecting Child: {:?} to Parent: {:?}",
+        //     child_key, parent_key
+        // );
         self.publisher.connect(parent_key, child_key);
     }
     fn connect_front(&mut self, parent_key: Key, child_key: Key) {
@@ -202,11 +216,17 @@ impl Context for BasicContext {
     fn rule_in_involved_set(&self, start_position: u32, rule: Rules) -> bool {
         self.cache.rule_in_involved_set(start_position, rule)
     }
+    fn connect_if_not_connected(&mut self, parent_index: Key, child_index: Key) {
+        self.publisher
+            .connect_if_not_connected(parent_index, child_index);
+    }
 
     fn reset_head(&mut self, start_position: u32) {
+        println!("RESETTING HEAD!");
         self.cache.reset_head(start_position);
     }
     fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>) {
+        println!("SETTING HEAD");
         self.cache.set_head(start_position, head_rule, involved_set);
     }
     fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool {
