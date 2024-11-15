@@ -69,7 +69,7 @@ impl BasicCache {
             .insert((rule, start_position), (is_true, end_position, key));
         match x {
             Some(x) => {
-                println!("Overwriting Key: {:?} with Key: {:?}", x.2, key)
+                //println!("Overwriting Key: {:?} with Key: {:?}", x.2, key)
             }
             None => {}
         }

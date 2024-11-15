@@ -383,20 +383,16 @@ pub fn _var_name_kernel_growth_function<T: Context>(
         let mut count = 0;
 
         loop {
+            println!("\n");
             println!(
                 "GROWTH RULE: {:?}, POSITION: {:?}, LOOP COUNT: {:?}",
                 rule, position, count
             );
             context.borrow_mut().reinitialize_eval_set(position);
-            // println!("Entering Func: {:?} {:?}", rule, position);
-            // println!("Parent: {:?} Child: {:?}", parent, current_key);
 
             result = func(current_key, context, source, position);
 
             let memo_result = context.borrow_mut().check(rule, position);
-            println!("Current");
-            //context.borrow_mut().print_node(current_key);
-            println!("Memo");
 
             match memo_result {
                 None => {
@@ -408,18 +404,22 @@ pub fn _var_name_kernel_growth_function<T: Context>(
                     result = (memo_result.0, memo_result.1);
                 }
             }
-            context.borrow_mut().connect_front(current_key, last_key);
+            // This is dumb connect beforehand and then order is conserved. Although can't if there are multiple
+            // Nested indirect rules.
+            // Walk the tree to "find" the lowest rule in involved set on each iteration
+            // Probably not that performant but at this point who gives a fuck.
+            // context.borrow_mut().connect_front(current_key, last_key);
 
             context
                 .borrow_mut()
                 .update_publisher_entry(current_key, result.0, position, result.1);
-            context.borrow_mut().print_node(current_key);
+            //context.borrow_mut().print_node(current_key);
             // context
             //     .borrow_mut()
             //     .update_publisher_entry(current_key, result.0, position, result.1);
 
             if !result.0 || (result.1 <= last_result.1) {
-                context.borrow_mut().connect_front(parent, last_key);
+                context.borrow_mut().connect(parent, last_key);
 
                 context
                     .borrow_mut()
@@ -441,12 +441,16 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             current_key = context.borrow_mut().reserve_publisher_entry(rule);
             println!("LOOP: {:?}, Result: {:?}", count, result);
             count += 1;
+            println!("\n");
         }
     }
     // We need to reset the head, in that if there was a head before we need to push it back onto the stack.
-    //context.borrow_mut().remove_head(position);
     context.borrow_mut().reset_head(position);
-    println!("EXITING GROWTH FUNCTION: {:?}", (rule, position));
+    println!("EXITING GROWTH FUNCTION: {:?}\n", (rule, position));
+    println!("Node Result of Growth Function");
+    context.borrow_mut().print_node(last_key);
+    println!("\n");
+
     return last_result;
 }
 
@@ -460,18 +464,12 @@ pub fn should_go_into_growth_function<T: Context>(
     let active_lr_position = ctx.get_current_active_lr_position();
     match active_lr_position {
         None => {
-            println!("No head?");
             let last_lr_position = ctx.get_current_active_lr_position();
             ctx.set_current_active_lr_position(Some(position));
             (true, last_lr_position)
         }
         Some(lr_position) => {
             let head = ctx.check_head(lr_position).expect("Should exist");
-            println!("{:?}", head);
-            println!(
-                "In involved set? {:?}",
-                ctx.rule_in_involved_set(lr_position, rule)
-            );
             if ctx.rule_in_involved_set(lr_position, rule) {
                 (false, None)
             } else if head.active_left_recursion_rule == rule {
@@ -484,32 +482,6 @@ pub fn should_go_into_growth_function<T: Context>(
         }
     }
 }
-// let head = ctx.check_head(position);
-// //println!("SHOULD GROWTH HEAD IS CURRENTLY: {:?}", head);
-// println!("Head: {:?}", head);
-// return match head {
-//     Some(head) => {
-//         println!(
-//             "In involved set? {:?}",
-//             ctx.rule_in_involved_set(position, rule)
-//         );
-//         if ctx.rule_in_involved_set(position, rule) {
-//             (false, None)
-//         } else if head.active_left_recursion_rule == rule {
-//             (false, None)
-//         } else {
-//             let last_lr_position = ctx.get_current_active_lr_position();
-//             ctx.set_current_active_lr_position(Some(position));
-//             (true, last_lr_position)
-//         }
-//     }
-//     None => {
-//         println!("No head?");
-//         let last_lr_position = ctx.get_current_active_lr_position();
-//         ctx.set_current_active_lr_position(Some(position));
-//         (true, last_lr_position)
-//     }
-// };
 
 pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
     involved_set: &Vec<Rules>,
@@ -520,6 +492,7 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
     position: u32,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
+    println!("Entering Indirect Left Recursion");
     let should = should_go_into_growth_function(rule, context, position);
     if should.0 {
         let result = _var_name_kernel_growth_function(
@@ -532,6 +505,8 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
             func,
             should.1,
         );
+        println!("Exiting Indirect Left Recursion");
+
         return result;
     } else {
         // Runs if head is Some
@@ -541,18 +516,16 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
             .get_current_active_lr_position()
             .expect("Active LR Should exist when in LR code.");
         let is_in_eval_set = context.borrow().rule_in_eval_set(active_lr_position, rule);
-        // println!("{:?} is in Eval Set: {:?}", rule, is_in_eval_set);
         if is_in_eval_set {
-            //println!("IS IN EVAL SET\nRUNNING FUNCTION: {:?}", rule);
             let current_key = context.borrow_mut().reserve_publisher_entry(rule);
             context
                 .borrow_mut()
                 .remove_from_eval_set(active_lr_position, rule);
+            println!("CURRENT KEY: {:?}", current_key);
             let result = func(current_key, context, source, position);
-            // println!(
-            //     "RESULT OF RUNNING FUNCTION: {:?} {:?} {:?}",
-            //     position, rule, result
-            // );
+            context
+                .borrow_mut()
+                .update_publisher_entry(current_key, result.0, position, result.1);
             context.borrow_mut().create_cache_entry(
                 rule,
                 result.0,
@@ -560,14 +533,33 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
                 result.1,
                 current_key,
             );
-            context.borrow_mut().connect(parent, current_key);
+            //context.borrow_mut().connect(parent, current_key);
+            println!(
+                "Exiting Indirect Left Recursion - Not Memo, Parent: {:?}, Key: {:?}",
+                parent, current_key
+            );
+
             result
         } else {
             //println!("{:?} NOT IN EVAL SET RETURNING {:?}", rule, position);
             let memo = context.borrow().check(rule, position);
+
             match memo {
-                Some(memo) => (memo.0, memo.1),
-                None => (false, position),
+                Some(memo) => {
+                    println!(
+                        "Exiting Indirect Left Recursion -> Memo Parent: {:?}, Key: {:?}",
+                        parent, memo.2
+                    );
+
+                    context
+                        .borrow_mut()
+                        .connect_if_not_connected(parent, memo.2);
+                    (memo.0, memo.1)
+                }
+                None => {
+                    println!("Exiting Indirect Left Recursion -> Memo - False");
+                    (false, position)
+                }
             }
         }
     }
