@@ -949,7 +949,7 @@ pub fn test_indirect_lr_num<T: Context + 'static>(
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> =
         [Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(
+    let closure_1 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_indirect_LR_expr,
         context,
@@ -967,7 +967,7 @@ pub fn test_indirect_lr_expr<T: Context + 'static>(
     //  Should match 0-0-0-0-0-0-0-0 etc
     let involved_set: Vec<Rules> =
         [Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(
+    let closure_1 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_indirect_LR_num,
         context,
@@ -1038,8 +1038,10 @@ pub fn test_term_indirect<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![Rules::test_term];
-    let closure_1 = _var_name_indirect_left_recursion(
+    let involved_set = vec![Rules::test_term_indirect];
+    let involved_set_for_test_fact = vec![Rules::test_fact_indirect];
+
+    let closure_1 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_term_indirect,
         context,
@@ -1047,10 +1049,15 @@ pub fn test_term_indirect<T: Context + 'static>(
     );
     let closure_2 = _terminal(b'+');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::test_fact_indirect, context, test_fact_indirect);
+    let closure_4 = _var_name_indirect_left_recursion2(
+        &involved_set_for_test_fact,
+        Rules::test_fact_indirect,
+        context,
+        test_fact_indirect,
+    );
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name_indirect_left_recursion(
+    let closure_7 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_term_indirect,
         context,
@@ -1058,11 +1065,21 @@ pub fn test_term_indirect<T: Context + 'static>(
     );
     let closure_8 = _terminal(b'-');
     let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::test_fact_indirect, context, test_fact_indirect);
+    let closure_10 = _var_name_indirect_left_recursion2(
+        &involved_set_for_test_fact,
+        Rules::test_fact_indirect,
+        context,
+        test_fact_indirect,
+    );
     let closure_11 = _sequence(&closure_9, &closure_10);
     let closure_12 = _subexpression(&closure_11);
     let closure_13 = _ordered_choice(&closure_6, &closure_12);
-    let closure_14 = _var_name(Rules::test_fact_indirect, context, test_fact_indirect);
+    let closure_14 = _var_name_indirect_left_recursion2(
+        &involved_set_for_test_fact,
+        Rules::test_fact_indirect,
+        context,
+        test_fact_indirect,
+    );
     let closure_15 = _ordered_choice(&closure_13, &closure_14);
     closure_15(parent, source, position)
 }
@@ -1073,8 +1090,8 @@ pub fn test_fact_indirect<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![Rules::test_fact];
-    let closure_1 = _var_name_indirect_left_recursion(
+    let involved_set = vec![Rules::test_fact_indirect];
+    let closure_1 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_fact_indirect,
         context,
@@ -1085,7 +1102,7 @@ pub fn test_fact_indirect<T: Context + 'static>(
     let closure_4 = _var_name(Rules::Num, context, num);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name_indirect_left_recursion(
+    let closure_7 = _var_name_indirect_left_recursion2(
         &involved_set,
         Rules::test_fact_indirect,
         context,

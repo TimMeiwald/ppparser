@@ -39,6 +39,9 @@ impl BasicPublisher {
             return false;
         }
     }
+    pub fn clear_node_of_children(&mut self, node: Key) {
+        self.get_mut_node(node).set_children(vec![]);
+    }
 
     pub fn new(size_of_source: usize, number_of_rules: usize) -> Self {
         //let memory_to_allocate = ((size_of_source * number_of_rules) * 64) / 128;
@@ -79,6 +82,11 @@ impl BasicPublisher {
 
     pub fn connect(&mut self, parent_index: Key, child_index: Key) {
         //println!("Connecting: {:?} <- {:?}", parent_index, child_index);
+        debug_assert!(
+            parent_index != child_index,
+            "Debug: Cannot connect a Node to itself! -> In BasicPublisher.connect, Parent: {:?}, Child: {:?}", parent_index, child_index
+        );
+
         let parent_node: &mut Node = self.get_mut_node(parent_index);
         parent_node.children.push(child_index);
     }
@@ -88,6 +96,10 @@ impl BasicPublisher {
         // pending actual performance testing.
         // There may well be a better way to do things but just to get things working.
         //println!("Connecting: {:?} <- {:?}", parent_index, child_index);
+        debug_assert!(
+            parent_index != child_index,
+            "Debug: Cannot connect a Node to itself! -> In BasicPublisher.connect_front"
+        );
         let parent_node: &mut Node = self.get_mut_node(parent_index);
         let mut copy_of_children = parent_node.children.clone();
         parent_node.children.clear();
@@ -150,7 +162,7 @@ impl BasicPublisher {
         let index = 0;
 
         let node = self.get_node(Key(index));
-
+        //println!("Clear_False Index: {:?}", index);
         if node.result {
             new_tree.add_node(
                 node.rule,
@@ -176,6 +188,8 @@ impl BasicPublisher {
     }
 
     fn clear_false_kernel(&self, new_tree: &mut BasicPublisher, parent_index: Key, index: Key) {
+        //println!("Clear_False_Kernel Index: {:?}", index);
+
         let node = self.get_node(index);
         if node.result && (node.start_position != node.end_position) {
             let child_index = new_tree.add_node(
