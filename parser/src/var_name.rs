@@ -360,7 +360,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
     source: &Source,
     position: u32,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
-    last_lr_position: Option<u32>,
+    last_lr_position: Option<(Rules, u32)>,
 ) -> (bool, u32) {
     println!("ENTERING GROWTH FUNCTION!: {:?}", (rule, position));
     // If head is none, return what is stored in the memo table.
@@ -388,7 +388,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
                 "GROWTH RULE: {:?}, POSITION: {:?}, LOOP COUNT: {:?}",
                 rule, position, count
             );
-            context.borrow_mut().reinitialize_eval_set(position);
+            context.borrow_mut().reinitialize_eval_set(rule, position);
 
             result = func(current_key, context, source, position);
 
@@ -445,7 +445,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
         }
     }
     // We need to reset the head, in that if there was a head before we need to push it back onto the stack.
-    context.borrow_mut().reset_head(position);
+    context.borrow_mut().reset_head(rule, position);
     println!("EXITING GROWTH FUNCTION: {:?}\n", (rule, position));
     println!("Node Result of Growth Function");
     context.borrow_mut().print_node(last_key);
@@ -458,25 +458,30 @@ pub fn should_go_into_growth_function<T: Context>(
     rule: Rules,
     context: &RefCell<T>,
     position: u32,
-) -> (bool, Option<u32>) {
+) -> (bool, Option<(Rules, u32)>) {
     // Keeps triggering everytime which it should not do.
     let mut ctx = context.borrow_mut();
     let active_lr_position = ctx.get_current_active_lr_position();
+    println!(
+        "Should grow, Active LR: {:?}, Current Rule: {:?}",
+        active_lr_position, rule
+    );
     match active_lr_position {
         None => {
             let last_lr_position = ctx.get_current_active_lr_position();
-            ctx.set_current_active_lr_position(Some(position));
+            ctx.set_current_active_lr_position(Some((rule, position)));
             (true, last_lr_position)
         }
         Some(lr_position) => {
-            let head = ctx.check_head(lr_position).expect("Should exist");
-            if ctx.rule_in_involved_set(lr_position, rule) {
+            let head = ctx.check_head(rule, position);
+            if head.is_some() {
+                // We don't want to grow more than once per rule, position pair.
                 (false, None)
-            } else if head.active_left_recursion_rule == rule {
+            } else if ctx.rule_in_involved_set(lr_position, rule) {
                 (false, None)
             } else {
                 let last_lr_position = ctx.get_current_active_lr_position();
-                ctx.set_current_active_lr_position(Some(position));
+                ctx.set_current_active_lr_position(Some((rule, position)));
                 (true, last_lr_position)
             }
         }
@@ -494,6 +499,7 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
 ) -> (bool, u32) {
     println!("Entering Indirect Left Recursion");
     let should = should_go_into_growth_function(rule, context, position);
+    println!("Should grow Rule: {:?}, {:?}", rule, should.0);
     if should.0 {
         let result = _var_name_kernel_growth_function(
             involved_set,
@@ -533,7 +539,7 @@ pub fn _var_name_kernel_indirect_left_recursion3<T: Context>(
                 result.1,
                 current_key,
             );
-            //context.borrow_mut().connect(parent, current_key);
+            context.borrow_mut().connect(parent, current_key);
             println!(
                 "Exiting Indirect Left Recursion - Not Memo, Parent: {:?}, Key: {:?}",
                 parent, current_key

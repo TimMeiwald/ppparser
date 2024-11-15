@@ -60,24 +60,24 @@ where
         end_position: u32,
     );
 
-    fn check_head(&self, start_position: u32) -> Option<&Head>;
+    fn check_head(&self, rule: Rules, start_position: u32) -> Option<&Head>;
     fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>);
-    fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool;
-    fn rule_in_involved_set(&self, start_position: u32, rule: Rules) -> bool;
+    fn rule_in_eval_set(&self, head_index: (Rules, u32), rule: Rules) -> bool;
+    fn rule_in_involved_set(&self, head: (Rules, u32), rule: Rules) -> bool;
 
-    fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules);
-    fn reinitialize_eval_set(&mut self, start_position: u32);
+    fn remove_from_eval_set(&mut self, head_index: (Rules, u32), rule: Rules);
+    fn reinitialize_eval_set(&mut self, rule: Rules, start_position: u32);
     fn get_publisher(self) -> Self::P;
     fn clear_node_of_children(&mut self, node: Key);
     // fn remove_head(&mut self, start_position: u32);
     fn last_key(&self) -> Key;
     fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool;
     fn set_last_key(&mut self, last_used: Key);
-    fn reset_head(&mut self, start_position: u32);
+    fn reset_head(&mut self, rule: Rules, start_position: u32);
     fn disconnect(&mut self, parent: Key, child: Key);
     fn print_node(&self, node: Key);
-    fn get_current_active_lr_position(&self) -> Option<u32>;
-    fn set_current_active_lr_position(&mut self, position: Option<u32>);
+    fn get_current_active_lr_position(&self) -> Option<(Rules, u32)>;
+    fn set_current_active_lr_position(&mut self, position: Option<(Rules, u32)>);
     // fn get_currently_active_head(&self) -> Option<u32>;
     // fn set_currently_active_head(&mut self, position: Option<u32>);
 }
@@ -109,10 +109,10 @@ impl Context for BasicContext {
             publisher: Self::P::new(size_of_source, number_of_rules),
         }
     }
-    fn get_current_active_lr_position(&self) -> Option<u32> {
+    fn get_current_active_lr_position(&self) -> Option<(Rules, u32)> {
         self.cache.get_current_active_lr_position()
     }
-    fn set_current_active_lr_position(&mut self, position: Option<u32>) {
+    fn set_current_active_lr_position(&mut self, position: Option<(Rules, u32)>) {
         self.cache.set_current_active_lr_position(position);
     }
     fn last_key(&self) -> Key {
@@ -121,15 +121,15 @@ impl Context for BasicContext {
     fn set_last_key(&mut self, last_used: Key) {
         self.cache.set_last_key(last_used);
     }
-    fn reinitialize_eval_set(&mut self, start_position: u32) {
-        self.cache.reinitialize_eval_set(start_position);
+    fn reinitialize_eval_set(&mut self, rule: Rules, start_position: u32) {
+        self.cache.reinitialize_eval_set(rule, start_position);
     }
     #[allow(dead_code)]
     fn print_cache(&self) {
         println!("{:?}", &self.cache)
     }
     fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool {
-        self.cache.eval_set_is_empty(start_position, rule)
+        self.cache.eval_set_is_empty(rule, start_position)
     }
     fn clear_node_of_children(&mut self, node: Key) {
         self.publisher.clear_node_of_children(node);
@@ -205,35 +205,35 @@ impl Context for BasicContext {
     fn check_lr(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key, LR)> {
         self.cache.check_direct_lr(rule, start_position)
     }
-    fn check_head(&self, start_position: u32) -> Option<&Head> {
-        self.cache.check_head(start_position)
+    fn check_head(&self, rule: Rules, start_position: u32) -> Option<&Head> {
+        self.cache.check_head(rule, start_position)
     }
     // fn remove_head(&mut self, start_position: u32) {
     //     println!("REMOVE HEAD! {:?}\x1b[0m", (start_position));
 
     //     self.cache.remove_head(start_position);
     // }
-    fn rule_in_involved_set(&self, start_position: u32, rule: Rules) -> bool {
-        self.cache.rule_in_involved_set(start_position, rule)
+    fn rule_in_involved_set(&self, head: (Rules, u32), rule: Rules) -> bool {
+        self.cache.rule_in_involved_set(head, rule)
     }
     fn connect_if_not_connected(&mut self, parent_index: Key, child_index: Key) {
         self.publisher
             .connect_if_not_connected(parent_index, child_index);
     }
 
-    fn reset_head(&mut self, start_position: u32) {
+    fn reset_head(&mut self, rule: Rules, start_position: u32) {
         println!("RESETTING HEAD!");
-        self.cache.reset_head(start_position);
+        self.cache.reset_head(rule, start_position);
     }
     fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>) {
         println!("SETTING HEAD");
         self.cache.set_head(start_position, head_rule, involved_set);
     }
-    fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool {
-        self.cache.rule_in_eval_set(start_position, rule)
+    fn rule_in_eval_set(&self, head_index: (Rules, u32), rule: Rules) -> bool {
+        self.cache.rule_in_eval_set(head_index, rule)
     }
-    fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules) {
-        self.cache.remove_from_eval_set(start_position, rule);
+    fn remove_from_eval_set(&mut self, head_index: (Rules, u32), rule: Rules) {
+        self.cache.remove_from_eval_set(head_index, rule);
     }
 
     fn get_publisher(self) -> Self::P {

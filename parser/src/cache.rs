@@ -19,8 +19,8 @@ pub enum LR {
 pub struct BasicCache {
     cache: HashMap<(Rules, u32), (bool, u32, Key)>,
     left_recursion_cache: HashMap<(Rules, u32), (bool, u32, Key, LR)>,
-    heads: HashMap<u32, Head>,
-    current_active_left_recursion: Option<u32>,
+    heads: HashMap<(Rules, u32), Head>,
+    current_active_left_recursion: Option<(Rules, u32)>,
     recursion_stack: VecDeque<Head>,
     last_used: Key,
 }
@@ -37,23 +37,16 @@ impl BasicCache {
         }
     }
 
-    pub fn get_current_active_lr_position(&self) -> Option<u32> {
-        // println!(
-        //     "Current Active LR: {:?}",
-        //     self.current_active_left_recursion
-        // );
+    pub fn get_current_active_lr_position(&self) -> Option<(Rules, u32)> {
+        println!(
+            "Getting Current Active LR Position: {:?}",
+            self.current_active_left_recursion
+        );
         self.current_active_left_recursion
     }
-    pub fn set_current_active_lr_position(&mut self, position: Option<u32>) {
-        // println!(
-        //     "Current Active LR: {:?}",
-        //     self.current_active_left_recursion
-        // );
-        self.current_active_left_recursion = position;
-        // println!(
-        //     "Setting Active LR to: {:?}",
-        //     self.current_active_left_recursion
-        // );
+    pub fn set_current_active_lr_position(&mut self, active_lr: Option<(Rules, u32)>) {
+        println!("Setting Current Active LR Position: {:?}", active_lr);
+        self.current_active_left_recursion = active_lr;
     }
 
     pub fn insert(
@@ -105,8 +98,8 @@ impl BasicCache {
             .copied()
     }
 
-    pub fn check_head(&self, start_position: u32) -> Option<&Head> {
-        let head = self.heads.get(&start_position);
+    pub fn check_head(&self, rule: Rules, start_position: u32) -> Option<&Head> {
+        let head = self.heads.get(&(rule, start_position));
         #[allow(clippy::manual_map)]
         match head {
             None => None, // Not yet exists therefore no Left Recursion at this position
@@ -126,19 +119,19 @@ impl BasicCache {
     //     //     }
     //     // };
     // }
-    pub fn reset_head(&mut self, start_position: u32) {
+    pub fn reset_head(&mut self, rule: Rules, start_position: u32) {
         // println!("RESET HEAD!");
         // println!("\x1b[0m");
         //self.heads.remove(&start_position); // Remove this head
-        let past_head = self.recursion_stack.pop_front();
+        // let past_head = self.recursion_stack.pop_front();
 
-        match past_head {
-            None => {}
-            Some(past_head) => {
-                // println!("REINSERTING HEAD RECURSION");
-                self.heads.insert(start_position, past_head);
-            }
-        };
+        // match past_head {
+        //     None => {}
+        //     Some(past_head) => {
+        //         // println!("REINSERTING HEAD RECURSION");
+        //         self.heads.insert((rule, start_position), past_head);
+        //     }
+        // };
     }
 
     pub fn set_head(
@@ -151,65 +144,76 @@ impl BasicCache {
         // println!("SET HEAD! {:?}", (start_position, head_rule));
 
         // println!("Recursion Stack: {:?}", self.recursion_stack);
-
-        let old_value = self.heads.remove(&start_position);
+        // let current_active_lr_position = self.get_current_active_lr_position();
+        // println!(
+        //     "Current Active LR Position in Set Head: {:?}",
+        //     current_active_lr_position
+        // );
+        // match current_active_lr_position {
+        //     Some(active_lr_position) => {
+        //         let old_value = self
+        //             .heads
+        //             .remove(&active_lr_position)
+        //             .expect("If Active LR position valid then head should exist!");
+        //         self.recursion_stack.push_front(old_value);
+        //     }
+        //     None => {}
+        // }
         let eval_set = involved_set.clone();
-
-        match old_value {
-            None => {}
-            Some(old_head) => {
-                self.recursion_stack.push_front(old_head);
-            }
-        }
-
         let head = Head {
-            start_position: start_position,
+            start_position,
             active_left_recursion_rule: head_rule,
             involved_set,
             eval_set,
         };
-        self.heads.insert(start_position, head);
+        self.heads.insert((head_rule, start_position), head);
     }
 
-    pub fn reinitialize_eval_set(&mut self, start_position: u32) {
+    pub fn reinitialize_eval_set(&mut self, rule: Rules, start_position: u32) {
         let head = self
             .heads
-            .get_mut(&start_position)
+            .get_mut(&(rule, start_position))
             .expect("Should exist by now");
         head.eval_set = head.involved_set.clone();
         // println!("Reinit Eval Set: {:?}", head.eval_set);
     }
 
-    pub fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool {
+    pub fn eval_set_is_empty(&self, rule: Rules, start_position: u32) -> bool {
         let head = self
             .heads
-            .get(&start_position)
+            .get(&(rule, start_position))
             .expect("Should always exist when calling rule_in_eval_set");
         // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
         head.eval_set.is_empty()
     }
-    pub fn rule_in_involved_set(&self, start_position: u32, rule: Rules) -> bool {
+    pub fn rule_in_involved_set(&self, head_index: (Rules, u32), rule: Rules) -> bool {
         // Return true if it's in eval set
+
         let head = self
             .heads
-            .get(&start_position)
+            .get(&head_index)
             .expect("Should always exist when calling rule_in_involved_set");
         // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
-        head.involved_set.contains(&rule)
+        let is_involved = head.involved_set.contains(&rule);
+        println!(
+            "Rule in involved set: Rule : {:?}, Start Position: {:?}, {:?}",
+            rule, head_index.1, is_involved
+        );
+        is_involved
     }
 
-    pub fn rule_in_eval_set(&self, start_position: u32, rule: Rules) -> bool {
+    pub fn rule_in_eval_set(&self, head_index: (Rules, u32), rule: Rules) -> bool {
         // Return true if it's in eval set
         let head = self
             .heads
-            .get(&start_position)
+            .get(&head_index)
             .expect("Should always exist when calling rule_in_eval_set");
         // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
         head.eval_set.contains(&rule)
     }
-    pub fn remove_from_eval_set(&mut self, start_position: u32, rule: Rules) {
+    pub fn remove_from_eval_set(&mut self, head_index: (Rules, u32), rule: Rules) {
         self.heads
-            .get_mut(&start_position)
+            .get_mut(&head_index)
             .expect("Should exist by now")
             .eval_set
             .remove(&rule);
