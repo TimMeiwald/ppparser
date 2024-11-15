@@ -189,7 +189,7 @@ mod tests {
         let result: (bool, u32);
         {
             let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
-            let executor = _var_name_indirect_left_recursion2(
+            let executor = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_indirect_LR_expr,
                 &context,
@@ -213,7 +213,7 @@ mod tests {
         let result: (bool, u32);
         {
             let involved_set = vec![Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num];
-            let executor = _var_name_indirect_left_recursion2(
+            let executor = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_indirect_LR_expr,
                 &context,
@@ -236,7 +236,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_fact_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_fact_indirect,
                 &context,
@@ -261,7 +261,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_fact_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_fact_indirect,
                 &context,
@@ -287,7 +287,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_term_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_term_indirect,
                 &context,
@@ -317,7 +317,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_term_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_term_indirect,
                 &context,
@@ -347,7 +347,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_term_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_term_indirect,
                 &context,
@@ -377,7 +377,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_fact_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_fact_indirect,
                 &context,
@@ -403,7 +403,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_fact_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_fact_indirect,
                 &context,
@@ -429,7 +429,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_fact_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_fact_indirect,
                 &context,
@@ -455,7 +455,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_fact_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_fact_indirect,
                 &context,
@@ -481,7 +481,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_term_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_term_indirect,
                 &context,
@@ -506,7 +506,7 @@ mod tests {
         {
             let involved_set = vec![Rules::test_term_indirect];
             //result = test_fact_indirect(Key(0), &context, &source, position);
-            let closure = _var_name_indirect_left_recursion2(
+            let closure = _var_name_indirect_left_recursion(
                 &involved_set,
                 Rules::test_term_indirect,
                 &context,
