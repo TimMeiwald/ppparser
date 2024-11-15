@@ -21,8 +21,6 @@ pub struct BasicCache {
     left_recursion_cache: HashMap<(Rules, u32), (bool, u32, Key, LR)>,
     heads: HashMap<(Rules, u32), Head>,
     current_active_left_recursion: Option<(Rules, u32)>,
-    recursion_stack: VecDeque<Head>,
-    last_used: Key,
 }
 
 impl BasicCache {
@@ -32,8 +30,6 @@ impl BasicCache {
             left_recursion_cache: HashMap::new(),
             heads: HashMap::new(),
             current_active_left_recursion: None,
-            recursion_stack: VecDeque::new(),
-            last_used: Key(0),
         }
     }
 
@@ -69,12 +65,6 @@ impl BasicCache {
     }
     pub fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         self.cache.get(&(rule, start_position)).copied()
-    }
-    pub fn last_key(&self) -> Key {
-        self.last_used
-    }
-    pub fn set_last_key(&mut self, last_used: Key) {
-        self.last_used = last_used
     }
     pub fn insert_direct_lr(
         &mut self,

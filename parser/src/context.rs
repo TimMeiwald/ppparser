@@ -69,17 +69,12 @@ where
     fn reinitialize_eval_set(&mut self, rule: Rules, start_position: u32);
     fn get_publisher(self) -> Self::P;
     fn clear_node_of_children(&mut self, node: Key);
-    // fn remove_head(&mut self, start_position: u32);
-    fn last_key(&self) -> Key;
     fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool;
-    fn set_last_key(&mut self, last_used: Key);
     fn reset_head(&mut self, rule: Rules, start_position: u32);
     fn disconnect(&mut self, parent: Key, child: Key);
     fn print_node(&self, node: Key);
     fn get_current_active_lr_position(&self) -> Option<(Rules, u32)>;
     fn set_current_active_lr_position(&mut self, position: Option<(Rules, u32)>);
-    // fn get_currently_active_head(&self) -> Option<u32>;
-    // fn set_currently_active_head(&mut self, position: Option<u32>);
 }
 
 pub struct BasicContext {
@@ -115,12 +110,7 @@ impl Context for BasicContext {
     fn set_current_active_lr_position(&mut self, position: Option<(Rules, u32)>) {
         self.cache.set_current_active_lr_position(position);
     }
-    fn last_key(&self) -> Key {
-        self.cache.last_key()
-    }
-    fn set_last_key(&mut self, last_used: Key) {
-        self.cache.set_last_key(last_used);
-    }
+
     fn reinitialize_eval_set(&mut self, rule: Rules, start_position: u32) {
         self.cache.reinitialize_eval_set(rule, start_position);
     }
