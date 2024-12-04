@@ -1,5 +1,7 @@
 # PackratParserGenerator 
-Issues -> Not Predicate and And Predicate still create a Node and attach it on their relevant success. Not sure whether this should or should not happen. 
+Issues ->   Not Predicate and And Predicate still create a Node and attach it on their relevant success. Not sure whether this should or should not happen. 
+            Still need to bake text into executable and not use local filepath for obvious reasons when generating code.   
+            
 ## Introduction 
 PackratParserGenerator is a packrat parsing expression grammar(PEG) parser generator.   
 
