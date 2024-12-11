@@ -1,6 +1,12 @@
 # PackratParserGenerator 
 Issues ->   Not Predicate and And Predicate still create a Node and attach it on their relevant success. Not sure whether this should or should not happen. 
             Still need to bake text into executable and not use local filepath for obvious reasons when generating code.   
+            Add root rule semantic instruction so the root is not required to be called grammar.   
+            Generate correct var_name usage based on compile time analysis of left recursive rules.
+            Investigate lifetime issue so left recursive doesn't require use of 'static lifetimes/make sure
+            it doesn't cause a memory leak. 
+
+Please note large parts of this documentation is already out of date.
             
 ## Introduction 
 PackratParserGenerator is a packrat parsing expression grammar(PEG) parser generator.   
