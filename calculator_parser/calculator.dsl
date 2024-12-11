@@ -7,8 +7,8 @@
 <exponent> = (('E'/'e'), <sign>, <digit>+);
 <sign> = ('+'/'-')?;
 
-<div_expr> = <expr_divmul>, '/', <term>;
-<mult_expr> = <expr_divmul>, '*', <term>;
+<div_expr> = <expr_divmul>, '/', <expr_exponentiation>;
+<mult_expr> = <expr_divmul>, '*', <expr_exponentiation>;
 <add_expr> = <expr_addsub>, '+', <expr_divmul>;
 <sub_expr> = <expr_addsub>, '-', <expr_divmul>;
 <exponent_expr> = <expr_parentheses>, '^', <expr_parentheses>;
