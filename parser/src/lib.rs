@@ -3,7 +3,7 @@ mod cache;
 mod context;
 mod keys;
 pub mod parse;
-mod parser;
+pub mod parser;
 mod parser_core;
 mod publisher;
 mod rules;
