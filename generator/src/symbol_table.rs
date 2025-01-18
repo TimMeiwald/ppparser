@@ -130,7 +130,7 @@ impl<'a> SymbolTable<'a> {
 mod tests {
     use super::*;
     use crate::count_lines;
-    use parser::*;
+    use ::parser::*;
     use std::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};

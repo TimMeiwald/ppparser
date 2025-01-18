@@ -6,7 +6,7 @@ mod constructor;
 mod symbol_table;
 pub use crate::constructor::GeneratedCode;
 use crate::symbol_table::SymbolTable;
-use parser::*;
+use ::parser::*;
 
 fn count_lines(source: &String, start_position: u32) -> u32 {
     let mut new_line_count: u32 = 1;
@@ -54,7 +54,7 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
 mod tests {
     use super::*;
     use crate::count_lines;
-    use parser::*;
+    use ::parser::*;
     use std::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};

@@ -1,7 +1,7 @@
 use super::binary_wo::{BinaryTreeWO, Reference};
 use crate::symbol_table::SymbolTable;
 use indoc::indoc;
-use parser::*;
+use ::parser::*;
 use std::panic::panic_any;
 
 pub struct GeneratedCode<'a> {
@@ -701,7 +701,7 @@ impl GeneratedCode<'_> {
 mod tests {
     use super::*;
     use crate::count_lines;
-    use parser::*;
+    use ::parser::*;
     use std::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
