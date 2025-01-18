@@ -64,6 +64,7 @@ impl GeneratedCode<'_> {
     }
 
     pub fn sample_main_header(&self, name: &str) -> String {
+        let name = name.replace("-", "_");
         format!("use {}::*;\n", name)
     }
 
