@@ -1,7 +1,7 @@
 use super::binary_wo::{BinaryTreeWO, Reference};
 use crate::symbol_table::SymbolTable;
-use indoc::indoc;
 use ::parser::*;
+use indoc::indoc;
 use std::panic::panic_any;
 
 pub struct GeneratedCode<'a> {

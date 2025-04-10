@@ -3,7 +3,9 @@ use std::fs::read_to_string;
 use std::path::PathBuf;
 mod binary_wo;
 mod constructor;
+mod cycle_detector;
 mod symbol_table;
+
 pub use crate::constructor::GeneratedCode;
 use crate::symbol_table::SymbolTable;
 use ::parser::*;

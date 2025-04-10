@@ -153,7 +153,7 @@ impl BasicPublisher {
         }
     }
 
-    pub fn clear_false(&self) -> BasicPublisher {
+    pub fn clear_false(self) -> BasicPublisher {
         // Since Tree is a write only structure we need to remvoe False results to be more useful at some point
         // Consume self and return a new Tree only containing the True results.
         let capacity = self.len() / 4; // Heuristic

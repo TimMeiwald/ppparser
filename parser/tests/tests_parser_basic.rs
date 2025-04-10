@@ -5,8 +5,8 @@
 
 #[cfg(test)]
 mod tests {
-    use core::cell::RefCell;
     use ::parser::*;
+    use core::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
     #[test]
@@ -100,9 +100,6 @@ mod tests {
             .print(Key(0), Some(true));
         assert_eq!((result.0, result.1), (true, src_len));
     }
-
-
-
 
     #[test]
     fn test_dsl_grammar() {
