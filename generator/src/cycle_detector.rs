@@ -58,21 +58,76 @@ impl<'a> LeftRecursionDetector<'a> {
         debug_assert_eq!(node.rule, Rules::Grammar);
         for key in node.get_children() {
             let child = tree.get_node(*key);
+            let rules_stack: Vec<String> = Vec::new();
             match child.rule {
                 Rules::Rule => {
-                    self.left_walk_kernel(tree, *key);
+                    debug_assert_eq!(child.rule, Rules::Rule);
+                    let lhs = child.get_children()[0];
+                    let lhs = tree.get_node(lhs);
+                    let parent_rule_name = self.get_rule_name(tree, lhs);
+                    println!("\nRule: {:?}", parent_rule_name);
+                    let rhs_key = child.get_children()[1];
+                    let rhs = tree.get_node(rhs_key);
+                    debug_assert_eq!(rhs.rule, Rules::RHS);
+                    self.left_walk_kernel(tree, rhs_key, parent_rule_name, rules_stack);
                 }
                 _ => {}
             }
         }
     }
 
-    fn left_walk_kernel(&mut self, tree: &BasicPublisher, key: Key) {
+    fn left_walk_kernel(&mut self, tree: &BasicPublisher, key: Key, parent_rule_name: String, mut rules_stack: Vec<String>) {
+        // Since a jump to a reference jumps to a rule and we actually just want 
+        // The first child of the RHS.
+        // We check if the node is itself a rule, if yes we grab the RHS index not the left most. 
         let node = tree.get_node(key);
-        debug_assert_eq!(node.rule, Rules::Rule);
-        let rhs = node.get_children()[1];
-        let rhs = tree.get_node(rhs);
-        debug_assert_eq!(rhs.rule, Rules::RHS);
+        let left_most_child: Option<&Key>;
+        match node.rule{
+            Rules::Rule => {
+                // Since assignment and whitespace are inlined
+                // The 2nd rule to get called in rule is index 1 of the children.
+                left_most_child = node.get_children().get(1)
+            }
+            _ => {
+                left_most_child = node.get_children().get(0);
+            }
+        }
+
+        // If it get's here they're terminals.
+        match left_most_child{
+            Some(child) =>{
+                println!("Going into child of {:?}", node.rule);
+                self.left_walk_kernel(tree, *child, parent_rule_name, rules_stack);
+            }
+            None => {   
+                match node.rule {
+                    Rules::Var_Name_Ref => {
+                        // Since a LR rule would cycle endlessly we must know when to terminate.
+                        // Since we also want to support indirect left recursion 
+                        // We use a stack to push the rules onto and then check it's not repeating. 
+
+
+                        rules_stack.push(node.get_string(&self.source));
+                        if rules_stack.len() >= 100{
+                            println!("{:#?}", rules_stack);
+                            return;
+                        }
+                        let key = self.rules_name_map.get(&node.get_string(&self.source)).expect("The index should exist. If it doesn't the program is broken.");
+                        println!("Jumping to Rule: {:?}", node.rule);
+                        // If it's a reference to a rule then we jump to that rule's index and keep recursing. 
+                        self.left_walk_kernel(tree, *key, parent_rule_name, rules_stack);
+                        
+                    }
+                    _ => {
+                        // If it's some other terminal type we ignore it since it terminates.
+                        println!("Terminal {:?}", node.rule);
+
+                    }
+                }
+
+            }
+        }
+
     }
 }
 
@@ -86,6 +141,8 @@ mod tests {
     use std::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
+    use std::io::stdout;
+    use std::io::Write;
 
     #[test]
     fn test_no_lr() {
@@ -113,6 +170,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let lr_detector = LeftRecursionDetector::new(tree, source);
+        let f = stdout().flush().expect("Why did it not flush");
         //lr_detector.print_rules_name_map();
         //tree.print(Key(0), None);
         // let src = &String::from(source);
