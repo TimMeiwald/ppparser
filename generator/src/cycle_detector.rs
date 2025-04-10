@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use parser::{Node, Rules};
 
@@ -58,7 +58,7 @@ impl<'a> LeftRecursionDetector<'a> {
         debug_assert_eq!(node.rule, Rules::Grammar);
         for key in node.get_children() {
             let child = tree.get_node(*key);
-            let rules_stack: Vec<String> = Vec::new();
+            let rules_set: HashSet<String> = HashSet::new();
             match child.rule {
                 Rules::Rule => {
                     debug_assert_eq!(child.rule, Rules::Rule);
@@ -69,14 +69,14 @@ impl<'a> LeftRecursionDetector<'a> {
                     let rhs_key = child.get_children()[1];
                     let rhs = tree.get_node(rhs_key);
                     debug_assert_eq!(rhs.rule, Rules::RHS);
-                    self.left_walk_kernel(tree, rhs_key, parent_rule_name, rules_stack);
+                    self.left_walk_kernel(tree, rhs_key, parent_rule_name, rules_set);
                 }
                 _ => {}
             }
         }
     }
 
-    fn left_walk_kernel(&mut self, tree: &BasicPublisher, key: Key, parent_rule_name: String, mut rules_stack: Vec<String>) {
+    fn left_walk_kernel(&mut self, tree: &BasicPublisher, key: Key, parent_rule_name: String, mut rules_set: HashSet<String>) {
         // Since a jump to a reference jumps to a rule and we actually just want 
         // The first child of the RHS.
         // We check if the node is itself a rule, if yes we grab the RHS index not the left most. 
@@ -97,7 +97,7 @@ impl<'a> LeftRecursionDetector<'a> {
         match left_most_child{
             Some(child) =>{
                 println!("Going into child of {:?}", node.rule);
-                self.left_walk_kernel(tree, *child, parent_rule_name, rules_stack);
+                self.left_walk_kernel(tree, *child, parent_rule_name, rules_set);
             }
             None => {   
                 match node.rule {
@@ -107,15 +107,16 @@ impl<'a> LeftRecursionDetector<'a> {
                         // We use a stack to push the rules onto and then check it's not repeating. 
 
 
-                        rules_stack.push(node.get_string(&self.source));
-                        if rules_stack.len() >= 100{
-                            println!("{:#?}", rules_stack);
+                        if !rules_set.insert(node.get_string(&self.source)){
+                            // Was already in the list so we can stop because it means
+                            // We'll be looping
+                            println!("{:#?}", rules_set);
                             return;
                         }
                         let key = self.rules_name_map.get(&node.get_string(&self.source)).expect("The index should exist. If it doesn't the program is broken.");
                         println!("Jumping to Rule: {:?}", node.rule);
                         // If it's a reference to a rule then we jump to that rule's index and keep recursing. 
-                        self.left_walk_kernel(tree, *key, parent_rule_name, rules_stack);
+                        self.left_walk_kernel(tree, *key, parent_rule_name, rules_set);
                         
                     }
                     _ => {
@@ -171,6 +172,7 @@ mod tests {
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
         let _f = stdout().flush().expect("Why did it not flush");
+        println!("\n\n\n");
         //lr_detector.print_rules_name_map();
         //tree.print(Key(0), None);
         // let src = &String::from(source);
