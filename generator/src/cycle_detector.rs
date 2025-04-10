@@ -135,11 +135,11 @@ impl<'a> LeftRecursionDetector<'a> {
 mod tests {
     use super::*;
     use crate::count_lines;
-    use crate::GeneratedCode;
-    use crate::SymbolTable;
+    
+    
     use ::parser::*;
     use std::cell::RefCell;
-    use std::env;
+    
     use std::fs::{canonicalize, read_to_string};
     use std::io::stdout;
     use std::io::Write;
@@ -169,8 +169,8 @@ mod tests {
         let source = &String::from(source);
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
-        let lr_detector = LeftRecursionDetector::new(tree, source);
-        let f = stdout().flush().expect("Why did it not flush");
+        let _lr_detector = LeftRecursionDetector::new(tree, source);
+        let _f = stdout().flush().expect("Why did it not flush");
         //lr_detector.print_rules_name_map();
         //tree.print(Key(0), None);
         // let src = &String::from(source);
