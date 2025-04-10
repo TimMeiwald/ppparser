@@ -76,13 +76,19 @@ impl<'a> LeftRecursionDetector<'a> {
         }
     }
 
-    fn left_walk_kernel(&mut self, tree: &BasicPublisher, key: Key, parent_rule_name: String, mut rules_set: HashSet<String>) {
-        // Since a jump to a reference jumps to a rule and we actually just want 
+    fn left_walk_kernel(
+        &mut self,
+        tree: &BasicPublisher,
+        key: Key,
+        parent_rule_name: String,
+        mut rules_set: HashSet<String>,
+    ) {
+        // Since a jump to a reference jumps to a rule and we actually just want
         // The first child of the RHS.
-        // We check if the node is itself a rule, if yes we grab the RHS index not the left most. 
+        // We check if the node is itself a rule, if yes we grab the RHS index not the left most.
         let node = tree.get_node(key);
         let left_most_child: Option<&Key>;
-        match node.rule{
+        match node.rule {
             Rules::Rule => {
                 // Since assignment and whitespace are inlined
                 // The 2nd rule to get called in rule is index 1 of the children.
@@ -94,41 +100,39 @@ impl<'a> LeftRecursionDetector<'a> {
         }
 
         // If it get's here they're terminals.
-        match left_most_child{
-            Some(child) =>{
+        match left_most_child {
+            Some(child) => {
                 println!("Going into child of {:?}", node.rule);
                 self.left_walk_kernel(tree, *child, parent_rule_name, rules_set);
             }
-            None => {   
+            None => {
                 match node.rule {
                     Rules::Var_Name_Ref => {
                         // Since a LR rule would cycle endlessly we must know when to terminate.
-                        // Since we also want to support indirect left recursion 
-                        // We use a stack to push the rules onto and then check it's not repeating. 
+                        // Since we also want to support indirect left recursion
+                        // We use a stack to push the rules onto and then check it's not repeating.
 
-
-                        if !rules_set.insert(node.get_string(&self.source)){
+                        if !rules_set.insert(node.get_string(&self.source)) {
                             // Was already in the list so we can stop because it means
                             // We'll be looping
                             println!("{:#?}", rules_set);
                             return;
                         }
-                        let key = self.rules_name_map.get(&node.get_string(&self.source)).expect("The index should exist. If it doesn't the program is broken.");
+                        let key = self
+                            .rules_name_map
+                            .get(&node.get_string(&self.source))
+                            .expect("The index should exist. If it doesn't the program is broken.");
                         println!("Jumping to Rule: {:?}", node.rule);
-                        // If it's a reference to a rule then we jump to that rule's index and keep recursing. 
+                        // If it's a reference to a rule then we jump to that rule's index and keep recursing.
                         self.left_walk_kernel(tree, *key, parent_rule_name, rules_set);
-                        
                     }
                     _ => {
                         // If it's some other terminal type we ignore it since it terminates.
                         println!("Terminal {:?}", node.rule);
-
                     }
                 }
-
             }
         }
-
     }
 }
 
@@ -136,11 +140,10 @@ impl<'a> LeftRecursionDetector<'a> {
 mod tests {
     use super::*;
     use crate::count_lines;
-    
-    
+
     use ::parser::*;
     use std::cell::RefCell;
-    
+
     use std::fs::{canonicalize, read_to_string};
     use std::io::stdout;
     use std::io::Write;

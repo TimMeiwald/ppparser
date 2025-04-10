@@ -55,11 +55,8 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
-    
-    
-    
-    use std::fs::{canonicalize};
+
+    use std::fs::canonicalize;
     #[test]
     fn test() {
         let path = "../parser/tests/test_data/Grammar.txt";

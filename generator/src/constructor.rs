@@ -702,7 +702,7 @@ impl GeneratedCode<'_> {
 mod tests {
     use super::*;
     use crate::count_lines;
-    
+
     use std::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
