@@ -8,6 +8,7 @@ mod symbol_table;
 
 pub use crate::constructor::GeneratedCode;
 use crate::symbol_table::SymbolTable;
+use cycle_detector::LeftRecursionDetector;
 use ::parser::*;
 
 fn count_lines(source: &String, start_position: u32) -> u32 {
@@ -48,7 +49,9 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
     let clean_tree = tree.get_publisher().clear_false();
     let sym_table = SymbolTable::new(&clean_tree, src);
     //sym_table.print();
-    let gen_code = GeneratedCode::new(&sym_table, &clean_tree, src);
+    let cycles = LeftRecursionDetector::new(&clean_tree, src);
+    //println!("{:#?}", cycles.get_left_recursion_rules());
+    let gen_code = GeneratedCode::new(&cycles, &sym_table, &clean_tree, src);
     Some(gen_code)
 }
 

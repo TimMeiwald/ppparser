@@ -1,5 +1,5 @@
 use super::binary_wo::{BinaryTreeWO, Reference};
-use crate::symbol_table::SymbolTable;
+use crate::{cycle_detector::LeftRecursionDetector, symbol_table::SymbolTable};
 use ::parser::*;
 use indoc::indoc;
 use std::panic::panic_any;
@@ -16,7 +16,7 @@ pub struct GeneratedCode<'a> {
 }
 
 impl GeneratedCode<'_> {
-    pub fn new(symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str) -> Self {
+    pub fn new(left_recursive_rules: &LeftRecursionDetector, symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str) -> Self {
         println!("Generating Code");
         let rules = Self::generate(symbol_table, tree, source);
         let (rules_enum, num_rules) = Self::generate_rules_enum(symbol_table);
@@ -701,7 +701,7 @@ impl GeneratedCode<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::count_lines;
+    use crate::{count_lines, cycle_detector};
 
     use std::cell::RefCell;
     use std::env;
@@ -769,7 +769,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, &tree, src);
         _gen_code.print();
     }
 
@@ -800,7 +801,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
         _gen_code.print();
     }
 
@@ -829,7 +831,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
     }
 
     #[test]
@@ -860,7 +863,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
         _gen_code.print();
     }
     #[test]
@@ -893,7 +897,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
         _gen_code.print();
     }
 
@@ -926,7 +931,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
         // for i in &gen_code.rules {
         //     println!("{}", i)
         // }
@@ -1001,7 +1007,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
         for i in gen_code.rules {
             println!("{}", i)
         }
@@ -1037,7 +1044,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
         for i in gen_code.rules {
             println!("{}", i)
         }
@@ -1073,7 +1081,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
         for i in gen_code.rules {
             println!("{}", i)
         }
@@ -1108,7 +1117,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
         for i in gen_code.rules {
             println!("{}", i)
         }
@@ -1146,7 +1156,8 @@ mod tests {
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
         sym_table.print_inlined_rules();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector,&sym_table, &tree, src);
         gen_code.print();
     }
 }

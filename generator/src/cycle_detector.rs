@@ -13,7 +13,7 @@ pub struct LeftRecursionDetector<'a> {
 }
 
 impl<'a> LeftRecursionDetector<'a> {
-    fn new(tree: &BasicPublisher, source: &'a String) -> Self {
+    pub fn new(tree: &BasicPublisher, source: &'a String) -> Self {
         let mut lr_detector = LeftRecursionDetector {
             source,
             rules_name_map: HashMap::new(),
@@ -29,6 +29,9 @@ impl<'a> LeftRecursionDetector<'a> {
     }
     fn print_left_recursive_rules(&self){
         println!("{:#?}", self.left_recursion_rules);
+    }
+    pub fn get_left_recursion_rules(&self) -> &HashMap<String, HashSet<String>> {
+        return &self.left_recursion_rules
     }
     fn get_rule_name(&mut self, tree: &BasicPublisher, node: &Node) -> String {
         debug_assert_eq!(node.rule, Rules::LHS);
