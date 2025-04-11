@@ -39,7 +39,7 @@ impl<'a> LeftRecursionDetector<'a> {
         let var_name_decl = tree.get_node(var_name_decl);
         debug_assert_eq!(var_name_decl.rule, Rules::Var_Name_Decl);
         let s = var_name_decl.get_string(&self.source);
-        s[1..s.len()-1].to_string()
+        s[1..s.len()-1].to_ascii_lowercase().to_string()
     }
     fn get_rule_keys(&mut self, tree: &BasicPublisher) {
         let node = tree.get_node(Key(0));
@@ -127,7 +127,7 @@ impl<'a> LeftRecursionDetector<'a> {
                         // Since we also want to support indirect left recursion
                         // We use a stack to push the rules onto and then check it's not repeating.
                         let ref_name = node.get_string(&self.source);
-                        let ref_name = ref_name[1..ref_name.len()-1].to_string();
+                        let ref_name = ref_name[1..ref_name.len()-1].to_ascii_lowercase().to_string();
                         if !rules_set.insert(ref_name) {
                             // Was already in the list so we can stop because it means
                             // We'll be looping
@@ -137,7 +137,7 @@ impl<'a> LeftRecursionDetector<'a> {
                         }
                         
                         let rule_name = node.get_string(&self.source);
-                        let rule_name = rule_name[1..rule_name.len()-1].to_string();
+                        let rule_name = rule_name[1..rule_name.len()-1].to_ascii_lowercase().to_string();
                         let key = self
                             .rules_name_map
                             .get(&rule_name)

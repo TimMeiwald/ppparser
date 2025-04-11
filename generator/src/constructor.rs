@@ -230,7 +230,7 @@ impl GeneratedCode<'_> {
             lr_rule_hdr.push_str("];");
         }
         let builder = format!(
-            "{}\n{}{}\n{}\n}} ",
+            "{}\n{}{}\n{}\n}}\n",
             rule_header,
             lr_rule_hdr,
             comment.unwrap_or("".to_string()),
@@ -718,6 +718,7 @@ impl GeneratedCode<'_> {
         let var_name: String = source
             [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)]
             .to_string();
+        println!("{:#?}", var_name);
         let is_left_recursive = left_recursive_rules.get_left_recursion_rules().get(&var_name);
         if is_left_recursive.is_some(){
             let contents = var_name.to_string();
