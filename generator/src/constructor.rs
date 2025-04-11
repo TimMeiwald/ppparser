@@ -222,15 +222,17 @@ impl GeneratedCode<'_> {
             //     Rules::div_expr,
             //     Rules::mult_expr,
             // ];
-            lr_rule_hdr.push_str("let involved_set = vec![");
+            lr_rule_hdr.push_str("\tlet involved_set = vec![");
             for i in lr_rules_for_name {
-                lr_rule_hdr.push_str(i);
+                lr_rule_hdr.push_str(&format!("Rules::{i}, ").to_string());
             }
-            lr_rule_hdr.push_str("]\n");
+            lr_rule_hdr = lr_rule_hdr[0..lr_rule_hdr.len()-2].to_string(); // Drops a comma
+            lr_rule_hdr.push_str("];");
         }
         let builder = format!(
-            "{}\n{}\n{}\n}} ",
+            "{}\n{}{}\n{}\n}} ",
             rule_header,
+            lr_rule_hdr,
             comment.unwrap_or("".to_string()),
             rhs
         );
@@ -1228,7 +1230,7 @@ mod tests {
 
                                 <expr_divmul> = <div_expr>/<mult_expr>/<expr_exponentiation>;
                                 <expr_addsub> = <add_expr>/<sub_expr>/<expr_divmul>;
-                                <Grammar> = <expr_addsub>;
+                                <grammar> = <expr_addsub>;
         "#
         .to_string();
         let string2 = string.clone();
