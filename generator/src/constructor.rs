@@ -18,7 +18,7 @@ pub struct GeneratedCode<'a> {
 impl GeneratedCode<'_> {
     pub fn new(left_recursive_rules: &LeftRecursionDetector, symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str) -> Self {
         println!("Generating Code");
-        let rules = Self::generate(symbol_table, tree, source);
+        let rules = Self::generate(left_recursive_rules, symbol_table, tree, source);
         let (rules_enum, num_rules) = Self::generate_rules_enum(symbol_table);
         let rules_enum_header = indoc! {
             r##"#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually
@@ -95,7 +95,7 @@ impl GeneratedCode<'_> {
         }
     }
 
-    fn generate(symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str) -> Vec<String> {
+    fn generate(left_recursive_rules: &LeftRecursionDetector, symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str) -> Vec<String> {
         let node = tree.get_node(Key(0));
         if node.rule != Rules::Grammar {
             panic!("Invalid Root. Must be of type Rules::Grammar");
@@ -108,7 +108,7 @@ impl GeneratedCode<'_> {
             }
             let child_index = node.get_children()[counter];
             // Recurse.
-            let rule = Self::match_rule(symbol_table, tree, source, child_index);
+            let rule = Self::match_rule(left_recursive_rules, symbol_table, tree, source, child_index);
             rules.push(rule);
             counter += 1;
         }
@@ -132,6 +132,7 @@ impl GeneratedCode<'_> {
     }
 
     fn match_rule(
+        left_recursive_rules: &LeftRecursionDetector,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
         source: &str,
@@ -139,14 +140,14 @@ impl GeneratedCode<'_> {
     ) -> String {
         let node = tree.get_node(index);
         match node.rule {
-            Rules::Rule => Self::rule(symbol_table, tree, source, index),
+            Rules::Rule => Self::rule(left_recursive_rules, symbol_table, tree, source, index),
             _ => {
                 todo!("Not yet implemented")
             }
         }
     }
 
-    fn rule(symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str, index: Key) -> String {
+    fn rule(left_recursive_rules: &LeftRecursionDetector, symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str, index: Key) -> String {
         let rule_node = tree.get_node(index);
         let rule_children = rule_node.get_children();
         let mut name: Option<String> = None;
@@ -179,12 +180,32 @@ impl GeneratedCode<'_> {
                 _ => {}
             }
         }
-
+        let name = name.expect("Must have name");
         let rule_header = format!(
 
             "#[allow(dead_code)]\npub fn {}<T: Context>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{",
-            name.expect("Must have name")
+            name
         );
+        let mut lr_rule_hdr: String = "".to_string();
+        let lr_rules = left_recursive_rules.get_left_recursion_rules();
+        let lr_rules_for_name = lr_rules.get(&name);
+        if lr_rules_for_name.is_some() {
+            let lr_rules_for_name= lr_rules_for_name.expect("We just checked it's some");
+            // Then it's an LR rule and we need to add the involved set
+            // e.g exmaple below
+            // let involved_set = vec![
+            //     Rules::expr_addsub,
+            //     Rules::sub_expr,
+            //     Rules::expr_divmul,
+            //     Rules::div_expr,
+            //     Rules::mult_expr,
+            // ];
+            lr_rule_hdr.push_str("let involved_set = vec![");
+            for i in lr_rules_for_name{
+                lr_rule_hdr.push_str(i);
+            }
+            lr_rule_hdr.push_str("]\n");
+        }
         let builder = format!(
             "{}\n{}\n{}\n}} ",
             rule_header,
