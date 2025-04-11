@@ -350,7 +350,7 @@ impl BinaryTreeWO {
         match &node.reference {
             Reference::LeftRecursiveRule(content) => {
                 let contents = format!(
-                    "let closure_{:?} = _var_name_indirect_left_recursion(Rules::{}, context, {});",
+                    "let closure_{:?} = _var_name_indirect_left_recursion(&involved_set, Rules::{}, context, {});",
                     index.0,
                     content,
                     content.to_lowercase()

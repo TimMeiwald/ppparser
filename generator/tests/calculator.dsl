@@ -20,4 +20,4 @@
 
 <expr_divmul> = <div_expr>/<mult_expr>/<expr_exponentiation>;
 <expr_addsub> = <add_expr>/<sub_expr>/<expr_divmul>;
-<grammar> = <expr_addsub>;
+<Grammar> = <expr_addsub>;
