@@ -63,7 +63,7 @@ impl<'a> LeftRecursionDetector<'a> {
         debug_assert_eq!(node.rule, Rules::Grammar);
         for key in node.get_children() {
             let child = tree.get_node(*key);
-            let rules_set: HashSet<String> = HashSet::new();
+            let mut rules_set: HashSet<String> = HashSet::new();
             match child.rule {
                 Rules::Rule => {
                     debug_assert_eq!(child.rule, Rules::Rule);
@@ -74,7 +74,7 @@ impl<'a> LeftRecursionDetector<'a> {
                     let rhs_key = child.get_children()[1];
                     let rhs = tree.get_node(rhs_key);
                     debug_assert_eq!(rhs.rule, Rules::RHS);
-                    self.left_walk_kernel(tree, rhs_key, parent_rule_name, rules_set);
+                    self.left_walk_kernel(tree, rhs_key, parent_rule_name, &mut rules_set);
                 }
                 _ => {}
             }
@@ -86,7 +86,7 @@ impl<'a> LeftRecursionDetector<'a> {
         tree: &BasicPublisher,
         key: Key,
         parent_rule_name: String,
-        mut rules_set: HashSet<String>,
+        mut rules_set: &mut HashSet<String>,
     ) {
         // Since a jump to a reference jumps to a rule and we actually just want
         // The first child of the RHS.
@@ -99,6 +99,11 @@ impl<'a> LeftRecursionDetector<'a> {
                 // Since assignment and whitespace are inlined
                 // The 2nd rule to get called in rule is index 1 of the children.
                 left_most_child = node.get_children().get(1)
+            }
+            Rules::Ordered_Choice => {
+                left_most_child = node.get_children().get(0);
+                let right_most_child = node.get_children().get(1).expect("OC always has 2 children");
+                self.left_walk_kernel(tree, *right_most_child, parent_rule_name.clone(), rules_set);
             }
             _ => {
                 left_most_child = node.get_children().get(0);
@@ -122,7 +127,7 @@ impl<'a> LeftRecursionDetector<'a> {
                             // Was already in the list so we can stop because it means
                             // We'll be looping
                             // println!("{:#?}", rules_set);
-                            self.left_recursion_rules.insert(parent_rule_name, rules_set);
+                            self.left_recursion_rules.insert(parent_rule_name, rules_set.clone());
                             return;
                         }
                         let key = self
