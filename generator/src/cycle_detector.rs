@@ -141,7 +141,7 @@ impl<'a> LeftRecursionDetector<'a> {
                         let key = self
                             .rules_name_map
                             .get(&rule_name)
-                            .expect("The index should exist. If it doesn't the program is broken.");
+                            .expect("The index should exist. If it doesn't the program is broken. Or the rule doesn't exist which cannot be handled. Todo: Bubble errors up properly at some point");
                         // println!("Jumping to Rule: {:?}", node.rule);
                         // If it's a reference to a rule then we jump to that rule's index and keep recursing.
                         self.left_walk_kernel(tree, *key, parent_rule_name, rules_set);
