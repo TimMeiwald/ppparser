@@ -50,7 +50,6 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
     let sym_table = SymbolTable::new(&clean_tree, src);
     //sym_table.print();
     let cycles = LeftRecursionDetector::new(&clean_tree, src);
-    //println!("{:#?}", cycles.get_left_recursion_rules());
     let gen_code = GeneratedCode::new(&cycles, &sym_table, &clean_tree, src);
     Some(gen_code)
 }

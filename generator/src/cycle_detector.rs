@@ -38,7 +38,8 @@ impl<'a> LeftRecursionDetector<'a> {
         let var_name_decl = node.get_children()[0];
         let var_name_decl = tree.get_node(var_name_decl);
         debug_assert_eq!(var_name_decl.rule, Rules::Var_Name_Decl);
-        var_name_decl.get_string(&self.source)
+        let s = var_name_decl.get_string(&self.source);
+        s[1..s.len()-1].to_string()
     }
     fn get_rule_keys(&mut self, tree: &BasicPublisher) {
         let node = tree.get_node(Key(0));
@@ -125,17 +126,21 @@ impl<'a> LeftRecursionDetector<'a> {
                         // Since a LR rule would cycle endlessly we must know when to terminate.
                         // Since we also want to support indirect left recursion
                         // We use a stack to push the rules onto and then check it's not repeating.
-
-                        if !rules_set.insert(node.get_string(&self.source)) {
+                        let ref_name = node.get_string(&self.source);
+                        let ref_name = ref_name[1..ref_name.len()-1].to_string();
+                        if !rules_set.insert(ref_name) {
                             // Was already in the list so we can stop because it means
                             // We'll be looping
                             // println!("{:#?}", rules_set);
                             self.left_recursion_rules.insert(parent_rule_name, rules_set.clone());
                             return;
                         }
+                        
+                        let rule_name = node.get_string(&self.source);
+                        let rule_name = rule_name[1..rule_name.len()-1].to_string();
                         let key = self
                             .rules_name_map
-                            .get(&node.get_string(&self.source))
+                            .get(&rule_name)
                             .expect("The index should exist. If it doesn't the program is broken.");
                         // println!("Jumping to Rule: {:?}", node.rule);
                         // If it's a reference to a rule then we jump to that rule's index and keep recursing.
