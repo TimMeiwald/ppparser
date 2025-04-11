@@ -23,6 +23,7 @@ pub enum Reference {
     StringTerminal(Vec<char>),
     StringTerminalAsciiOpt(Vec<char>),
     InlinedRule(String),
+    LeftRecursiveRule(String)
 }
 
 pub struct BinaryTreeWO {
@@ -101,6 +102,7 @@ impl BinaryTreeWO {
             Reference::StringTerminal(_) => self.string_terminal(stack, index),
             Reference::StringTerminalAsciiOpt(_) => self.string_terminal_ascii_opt(stack, index),
             Reference::InlinedRule(_) => self.inlined_rule(stack, index),
+            Reference::LeftRecursiveRule(_) => self.left_recursive_rule(stack, index),
             Reference::Exec | Reference::Null => {
                 panic!("Exec should only exist once and NULL should never exist")
             }
@@ -343,6 +345,25 @@ impl BinaryTreeWO {
             }
         }
     }
+    fn left_recursive_rule(&self, stack: &mut Vec<String>, index: Key) -> Key {
+        let node = &self.nodes[usize::from(index)];
+        match &node.reference {
+            Reference::LeftRecursiveRule(content) => {
+                let contents = format!(
+                    "let closure_{:?} = _var_name_indirect_left_recursion(Rules::{}, context, {});",
+                    index.0,
+                    content,
+                    content.to_lowercase()
+                );
+                stack.push(contents);
+                index
+            }
+            _ => {
+                panic!("Shouldn't happen")
+            }
+        }
+    }
+
 
     fn inlined_rule(&self, stack: &mut Vec<String>, index: Key) -> Key {
         let node = &self.nodes[usize::from(index)];

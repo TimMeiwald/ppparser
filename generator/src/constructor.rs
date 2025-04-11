@@ -718,8 +718,12 @@ impl GeneratedCode<'_> {
         let var_name: String = source
             [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)]
             .to_string();
-
-        if symbol_table.check_symbol_is_inline(&var_name) {
+        let is_left_recursive = left_recursive_rules.get_left_recursion_rules().get(&var_name);
+        if is_left_recursive.is_some(){
+            let contents = var_name.to_string();
+            out_tree.push(Reference::LeftRecursiveRule(contents), None, None)
+        }
+        else if symbol_table.check_symbol_is_inline(&var_name) {
             let contents = var_name.to_string();
             out_tree.push(Reference::InlinedRule(contents), None, None)
         } else {
