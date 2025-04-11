@@ -183,7 +183,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::RHS => {
                     let mut out_tree = BinaryTreeWO::new();
-                    let rhs_key = Self::rhs(&mut out_tree, symbol_table, tree, source, *i);
+                    let rhs_key = Self::rhs(left_recursive_rules, &mut out_tree, symbol_table, tree, source, *i);
                     let last_key = out_tree.push(Reference::Exec, Some(rhs_key), None);
                     //out_tree.print(last_key);
 
@@ -283,6 +283,7 @@ impl GeneratedCode<'_> {
     }
 
     fn rhs(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -294,12 +295,12 @@ impl GeneratedCode<'_> {
         for i in rhs_node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::Ordered_Choice => {
-                    ret_key = Self::ordered_choice(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::ordered_choice(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Sequence => {
-                    ret_key = Self::sequence(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::sequence(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
-                Rules::Atom => ret_key = Self::atom(out_tree, symbol_table, tree, source, *i),
+                Rules::Atom => ret_key = Self::atom(&left_recursive_rules, out_tree, symbol_table, tree, source, *i),
                 _ => panic!("rhs"),
             }
         }
@@ -307,6 +308,7 @@ impl GeneratedCode<'_> {
     }
 
     fn ordered_choice(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -320,7 +322,7 @@ impl GeneratedCode<'_> {
         for i in oc_node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::Atom => {
-                    let mut key = Self::atom(out_tree, symbol_table, tree, source, *i);
+                    let mut key = Self::atom(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                     if count != 0 {
                         key = out_tree.push(Reference::OrderedChoice, Some(last_key), Some(key))
                     }
@@ -335,6 +337,7 @@ impl GeneratedCode<'_> {
     }
 
     fn sequence(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -348,7 +351,7 @@ impl GeneratedCode<'_> {
         for i in oc_node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::Atom => {
-                    let mut key = Self::atom(out_tree, symbol_table, tree, source, *i);
+                    let mut key = Self::atom(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                     if count != 0 {
                         key = out_tree.push(Reference::Sequence, Some(last_key), Some(key));
                     }
@@ -363,6 +366,7 @@ impl GeneratedCode<'_> {
     }
 
     fn atom(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -375,22 +379,22 @@ impl GeneratedCode<'_> {
         for i in node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::And_Predicate => {
-                    ret_key = Self::and_predicate(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::and_predicate(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Not_Predicate => {
-                    ret_key = Self::not_predicate(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::not_predicate(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::One_Or_More => {
-                    ret_key = Self::one_or_more(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::one_or_more(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Zero_Or_More => {
-                    ret_key = Self::zero_or_more(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::zero_or_more(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Optional => {
-                    ret_key = Self::optional(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::optional(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Nucleus => {
-                    ret_key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::nucleus(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
 
                 _ => panic!("atom"),
@@ -400,6 +404,7 @@ impl GeneratedCode<'_> {
     }
 
     fn optional(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -413,7 +418,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Question_Mark => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::Optional, Some(key), None)
                 }
 
@@ -423,6 +428,7 @@ impl GeneratedCode<'_> {
         ret_key
     }
     fn one_or_more(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -436,7 +442,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Plus => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::OneOrMore, Some(key), None)
                 }
 
@@ -446,6 +452,7 @@ impl GeneratedCode<'_> {
         ret_key
     }
     fn zero_or_more(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -459,7 +466,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Star => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::ZeroOrMore, Some(key), None)
                 }
 
@@ -470,6 +477,7 @@ impl GeneratedCode<'_> {
     }
 
     fn and_predicate(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -483,7 +491,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Ampersand => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::AndPredicate, Some(key), None);
                 }
 
@@ -494,6 +502,7 @@ impl GeneratedCode<'_> {
     }
 
     fn not_predicate(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -506,7 +515,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Exclamation_Mark => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::NotPredicate, Some(key), None)
                 }
 
@@ -517,6 +526,7 @@ impl GeneratedCode<'_> {
     }
 
     fn nucleus(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -529,13 +539,13 @@ impl GeneratedCode<'_> {
             let child_rule = tree.get_node(*i).rule;
             match child_rule {
                 Rules::Subexpression => {
-                    ret_key = Self::subexpression(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::subexpression(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Terminal => {
                     ret_key = Self::terminal(out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Var_Name_Ref => {
-                    ret_key = Self::var_name(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::var_name(&left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::OrderedChoiceMatchRange => {
                     ret_key =
@@ -674,6 +684,7 @@ impl GeneratedCode<'_> {
     }
 
     fn subexpression(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -685,7 +696,7 @@ impl GeneratedCode<'_> {
         for i in node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::RHS => {
-                    let key = Self::rhs(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::rhs(left_recursive_rules, out_tree, symbol_table, tree, source, *i);
                     ret_key = out_tree.push(Reference::Subexpression, Some(key), None);
                 }
                 //Rules::Left_Bracket | Rules::Right_Bracket => {}
@@ -696,6 +707,7 @@ impl GeneratedCode<'_> {
     }
 
     fn var_name(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
