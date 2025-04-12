@@ -205,7 +205,7 @@ impl GeneratedCode<'_> {
         let name = name.expect("Must have name");
         let rule_header = format!(
 
-            "#[allow(dead_code)]\npub fn {}<T: Context>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{",
+            "#[allow(dead_code)]\npub fn {}<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{",
             name
         );
         let mut lr_rule_hdr: String = "".to_string();
@@ -222,7 +222,7 @@ impl GeneratedCode<'_> {
             //     Rules::div_expr,
             //     Rules::mult_expr,
             // ];
-            lr_rule_hdr.push_str("\tlet involved_set = vec![");
+            lr_rule_hdr.push_str("\tlet involved_set: Vec<Rules> = vec![");
             for i in lr_rules_for_name {
                 lr_rule_hdr.push_str(&format!("Rules::{i}, ").to_string());
             }

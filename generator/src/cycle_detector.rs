@@ -5,7 +5,7 @@ use parser::{Node, Rules};
 use crate::{BasicPublisher, Key};
 
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 enum LeftRecursive {
     True,
     False,
@@ -18,6 +18,7 @@ pub struct LeftRecursionDetector<'a> {
     source: &'a String,
     rules_name_map: HashMap<String, Key>, // Lookup a key for a rule by the name of the rule.
     left_recursion_rules: HashMap<String, HashSet<String>>,
+    rules_that_terminate_map: HashMap<String, LeftRecursive>
 }
 
 impl<'a> LeftRecursionDetector<'a> {
@@ -26,14 +27,47 @@ impl<'a> LeftRecursionDetector<'a> {
             source,
             rules_name_map: HashMap::new(),
             left_recursion_rules: HashMap::new(),
+            rules_that_terminate_map: HashMap::new(),
         };
+
+        // Must build a graph of all rules from Grammar
+        // Then order rules from lowest to top. So we can abort loops if
+        // we know they already loop. 
+        // Then we can go to progessively higher tier rules. 
+        // And see if they loop back to themselves
+        // This may work
+        // Not sure if I need to work through every rule path or not 
+        // We care if keys are duplicated because they're pointers
+        // Not the rule name per se 
+        // Ya silly goose
+        // Still apply the above. 
+        
+
         lr_detector.get_rule_keys(tree); // We get the declared rules and their keys
                                          // So we can then lookup the rule in the tree when it's referenced in a different rule
         lr_detector.left_walk_init(tree);
+        lr_detector.remove_terminals(tree);
         lr_detector
+    }
+    fn remove_terminals(&mut self, tree: &BasicPublisher){
+        for (terminal_rule, value) in &self.rules_that_terminate_map{
+            debug_assert_eq!(*value, LeftRecursive::False);
+            for (lr_rule, set) in &mut self.left_recursion_rules{
+                set.remove(terminal_rule); // Remove from sets if the rule is terminal.
+            }
+
+        }
+        // Remove from self.left_recursion_rules if rule is terminal.
+        for (terminal_rule, value) in &self.rules_that_terminate_map{
+            self.left_recursion_rules.remove(terminal_rule);
+        }
+
     }
     fn print_rules_name_map(&self) {
         println!("{:#?}", self.rules_name_map);
+    }
+    fn print_rules_that_terminate_map(&self) {
+        println!("{:#?}", self.rules_that_terminate_map);
     }
     fn print_left_recursive_rules(&self) {
         println!("{:#?}", self.left_recursion_rules);
@@ -82,6 +116,7 @@ impl<'a> LeftRecursionDetector<'a> {
         debug_assert_eq!(node.rule, Rules::Grammar);
         for key in node.get_children() {
             let child = tree.get_node(*key);
+            let child_name = child.get_string(&self.source);
             let mut rules_set: HashSet<String> = HashSet::new();
             match child.rule {
                 Rules::Rule => {
@@ -100,6 +135,9 @@ impl<'a> LeftRecursionDetector<'a> {
                         parent_rule_name.clone(),
                         &mut rules_set,
                     );
+                    if lr == LeftRecursive::False{
+                        self.rules_that_terminate_map.insert(parent_rule_name.clone(), lr);
+                    }
                     println!("RULE EXIT: {}, Left Recursive = {:?}\n", parent_rule_name.clone(), lr);
                 }
                 _ => {}
@@ -140,6 +178,9 @@ impl<'a> LeftRecursionDetector<'a> {
                     let rhs = children[1];
                     println!("Left Walk Rule Init: Entering Ordered Choice 1");
                     lr = Some(self.left_walk_rule_init(tree, lhs, parent_rule_name.clone(), rules_set));
+                    if lr == Some(LeftRecursive::True){
+                        break;
+                    }
                     println!("Left Walk Rule Init: Entering Ordered Choice 2");
                     lr = Some(self.left_walk_rule_init(tree, rhs, parent_rule_name.clone(), rules_set));
                     break;
@@ -184,10 +225,9 @@ impl<'a> LeftRecursionDetector<'a> {
         let ref_name = ref_name[1..ref_name.len() - 1]
             .to_ascii_lowercase()
             .to_string();
-        if !rules_set.insert(ref_name) {
-            // Was already in the list so we can stop because it means
-            // We'll be looping
-            // println!("{:#?}", rules_set);
+        rules_set.insert(ref_name.clone()); // Always insert the rule
+        if ref_name == parent_rule_name {
+            // If ref name is the same as the parent rule then we have looped and can stop.
             self.left_recursion_rules
                 .insert(parent_rule_name, rules_set.clone());
             return LeftRecursive::True;
@@ -248,6 +288,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
+        _lr_detector.print_rules_that_terminate_map();
         _lr_detector.print_left_recursive_rules();
         let r = _lr_detector.get_left_recursion_rules();
         assert!(r.len() == 0);
@@ -290,9 +331,55 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
+        _lr_detector.print_rules_that_terminate_map();
         _lr_detector.print_left_recursive_rules();
         let r = _lr_detector.get_left_recursion_rules();
         assert!(r.len() == 2);
+        let _f = stdout().flush().expect("Why did it not flush");
+        // println!("\n\n\n");
+        //lr_detector.print_rules_name_map();
+        //tree.print(Key(0), None);
+        // let src = &String::from(source);
+        // let sym_table = SymbolTable::new(tree, src);
+        // sym_table.print();
+        // let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        // _gen_code.print();
+    }
+    #[test]
+    fn test_var_name_lr2() {
+        let string = r##"<test_indirect_three_level_A> = (<test_indirect_three_level_B>, '-', <test_LR_num>) / <test_LR_num>;
+<test_indirect_three_level_B> = <test_indirect_three_level_C>;
+<test_indirect_three_level_C> = <test_indirect_three_level_A>;
+<test_LR_num> = <Num>;
+<Num> = [0x30..0x39];
+<test_LR_expr> = (<test_LR_expr>, '-', <test_LR_num>) / <test_LR_num>; # Should match 0-0-0-0-0-0-0-0 etc #
+"##
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len();
+        let source = Source::new(&string);
+        let position = 0;
+        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let result = grammar(Key(0), &context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            // println!("Successfully parsed")
+        }
+        let source = &String::from(source);
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
+        let _lr_detector = LeftRecursionDetector::new(tree, source);
+        _lr_detector.print_rules_that_terminate_map();
+        _lr_detector.print_left_recursive_rules();
+        let r = _lr_detector.get_left_recursion_rules();
+        assert!(r.len() == 4);
         let _f = stdout().flush().expect("Why did it not flush");
         // println!("\n\n\n");
         //lr_detector.print_rules_name_map();
@@ -330,6 +417,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
+        _lr_detector.print_rules_that_terminate_map();
         _lr_detector.print_left_recursive_rules();
         let _f = stdout().flush().expect("Why did it not flush");
         // println!("\n\n\n");
@@ -368,6 +456,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
+        _lr_detector.print_rules_that_terminate_map();
         _lr_detector.print_left_recursive_rules();
         let _f = stdout().flush().expect("Why did it not flush");
         // println!("\n\n\n");
