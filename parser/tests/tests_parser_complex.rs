@@ -356,7 +356,7 @@ mod tests {
         let result: (bool, u32);
 
         {
-            let involved_set = vec![Rules::test_term_indirect];
+            let involved_set = vec![];
             //result = test_fact_indirect(Key(0), &context, &source, position);
             let closure = _var_name_indirect_left_recursion(
                 &involved_set,
