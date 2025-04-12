@@ -58,6 +58,7 @@ impl<'a> LeftRecursionDetector<'a> {
             }
         }
     }
+    
 
     fn left_walk_init(&mut self, tree: &BasicPublisher) {
         // We loop over every rule
@@ -78,13 +79,58 @@ impl<'a> LeftRecursionDetector<'a> {
                     let rhs_key = child.get_children()[1];
                     let rhs = tree.get_node(rhs_key);
                     debug_assert_eq!(rhs.rule, Rules::RHS);
-                    self.left_walk_kernel(tree, rhs_key, parent_rule_name, &mut rules_set);
+                    self.left_walk_rule_init(tree, rhs_key, parent_rule_name, &mut rules_set);
                 }
                 _ => {}
             }
         }
     }
 
+    fn left_walk_rule_init(
+        &mut self,
+        tree: &BasicPublisher,
+        key: Key,
+        parent_rule_name: String,
+        mut rules_set: &mut HashSet<String>,
+    ) {
+        // We want to take every viable left recursive path at the top rule level
+        // But not thereafter(I think!)
+        let node = tree.get_node(key);
+        for child in node.get_children(){
+            let child_node = tree.get_node(*child);
+            match child_node.rule {
+                Rules::Var_Name_Ref => {
+                    self.left_walk_kernel(tree, *child, parent_rule_name.clone(), rules_set);
+                    break;
+                }
+                Rules::Ordered_Choice => {
+                    let children = child_node.get_children();
+                    let lhs = children[0];
+                    let rhs = children[1];
+                    self.left_walk_rule_init(tree, lhs, parent_rule_name.clone(), rules_set);
+                    self.left_walk_rule_init(tree, rhs, parent_rule_name.clone(), rules_set);
+                    break;
+
+                }
+                Rules::Sequence => {
+                    let children = child_node.get_children();
+                    let lhs = children[0];
+                    let rhs = children[1];
+                    self.left_walk_rule_init(tree, lhs, parent_rule_name.clone(), rules_set);
+                    self.left_walk_rule_init(tree, rhs, parent_rule_name.clone(), rules_set);
+                    break;
+                }
+                _ => {
+                    println!("Left Walk Rule Init: Ignoring {:?}", child_node.rule);
+                    self.left_walk_rule_init(tree, *child, parent_rule_name.clone(), rules_set);
+                    break;
+                }
+            }
+        }
+
+    }
+
+    
     fn left_walk_kernel(
         &mut self,
         tree: &BasicPublisher,
@@ -98,6 +144,10 @@ impl<'a> LeftRecursionDetector<'a> {
         let node = tree.get_node(key);
         let left_most_child: Option<&Key>;
         
+
+        // Not the left most rule the first rule group
+        // I.e Ordered choice must walk all of them, but we can skip some sequence stuff if
+        // those sequences are not left recursive. 
         match node.rule {
             Rules::Rule => {
                 // Since assignment and whitespace are inlined
