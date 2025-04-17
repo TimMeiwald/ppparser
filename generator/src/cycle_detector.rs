@@ -23,6 +23,11 @@ pub struct LeftRecursionDetector<'a> {
 
 impl<'a> LeftRecursionDetector<'a> {
     pub fn new(tree: &BasicPublisher, source: &'a String) -> Self {
+        // We assume tree is a true tree with the only loops being left
+        // recursion
+        // This does not hold for basic publishers that have not done 
+        // clear_false()
+        
         let mut lr_detector = LeftRecursionDetector {
             source,
             rules_name_map: HashMap::new(),
@@ -41,7 +46,7 @@ impl<'a> LeftRecursionDetector<'a> {
         // Not the rule name per se 
         // Ya silly goose
         // Still apply the above. 
-        
+
 
         lr_detector.get_rule_keys(tree); // We get the declared rules and their keys
                                          // So we can then lookup the rule in the tree when it's referenced in a different rule
