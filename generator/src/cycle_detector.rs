@@ -1,4 +1,7 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    hash::Hash,
+};
 
 use parser::{Node, Rules};
 
@@ -6,8 +9,8 @@ use crate::{BasicPublisher, Key};
 
 #[derive(Debug, PartialEq, Clone)]
 enum LeftRecursive {
-    SelfCycleDetected,  // The rule itself is left recursive
-    False,              // Not left recursive
+    SelfCycleDetected,          // The rule itself is left recursive
+    False,                      // Not left recursive
     OtherCycleDetected(String), // Cycles were detected but is not the rule we're investigating
 }
 
@@ -17,23 +20,23 @@ struct GetLeftRecursiveRules<'a> {
     source: &'a String,
     is_left_recursive_rule: HashMap<String, LeftRecursive>,
     rules_index_map: &'a HashMap<String, Key>,
-    inverse_rules_index_map: &'a HashMap<Key, String>
+    inverse_rules_index_map: &'a HashMap<Key, String>,
 }
 impl<'a> GetLeftRecursiveRules<'a> {
     pub fn new(
         tree: &BasicPublisher,
         source: &'a String,
         rules_index_map: &'a HashMap<String, Key>,
-        inverse_rules_index_map: &'a HashMap<Key, String>
-    ) -> HashMap<String, LeftRecursive> {
+        inverse_rules_index_map: &'a HashMap<Key, String>,
+    ) -> Self {
         let mut lr_detector = Self {
             source,
             is_left_recursive_rule: HashMap::new(),
             rules_index_map,
-            inverse_rules_index_map
+            inverse_rules_index_map,
         };
         lr_detector.evaluate_if_left_recursive(tree, rules_index_map);
-        lr_detector.is_left_recursive_rule
+        lr_detector
     }
     fn evaluate_if_left_recursive(
         &mut self,
@@ -42,7 +45,7 @@ impl<'a> GetLeftRecursiveRules<'a> {
     ) {
         for (rule_name, rhs_index) in rules_index_map {
             let mut rule_evaluation_set: HashSet<Key> = HashSet::new();
-            // println!("\n\nEvaluation Started:  {} {:?}", rule_name, rhs_index);
+            println!("\n\nEvaluation Started:  {} {:?}", rule_name, rhs_index);
             let mut should_return = LeftRecursive::False;
             self.kernel(
                 *rhs_index,
@@ -53,20 +56,8 @@ impl<'a> GetLeftRecursiveRules<'a> {
                 rhs_index,
             );
 
-            // if should_return != LeftRecursive::False {
-            //     self.is_left_recursive_rule.insert(rule_name.clone(), true);
-            // } else {
-            //     self.is_left_recursive_rule.insert(rule_name.clone(), false);
-            // }
-
-            // println!("Evaluation Complete: {rule_name}");
             self.is_left_recursive_rule
                 .insert(rule_name.clone(), should_return);
-            // println!("Statistics");
-            // println!("Rule Name: {rule_name}");
-            // println!("Returned due to same rule detected: {should_return}");
-            // println!("rule_evaluation_set: {:#?}", rule_evaluation_set);
-            // println!("End Statistics\n\n")
         }
     }
 
@@ -85,7 +76,10 @@ impl<'a> GetLeftRecursiveRules<'a> {
             let s = node.get_string(&self.source);
             let rule_name = s[1..s.len() - 1].to_ascii_lowercase().to_string();
             println!("Jumping to rule:    {:?}", rule_name);
-            let rhs_key = rules_index_map.get(&rule_name).expect("Should exist");
+            let rhs_key = rules_index_map.get(&rule_name).expect(&format!(
+                "Cannot use function: {:?} because it does not exist.",
+                rule_name
+            ));
             self.kernel(
                 *rhs_key,
                 tree,
@@ -115,7 +109,10 @@ impl<'a> GetLeftRecursiveRules<'a> {
                 if key == *parent_rule_key {
                     return LeftRecursive::SelfCycleDetected;
                 } else {
-                    let rule_name = self.inverse_rules_index_map.get(&key).expect("Expect existence");
+                    let rule_name = self
+                        .inverse_rules_index_map
+                        .get(&key)
+                        .expect("Expect existence");
                     return LeftRecursive::OtherCycleDetected(rule_name.clone());
                 }
             }
@@ -170,6 +167,148 @@ impl<'a> GetLeftRecursiveRules<'a> {
     }
 }
 
+struct GetInvolvedSets<'a> {
+    tree: &'a BasicPublisher,
+    source: &'a String,
+    is_left_recursive_rule: &'a HashMap<String, LeftRecursive>,
+    rules_index_map: &'a HashMap<String, Key>,
+    inverse_rules_index_map: &'a HashMap<Key, String>,
+    involved_sets: HashMap<String, Vec<String>>,
+}
+impl<'a> GetInvolvedSets<'a> {
+    fn new(
+        tree: &'a BasicPublisher,
+        source: &'a String,
+        is_left_recursive_rule: &'a HashMap<String, LeftRecursive>,
+        rules_index_map: &'a HashMap<String, Key>,
+        inverse_rules_index_map: &'a HashMap<Key, String>,
+    ) -> () {
+        let mut slf = GetInvolvedSets {
+            tree,
+            source,
+            is_left_recursive_rule,
+            rules_index_map,
+            inverse_rules_index_map,
+            involved_sets: HashMap::new(),
+        };
+        slf.get_involved_sets();
+    }
+
+    fn get_involved_sets(&mut self) {
+        for (rule_name, cycle_detected) in self.is_left_recursive_rule {
+            match cycle_detected {
+                LeftRecursive::False => {
+                    // Do nothing since it's not left recursive.
+                }
+                LeftRecursive::SelfCycleDetected => {
+                    // Find the involved set of rules for this self cycle.
+                    self.get_involved_set(rule_name);
+                }
+                LeftRecursive::OtherCycleDetected(_) => {
+                    // todo!("Not yet implemented")
+                }
+            }
+        }
+    }
+
+    fn get_involved_set(&self, rule_name: &String) -> HashSet<String> {
+        let rule_key = self.rules_index_map.get(rule_name).expect("Should exist");
+        // self.tree.print(*rule_key, Some(true));
+        // println!("\n\n");
+        let mut involved_set: HashSet<String> = HashSet::new();
+        involved_set.insert(rule_name.clone());
+        self.traverse(*rule_key, &mut involved_set);
+
+        // Filters out rules that have no cycles.
+        let involved_set = involved_set
+            .into_iter()
+            .filter(|r| {
+                let s= self.is_left_recursive_rule.get(r);
+                match s {
+                    None => {panic!("Rule should exist in is_left_recursive_rule")}
+                    Some(s) => {
+                        match s {
+                            LeftRecursive::False => return false,
+                            _ => return true,
+                        }
+                    }
+                }
+                
+            })
+            .collect();
+        
+        println!("Involved Set for: {rule_name}\n{:?}\n\n", involved_set);
+        involved_set
+    }
+
+    fn traverse(&self, node_key: Key, involved_set: &mut HashSet<String>) {
+        let node = self.tree.get_node(node_key);
+        let node_children = node.get_children();
+        for child in node_children {
+            let child_node = self.tree.get_node(*child);
+            match child_node.rule {
+                Rules::Ordered_Choice => {
+                    let subchildren = child_node.get_children();
+                    // We want to take every path through a top level ordered choice
+                    // Since all could be the leftmost available path.
+                    for child in subchildren {
+                        self.traverse(*child, involved_set);
+                    }
+                }
+                Rules::Sequence => {
+                    let subchild = child_node
+                        .get_children()
+                        .get(0)
+                        .expect("Must have at least two children.");
+                    self.traverse(*subchild, involved_set);
+                }
+                Rules::Var_Name_Ref => {
+                    self.jump_to_rule_reference(*child, involved_set);
+                }
+                Rules::Zero_Or_More
+                | Rules::One_Or_More
+                | Rules::Subexpression
+                | Rules::And_Predicate
+                | Rules::Optional
+                | Rules::Not_Predicate
+                | Rules::Atom
+                | Rules::RHS
+                | Rules::Nucleus => {
+                    self.traverse(*child, involved_set);
+                }
+                Rules::Terminal
+                | Rules::OrderedChoiceMatchRange
+                | Rules::StringTerminal
+                | Rules::ASCII => {
+                    return;
+                }
+
+                _ => {
+                    panic!("Unaccounted for rule: {:?}", child_node.rule)
+                }
+            }
+        }
+    }
+
+    fn jump_to_rule_reference(&self, key: Key, involved_set: &mut HashSet<String>) {
+        let node = self.tree.get_node(key);
+        let s = node.get_string(&self.source);
+        let rule_name = s[1..s.len() - 1].to_ascii_lowercase().to_string();
+        println!("Jumping to rule:    {:?}", rule_name);
+        let rhs_key = self.rules_index_map.get(&rule_name).expect(&format!(
+            "Cannot use function: {:?} because it does not exist.",
+            rule_name
+        ));
+        if involved_set.insert(rule_name) {
+            // True if rule did not already exist in the set.
+        } else {
+            // False if the rule already existed in the set
+            return; // So we don't loop endlessly.
+        }
+        self.traverse(*rhs_key, involved_set);
+    }
+}
+
 /// For each rule we must detect whether there is a cycle to
 /// determine if there is left recursion.
 /// We then store this information for generatoion time
@@ -210,13 +349,26 @@ impl<'a> LeftRecursionDetector<'a> {
         // Ya silly goose
         // Still apply the above.
         let rules_index_map = lr_detector.get_rules_index_map(tree);
-        let inverse_rules_index_map: HashMap<Key, String> = rules_index_map.iter()
-        .map(|(k, v)| (v.clone(), k.clone())).collect();
-        lr_detector.is_left_recursive_rule =
+        let inverse_rules_index_map: HashMap<Key, String> = rules_index_map
+            .iter()
+            .map(|(k, v)| (v.clone(), k.clone()))
+            .collect();
+        let get_left_recursive =
             GetLeftRecursiveRules::new(tree, source, &rules_index_map, &inverse_rules_index_map);
+        lr_detector.is_left_recursive_rule = get_left_recursive.is_left_recursive_rule.clone();
+
         println!(
             "Whether Rules are left recursive or not:\n{:#?}",
             lr_detector.is_left_recursive_rule
+        );
+
+        let rules: &HashMap<String, LeftRecursive> = &lr_detector.is_left_recursive_rule;
+        let get_involved_sets = GetInvolvedSets::new(
+            tree,
+            source,
+            &get_left_recursive.is_left_recursive_rule,
+            &get_left_recursive.rules_index_map,
+            &get_left_recursive.inverse_rules_index_map,
         );
         // Everytime a rule goes to a key in rules_index_map it's traversing a new rule
         // If it does it multiple times it could be a loop.
@@ -266,81 +418,6 @@ impl<'a> LeftRecursionDetector<'a> {
         }
         map
     }
-
-    // fn kernel(
-    //     &self,            // self.is_left_recursive_rule
-    //     .insert(rule_name.clone(), should_return);lisher,
-    //     rules_index_map: &HashMap<String, Key>,
-    //     rule_evaluation_set: &mut HashSet<Key>,
-    //     mut should_return: &mut bool,
-    // ) {
-    //     // If Rule is RHS then we add to a set that we have visited a given node.
-    //     *should_return = self.if_rhs_add_to_set(key, tree, rule_evaluation_set);
-    //     if *should_return {
-    //         return;
-    //     }
-    //     // If Rule is Var_Name_Ref we jump to that rule
-    //     self.jump_if_rule_reference(
-    //         key,
-    //         tree,
-    //         rules_index_map,
-    //         rule_evaluation_set,
-    //         should_return,
-    //     );
-
-    //     // Run for all children(not sure maybe only leftmost?)
-    //     let node = tree.get_node(key);
-    //     let children = node.get_children();
-    //     let first_child = children.get(0);
-    //     match first_child {
-    //         Some(index) => {
-    //             // if !self.if_ordered_choice_try_all_choices(key, tree, rules_index_map, rule_evaluation_set, should_return){
-    //             //     self.kernel(*index, tree, rules_index_map, rule_evaluation_set, should_return);
-    //             // }
-    //             self.kernel(
-    //                 *index,
-    //                 tree,
-    //                 rules_index_map,
-    //                 rule_evaluation_set,
-    //                 should_return,
-    //             );
-    //         }
-    //         None => {} // Terminal ignore
-    //     }
-    //     // for child in children{
-    //     //     self.kernel(*child, tree, rules_index_map, rule_evaluation_set);
-    //     // }
-    // }
-    // /// Not sure if necssary
-    // fn if_ordered_choice_try_all_choices(
-    //     &self,
-    //     key: Key,
-    //     tree: &BasicPublisher,
-    //     rules_index_map: &HashMap<String, Key>,
-    //     rule_evaluation_set: &mut HashSet<Key>,
-    //     mut should_return: &mut bool,
-    // ) -> bool {
-    //     let node = tree.get_node(key);
-    //     let mut temp_rule_evaluation_set = rule_evaluation_set.clone();
-    //     if node.rule == Rules::Ordered_Choice {
-    //         let children = node.get_children();
-    //         for child in children {
-    //             let mut temp_should_return = false;
-    //             let mut temp_rule_evaluation_set_in_loop = temp_rule_evaluation_set.clone();
-    //             self.kernel(
-    //                 *child,
-    //                 tree,
-    //                 rules_index_map,
-    //                 &mut temp_rule_evaluation_set_in_loop,
-    //                 &mut temp_should_return,
-    //             );
-    //         }
-
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
 }
 #[cfg(test)]
 mod tests {
