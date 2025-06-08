@@ -182,7 +182,7 @@ impl<'a> GetInvolvedSets<'a> {
         is_left_recursive_rule: &'a HashMap<String, LeftRecursive>,
         rules_index_map: &'a HashMap<String, Key>,
         inverse_rules_index_map: &'a HashMap<Key, String>,
-    ) -> () {
+    ) -> HashMap<String, HashSet<String>> {
         let mut slf = GetInvolvedSets {
             tree,
             source,
@@ -191,10 +191,10 @@ impl<'a> GetInvolvedSets<'a> {
             inverse_rules_index_map,
             involved_sets: HashMap::new(),
         };
-        slf.get_involved_sets();
+        slf.get_involved_sets().clone()
     }
 
-    fn get_involved_sets(&mut self) {
+    fn get_involved_sets(&mut self) -> &HashMap<String, HashSet<String>> {
         for (rule_name, cycle_detected) in self.is_left_recursive_rule {
             match cycle_detected {
                 LeftRecursive::False => {
@@ -210,6 +210,7 @@ impl<'a> GetInvolvedSets<'a> {
                 }
             }
         }
+        &self.involved_sets
     }
 
     fn get_involved_set(&self, rule_name: &String) -> HashSet<String> {
@@ -315,14 +316,15 @@ impl<'a> GetInvolvedSets<'a> {
 /// We then store this information for generatoion time
 pub struct LeftRecursionDetector<'a> {
     source: &'a String,
-    left_recursion_rules: HashMap<String, HashSet<String>>,
-    is_left_recursive_rule: HashMap<String, LeftRecursive>,
+    pub left_recursion_rules: HashMap<String, HashSet<String>>,
+    pub is_left_recursive_rule: HashMap<String, LeftRecursive>,
 }
 
 impl<'a> LeftRecursionDetector<'a> {
     pub fn get_left_recursion_rules(&self) -> &HashMap<String, HashSet<String>> {
         &self.left_recursion_rules
     }
+
     pub fn new(tree: &BasicPublisher, source: &'a String) -> Self {
         // We assume tree is a true tree  with no cycles
         // The references between rules do not induce cycles in themselves
@@ -364,13 +366,14 @@ impl<'a> LeftRecursionDetector<'a> {
         );
 
         let rules: &HashMap<String, LeftRecursive> = &lr_detector.is_left_recursive_rule;
-        let get_involved_sets = GetInvolvedSets::new(
+        let get_involved_sets: HashMap<String, HashSet<String>> = GetInvolvedSets::new(
             tree,
             source,
             &get_left_recursive.is_left_recursive_rule,
             &get_left_recursive.rules_index_map,
             &get_left_recursive.inverse_rules_index_map,
         );
+        lr_detector.left_recursion_rules = get_involved_sets;
         // Everytime a rule goes to a key in rules_index_map it's traversing a new rule
         // If it does it multiple times it could be a loop.
         // It could just be called multiple times if e.g it's a terminal.
