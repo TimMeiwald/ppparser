@@ -208,7 +208,7 @@ impl<'a> GetInvolvedSets<'a> {
                 LeftRecursive::OtherCycleDetected(name) => {
                     // todo!("Not yet implemented")
                     let hash_set = self.get_involved_set(name);
-                    self.involved_sets.insert(name.to_string(), hash_set);
+                    self.involved_sets.insert(rule_name.to_string(), hash_set);
                 }
             }
         }
