@@ -208,31 +208,30 @@ impl GeneratedCode<'_> {
             "#[allow(dead_code)]\npub fn {}<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{",
             name
         );
-        let mut lr_rule_hdr: String = "".to_string();
-        let lr_rules = left_recursive_rules.get_left_recursion_rules();
-        let lr_rules_for_name = lr_rules.get(&name);
-        if lr_rules_for_name.is_some() {
-            let lr_rules_for_name = lr_rules_for_name.expect("We just checked it's some");
-            // Then it's an LR rule and we need to add the involved set
-            // e.g exmaple below
-            // let involved_set = vec![
-            //     Rules::expr_addsub,
-            //     Rules::sub_expr,
-            //     Rules::expr_divmul,
-            //     Rules::div_expr,
-            //     Rules::mult_expr,
-            // ];
-            lr_rule_hdr.push_str("\tlet involved_set: Vec<Rules> = vec![");
-            for i in lr_rules_for_name {
-                lr_rule_hdr.push_str(&format!("Rules::{i}, ").to_string());
-            }
-            lr_rule_hdr = lr_rule_hdr[0..lr_rule_hdr.len()-2].to_string(); // Drops a comma
-            lr_rule_hdr.push_str("];");
-        }
+        // let mut lr_rule_hdr: String = "".to_string();
+        // let lr_rules = left_recursive_rules.get_left_recursion_rules();
+        // let lr_rules_for_name = lr_rules.get(&name);
+        // if lr_rules_for_name.is_some() {
+        //     let lr_rules_for_name = lr_rules_for_name.expect("We just checked it's some");
+        //     // Then it's an LR rule and we need to add the involved set
+        //     // e.g exmaple below
+        //     // let involved_set = vec![
+        //     //     Rules::expr_addsub,
+        //     //     Rules::sub_expr,
+        //     //     Rules::expr_divmul,
+        //     //     Rules::div_expr,
+        //     //     Rules::mult_expr,
+        //     // ];
+        //     lr_rule_hdr.push_str("\tlet involved_set: Vec<Rules> = vec![");
+        //     for i in lr_rules_for_name {
+        //         lr_rule_hdr.push_str(&format!("Rules::{i}, ").to_string());
+        //     }
+        //     lr_rule_hdr = lr_rule_hdr[0..lr_rule_hdr.len()-2].to_string(); // Drops a comma
+        //     lr_rule_hdr.push_str("];");
+        // }
         let builder = format!(
-            "{}\n{}{}\n{}\n}}\n",
+            "{}\n{}\n{}\n}}\n",
             rule_header,
-            lr_rule_hdr,
             comment.unwrap_or("".to_string()),
             rhs
         );
