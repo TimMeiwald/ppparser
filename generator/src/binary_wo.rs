@@ -23,7 +23,7 @@ pub enum Reference {
     StringTerminal(Vec<char>),
     StringTerminalAsciiOpt(Vec<char>),
     InlinedRule(String),
-    LeftRecursiveRule(String)
+    LeftRecursiveRule(String, Vec<String>)
 }
 
 pub struct BinaryTreeWO {
@@ -102,7 +102,7 @@ impl BinaryTreeWO {
             Reference::StringTerminal(_) => self.string_terminal(stack, index),
             Reference::StringTerminalAsciiOpt(_) => self.string_terminal_ascii_opt(stack, index),
             Reference::InlinedRule(_) => self.inlined_rule(stack, index),
-            Reference::LeftRecursiveRule(_) => self.left_recursive_rule(stack, index),
+            Reference::LeftRecursiveRule(..) => self.left_recursive_rule(stack, index),
             Reference::Exec | Reference::Null => {
                 panic!("Exec should only exist once and NULL should never exist")
             }
@@ -348,7 +348,25 @@ impl BinaryTreeWO {
     fn left_recursive_rule(&self, stack: &mut Vec<String>, index: Key) -> Key {
         let node = &self.nodes[usize::from(index)];
         match &node.reference {
-            Reference::LeftRecursiveRule(content) => {
+            Reference::LeftRecursiveRule(content, involved_set) => {
+                let mut contents_involved_set: String;
+                if involved_set.len() == 0{
+                    contents_involved_set = format!("let involved_set = [];");
+
+                }
+                else{
+                    contents_involved_set = format!("let involved_set = [");
+                    for rule in involved_set{
+                        contents_involved_set.push_str(&format!("Rules::{}, ", rule));
+                    }
+                    contents_involved_set.pop(); // Removes last space
+                    contents_involved_set.pop(); // Removes last comma
+                    contents_involved_set.push_str("];");
+                }
+
+
+                stack.push(contents_involved_set);
+
                 let contents = format!(
                     "let closure_{:?} = _var_name_indirect_left_recursion(&involved_set, Rules::{}, context, {});",
                     index.0,

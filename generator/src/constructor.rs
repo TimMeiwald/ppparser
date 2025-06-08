@@ -721,7 +721,19 @@ impl GeneratedCode<'_> {
         let is_left_recursive = left_recursive_rules.get_left_recursion_rules().get(&var_name);
         if is_left_recursive.is_some(){
             let contents = var_name.to_string();
-            out_tree.push(Reference::LeftRecursiveRule(contents), None, None)
+            let involved_set = left_recursive_rules.left_recursion_rules.get(&var_name);
+            match involved_set {
+                None => {
+                    panic!("Should have involved set")
+                }
+                Some(involved_set) =>{
+                    let involved_set = involved_set.clone();
+                    let involved_set: Vec<String> = involved_set.into_iter().collect();
+                    out_tree.push(Reference::LeftRecursiveRule(contents, involved_set), None, None)
+
+                }
+            }
+
         }
         else if symbol_table.check_symbol_is_inline(&var_name) {
             let contents = var_name.to_string();
