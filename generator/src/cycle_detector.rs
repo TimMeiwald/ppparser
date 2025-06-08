@@ -173,7 +173,7 @@ struct GetInvolvedSets<'a> {
     is_left_recursive_rule: &'a HashMap<String, LeftRecursive>,
     rules_index_map: &'a HashMap<String, Key>,
     inverse_rules_index_map: &'a HashMap<Key, String>,
-    involved_sets: HashMap<String, Vec<String>>,
+    involved_sets: HashMap<String, HashSet<String>>,
 }
 impl<'a> GetInvolvedSets<'a> {
     fn new(
@@ -202,7 +202,8 @@ impl<'a> GetInvolvedSets<'a> {
                 }
                 LeftRecursive::SelfCycleDetected => {
                     // Find the involved set of rules for this self cycle.
-                    self.get_involved_set(rule_name);
+                    let hash_set = self.get_involved_set(rule_name);
+                    self.involved_sets.insert(rule_name.to_string(), hash_set);
                 }
                 LeftRecursive::OtherCycleDetected(_) => {
                     // todo!("Not yet implemented")
