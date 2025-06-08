@@ -351,17 +351,17 @@ impl BinaryTreeWO {
             Reference::LeftRecursiveRule(content, involved_set) => {
                 let mut contents_involved_set: String;
                 if involved_set.len() == 0{
-                    contents_involved_set = format!("let involved_set = [];");
+                    contents_involved_set = format!("let involved_set: Vec<Rules> = [].to_vec();");
 
                 }
                 else{
-                    contents_involved_set = format!("let involved_set = [");
+                    contents_involved_set = format!("let involved_set: Vec<Rules> = [");
                     for rule in involved_set{
                         contents_involved_set.push_str(&format!("Rules::{}, ", rule));
                     }
                     contents_involved_set.pop(); // Removes last space
                     contents_involved_set.pop(); // Removes last comma
-                    contents_involved_set.push_str("];");
+                    contents_involved_set.push_str("].to_vec();");
                 }
 
 
