@@ -70,6 +70,14 @@ impl RuleCallTree {
             "Rules -> IsLeftRecursive: {:#?}",
             rc_tree.is_rule_left_recursive
         );
+
+        // Copy over the left most rules but ignore any that aren't left recursive
+        // These appear to be almost the correct involved_set.
+        // Need to analyse their behaviour. 
+        // By making a tree to see how behaviour loops. 
+        // E.g sub_expr only calls expr_addsub which can call sub_expr so that's clearly a loop.
+        // Each involved set can include the calling rule(I think)
+
         rc_tree
     }
 
@@ -95,25 +103,25 @@ impl RuleCallTree {
 
     fn cleanup_left_most_called_rules(&mut self, tree: &BasicPublisher, source: &String) {
         for (rule_name, left_most_rule_refs) in &self.rules_left_most_rule_refs {
-            println!("Rule Name: {:#?}", rule_name);
+            // println!("Rule Name: {:#?}", rule_name);
             let mut is_not_left_recursive = true;
             for left_most_ref in left_most_rule_refs {
-                println!("Left most Ref: {:#?}", left_most_ref);
+                // println!("Left most Ref: {:#?}", left_most_ref);
                 match self.is_rule_left_recursive.get(left_most_ref) {
                     None => {
                         // Must assume it could be LR
                         is_not_left_recursive = false;
-                        println!("Left most ref is None");
+                        // println!("Left most ref is None");
                     }
                     Some(lr) => {
                         match lr {
                             LeftRecursive::False => {
                                 // Do nothing
-                                println!("Left most ref is LeftRecursive::False");
+                                // println!("Left most ref is LeftRecursive::False");
 
                             }
                             _ => {
-                                println!("Left most ref is LeftRecursive::Other");
+                                // println!("Left most ref is LeftRecursive::Other");
                                 is_not_left_recursive = false;
                             }
                         }
