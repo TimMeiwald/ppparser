@@ -721,7 +721,7 @@ impl GeneratedCode<'_> {
         let is_left_recursive = left_recursive_rules.get_left_recursion_rules().get(&var_name);
         if is_left_recursive.is_some(){
             let contents = var_name.to_string();
-            let involved_set = left_recursive_rules.left_recursion_rules.get(&var_name);
+            let involved_set = left_recursive_rules.get_left_recursion_rules().get(&var_name);
             match involved_set {
                 None => {
                     panic!("Should have involved set")
