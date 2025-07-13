@@ -65,7 +65,7 @@ impl RuleCallTree {
             rc_tree.rules_left_most_rule_refs
         );
         // If all left most rules are also not left recursive then we know that rule isn't left recursive either.
-        rc_tree.cleanup_left_most_called_rules(tree, source);
+        rc_tree.repeated_loop_over_cleanup_left_most_called_rules(tree, source);
         println!(
             "Rules -> IsLeftRecursive: {:#?}",
             rc_tree.is_rule_left_recursive
@@ -95,19 +95,25 @@ impl RuleCallTree {
 
     fn cleanup_left_most_called_rules(&mut self, tree: &BasicPublisher, source: &String) {
         for (rule_name, left_most_rule_refs) in &self.rules_left_most_rule_refs {
+            println!("Rule Name: {:#?}", rule_name);
             let mut is_not_left_recursive = true;
             for left_most_ref in left_most_rule_refs {
+                println!("Left most Ref: {:#?}", left_most_ref);
                 match self.is_rule_left_recursive.get(left_most_ref) {
                     None => {
                         // Must assume it could be LR
                         is_not_left_recursive = false;
+                        println!("Left most ref is None");
                     }
                     Some(lr) => {
                         match lr {
                             LeftRecursive::False => {
                                 // Do nothing
+                                println!("Left most ref is LeftRecursive::False");
+
                             }
                             _ => {
+                                println!("Left most ref is LeftRecursive::Other");
                                 is_not_left_recursive = false;
                             }
                         }
@@ -459,7 +465,9 @@ mod tests {
 
     #[test]
     fn test_var_name_lr2() {
-        let string = r##"<test_indirect_three_level_A> = (<test_indirect_three_level_B>, '-', <test_LR_num>) / <test_LR_num>;
+        let string = r##"<Num> = [0x30..0x39];
+        <test_LR_num> = <Num>;
+        <test_indirect_three_level_A> = (<test_indirect_three_level_B>, '-', <test_LR_num>) / <test_LR_num>;
 <test_indirect_three_level_B> = <test_indirect_three_level_C>;
 <test_indirect_three_level_C> = <test_indirect_three_level_A>;"##
         .to_string();
