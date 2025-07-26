@@ -611,4 +611,40 @@ mod tests {
         // let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
         // _gen_code.print();
     }
+    #[test]
+    fn test_example_2() {
+        let path = "../example_2/example_2.dsl";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+        let string2 = string.clone();
+        let src_len = string.len();
+        let source = Source::new(&string);
+        let position = 0;
+        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let result = grammar(Key(0), &context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            // println!("Successfully parsed")
+        }
+        let source = &String::from(source);
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
+        let _lr_detector = LeftRecursionDetector::new(tree, source);
+        let _f = stdout().flush().expect("Why did it not flush");
+        // println!("\n\n\n");
+        //lr_detector.print_rules_name_map();
+        //tree.print(Key(0), None);
+        // let src = &String::from(source);
+        // let sym_table = SymbolTable::new(tree, src);
+        // sym_table.print();
+        // let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        // _gen_code.print();
+    }
 }

@@ -718,17 +718,19 @@ impl GeneratedCode<'_> {
             [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)]
             .to_string();
         println!("{:#?}", var_name);
-        let is_left_recursive = left_recursive_rules.get_left_recursion_rules().get(&var_name);
+
+        let is_left_recursive = left_recursive_rules.get_left_recursion_rules().get(&var_name.to_lowercase());
+        println!("IS_ LEFT RECUSRIVE = {is_left_recursive:?}");
         if is_left_recursive.is_some(){
             let contents = var_name.to_string();
-            let involved_set = left_recursive_rules.get_left_recursion_rules().get(&var_name);
+            let involved_set = left_recursive_rules.get_left_recursion_rules().get(&var_name.to_lowercase());
             match involved_set {
                 None => {
                     panic!("Should have involved set")
                 }
                 Some(involved_set) =>{
                     let involved_set = involved_set.clone();
-                    let involved_set: Vec<String> = involved_set.into_iter().collect();
+                    let involved_set: Vec<String> = involved_set.into_iter().map(|rule_name|{rule_name.to_uppercase()}).collect();
                     out_tree.push(Reference::LeftRecursiveRule(contents, involved_set), None, None)
 
                 }

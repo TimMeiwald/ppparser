@@ -8,8 +8,8 @@ mod symbol_table;
 
 pub use crate::constructor::GeneratedCode;
 use crate::symbol_table::SymbolTable;
-use cycle_detector::LeftRecursionDetector;
 use ::parser::*;
+use cycle_detector::LeftRecursionDetector;
 
 fn count_lines(source: &String, start_position: u32) -> u32 {
     let mut new_line_count: u32 = 1;
@@ -78,6 +78,23 @@ mod tests {
     #[test]
     fn test_calculator() {
         let path = "../generator/tests/calculator.dsl";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let gen_code = generate_parser(&pathbuf);
+        match gen_code {
+            Some(gen_code) => {
+                //gen_code.print();
+                print!("{}\n", gen_code.parser_file_content());
+                print!("{}\n", gen_code.rules_enum_file_content());
+            }
+            None => {
+                panic!("Something went wrong")
+            }
+        }
+    }
+
+    #[test]
+    fn test_example_2() {
+        let path = "../example_2/example_2.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let gen_code = generate_parser(&pathbuf);
         match gen_code {
