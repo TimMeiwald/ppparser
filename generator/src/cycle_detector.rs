@@ -19,7 +19,7 @@ impl<'a> LeftRecursionDetector<'a> {
         }
     }
     pub fn get_left_recursion_rules(&self) -> &HashMap<String, HashSet<String>> {
-        &self.left_recursion_rules
+        &self.rule_call_tree.involved_sets
     }
 }
 
@@ -36,6 +36,7 @@ struct RuleCallTree {
     rules_referenced_by_rule: HashMap<String, HashSet<String>>,
     is_rule_left_recursive: HashMap<String, LeftRecursive>,
     rules_left_most_rule_refs: HashMap<String, HashSet<String>>,
+    involved_sets: HashMap<String, HashSet<String>>,
 }
 impl RuleCallTree {
     fn new(tree: &BasicPublisher, source: &String) -> Self {
@@ -46,6 +47,7 @@ impl RuleCallTree {
             rules_referenced_by_rule: HashMap::new(),
             is_rule_left_recursive: HashMap::new(),
             rules_left_most_rule_refs: HashMap::new(),
+            involved_sets: HashMap::new(),
         };
         rc_tree.walk_node_children(tree, source, node);
         // println!("Rules -> Keys: {:#?}", rc_tree.rules_keys);
@@ -70,17 +72,43 @@ impl RuleCallTree {
             "Rules -> IsLeftRecursive: {:#?}",
             rc_tree.is_rule_left_recursive
         );
-
+        rc_tree.create_involved_sets(tree, source);
+        println!("Rules -> InvolvedSets: {:#?}", rc_tree.involved_sets);
         // Copy over the left most rules but ignore any that aren't left recursive
         // These appear to be almost the correct involved_set.
-        // Need to analyse their behaviour. 
-        // By making a tree to see how behaviour loops. 
+        // Need to analyse their behaviour.
+        // By making a tree to see how behaviour loops.
         // E.g sub_expr only calls expr_addsub which can call sub_expr so that's clearly a loop.
         // Each involved set can include the calling rule(I think)
 
         rc_tree
     }
 
+    fn create_involved_sets(&mut self, tree: &BasicPublisher, source: &String) {
+        for (rule_name, left_most_rules) in &self.rules_left_most_rule_refs {
+            let mut involved_set: HashSet<String> = HashSet::new();
+            for rule in left_most_rules {
+                let is_lr = self.is_rule_left_recursive.get(rule);
+                match is_lr {
+                    None => {
+                        // Is LR, so insert rule
+                        involved_set.insert(rule.to_string());
+                    }
+                    Some(lr) => {
+                        if *lr != LeftRecursive::False {
+                            involved_set.insert(rule.to_string());
+                        }
+                    }
+                }
+            }
+            if involved_set.len() != 0 {
+                involved_set.insert(rule_name.to_string()); // Insert self rule
+                self.involved_sets
+                    .insert(rule_name.to_string(), involved_set);
+            }
+
+        }
+    }
     fn repeated_loop_over_cleanup_left_most_called_rules(
         &mut self,
         tree: &BasicPublisher,
@@ -118,7 +146,6 @@ impl RuleCallTree {
                             LeftRecursive::False => {
                                 // Do nothing
                                 // println!("Left most ref is LeftRecursive::False");
-
                             }
                             _ => {
                                 // println!("Left most ref is LeftRecursive::Other");

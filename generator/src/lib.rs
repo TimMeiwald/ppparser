@@ -75,4 +75,20 @@ mod tests {
             }
         }
     }
+    #[test]
+    fn test_calculator() {
+        let path = "../generator/tests/calculator.dsl";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let gen_code = generate_parser(&pathbuf);
+        match gen_code {
+            Some(gen_code) => {
+                //gen_code.print();
+                print!("{}\n", gen_code.parser_file_content());
+                print!("{}\n", gen_code.rules_enum_file_content());
+            }
+            None => {
+                panic!("Something went wrong")
+            }
+        }
+    }
 }
