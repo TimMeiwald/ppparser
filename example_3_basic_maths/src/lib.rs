@@ -273,4 +273,157 @@ mod tests {
         let result = evaluate_tree(publisher, &string);
         assert_eq!(result, 6);
     }
+
+    #[test]
+    fn test_9() {
+        let string = "20+10+20+40".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 90);
+    }
+
+    #[test]
+    fn test_10() {
+        let string = "7+5-3-60".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, -51);
+    }
+
+    #[test]
+    fn test_11() {
+        let string = "7/5+3-20".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, -16);
+    }
+
+    #[test]
+    fn test_12() {
+        let string = "7+5/3+40".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 48);
+    }
+
+    #[test]
+    fn test_13() {
+        let string = "7/5-3+15".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 13);
+    }
+
+    #[test]
+    fn test_14() {
+        let string = "7-5/3*4".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 3);
+    }
+     #[test]
+    fn test_15() {
+        let string = "(7-5)/(3*4)".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 3);
+    }
 }
