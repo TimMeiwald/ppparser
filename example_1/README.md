@@ -9,7 +9,7 @@ expr    := expr "+" integer |
 integer := [1-9] [0-9]*
 ```
 
-cargo run -- -s ./example_1/example_1.dsl -t example_1_parser -n example_1_parser
+cargo run -- -s ./example_1/example_1.dsl -t ./ -n example_1_parser
 
 
 ## Please note the parser is not automatically regenerated. This still needs to be done with build script ideally.

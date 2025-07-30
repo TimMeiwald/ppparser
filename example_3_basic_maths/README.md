@@ -15,7 +15,8 @@ We test an adapted grammar from the link(pg.94) in this example.
             | name
 ```
 
-cargo run -- -s .|example_3_basic_maths|example_3_basic_maths.dsl -t example_3_basic_maths_parser -n example_3_basic_maths_parser
+cargo run -- -s ./example_3_basic_maths/example_3_basic_maths.dsl -t ./ -n example_3_basic_maths_parser
+
 
 
 ## Please note the parser is not automatically regenerated. This still needs to be done with build script ideally.
