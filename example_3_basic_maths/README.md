@@ -7,7 +7,7 @@ We test an adapted grammar from the link(pg.94) in this example.
  Expr   =   <Expr> + Term
             | <Expr> - Term
             | Term
- Term   =   Term x Factor
+ Term   =   Term * Factor
             | Term ÷ Factor
             | Factor
  Factor =   ( <Expr> )

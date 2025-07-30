@@ -9,7 +9,7 @@
 
 <addition> = <expr>, '+', <term>;
 <subtraction> = <expr>, '-', <term>;
-<multiplication> = <term>, 'x', <factor>;
+<multiplication> = <term>, '*', <factor>;
 <division> = <term>, '/', <factor>;
 <parentheses> = '(', <expr>, ')';
 
