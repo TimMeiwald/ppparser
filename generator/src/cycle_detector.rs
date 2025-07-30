@@ -213,8 +213,13 @@ impl RuleCallTree {
             let child_node = tree.get_node(*child);
             match child_node.rule {
                 Rules::Ordered_Choice => {
-                    // println!("In OC");
-                    for child_key in child_node.get_children() {
+                    // We do not care about the rightmost rule in an ordered choice
+                    // As whilst this could still lead to a loop it's the rule that 
+                    // is called's responsibility to handle the left recursion at that point.
+                    let children = child_node.get_children();
+                    let children = &children[..children.len()-1];
+                    
+                    for child_key in children {
                         let child = tree.get_node(*child_key);
                         // println!("Child: {:?} {:?}", child.rule, child_key);
                         self.get_left_most_called_rules_of_rule(
