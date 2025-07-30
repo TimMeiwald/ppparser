@@ -107,14 +107,7 @@ mod tests {
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
-            let involved_set: Vec<Rules> = vec![
-                Rules::Subtraction,
-                Rules::Addition,
-                Rules::Expr,
-                Rules::Term,
-            ];
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Grammar, &context, grammar);
+            let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {:?}", result);
@@ -136,14 +129,7 @@ mod tests {
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
-            let involved_set: Vec<Rules> = vec![
-                Rules::Subtraction,
-                Rules::Addition,
-                Rules::Expr,
-                Rules::Term,
-            ];
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Grammar, &context, grammar);
+            let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {:?}", result);
@@ -165,14 +151,7 @@ mod tests {
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
-            let involved_set: Vec<Rules> = vec![
-                Rules::Subtraction,
-                Rules::Addition,
-                Rules::Expr,
-                Rules::Term,
-            ];
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Grammar, &context, grammar);
+            let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {:?}", result);
@@ -194,14 +173,7 @@ mod tests {
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
-            let involved_set: Vec<Rules> = vec![
-                Rules::Subtraction,
-                Rules::Addition,
-                Rules::Expr,
-                Rules::Term,
-            ];
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Grammar, &context, grammar);
+            let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {:?}", result);
@@ -223,14 +195,7 @@ mod tests {
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
-            let involved_set: Vec<Rules> = vec![
-                Rules::Subtraction,
-                Rules::Addition,
-                Rules::Expr,
-                Rules::Term,
-            ];
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Grammar, &context, grammar);
+            let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {:?}", result);
@@ -252,14 +217,7 @@ mod tests {
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
-            let involved_set: Vec<Rules> = vec![
-                Rules::Subtraction,
-                Rules::Addition,
-                Rules::Expr,
-                Rules::Term,
-            ];
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Grammar, &context, grammar);
+            let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {:?}", result);
@@ -281,14 +239,7 @@ mod tests {
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
-            let involved_set: Vec<Rules> = vec![
-                Rules::Subtraction,
-                Rules::Addition,
-                Rules::Expr,
-                Rules::Term,
-            ];
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Grammar, &context, grammar);
+            let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {:?}", result);
@@ -310,14 +261,7 @@ mod tests {
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
-            let involved_set: Vec<Rules> = vec![
-                Rules::Subtraction,
-                Rules::Addition,
-                Rules::Expr,
-                Rules::Term,
-            ];
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Grammar, &context, grammar);
+            let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {:?}", result);

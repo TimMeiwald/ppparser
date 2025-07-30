@@ -185,7 +185,7 @@ pub fn factor<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &
 #[allow(dead_code)]
 pub fn grammar<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Subtraction, Rules::Addition, Rules::Expr, Rules::Term].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Subtraction, Rules::Addition, Rules::Expr].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
 	closure_1(parent, source, position)
 
