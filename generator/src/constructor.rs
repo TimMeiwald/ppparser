@@ -1073,7 +1073,6 @@ mod tests {
     }
 
     #[test]
-    #[should_panic] // Panics because of rule references that don't exist should do better than crashing but for now expected behaviour.
     fn test_3() {
         let string = r#"<Atom> PASSTHROUGH = (<And_Predicate>/<Not_Predicate>/<One_Or_More>/<Zero_Or_More>/<Optional>/<Nucleus>), <Whitespace>;
         "#.to_string();
@@ -1106,7 +1105,6 @@ mod tests {
         _gen_code.print();
     }
     #[test]
-    #[should_panic] // Panics because of rule references that don't exist should do better than crashing but for now expected behaviour.
     fn test_9() {
         let string = r#"<Whitespace> Inline = (' '/'\n'/'\r'/'\t')*;
             <LHS> = <Var_Name_Decl>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
