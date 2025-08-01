@@ -43,11 +43,18 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
         let child = publisher.get_node(*child_key);
         let result: i64;
         match child.rule {
-            Rules::Grammar | Rules::Term | Rules::Factor | Rules::Expr | Rules::Parentheses => {
+            Rules::Grammar | Rules::Parentheses | Rules::Term | Rules::Factor | Rules::Expr  | Rules::Power_expr=> {
                 result = evaluate_tree_kernel(publisher, source, child);
                 println!("{:?} Result: {result}", child.rule);
                 evaluation_result = Some(result);
             }
+            Rules::Power => {
+                let (lhs, rhs) = evaluate_binary_node(publisher, source, child);
+                let res = lhs.pow(rhs as u32);
+                println!("{lhs}, {rhs}, {res:?}");
+                println!("Power Result: {lhs} ^ {rhs} = {res:?}");
+                evaluation_result = Some(res);
+            },
             Rules::Addition => {
                 let (lhs, rhs) = evaluate_binary_node(publisher, source, child);
                 println!("Addition Result: {lhs} + {rhs} = {}", lhs + rhs);
@@ -446,5 +453,110 @@ mod tests {
         assert_eq!((result.0, result.1), (true, src_len));
         let result = evaluate_tree(publisher, &string);
         assert_eq!(result, -14);
+    }
+    #[test]
+    fn test_17() {
+        let string = "7^5".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 16807);
+    }
+    #[test]
+    fn test_18() {
+        let string = "7+4^5".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 1031);
+    }
+    #[test]
+    fn test_19() {
+        let string = "7^5+4".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 16811);
+    }
+    #[test]
+    fn test_20() {
+        let string = "7^(5+4)".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 40353607);
+    }
+    #[test]
+    fn test_21() {
+        let string = "(7/5)^4".to_string();
+        let src_len = string.len() as u32;
+        let source = Source::new(&string);
+        let position: u32 = 0;
+        let result: (bool, u32);
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
+            result = executor(Key(0), &source, position);
+        }
+        println!("Result: {:?}", result);
+        //context.borrow().print_cache();
+        //context.borrow().print_publisher();
+        let publisher = context.into_inner().get_publisher();
+        publisher.print(Key(0), Some(true));
+        assert_eq!((result.0, result.1), (true, src_len));
+        let result = evaluate_tree(publisher, &string);
+        assert_eq!(result, 1);
     }
 }

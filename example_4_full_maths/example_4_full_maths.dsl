@@ -9,11 +9,13 @@
 
 <addition> = <expr>, '+', <term>;
 <subtraction> = <expr>, '-', <term>;
-<multiplication> = <term>, '*', <factor>;
-<division> = <term>, '/', <factor>;
+<multiplication> = <term>, '*', <power_expr>;
+<division> = <term>, '/', <power_expr>;
 <parentheses> = '(', <expr>, ')';
+<power> = <factor>, '^', <power_expr>;
 
 <expr>   =  <addition>/<subtraction>/<term>;
-<term>   =   <multiplication>/<division>/<factor>;
+<term>   =   <multiplication>/<division>/<power_expr>;
+<power_expr> = <power>/<factor>;
 <factor> =   <parentheses>/<number>;
 <Grammar> = <expr>;
