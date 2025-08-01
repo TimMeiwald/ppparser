@@ -405,7 +405,7 @@ mod tests {
         let result = evaluate_tree(publisher, &string);
         assert_eq!(result, 3);
     }
-     #[test]
+    #[test]
     fn test_15() {
         let string = "(7-5)/(3*4)".to_string();
         let src_len = string.len() as u32;

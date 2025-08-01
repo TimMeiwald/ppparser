@@ -1,5 +1,5 @@
 use super::{Context, Rules, Source};
-use crate::{cache::LR, Key};
+use crate::{Key, cache::LR};
 use core::{cell::RefCell, panic};
 use std::{collections::BTreeSet, thread::current};
 

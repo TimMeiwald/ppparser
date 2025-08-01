@@ -23,7 +23,7 @@ pub enum Reference {
     StringTerminal(Vec<char>),
     StringTerminalAsciiOpt(Vec<char>),
     InlinedRule(String),
-    LeftRecursiveRule(String, Vec<String>)
+    LeftRecursiveRule(String, Vec<String>),
 }
 
 pub struct BinaryTreeWO {
@@ -332,11 +332,11 @@ impl BinaryTreeWO {
         match &node.reference {
             Reference::VarName(content) => {
                 let rule_str = |rule_name: String| {
-                            let start_char = rule_name.chars().nth(0).expect("Should exist");
-                            let start_char = start_char.to_uppercase().to_string();
-                            let rule_name = start_char + rule_name.split_at_checked(1).unwrap().1;
-                            rule_name
-                        };
+                    let start_char = rule_name.chars().nth(0).expect("Should exist");
+                    let start_char = start_char.to_uppercase().to_string();
+                    let rule_name = start_char + rule_name.split_at_checked(1).unwrap().1;
+                    rule_name
+                };
 
                 let contents = format!(
                     "let closure_{:?} = _var_name(Rules::{}, context, {});",
@@ -357,13 +357,11 @@ impl BinaryTreeWO {
         match &node.reference {
             Reference::LeftRecursiveRule(content, involved_set) => {
                 let mut contents_involved_set: String;
-                if involved_set.len() == 0{
+                if involved_set.len() == 0 {
                     contents_involved_set = format!("let involved_set: Vec<Rules> = [].to_vec();");
-
-                }
-                else{
+                } else {
                     contents_involved_set = format!("let involved_set: Vec<Rules> = [");
-                    for rule in involved_set{
+                    for rule in involved_set {
                         let rule_str = |rule_name: String| {
                             let start_char = rule_name.chars().nth(0).expect("Should exist");
                             let start_char = start_char.to_uppercase().to_string();
@@ -371,22 +369,22 @@ impl BinaryTreeWO {
                             rule_name
                         };
 
-                        contents_involved_set.push_str(&format!("Rules::{}, ", rule_str(rule.to_string())));
+                        contents_involved_set
+                            .push_str(&format!("Rules::{}, ", rule_str(rule.to_string())));
                     }
                     contents_involved_set.pop(); // Removes last space
                     contents_involved_set.pop(); // Removes last comma
                     contents_involved_set.push_str("].to_vec();");
                 }
 
-
                 stack.push(contents_involved_set);
 
                 let rule_str = |rule_name: String| {
-                            let start_char = rule_name.chars().nth(0).expect("Should exist");
-                            let start_char = start_char.to_uppercase().to_string();
-                            let rule_name = start_char + rule_name.split_at_checked(1).unwrap().1;
-                            rule_name
-                        };
+                    let start_char = rule_name.chars().nth(0).expect("Should exist");
+                    let start_char = start_char.to_uppercase().to_string();
+                    let rule_name = start_char + rule_name.split_at_checked(1).unwrap().1;
+                    rule_name
+                };
 
                 let contents = format!(
                     "let closure_{:?} = _var_name_indirect_left_recursion(&involved_set, Rules::{}, context, {});",
@@ -402,7 +400,6 @@ impl BinaryTreeWO {
             }
         }
     }
-
 
     fn inlined_rule(&self, stack: &mut Vec<String>, index: Key) -> Key {
         let node = &self.nodes[usize::from(index)];

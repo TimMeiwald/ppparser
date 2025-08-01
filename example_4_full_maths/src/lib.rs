@@ -43,7 +43,12 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
         let child = publisher.get_node(*child_key);
         let result: i64;
         match child.rule {
-            Rules::Grammar | Rules::Parentheses | Rules::Term | Rules::Factor | Rules::Expr  | Rules::Power_expr=> {
+            Rules::Grammar
+            | Rules::Parentheses
+            | Rules::Term
+            | Rules::Factor
+            | Rules::Expr
+            | Rules::Power_expr => {
                 result = evaluate_tree_kernel(publisher, source, child);
                 println!("{:?} Result: {result}", child.rule);
                 evaluation_result = Some(result);
@@ -54,7 +59,7 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
                 println!("{lhs}, {rhs}, {res:?}");
                 println!("Power Result: {lhs} ^ {rhs} = {res:?}");
                 evaluation_result = Some(res);
-            },
+            }
             Rules::Addition => {
                 let (lhs, rhs) = evaluate_binary_node(publisher, source, child);
                 println!("Addition Result: {lhs} + {rhs} = {}", lhs + rhs);
@@ -412,7 +417,7 @@ mod tests {
         let result = evaluate_tree(publisher, &string);
         assert_eq!(result, 3);
     }
-     #[test]
+    #[test]
     fn test_15() {
         let string = "(7-5)/(3*4)".to_string();
         let src_len = string.len() as u32;

@@ -106,7 +106,6 @@ impl RuleCallTree {
                 self.involved_sets
                     .insert(rule_name.to_string(), involved_set);
             }
-
         }
     }
     fn repeated_loop_over_cleanup_left_most_called_rules(
@@ -214,11 +213,11 @@ impl RuleCallTree {
             match child_node.rule {
                 Rules::Ordered_Choice => {
                     // We do not care about the rightmost rule in an ordered choice
-                    // As whilst this could still lead to a loop it's the rule that 
+                    // As whilst this could still lead to a loop it's the rule that
                     // is called's responsibility to handle the left recursion at that point.
                     let children = child_node.get_children();
-                    let children = &children[..children.len()-1];
-                    
+                    let children = &children[..children.len() - 1];
+
                     for child_key in children {
                         let child = tree.get_node(*child_key);
                         // println!("Child: {:?} {:?}", child.rule, child_key);
