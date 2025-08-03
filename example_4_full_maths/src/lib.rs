@@ -1,11 +1,12 @@
 mod test_number;
 use example_4_full_maths_parser::*;
+#[allow(dead_code)]
 fn evaluate_tree(publisher: BasicPublisher, source: &String) -> i64 {
     let publisher = publisher.clear_false();
     let grammar_node = publisher.get_node(Key(0));
     evaluate_tree_kernel(&publisher, source, grammar_node)
 }
-
+#[allow(dead_code)]
 fn evaluate_binary_node(publisher: &BasicPublisher, source: &String, node: &Node) -> (i64, i64) {
     // Eval Nodes with two children.
     let children = node.get_children();
@@ -16,7 +17,7 @@ fn evaluate_binary_node(publisher: &BasicPublisher, source: &String, node: &Node
     let rhs_result = evaluate_tree_kernel(publisher, source, rhs);
     (lhs_result, rhs_result)
 }
-
+#[allow(dead_code)]
 fn evaluate_number(publisher: &BasicPublisher, source: &String, node: &Node) -> i64 {
     debug_assert!(node.rule == Rules::Number);
     debug_assert!(
@@ -36,7 +37,7 @@ fn evaluate_number(publisher: &BasicPublisher, source: &String, node: &Node) -> 
     println!("Integer i64: {integer}");
     integer
 }
-
+#[allow(dead_code)]
 fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node) -> i64 {
     let mut evaluation_result: Option<i64> = None;
     for child_key in node.get_children() {

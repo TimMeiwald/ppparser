@@ -2,10 +2,8 @@ use anyhow::{bail, Ok, Result};
 use generator::GeneratedCode;
 use std::fs::{self, create_dir, File};
 use std::io::ErrorKind;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{exit, Command};
-use std::str::FromStr;
 pub fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> Result<()> {
     fs::create_dir_all(&dst)?;
     for entry in fs::read_dir(src)? {
@@ -63,7 +61,7 @@ impl DataGenerator {
         println!("Step 1");
         let parser = self.generate_parser();
         let path = &self.target_dir.canonicalize().unwrap().join(&self.name);
-        let r = self.create_dir(&path);
+        let r = self.create_dir(path);
 
         match r {
             Err(e) => {
@@ -122,10 +120,10 @@ impl DataGenerator {
                 let _ = fs::write(rules_enum_file, parser.rules_enum_file_content());
                 let _ = fs::write(parser_rs, parser.parser_file_content());
                 let header = parser.sample_main_header(&self.name);
-                let content = fs::read(&copy_folder.join("sample_main.txt"))?;
+                let content = fs::read(copy_folder.join("sample_main.txt"))?;
                 let sample_main_content = header + &String::from_utf8(content)?;
                 let _ = fs::write(sample_main, sample_main_content);
-                fs::remove_file(&path.join("sample_main.txt"))?;
+                fs::remove_file(path.join("sample_main.txt"))?;
             }
         }
 
@@ -151,7 +149,7 @@ impl DataGenerator {
         if source_dir.is_dir() {
             for entry in fs::read_dir(source_dir)? {
                 println!("{:?}", entry);
-                let mut e = &entry?.path();
+                let e = &entry?.path();
                 let file_name = e.file_name().expect("Should exist");
                 let new_file_path = target_dir.join(file_name);
 

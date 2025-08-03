@@ -48,7 +48,7 @@ fn main() {
         target.to_str().unwrap().into(),
         "./parser",
         source,
-        args.name.into(),
+        args.name,
     );
     match data.generate_data() {
         Ok(()) => println!("Success"),

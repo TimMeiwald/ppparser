@@ -1,10 +1,11 @@
 use example_2_parser::*;
-
+#[allow(dead_code)]
 fn evaluate_tree(publisher: BasicPublisher, source: &String) -> String {
     let publisher = publisher.clear_false();
     let grammar_node = publisher.get_node(Key(0));
     evaluate_tree_kernel(&publisher, source, grammar_node)
 }
+#[allow(dead_code)]
 fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node) -> String {
     let mut results: String = "".to_string();
     for child_key in node.get_children() {
