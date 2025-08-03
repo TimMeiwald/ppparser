@@ -60,7 +60,7 @@ pub fn _var_name_kernel<T: Context>(
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let memo = context.borrow().check(rule, position);
-    return match memo {
+    match memo {
         Some((is_true, end_position, memoized_key)) => memoized_behaviour(
             context,
             rule,
@@ -71,7 +71,7 @@ pub fn _var_name_kernel<T: Context>(
             memoized_key,
         ),
         None => default_behaviour(source, func, context, rule, parent, position),
-    };
+    }
 }
 
 pub fn _var_name_direct_left_recursion<T: Context>(
@@ -93,7 +93,7 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let memo = context.borrow().check_lr(rule, position);
-    return match memo {
+    match memo {
         Some((is_true, end_position, memoized_key, lr)) => match lr {
             LR::Set => {
                 context.borrow_mut().create_cache_entry_direct_lr(
@@ -144,7 +144,7 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
 
             f
         }
-    };
+    }
 }
 
 pub fn _var_name_indirect_left_recursion<'a, T: Context + 'static>(
@@ -273,7 +273,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
     context.borrow_mut().print_node(last_key);
     println!("\n");
 
-    return last_result;
+    last_result
 }
 
 pub fn should_go_into_growth_function<T: Context>(
@@ -335,7 +335,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
         );
         println!("Exiting Indirect Left Recursion");
 
-        return result;
+        result
     } else {
         // Runs if head is Some
         // Do not evaluate any rule that is not involved in this left recursion(i.e is not in the eval set.)

@@ -23,6 +23,12 @@ pub struct BasicCache {
     current_active_left_recursion: Option<(Rules, u32)>,
 }
 
+impl Default for BasicCache {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl BasicCache {
     pub fn new() -> Self {
         BasicCache {
@@ -56,11 +62,8 @@ impl BasicCache {
         let x = self
             .cache
             .insert((rule, start_position), (is_true, end_position, key));
-        match x {
-            Some(x) => {
-                //println!("Overwriting Key: {:?} with Key: {:?}", x.2, key)
-            }
-            None => {}
+        if let Some(x) = x {
+            //println!("Overwriting Key: {:?} with Key: {:?}", x.2, key)
         }
     }
     pub fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
@@ -93,7 +96,7 @@ impl BasicCache {
         #[allow(clippy::manual_map)]
         match head {
             None => None, // Not yet exists therefore no Left Recursion at this position
-            Some(head) => Some(&head), // Return head rule since that's necessary information.
+            Some(head) => Some(head), // Return head rule since that's necessary information.
         }
     }
     // pub fn remove_head(&mut self, start_position: u32) {

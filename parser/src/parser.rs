@@ -885,7 +885,7 @@ pub fn delete<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(&[b'D', b'E', b'L', b'E', b'T', b'E']);
+    let closure_1 = _string_terminal_opt_ascii(b"DELETE");
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
@@ -895,9 +895,7 @@ pub fn passthrough<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(&[
-        b'P', b'A', b'S', b'S', b'T', b'H', b'R', b'O', b'U', b'G', b'H',
-    ]);
+    let closure_1 = _string_terminal_opt_ascii(b"PASSTHROUGH");
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
@@ -908,7 +906,7 @@ pub fn inline<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     // Comment
-    let closure_1 = _string_terminal_opt_ascii(&[b'I', b'n', b'l', b'i', b'n', b'e']);
+    let closure_1 = _string_terminal_opt_ascii(b"Inline");
     closure_1(parent, source, position)
 }
 
