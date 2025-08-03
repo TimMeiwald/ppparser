@@ -19,7 +19,7 @@ fn main() {
         Err(_) => panic!("Failed to find Source File"),
         Ok(source) => source,
     };
-    let source_str = match fs::read(source.clone()) {
+    match fs::read(source.clone()) {
         Err(e) => {
             println!("{:?}", e);
             println!("Failed to read file at {:?}", source);
@@ -27,7 +27,7 @@ fn main() {
         }
         Ok(source_str) => {
             println!("Successfully read source file: {:?}", source);
-            let source_str = match String::from_utf8(source_str) {
+            match String::from_utf8(source_str) {
                 Err(e) => {
                     println!("{:?}", e);
                     println!("Failed to read file as utf8");

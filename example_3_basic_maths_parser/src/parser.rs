@@ -87,11 +87,11 @@ pub fn sign<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &So
 #[allow(dead_code)]
 pub fn addition<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Subtraction, Rules::Expr, Rules::Addition].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
 	let closure_2 = _terminal(b'+');
 	let closure_3 = _sequence(&closure_1, &closure_2);
-	let involved_set: Vec<Rules> = [Rules::Term, Rules::Multiplication, Rules::Division].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Term, Rules::Division, Rules::Multiplication].to_vec();
 	let closure_4 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
 	let closure_5 = _sequence(&closure_3, &closure_4);
 	closure_5(parent, source, position)
@@ -100,11 +100,11 @@ pub fn addition<T: Context + 'static>(parent: Key, context: &RefCell<T>, source:
 #[allow(dead_code)]
 pub fn subtraction<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Subtraction, Rules::Expr, Rules::Addition].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
 	let closure_2 = _terminal(b'-');
 	let closure_3 = _sequence(&closure_1, &closure_2);
-	let involved_set: Vec<Rules> = [Rules::Term, Rules::Multiplication, Rules::Division].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Term, Rules::Division, Rules::Multiplication].to_vec();
 	let closure_4 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
 	let closure_5 = _sequence(&closure_3, &closure_4);
 	closure_5(parent, source, position)
@@ -113,7 +113,7 @@ pub fn subtraction<T: Context + 'static>(parent: Key, context: &RefCell<T>, sour
 #[allow(dead_code)]
 pub fn multiplication<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Term, Rules::Multiplication, Rules::Division].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Term, Rules::Division, Rules::Multiplication].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
 	let closure_2 = _terminal(b'*');
 	let closure_3 = _sequence(&closure_1, &closure_2);
@@ -125,7 +125,7 @@ pub fn multiplication<T: Context + 'static>(parent: Key, context: &RefCell<T>, s
 #[allow(dead_code)]
 pub fn division<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Term, Rules::Multiplication, Rules::Division].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Term, Rules::Division, Rules::Multiplication].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
 	let closure_2 = _terminal(b'/');
 	let closure_3 = _sequence(&closure_1, &closure_2);
@@ -138,7 +138,7 @@ pub fn division<T: Context + 'static>(parent: Key, context: &RefCell<T>, source:
 pub fn parentheses<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
 	let closure_1 = _terminal(b'(');
-	let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Subtraction, Rules::Expr, Rules::Addition].to_vec();
 	let closure_2 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
 	let closure_3 = _sequence(&closure_1, &closure_2);
 	let closure_4 = _terminal(b')');
@@ -154,7 +154,7 @@ pub fn expr<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &So
 	let involved_set: Vec<Rules> = [Rules::Expr, Rules::Subtraction].to_vec();
 	let closure_2 = _var_name_indirect_left_recursion(&involved_set, Rules::Subtraction, context, subtraction);
 	let closure_3 = _ordered_choice(&closure_1, &closure_2);
-	let involved_set: Vec<Rules> = [Rules::Term, Rules::Multiplication, Rules::Division].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Term, Rules::Division, Rules::Multiplication].to_vec();
 	let closure_4 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
 	let closure_5 = _ordered_choice(&closure_3, &closure_4);
 	closure_5(parent, source, position)
@@ -163,9 +163,9 @@ pub fn expr<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &So
 #[allow(dead_code)]
 pub fn term<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Term, Rules::Multiplication].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Multiplication, Rules::Term].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Multiplication, context, multiplication);
-	let involved_set: Vec<Rules> = [Rules::Division, Rules::Term].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Term, Rules::Division].to_vec();
 	let closure_2 = _var_name_indirect_left_recursion(&involved_set, Rules::Division, context, division);
 	let closure_3 = _ordered_choice(&closure_1, &closure_2);
 	let closure_4 = _var_name(Rules::Factor, context, factor);
@@ -185,7 +185,7 @@ pub fn factor<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &
 #[allow(dead_code)]
 pub fn grammar<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Subtraction, Rules::Expr, Rules::Addition].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
 	closure_1(parent, source, position)
 
