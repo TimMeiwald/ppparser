@@ -30,7 +30,7 @@ fn default_behaviour<T: Context>(
     c.create_cache_entry(rule, f.0, start_position, f.1, current_key);
     c.update_publisher_entry(current_key, f.0, start_position, f.1);
     // TODO: Change to only connect on success to makes things a little faster
-    // Unsure how it impacts correctness on LR so needs testing first. 
+    // Unsure how it impacts correctness on LR so needs testing first.
     c.connect(parent, current_key);
     f
 }
