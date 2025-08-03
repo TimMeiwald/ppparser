@@ -358,7 +358,8 @@ impl BinaryTreeWO {
             Reference::LeftRecursiveRule(content, involved_set) => {
                 let mut contents_involved_set: String;
                 if involved_set.is_empty() {
-                    contents_involved_set = "let involved_set: Vec<Rules> = [].to_vec();".to_string();
+                    contents_involved_set =
+                        "let involved_set: Vec<Rules> = [].to_vec();".to_string();
                 } else {
                     contents_involved_set = "let involved_set: Vec<Rules> = [".to_string();
                     for rule in involved_set {

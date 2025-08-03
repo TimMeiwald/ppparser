@@ -1,9 +1,9 @@
 #[allow(unused_imports)] // So that I don't need to keep adding or removing whilst testing
 use super::Key;
 use crate::{
+    Rules,
     cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache, LR},
     publisher::{DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher},
-    Rules,
 };
 use std::collections::BTreeSet;
 

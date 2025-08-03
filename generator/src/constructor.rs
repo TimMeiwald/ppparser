@@ -718,8 +718,7 @@ impl GeneratedCode<'_> {
             let child_rule = child_node.rule;
             match child_rule {
                 Rules::ASCII => {
-                    let contents = source
-                        .as_bytes()[((child_node.start_position) as usize)
+                    let contents = source.as_bytes()[((child_node.start_position) as usize)
                         ..((child_node.end_position) as usize)][0];
                     data.push(contents as char);
                 }
@@ -939,7 +938,7 @@ impl GeneratedCode<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{count_lines};
+    use crate::count_lines;
 
     use std::cell::RefCell;
     use std::env;

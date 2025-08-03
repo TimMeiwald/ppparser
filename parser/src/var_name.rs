@@ -101,9 +101,7 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
 
                 (is_true, end_position)
             }
-            LR::Unset => {
-                (is_true, end_position)
-            }
+            LR::Unset => (is_true, end_position),
         },
         None => {
             let mut current_key: Key;

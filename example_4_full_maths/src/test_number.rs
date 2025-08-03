@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
+    use crate::evaluate_tree;
     use core::cell::RefCell;
     use example_4_full_maths_parser::*;
-    use crate::evaluate_tree;
 
     #[test]
     fn test_1() {

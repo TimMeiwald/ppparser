@@ -59,8 +59,7 @@ impl BasicCache {
         end_position: u32,
         key: Key,
     ) {
-        self
-            .cache
+        self.cache
             .insert((rule, start_position), (is_true, end_position, key));
     }
     pub fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
@@ -92,7 +91,7 @@ impl BasicCache {
         let head = self.heads.get(&(rule, start_position));
         #[allow(clippy::manual_map)]
         match head {
-            None => None, // Not yet exists therefore no Left Recursion at this position
+            None => None,             // Not yet exists therefore no Left Recursion at this position
             Some(head) => Some(head), // Return head rule since that's necessary information.
         }
     }

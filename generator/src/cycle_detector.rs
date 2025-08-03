@@ -1,7 +1,5 @@
 use crate::{BasicPublisher, Key, Node, Rules};
-use std::{
-    collections::{HashMap, HashSet},
-};
+use std::collections::{HashMap, HashSet};
 pub struct LeftRecursionDetector {
     rule_call_tree: RuleCallTree,
 }
@@ -18,7 +16,7 @@ impl LeftRecursionDetector {
 
 #[derive(Debug, PartialEq, Clone)]
 enum LeftRecursive {
-    False,                      // Not left recursive
+    False, // Not left recursive
 }
 
 struct RuleCallTree {
@@ -99,9 +97,7 @@ impl RuleCallTree {
             }
         }
     }
-    fn repeated_loop_over_cleanup_left_most_called_rules(
-        &mut self,
-    ) {
+    fn repeated_loop_over_cleanup_left_most_called_rules(&mut self) {
         let mut l = usize::MAX;
         println!(
             "Length of is_rule_lr: {:?} {:?}",

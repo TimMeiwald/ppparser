@@ -94,9 +94,7 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
         }
     }
     match evaluation_result {
-        Some(res) => {
-            res
-        }
+        Some(res) => res,
         None => {
             panic!("Some fatal logical flaw has occurred in the program.")
         }
@@ -105,9 +103,9 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
 
 #[cfg(test)]
 mod tests {
+    use crate::evaluate_tree;
     use core::cell::RefCell;
     use example_4_full_maths_parser::*;
-    use crate::evaluate_tree;
     #[test]
     fn test_1() {
         let string = "20+10".to_string();

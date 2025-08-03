@@ -34,9 +34,9 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
 
 #[cfg(test)]
 mod tests {
+    use crate::evaluate_tree;
     use core::cell::RefCell;
     use example_2_parser::*;
-    use crate::evaluate_tree;
 
     #[test]
     fn test_1() {

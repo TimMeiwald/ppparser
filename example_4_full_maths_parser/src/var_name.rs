@@ -1,5 +1,5 @@
 use super::{Context, Rules, Source};
-use crate::{cache::LR, Key};
+use crate::{Key, cache::LR};
 use core::{cell::RefCell, panic};
 use std::{collections::BTreeSet, thread::current};
 
@@ -101,9 +101,7 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
 
                 (is_true, end_position)
             }
-            LR::Unset => {
-                (is_true, end_position)
-            }
+            LR::Unset => (is_true, end_position),
         },
         None => {
             let mut current_key: Key;
