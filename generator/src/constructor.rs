@@ -939,7 +939,7 @@ impl GeneratedCode<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{count_lines, cycle_detector};
+    use crate::{count_lines};
 
     use std::cell::RefCell;
     use std::env;
