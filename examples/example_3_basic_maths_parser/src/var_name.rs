@@ -30,7 +30,7 @@ fn default_behaviour<T: Context>(
     c.create_cache_entry(rule, f.0, start_position, f.1, current_key);
     c.update_publisher_entry(current_key, f.0, start_position, f.1);
     // TODO: Change to only connect on success to makes things a little faster
-    // Unsure how it impacts correctness on LR
+    // Unsure how it impacts correctness on LR so needs testing first.
     c.connect(parent, current_key);
     f
 }
@@ -196,36 +196,20 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             .set_head(position, rule, involved_btree);
         loop {
             context.borrow_mut().reinitialize_eval_set(rule, position);
-
             result = func(current_key, context, source, position);
-
             let memo_result = context.borrow_mut().check(rule, position);
-
             match memo_result {
                 None => {}
                 Some(memo_result) => {
-                    //context.borrow_mut().print_node(memo_result.2);
                     current_key = memo_result.2;
                     result = (memo_result.0, memo_result.1);
                 }
             }
-            // This is dumb connect beforehand and then order is conserved. Although can't if there are multiple
-            // Nested indirect rules.
-            // Walk the tree to "find" the lowest rule in involved set on each iteration
-            // Probably not that performant but at this point who gives a fuck.
-            // context.borrow_mut().connect_front(current_key, last_key);
-
             context
                 .borrow_mut()
                 .update_publisher_entry(current_key, result.0, position, result.1);
-            //context.borrow_mut().print_node(current_key);
-            // context
-            //     .borrow_mut()
-            //     .update_publisher_entry(current_key, result.0, position, result.1);
-
             if !result.0 || (result.1 <= last_result.1) {
                 context.borrow_mut().connect(parent, last_key);
-
                 context
                     .borrow_mut()
                     .set_current_active_lr_position(previous_active_lr_position);
@@ -238,7 +222,6 @@ pub fn _var_name_kernel_growth_function<T: Context>(
                 );
                 break;
             }
-
             last_result = result;
             last_key = current_key;
             current_key = context.borrow_mut().reserve_publisher_entry(rule);
