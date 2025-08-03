@@ -19,10 +19,10 @@ fn evaluate_binary_node(publisher: &BasicPublisher, source: &String, node: &Node
     (lhs_result, rhs_result)
 }
 #[allow(dead_code)]
-fn evaluate_number(publisher: &BasicPublisher, source: &String, node: &Node) -> i64 {
+fn evaluate_number(publisher: &BasicPublisher, source: &str, node: &Node) -> i64 {
     debug_assert!(node.rule == Rules::Number);
     debug_assert!(
-        node.get_children().len() >= 1,
+        !node.get_children().is_empty(),
         "Must have at least one child, Integer"
     );
     let children = node.get_children();
@@ -84,7 +84,7 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
     }
     match evaluation_result {
         Some(res) => {
-            return res;
+            res
         }
         None => {
             panic!("Some fatal logical flaw has occurred in the program.")
