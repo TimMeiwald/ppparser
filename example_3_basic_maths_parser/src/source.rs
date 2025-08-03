@@ -3,12 +3,12 @@ pub struct Source<'a> {
     source: &'a str,
     source_len: u32,
 }
-impl<'a> From<Source<'a>> for String {
+impl From<Source<'_>> for String {
     fn from(i: Source) -> String {
         i.source.to_string()
     }
 }
-impl<'a> From<&Source<'a>> for String {
+impl From<&Source<'_>> for String {
     fn from(i: &Source) -> String {
         i.source.to_string()
     }

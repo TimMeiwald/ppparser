@@ -18,8 +18,8 @@ use parser_core::*;
 pub use publisher::{
     BasicPublisher, DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher, Node,
 };
-pub use rules::RULES_SIZE;
 pub use rules::Rules;
+pub use rules::RULES_SIZE;
 pub use source::Source;
 pub use var_name::{
     _var_name,

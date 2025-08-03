@@ -34,9 +34,9 @@ impl BasicPublisher {
                     return false;
                 }
             }
-            return true;
+            true
         } else {
-            return false;
+            false
         }
     }
     pub fn clear_node_of_children(&mut self, node: Key) {
@@ -84,9 +84,7 @@ impl BasicPublisher {
         //println!("Connecting: {:?} <- {:?}", parent_index, child_index);
         debug_assert!(
             parent_index != child_index,
-            "Debug: Cannot connect a Node to itself! -> In BasicPublisher.connect, Parent: {:?}, Child: {:?}",
-            parent_index,
-            child_index
+            "Debug: Cannot connect a Node to itself! -> In BasicPublisher.connect, Parent: {:?}, Child: {:?}", parent_index, child_index
         );
 
         let parent_node: &mut Node = self.get_mut_node(parent_index);
@@ -211,6 +209,7 @@ impl BasicPublisher {
         self.nodes.capacity()
     }
 
+    #[allow(clippy::len_without_is_empty)] // One node is added on creation.
     pub fn len(&self) -> usize {
         self.nodes.len()
     }
@@ -307,7 +306,7 @@ impl PartialEq for Node {
             println!("Rule must match!");
             self.print(0);
             other.print(0);
-            return false;
+            false
         } else if self.start_position != other.start_position {
             println!("Start Position must match!");
             self.print(0);

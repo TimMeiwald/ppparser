@@ -23,6 +23,12 @@ pub struct BasicCache {
     current_active_left_recursion: Option<(Rules, u32)>,
 }
 
+impl Default for BasicCache {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl BasicCache {
     pub fn new() -> Self {
         BasicCache {
@@ -53,15 +59,9 @@ impl BasicCache {
         end_position: u32,
         key: Key,
     ) {
-        let x = self
+        self
             .cache
             .insert((rule, start_position), (is_true, end_position, key));
-        match x {
-            Some(x) => {
-                //println!("Overwriting Key: {:?} with Key: {:?}", x.2, key)
-            }
-            None => {}
-        }
     }
     pub fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         self.cache.get(&(rule, start_position)).copied()
@@ -93,35 +93,8 @@ impl BasicCache {
         #[allow(clippy::manual_map)]
         match head {
             None => None, // Not yet exists therefore no Left Recursion at this position
-            Some(head) => Some(&head), // Return head rule since that's necessary information.
+            Some(head) => Some(head), // Return head rule since that's necessary information.
         }
-    }
-    // pub fn remove_head(&mut self, start_position: u32) {
-    //     // println!("IN REMOVE HEAD");
-    //     // println!("Recursion Stack: {:?}", self.recursion_stack);
-
-    //     // Remove head
-    //     self.heads.remove(&start_position);
-    //     // match self.recursion_stack.pop_front() {
-    //     //     None => {}
-    //     //     Some(head) => {
-    //     //         self.heads.insert(start_position, head);
-    //     //     }
-    //     // };
-    // }
-    pub fn reset_head(&mut self, rule: Rules, start_position: u32) {
-        // println!("RESET HEAD!");
-        // println!("\x1b[0m");
-        //self.heads.remove(&start_position); // Remove this head
-        // let past_head = self.recursion_stack.pop_front();
-
-        // match past_head {
-        //     None => {}
-        //     Some(past_head) => {
-        //         // println!("REINSERTING HEAD RECURSION");
-        //         self.heads.insert((rule, start_position), past_head);
-        //     }
-        // };
     }
 
     pub fn set_head(
@@ -130,25 +103,6 @@ impl BasicCache {
         head_rule: Rules,
         involved_set: BTreeSet<Rules>,
     ) {
-        // println!("\x1b[31m");
-        // println!("SET HEAD! {:?}", (start_position, head_rule));
-
-        // println!("Recursion Stack: {:?}", self.recursion_stack);
-        // let current_active_lr_position = self.get_current_active_lr_position();
-        // println!(
-        //     "Current Active LR Position in Set Head: {:?}",
-        //     current_active_lr_position
-        // );
-        // match current_active_lr_position {
-        //     Some(active_lr_position) => {
-        //         let old_value = self
-        //             .heads
-        //             .remove(&active_lr_position)
-        //             .expect("If Active LR position valid then head should exist!");
-        //         self.recursion_stack.push_front(old_value);
-        //     }
-        //     None => {}
-        // }
         let eval_set = involved_set.clone();
         let head = Head {
             start_position,

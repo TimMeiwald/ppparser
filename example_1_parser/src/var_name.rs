@@ -1,14 +1,14 @@
 use super::{Context, Rules, Source};
-use crate::{Key, cache::LR};
+use crate::{cache::LR, Key};
 use core::{cell::RefCell, panic};
 use std::{collections::BTreeSet, thread::current};
 
 fn memoized_behaviour<T: Context>(
     context: &RefCell<T>,
-    rule: Rules,
+    _rule: Rules,
     parent: Key,
     is_true: bool,
-    start_position: u32,
+    _start_position: u32,
     end_position: u32,
     memoized_key: Key,
 ) -> (bool, u32) {
@@ -29,15 +29,9 @@ fn default_behaviour<T: Context>(
     let mut c = context.borrow_mut();
     c.create_cache_entry(rule, f.0, start_position, f.1, current_key);
     c.update_publisher_entry(current_key, f.0, start_position, f.1);
-    // Change to only connect on success to makes things a little faster
+    // TODO: Change to only connect on success to makes things a little faster
+    // Unsure how it impacts correctness on LR
     c.connect(parent, current_key);
-    // #[cfg(debug_assertions)]
-    // {
-    //     println!(
-    //         "Default Behaviour: Rule: {:?}, Position: {:?}, Parent: {:?}, Result: {:?}",
-    //         rule, start_position, parent, f
-    //     )
-    // }
     f
 }
 
@@ -60,7 +54,7 @@ pub fn _var_name_kernel<T: Context>(
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let memo = context.borrow().check(rule, position);
-    return match memo {
+    match memo {
         Some((is_true, end_position, memoized_key)) => memoized_behaviour(
             context,
             rule,
@@ -71,7 +65,7 @@ pub fn _var_name_kernel<T: Context>(
             memoized_key,
         ),
         None => default_behaviour(source, func, context, rule, parent, position),
-    };
+    }
 }
 
 pub fn _var_name_direct_left_recursion<T: Context>(
@@ -93,7 +87,7 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let memo = context.borrow().check_lr(rule, position);
-    return match memo {
+    match memo {
         Some((is_true, end_position, memoized_key, lr)) => match lr {
             LR::Set => {
                 context.borrow_mut().create_cache_entry_direct_lr(
@@ -105,10 +99,10 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
                     LR::Unset,
                 );
 
-                return (is_true, end_position);
+                (is_true, end_position)
             }
             LR::Unset => {
-                return (is_true, end_position);
+                (is_true, end_position)
             }
         },
         None => {
@@ -144,7 +138,7 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
 
             f
         }
-    };
+    }
 }
 
 pub fn _var_name_indirect_left_recursion<'a, T: Context + 'static>(
@@ -174,6 +168,7 @@ fn convert_vec_to_btree_set(involved_set: &Vec<Rules>) -> BTreeSet<Rules> {
     involved
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn _var_name_kernel_growth_function<T: Context>(
     involved_set: &Vec<Rules>,
     rule: Rules,
@@ -266,14 +261,12 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             println!("\n");
         }
     }
-    // We need to reset the head, in that if there was a head before we need to push it back onto the stack.
-    context.borrow_mut().reset_head(rule, position);
     println!("EXITING GROWTH FUNCTION: {:?}\n", (rule, position));
     println!("Node Result of Growth Function");
     context.borrow_mut().print_node(last_key);
     println!("\n");
 
-    return last_result;
+    last_result
 }
 
 pub fn should_go_into_growth_function<T: Context>(
@@ -335,7 +328,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
         );
         println!("Exiting Indirect Left Recursion");
 
-        return result;
+        result
     } else {
         // Runs if head is Some
         // Do not evaluate any rule that is not involved in this left recursion(i.e is not in the eval set.)
