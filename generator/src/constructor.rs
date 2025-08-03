@@ -883,7 +883,7 @@ impl GeneratedCode<'_> {
                 }
                 Some(involved_set) => {
                     let involved_set = involved_set.clone();
-                    let involved_set: Vec<String> = involved_set
+                    let mut involved_set: Vec<String> = involved_set
                         .into_iter()
                         .map(|rule_name| {
                             let start_char = rule_name.chars().nth(0).expect("Should exist");
@@ -892,6 +892,7 @@ impl GeneratedCode<'_> {
                             rule_name
                         })
                         .collect();
+                    involved_set.sort();
                     out_tree.push(
                         Reference::LeftRecursiveRule(contents, involved_set),
                         None,
