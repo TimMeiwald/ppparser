@@ -20,15 +20,15 @@ fn main() {
     };
     match fs::read(source.clone()) {
         Err(e) => {
-            println!("{:?}", e);
-            println!("Failed to read file at {:?}", source);
+            println!("{e:?}");
+            println!("Failed to read file at {source:?}");
             exit(1)
         }
         Ok(source_str) => {
-            println!("Successfully read source file: {:?}", source);
+            println!("Successfully read source file: {source:?}");
             match String::from_utf8(source_str) {
                 Err(e) => {
-                    println!("{:?}", e);
+                    println!("{e:?}");
                     println!("Failed to read file as utf8");
                     exit(2)
                 }
