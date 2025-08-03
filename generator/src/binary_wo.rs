@@ -23,6 +23,7 @@ pub enum Reference {
     StringTerminal(Vec<char>),
     StringTerminalAsciiOpt(Vec<char>),
     InlinedRule(String),
+    LeftRecursiveRule(String, Vec<String>),
 }
 
 pub struct BinaryTreeWO {
@@ -101,6 +102,7 @@ impl BinaryTreeWO {
             Reference::StringTerminal(_) => self.string_terminal(stack, index),
             Reference::StringTerminalAsciiOpt(_) => self.string_terminal_ascii_opt(stack, index),
             Reference::InlinedRule(_) => self.inlined_rule(stack, index),
+            Reference::LeftRecursiveRule(..) => self.left_recursive_rule(stack, index),
             Reference::Exec | Reference::Null => {
                 panic!("Exec should only exist once and NULL should never exist")
             }
@@ -146,7 +148,7 @@ impl BinaryTreeWO {
                     format!("let closure_{:?} = _string_terminal_opt_ascii(&[", index.0);
 
                 for i in chars {
-                    r.push_str(&format!("b{:?},", i))
+                    r.push_str(&format!("b{i:?},"))
                 }
                 r.pop();
                 r.push_str("]);");
@@ -329,10 +331,66 @@ impl BinaryTreeWO {
         let node = &self.nodes[usize::from(index)];
         match &node.reference {
             Reference::VarName(content) => {
+                let rule_str = |rule_name: String| {
+                    let start_char = rule_name.chars().nth(0).expect("Should exist");
+                    let start_char = start_char.to_uppercase().to_string();
+                    let rule_name = start_char + rule_name.split_at_checked(1).unwrap().1;
+                    rule_name
+                };
+
                 let contents = format!(
                     "let closure_{:?} = _var_name(Rules::{}, context, {});",
                     index.0,
-                    content,
+                    rule_str(content.to_string()),
+                    content.to_lowercase()
+                );
+                stack.push(contents);
+                index
+            }
+            _ => {
+                panic!("Shouldn't happen")
+            }
+        }
+    }
+    fn left_recursive_rule(&self, stack: &mut Vec<String>, index: Key) -> Key {
+        let node = &self.nodes[usize::from(index)];
+        match &node.reference {
+            Reference::LeftRecursiveRule(content, involved_set) => {
+                let mut contents_involved_set: String;
+                if involved_set.is_empty() {
+                    contents_involved_set =
+                        "let involved_set: Vec<Rules> = [].to_vec();".to_string();
+                } else {
+                    contents_involved_set = "let involved_set: Vec<Rules> = [".to_string();
+                    for rule in involved_set {
+                        let rule_str = |rule_name: String| {
+                            let start_char = rule_name.chars().nth(0).expect("Should exist");
+                            let start_char = start_char.to_uppercase().to_string();
+                            let rule_name = start_char + rule_name.split_at_checked(1).unwrap().1;
+                            rule_name
+                        };
+
+                        contents_involved_set
+                            .push_str(&format!("Rules::{}, ", rule_str(rule.to_string())));
+                    }
+                    contents_involved_set.pop(); // Removes last space
+                    contents_involved_set.pop(); // Removes last comma
+                    contents_involved_set.push_str("].to_vec();");
+                }
+
+                stack.push(contents_involved_set);
+
+                let rule_str = |rule_name: String| {
+                    let start_char = rule_name.chars().nth(0).expect("Should exist");
+                    let start_char = start_char.to_uppercase().to_string();
+                    let rule_name = start_char + rule_name.split_at_checked(1).unwrap().1;
+                    rule_name
+                };
+
+                let contents = format!(
+                    "let closure_{:?} = _var_name_indirect_left_recursion(&involved_set, Rules::{}, context, {});",
+                    index.0,
+                    rule_str(content.to_string()),
                     content.to_lowercase()
                 );
                 stack.push(contents);

@@ -3,10 +3,13 @@ use std::fs::read_to_string;
 use std::path::PathBuf;
 mod binary_wo;
 mod constructor;
+mod cycle_detector;
 mod symbol_table;
+
 pub use crate::constructor::GeneratedCode;
 use crate::symbol_table::SymbolTable;
 use ::parser::*;
+use cycle_detector::LeftRecursionDetector;
 
 fn count_lines(source: &String, start_position: u32) -> u32 {
     let mut new_line_count: u32 = 1;
@@ -46,18 +49,16 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
     let clean_tree = tree.get_publisher().clear_false();
     let sym_table = SymbolTable::new(&clean_tree, src);
     //sym_table.print();
-    let gen_code = GeneratedCode::new(&sym_table, &clean_tree, src);
+    let cycles = LeftRecursionDetector::new(&clean_tree, src);
+    let gen_code = GeneratedCode::new(&cycles, &sym_table, &clean_tree, src);
     Some(gen_code)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::count_lines;
-    use ::parser::*;
-    use std::cell::RefCell;
-    use std::env;
-    use std::fs::{canonicalize, read_to_string};
+
+    use std::fs::canonicalize;
     #[test]
     fn test() {
         let path = "../parser/tests/test_data/Grammar.txt";
@@ -66,8 +67,41 @@ mod tests {
         match gen_code {
             Some(gen_code) => {
                 //gen_code.print();
-                print!("{}\n", gen_code.parser_file_content());
-                print!("{}\n", gen_code.rules_enum_file_content());
+                println!("{}", gen_code.parser_file_content());
+                println!("{}", gen_code.rules_enum_file_content());
+            }
+            None => {
+                panic!("Something went wrong")
+            }
+        }
+    }
+    #[test]
+    fn test_calculator() {
+        let path = "../generator/tests/calculator.dsl";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let gen_code = generate_parser(&pathbuf);
+        match gen_code {
+            Some(gen_code) => {
+                //gen_code.print();
+                println!("{}", gen_code.parser_file_content());
+                println!("{}", gen_code.rules_enum_file_content());
+            }
+            None => {
+                panic!("Something went wrong")
+            }
+        }
+    }
+
+    #[test]
+    fn test_example_2() {
+        let path = "../example_2/example_2.dsl";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let gen_code = generate_parser(&pathbuf);
+        match gen_code {
+            Some(gen_code) => {
+                //gen_code.print();
+                println!("{}", gen_code.parser_file_content());
+                println!("{}", gen_code.rules_enum_file_content());
             }
             None => {
                 panic!("Something went wrong")

@@ -5,10 +5,10 @@ use std::{collections::BTreeSet, thread::current};
 
 fn memoized_behaviour<T: Context>(
     context: &RefCell<T>,
-    rule: Rules,
+    _rule: Rules,
     parent: Key,
     is_true: bool,
-    start_position: u32,
+    _start_position: u32,
     end_position: u32,
     memoized_key: Key,
 ) -> (bool, u32) {
@@ -29,15 +29,9 @@ fn default_behaviour<T: Context>(
     let mut c = context.borrow_mut();
     c.create_cache_entry(rule, f.0, start_position, f.1, current_key);
     c.update_publisher_entry(current_key, f.0, start_position, f.1);
-    // Change to only connect on success to makes things a little faster
+    // TODO: Change to only connect on success to makes things a little faster
+    // Unsure how it impacts correctness on LR
     c.connect(parent, current_key);
-    // #[cfg(debug_assertions)]
-    // {
-    //     println!(
-    //         "Default Behaviour: Rule: {:?}, Position: {:?}, Parent: {:?}, Result: {:?}",
-    //         rule, start_position, parent, f
-    //     )
-    // }
     f
 }
 
@@ -60,7 +54,7 @@ pub fn _var_name_kernel<T: Context>(
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let memo = context.borrow().check(rule, position);
-    return match memo {
+    match memo {
         Some((is_true, end_position, memoized_key)) => memoized_behaviour(
             context,
             rule,
@@ -71,7 +65,7 @@ pub fn _var_name_kernel<T: Context>(
             memoized_key,
         ),
         None => default_behaviour(source, func, context, rule, parent, position),
-    };
+    }
 }
 
 pub fn _var_name_direct_left_recursion<T: Context>(
@@ -93,7 +87,7 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let memo = context.borrow().check_lr(rule, position);
-    return match memo {
+    match memo {
         Some((is_true, end_position, memoized_key, lr)) => match lr {
             LR::Set => {
                 context.borrow_mut().create_cache_entry_direct_lr(
@@ -105,11 +99,9 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
                     LR::Unset,
                 );
 
-                return (is_true, end_position);
+                (is_true, end_position)
             }
-            LR::Unset => {
-                return (is_true, end_position);
-            }
+            LR::Unset => (is_true, end_position),
         },
         None => {
             let mut current_key: Key;
@@ -144,7 +136,7 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
 
             f
         }
-    };
+    }
 }
 
 pub fn _var_name_indirect_left_recursion<'a, T: Context + 'static>(
@@ -174,6 +166,7 @@ fn convert_vec_to_btree_set(involved_set: &Vec<Rules>) -> BTreeSet<Rules> {
     involved
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn _var_name_kernel_growth_function<T: Context>(
     involved_set: &Vec<Rules>,
     rule: Rules,
@@ -206,10 +199,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
 
         loop {
             println!("\n");
-            println!(
-                "GROWTH RULE: {:?}, POSITION: {:?}, LOOP COUNT: {:?}",
-                rule, position, count
-            );
+            println!("GROWTH RULE: {rule:?}, POSITION: {position:?}, LOOP COUNT: {count:?}");
             context.borrow_mut().reinitialize_eval_set(rule, position);
 
             result = func(current_key, context, source, position);
@@ -254,26 +244,24 @@ pub fn _var_name_kernel_growth_function<T: Context>(
                     last_key,
                 );
 
-                println!("LOOP: {:?}, Result: {:?}", count, result);
+                println!("LOOP: {count:?}, Result: {result:?}");
                 break;
             }
 
             last_result = result;
             last_key = current_key;
             current_key = context.borrow_mut().reserve_publisher_entry(rule);
-            println!("LOOP: {:?}, Result: {:?}", count, result);
+            println!("LOOP: {count:?}, Result: {result:?}");
             count += 1;
             println!("\n");
         }
     }
-    // We need to reset the head, in that if there was a head before we need to push it back onto the stack.
-    context.borrow_mut().reset_head(rule, position);
     println!("EXITING GROWTH FUNCTION: {:?}\n", (rule, position));
     println!("Node Result of Growth Function");
     context.borrow_mut().print_node(last_key);
     println!("\n");
 
-    return last_result;
+    last_result
 }
 
 pub fn should_go_into_growth_function<T: Context>(
@@ -284,10 +272,7 @@ pub fn should_go_into_growth_function<T: Context>(
     // Keeps triggering everytime which it should not do.
     let mut ctx = context.borrow_mut();
     let active_lr_position = ctx.get_current_active_lr_position();
-    println!(
-        "Should grow, Active LR: {:?}, Current Rule: {:?}",
-        active_lr_position, rule
-    );
+    println!("Should grow, Active LR: {active_lr_position:?}, Current Rule: {rule:?}");
     match active_lr_position {
         None => {
             let last_lr_position = ctx.get_current_active_lr_position();
@@ -335,7 +320,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
         );
         println!("Exiting Indirect Left Recursion");
 
-        return result;
+        result
     } else {
         // Runs if head is Some
         // Do not evaluate any rule that is not involved in this left recursion(i.e is not in the eval set.)
@@ -349,7 +334,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
             context
                 .borrow_mut()
                 .remove_from_eval_set(active_lr_position, rule);
-            println!("CURRENT KEY: {:?}", current_key);
+            println!("CURRENT KEY: {current_key:?}");
             let result = func(current_key, context, source, position);
             context
                 .borrow_mut()
@@ -363,8 +348,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
             );
             context.borrow_mut().connect(parent, current_key);
             println!(
-                "Exiting Indirect Left Recursion - Not Memo, Parent: {:?}, Key: {:?}",
-                parent, current_key
+                "Exiting Indirect Left Recursion - Not Memo, Parent: {parent:?}, Key: {current_key:?}"
             );
 
             result

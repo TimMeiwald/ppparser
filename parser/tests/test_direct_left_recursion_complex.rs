@@ -1,9 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use core::cell::RefCell;
     use ::parser::*;
-    use std::env;
-    use std::fs::{canonicalize, read_to_string};
+    use core::cell::RefCell;
+
     #[test]
     fn test_left_recursion_direct_1() {
         let string = "1-2-3-7-9-1   ".to_string();
@@ -17,7 +16,7 @@ mod tests {
                 _var_name_direct_left_recursion(Rules::test_LR_expr, &context, test_lr_expr);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 11));
@@ -102,7 +101,7 @@ mod tests {
                 _var_name_direct_left_recursion(Rules::test_LR_expr, &context, test_lr_expr);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 3));
@@ -145,7 +144,7 @@ mod tests {
             let executor = _var_name_direct_left_recursion(Rules::test_fact, &context, test_fact);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         //context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 9));
@@ -231,7 +230,7 @@ mod tests {
             let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 9));

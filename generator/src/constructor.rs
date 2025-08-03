@@ -1,7 +1,7 @@
 use super::binary_wo::{BinaryTreeWO, Reference};
-use crate::symbol_table::SymbolTable;
-use indoc::indoc;
+use crate::{cycle_detector::LeftRecursionDetector, symbol_table::SymbolTable};
 use ::parser::*;
+use indoc::indoc;
 use std::panic::panic_any;
 
 pub struct GeneratedCode<'a> {
@@ -16,9 +16,14 @@ pub struct GeneratedCode<'a> {
 }
 
 impl GeneratedCode<'_> {
-    pub fn new(symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str) -> Self {
+    pub fn new(
+        left_recursive_rules: &LeftRecursionDetector,
+        symbol_table: &SymbolTable,
+        tree: &BasicPublisher,
+        source: &str,
+    ) -> Self {
         println!("Generating Code");
-        let rules = Self::generate(symbol_table, tree, source);
+        let rules = Self::generate(left_recursive_rules, symbol_table, tree, source);
         let (rules_enum, num_rules) = Self::generate_rules_enum(symbol_table);
         let rules_enum_header = indoc! {
             r##"#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually
@@ -65,7 +70,7 @@ impl GeneratedCode<'_> {
 
     pub fn sample_main_header(&self, name: &str) -> String {
         let name = name.replace("-", "_");
-        format!("use {}::*;\n", name)
+        format!("use {name}::*;\n")
     }
 
     pub fn parser_file_content(&self) -> String {
@@ -91,11 +96,16 @@ impl GeneratedCode<'_> {
         println!("Rules:\n");
         print!("{}", self.parser_header);
         for i in &self.rules {
-            println!("{}", i)
+            println!("{i}")
         }
     }
 
-    fn generate(symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str) -> Vec<String> {
+    fn generate(
+        left_recursive_rules: &LeftRecursionDetector,
+        symbol_table: &SymbolTable,
+        tree: &BasicPublisher,
+        source: &str,
+    ) -> Vec<String> {
         let node = tree.get_node(Key(0));
         if node.rule != Rules::Grammar {
             panic!("Invalid Root. Must be of type Rules::Grammar");
@@ -108,7 +118,13 @@ impl GeneratedCode<'_> {
             }
             let child_index = node.get_children()[counter];
             // Recurse.
-            let rule = Self::match_rule(symbol_table, tree, source, child_index);
+            let rule = Self::match_rule(
+                left_recursive_rules,
+                symbol_table,
+                tree,
+                source,
+                child_index,
+            );
             rules.push(rule);
             counter += 1;
         }
@@ -119,9 +135,16 @@ impl GeneratedCode<'_> {
         let mut rules_enum = "pub enum Rules {\n".to_string();
         let mut count: usize = 0;
         for s in symbol_table.get_names() {
+            let rule_name = |s: String| {
+                let start_char = s.chars().nth(0).expect("Should exist");
+                let start_char = start_char.to_uppercase().to_string();
+                let rule_name = start_char + s.split_at_checked(1).unwrap().1;
+                rule_name
+            };
+
             if !symbol_table.check_symbol_is_inline(s) {
                 rules_enum.push('\t');
-                rules_enum.push_str(s);
+                rules_enum.push_str(&rule_name(s.to_string()));
                 rules_enum.push(',');
                 rules_enum.push('\n');
                 count += 1;
@@ -132,6 +155,7 @@ impl GeneratedCode<'_> {
     }
 
     fn match_rule(
+        left_recursive_rules: &LeftRecursionDetector,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
         source: &str,
@@ -139,14 +163,20 @@ impl GeneratedCode<'_> {
     ) -> String {
         let node = tree.get_node(index);
         match node.rule {
-            Rules::Rule => Self::rule(symbol_table, tree, source, index),
+            Rules::Rule => Self::rule(left_recursive_rules, symbol_table, tree, source, index),
             _ => {
                 todo!("Not yet implemented")
             }
         }
     }
 
-    fn rule(symbol_table: &SymbolTable, tree: &BasicPublisher, source: &str, index: Key) -> String {
+    fn rule(
+        left_recursive_rules: &LeftRecursionDetector,
+        symbol_table: &SymbolTable,
+        tree: &BasicPublisher,
+        source: &str,
+        index: Key,
+    ) -> String {
         let rule_node = tree.get_node(index);
         let rule_children = rule_node.get_children();
         let mut name: Option<String> = None;
@@ -160,7 +190,14 @@ impl GeneratedCode<'_> {
                 }
                 Rules::RHS => {
                     let mut out_tree = BinaryTreeWO::new();
-                    let rhs_key = Self::rhs(&mut out_tree, symbol_table, tree, source, *i);
+                    let rhs_key = Self::rhs(
+                        left_recursive_rules,
+                        &mut out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                     let last_key = out_tree.push(Reference::Exec, Some(rhs_key), None);
                     //out_tree.print(last_key);
 
@@ -179,14 +216,34 @@ impl GeneratedCode<'_> {
                 _ => {}
             }
         }
-
+        let name = name.expect("Must have name");
         let rule_header = format!(
 
-            "#[allow(dead_code)]\npub fn {}<T: Context>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{",
-            name.expect("Must have name")
+            "#[allow(dead_code)]\npub fn {name}<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{"
         );
+        // let mut lr_rule_hdr: String = "".to_string();
+        // let lr_rules = left_recursive_rules.get_left_recursion_rules();
+        // let lr_rules_for_name = lr_rules.get(&name);
+        // if lr_rules_for_name.is_some() {
+        //     let lr_rules_for_name = lr_rules_for_name.expect("We just checked it's some");
+        //     // Then it's an LR rule and we need to add the involved set
+        //     // e.g exmaple below
+        //     // let involved_set = vec![
+        //     //     Rules::expr_addsub,
+        //     //     Rules::sub_expr,
+        //     //     Rules::expr_divmul,
+        //     //     Rules::div_expr,
+        //     //     Rules::mult_expr,
+        //     // ];
+        //     lr_rule_hdr.push_str("\tlet involved_set: Vec<Rules> = vec![");
+        //     for i in lr_rules_for_name {
+        //         lr_rule_hdr.push_str(&format!("Rules::{i}, ").to_string());
+        //     }
+        //     lr_rule_hdr = lr_rule_hdr[0..lr_rule_hdr.len()-2].to_string(); // Drops a comma
+        //     lr_rule_hdr.push_str("];");
+        // }
         let builder = format!(
-            "{}\n{}\n{}\n}} ",
+            "{}\n{}\n{}\n}}\n",
             rule_header,
             comment.unwrap_or("".to_string()),
             rhs
@@ -238,6 +295,7 @@ impl GeneratedCode<'_> {
     }
 
     fn rhs(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -249,12 +307,35 @@ impl GeneratedCode<'_> {
         for i in rhs_node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::Ordered_Choice => {
-                    ret_key = Self::ordered_choice(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::ordered_choice(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
                 Rules::Sequence => {
-                    ret_key = Self::sequence(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::sequence(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
-                Rules::Atom => ret_key = Self::atom(out_tree, symbol_table, tree, source, *i),
+                Rules::Atom => {
+                    ret_key = Self::atom(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    )
+                }
                 _ => panic!("rhs"),
             }
         }
@@ -262,6 +343,7 @@ impl GeneratedCode<'_> {
     }
 
     fn ordered_choice(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -275,7 +357,14 @@ impl GeneratedCode<'_> {
         for i in oc_node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::Atom => {
-                    let mut key = Self::atom(out_tree, symbol_table, tree, source, *i);
+                    let mut key = Self::atom(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                     if count != 0 {
                         key = out_tree.push(Reference::OrderedChoice, Some(last_key), Some(key))
                     }
@@ -290,6 +379,7 @@ impl GeneratedCode<'_> {
     }
 
     fn sequence(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -303,7 +393,14 @@ impl GeneratedCode<'_> {
         for i in oc_node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::Atom => {
-                    let mut key = Self::atom(out_tree, symbol_table, tree, source, *i);
+                    let mut key = Self::atom(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                     if count != 0 {
                         key = out_tree.push(Reference::Sequence, Some(last_key), Some(key));
                     }
@@ -318,6 +415,7 @@ impl GeneratedCode<'_> {
     }
 
     fn atom(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -330,22 +428,64 @@ impl GeneratedCode<'_> {
         for i in node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::And_Predicate => {
-                    ret_key = Self::and_predicate(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::and_predicate(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
                 Rules::Not_Predicate => {
-                    ret_key = Self::not_predicate(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::not_predicate(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
                 Rules::One_Or_More => {
-                    ret_key = Self::one_or_more(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::one_or_more(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
                 Rules::Zero_Or_More => {
-                    ret_key = Self::zero_or_more(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::zero_or_more(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
                 Rules::Optional => {
-                    ret_key = Self::optional(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::optional(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
                 Rules::Nucleus => {
-                    ret_key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::nucleus(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
 
                 _ => panic!("atom"),
@@ -355,6 +495,7 @@ impl GeneratedCode<'_> {
     }
 
     fn optional(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -368,7 +509,14 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Question_Mark => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                     ret_key = out_tree.push(Reference::Optional, Some(key), None)
                 }
 
@@ -378,6 +526,7 @@ impl GeneratedCode<'_> {
         ret_key
     }
     fn one_or_more(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -391,7 +540,14 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Plus => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                     ret_key = out_tree.push(Reference::OneOrMore, Some(key), None)
                 }
 
@@ -401,6 +557,7 @@ impl GeneratedCode<'_> {
         ret_key
     }
     fn zero_or_more(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -414,7 +571,14 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Star => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                     ret_key = out_tree.push(Reference::ZeroOrMore, Some(key), None)
                 }
 
@@ -425,6 +589,7 @@ impl GeneratedCode<'_> {
     }
 
     fn and_predicate(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -438,7 +603,14 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Ampersand => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                     ret_key = out_tree.push(Reference::AndPredicate, Some(key), None);
                 }
 
@@ -449,6 +621,7 @@ impl GeneratedCode<'_> {
     }
 
     fn not_predicate(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -461,7 +634,14 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 //Rules::Exclamation_Mark => {}
                 Rules::Nucleus => {
-                    let key = Self::nucleus(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::nucleus(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                     ret_key = out_tree.push(Reference::NotPredicate, Some(key), None)
                 }
 
@@ -472,6 +652,7 @@ impl GeneratedCode<'_> {
     }
 
     fn nucleus(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -484,13 +665,27 @@ impl GeneratedCode<'_> {
             let child_rule = tree.get_node(*i).rule;
             match child_rule {
                 Rules::Subexpression => {
-                    ret_key = Self::subexpression(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::subexpression(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
                 Rules::Terminal => {
                     ret_key = Self::terminal(out_tree, symbol_table, tree, source, *i);
                 }
                 Rules::Var_Name_Ref => {
-                    ret_key = Self::var_name(out_tree, symbol_table, tree, source, *i);
+                    ret_key = Self::var_name(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                 }
                 Rules::OrderedChoiceMatchRange => {
                     ret_key =
@@ -500,7 +695,7 @@ impl GeneratedCode<'_> {
                     ret_key = Self::string_terminal(out_tree, symbol_table, tree, source, *i);
                 }
                 _ => {
-                    let err_msg = format!("nucleus, Rule: {:?}", child_rule);
+                    let err_msg = format!("nucleus, Rule: {child_rule:?}");
                     panic_any(err_msg);
                 }
             }
@@ -522,9 +717,8 @@ impl GeneratedCode<'_> {
             let child_rule = child_node.rule;
             match child_rule {
                 Rules::ASCII => {
-                    let contents = source[((child_node.start_position) as usize)
-                        ..((child_node.end_position) as usize)]
-                        .as_bytes()[0];
+                    let contents = source.as_bytes()[((child_node.start_position) as usize)
+                        ..((child_node.end_position) as usize)][0];
                     data.push(contents as char);
                 }
                 Rules::Integer => {
@@ -541,7 +735,7 @@ impl GeneratedCode<'_> {
                 }
                 //Rules::Apostrophe => {}
                 _ => {
-                    let err_msg = format!("string_terminal, Rule: {:?}", child_rule);
+                    let err_msg = format!("string_terminal, Rule: {child_rule:?}");
                     panic_any(err_msg);
                 }
             }
@@ -600,7 +794,7 @@ impl GeneratedCode<'_> {
                         .to_string();
                     let f = match u32::from_str_radix(&contents, 16) {
                         Err(e) => {
-                            panic!("Failed to parse Hex value: {:?}", e)
+                            panic!("Failed to parse Hex value: {e:?}")
                         }
                         Ok(value) => value,
                     };
@@ -619,7 +813,7 @@ impl GeneratedCode<'_> {
                 }
 
                 _ => {
-                    let err_msg = format!("ordered choice match range, Rule: {:?}", child_rule);
+                    let err_msg = format!("ordered choice match range, Rule: {child_rule:?}");
                     panic_any(err_msg);
                 }
             }
@@ -629,6 +823,7 @@ impl GeneratedCode<'_> {
     }
 
     fn subexpression(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -640,7 +835,14 @@ impl GeneratedCode<'_> {
         for i in node.get_children() {
             match tree.get_node(*i).rule {
                 Rules::RHS => {
-                    let key = Self::rhs(out_tree, symbol_table, tree, source, *i);
+                    let key = Self::rhs(
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
                     ret_key = out_tree.push(Reference::Subexpression, Some(key), None);
                 }
                 //Rules::Left_Bracket | Rules::Right_Bracket => {}
@@ -651,6 +853,7 @@ impl GeneratedCode<'_> {
     }
 
     fn var_name(
+        left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -661,8 +864,41 @@ impl GeneratedCode<'_> {
         let var_name: String = source
             [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)]
             .to_string();
+        println!("{var_name:#?}");
 
-        if symbol_table.check_symbol_is_inline(&var_name) {
+        let is_left_recursive = left_recursive_rules
+            .get_left_recursion_rules()
+            .get(&var_name.to_lowercase());
+        println!("IS_ LEFT RECUSRIVE = {is_left_recursive:?}");
+        if is_left_recursive.is_some() {
+            let contents = var_name.to_string();
+            let involved_set = left_recursive_rules
+                .get_left_recursion_rules()
+                .get(&var_name.to_lowercase());
+            match involved_set {
+                None => {
+                    panic!("Should have involved set")
+                }
+                Some(involved_set) => {
+                    let involved_set = involved_set.clone();
+                    let mut involved_set: Vec<String> = involved_set
+                        .into_iter()
+                        .map(|rule_name| {
+                            let start_char = rule_name.chars().nth(0).expect("Should exist");
+                            let start_char = start_char.to_uppercase().to_string();
+                            let rule_name = start_char + rule_name.split_at_checked(1).unwrap().1;
+                            rule_name
+                        })
+                        .collect();
+                    involved_set.sort();
+                    out_tree.push(
+                        Reference::LeftRecursiveRule(contents, involved_set),
+                        None,
+                        None,
+                    )
+                }
+            }
+        } else if symbol_table.check_symbol_is_inline(&var_name) {
             let contents = var_name.to_string();
             out_tree.push(Reference::InlinedRule(contents), None, None)
         } else {
@@ -702,7 +938,7 @@ impl GeneratedCode<'_> {
 mod tests {
     use super::*;
     use crate::count_lines;
-    use ::parser::*;
+
     use std::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
@@ -769,7 +1005,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         _gen_code.print();
     }
 
@@ -800,7 +1037,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         _gen_code.print();
     }
 
@@ -829,7 +1067,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
     }
 
     #[test]
@@ -860,7 +1099,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         _gen_code.print();
     }
     #[test]
@@ -893,7 +1133,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let _gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         _gen_code.print();
     }
 
@@ -926,7 +1167,8 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         //sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         // for i in &gen_code.rules {
         //     println!("{}", i)
         // }
@@ -1001,9 +1243,10 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         for i in gen_code.rules {
-            println!("{}", i)
+            println!("{i}")
         }
         println!("{}", gen_code.rules_enum)
     }
@@ -1037,9 +1280,10 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         for i in gen_code.rules {
-            println!("{}", i)
+            println!("{i}")
         }
         println!("{}", gen_code.rules_enum)
     }
@@ -1073,9 +1317,10 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         for i in gen_code.rules {
-            println!("{}", i)
+            println!("{i}")
         }
         println!("{}", gen_code.rules_enum)
     }
@@ -1108,9 +1353,10 @@ mod tests {
         let src = &String::from(source);
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         for i in gen_code.rules {
-            println!("{}", i)
+            println!("{i}")
         }
         println!("{}", gen_code.rules_enum)
     }
@@ -1146,7 +1392,66 @@ mod tests {
         let sym_table = SymbolTable::new(tree, src);
         sym_table.print();
         sym_table.print_inlined_rules();
-        let gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        let gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
+        gen_code.print();
+    }
+
+    #[test]
+    fn test_lr() {
+        let string = r#"<onenine> Inline = ['1'..'9'];
+                <digit> Inline = ['0'..'9'];
+                <integer> = '-'?, ((<onenine>, <digit>+)/<digit>);
+
+                <number> = <integer>, <fraction>?, <exponent>?; 
+                <fraction> = ('.', <digit>+);
+                <exponent> = (('E'/'e'), <sign>, <digit>+);
+                <sign> = ('+'/'-')?;
+
+                <div_expr> = <expr_divmul>, '/', <expr_exponentiation>;
+                <mult_expr> = <expr_divmul>, '*', <expr_exponentiation>;
+                <add_expr> = <expr_addsub>, '+', <expr_divmul>;
+                <sub_expr> = <expr_addsub>, '-', <expr_divmul>;
+                <exponent_expr> = <expr_parentheses>, '^', <expr_parentheses>;
+                <parentheses_expr> = '(', <expr_addsub>, ')';
+                <term> = <number>; #For now we just use a json number and don't differentiate between integers and floats since it doesn't affect the left recursion test value#
+
+                <expr_parentheses> = <parentheses_expr>/<term>;
+                <expr_exponentiation> = <exponent_expr>/<expr_parentheses>;
+
+                <expr_divmul> = <div_expr>/<mult_expr>/<expr_exponentiation>;
+                <expr_addsub> = <add_expr>/<sub_expr>/<expr_divmul>;
+                <Grammar> = <expr_addsub>;
+        "#
+        .to_string();
+        let string2 = string.clone();
+        let src_len = string.len();
+        let source = Source::new(&string);
+        let position = 0;
+        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let result = grammar(Key(0), &context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            println!("Successfully parsed")
+        }
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
+
+        tree.print(Key(0), None);
+        let src = &String::from(source);
+        let sym_table = SymbolTable::new(tree, src);
+        sym_table.print();
+        sym_table.print_inlined_rules();
+        let left_recursion_detector = LeftRecursionDetector::new(tree, src);
+        println!("{:#?}", left_recursion_detector.get_left_recursion_rules());
+        let gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         gen_code.print();
     }
 }

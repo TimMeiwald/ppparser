@@ -26,7 +26,7 @@ impl<'a> SymbolTable<'a> {
 
     pub fn print(&self) {
         for i in &self.names {
-            println!("{}", i)
+            println!("{i}")
         }
     }
 
@@ -82,7 +82,7 @@ impl<'a> SymbolTable<'a> {
         tree: &BasicPublisher,
         index: Key,
     ) {
-        let lhs = tree.get_node(index);
+        let _lhs = tree.get_node(index);
         let node = tree.get_node(parent_index);
         for child in node.get_children() {
             let child_node = tree.get_node(*child);

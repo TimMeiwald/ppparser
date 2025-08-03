@@ -41,17 +41,17 @@ fn main() {
     };
 
     println!("Parser Name: {:?}", args.name);
-    println!("Target Directory: {:?}", target);
-    println!("Source File: {:?}", source);
+    println!("Target Directory: {target:?}");
+    println!("Source File: {source:?}");
 
     let data = DataGenerator::new(
         target.to_str().unwrap().into(),
         "./parser",
         source,
-        args.name.into(),
+        args.name,
     );
     match data.generate_data() {
         Ok(()) => println!("Success"),
-        Err(e) => println!("Error: {:?}", e),
+        Err(e) => println!("Error: {e:?}"),
     }
 }
