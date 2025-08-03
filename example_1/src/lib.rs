@@ -15,19 +15,19 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
                 result = evaluate_tree_kernel(publisher, source, child);
                 println!("Grammar Result: {result}");
             }
-            Rules::expr => {
+            Rules::Expr => {
                 result = evaluate_tree_kernel(publisher, source, child);
                 println!("Expression Result: {result}");
             }
-            Rules::addition => {
+            Rules::Addition => {
                 result = evaluate_tree_kernel(publisher, source, child);
                 println!("Addition Result: {result}");
             }
-            Rules::subtraction => {
+            Rules::Subtraction => {
                 result = evaluate_tree_kernel(publisher, source, child);
                 println!("Subtraction Result: {result}");
             }
-            Rules::integer => {
+            Rules::Integer => {
                 let integer = child.get_string(source);
                 println!("Integer String: {integer}");
                 let integer: i64 = integer.parse().expect("Should be valid integer");
@@ -38,7 +38,7 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
         results.push(result);
     }
     println!("Results: {results:?}");
-    if node.rule == Rules::subtraction {
+    if node.rule == Rules::Subtraction {
         results[1] = -results[1]
     }
     results.iter().sum()
