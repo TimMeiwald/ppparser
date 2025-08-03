@@ -6,6 +6,7 @@ fn evaluate_tree(publisher: BasicPublisher, source: &String) -> String {
     evaluate_tree_kernel(&publisher, source, grammar_node)
 }
 #[allow(dead_code)]
+#[allow(clippy::only_used_in_recursion)] // Keeps similarty with other examples despite not actually needing source
 fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node) -> String {
     let mut results: String = "".to_string();
     for child_key in node.get_children() {
@@ -28,7 +29,7 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
         }
         results.push_str(&result);
     }
-    return results;
+    results
 }
 
 #[cfg(test)]
