@@ -7,7 +7,7 @@ use core::cell::RefCell;
 use std::env;
 use std::fs::{canonicalize, read_to_string};
 
-pub fn parse(source: &String) -> (bool, u32, BasicPublisher) {
+pub fn parse(source: &str) -> (bool, u32, BasicPublisher) {
     let src_len = source.len() as u32;
     let source = Source::new(source);
     let position: u32 = 0;

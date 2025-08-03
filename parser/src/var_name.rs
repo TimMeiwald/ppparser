@@ -5,10 +5,10 @@ use std::{collections::BTreeSet, thread::current};
 
 fn memoized_behaviour<T: Context>(
     context: &RefCell<T>,
-    rule: Rules,
+    _rule: Rules,
     parent: Key,
     is_true: bool,
-    start_position: u32,
+    _start_position: u32,
     end_position: u32,
     memoized_key: Key,
 ) -> (bool, u32) {
@@ -29,15 +29,9 @@ fn default_behaviour<T: Context>(
     let mut c = context.borrow_mut();
     c.create_cache_entry(rule, f.0, start_position, f.1, current_key);
     c.update_publisher_entry(current_key, f.0, start_position, f.1);
-    // Change to only connect on success to makes things a little faster
+    // TODO: Change to only connect on success to makes things a little faster
+    // Unsure how it impacts correctness on LR
     c.connect(parent, current_key);
-    // #[cfg(debug_assertions)]
-    // {
-    //     println!(
-    //         "Default Behaviour: Rule: {:?}, Position: {:?}, Parent: {:?}, Result: {:?}",
-    //         rule, start_position, parent, f
-    //     )
-    // }
     f
 }
 
@@ -105,10 +99,10 @@ pub fn _var_name_kernel_direct_left_recursion<T: Context>(
                     LR::Unset,
                 );
 
-                return (is_true, end_position);
+                (is_true, end_position)
             }
             LR::Unset => {
-                return (is_true, end_position);
+                (is_true, end_position)
             }
         },
         None => {
@@ -174,6 +168,7 @@ fn convert_vec_to_btree_set(involved_set: &Vec<Rules>) -> BTreeSet<Rules> {
     involved
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn _var_name_kernel_growth_function<T: Context>(
     involved_set: &Vec<Rules>,
     rule: Rules,
@@ -266,8 +261,6 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             println!("\n");
         }
     }
-    // We need to reset the head, in that if there was a head before we need to push it back onto the stack.
-    context.borrow_mut().reset_head(rule, position);
     println!("EXITING GROWTH FUNCTION: {:?}\n", (rule, position));
     println!("Node Result of Growth Function");
     context.borrow_mut().print_node(last_key);

@@ -209,6 +209,7 @@ impl BasicPublisher {
         self.nodes.capacity()
     }
 
+    #[allow(clippy::len_without_is_empty)] // One node is added on creation.
     pub fn len(&self) -> usize {
         self.nodes.len()
     }

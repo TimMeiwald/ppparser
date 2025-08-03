@@ -20,12 +20,10 @@ where
 
     type P;
     #[allow(dead_code)]
-
     fn new(size_of_source: usize, number_of_rules: usize) -> Self;
     #[allow(dead_code)]
     fn print_cache(&self);
     #[allow(dead_code)]
-
     fn print_publisher(&self);
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)>;
     fn check_lr(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key, LR)>;
@@ -70,7 +68,6 @@ where
     fn get_publisher(self) -> Self::P;
     fn clear_node_of_children(&mut self, node: Key);
     fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool;
-    fn reset_head(&mut self, rule: Rules, start_position: u32);
     fn disconnect(&mut self, parent: Key, child: Key);
     fn print_node(&self, node: Key);
     fn get_current_active_lr_position(&self) -> Option<(Rules, u32)>;
@@ -82,13 +79,11 @@ pub struct BasicContext {
     publisher: BasicPublisher,
 }
 #[allow(dead_code)]
-
 pub struct DirectLeftRecursionContext {
     cache: DirectLeftRecursionCache,
     publisher: DirectLeftRecursionPublisher,
 }
 #[allow(dead_code)]
-
 pub struct IndirectLeftRecursionContext {
     cache: IndirectLeftRecursionCache,
     publisher: IndirectLeftRecursionPublisher,
@@ -127,14 +122,7 @@ impl Context for BasicContext {
     fn disconnect(&mut self, parent: Key, child: Key) {
         self.publisher.disconnect(parent, child);
     }
-    // fn get_currently_active_head(&self) -> Option<u32> {
-    //     self.cache.get_currently_active_head()
-    // }
-    // fn set_currently_active_head(&mut self, position: Option<u32>) {
-    //     self.cache.set_currently_active_head(position);
-    // }
     fn print_publisher(&self) {
-        //self.publisher.print(Key(0), Some(true));
         println!("\n\n{:?}", &self.publisher)
     }
     fn print_node(&self, node: Key) {
@@ -145,10 +133,6 @@ impl Context for BasicContext {
         self.publisher.add_node(rule, 0, 0, false)
     }
     fn connect(&mut self, parent_key: Key, child_key: Key) {
-        // println!(
-        //     "Connecting Child: {:?} to Parent: {:?}",
-        //     child_key, parent_key
-        // );
         self.publisher.connect(parent_key, child_key);
     }
     fn connect_front(&mut self, parent_key: Key, child_key: Key) {
@@ -198,22 +182,13 @@ impl Context for BasicContext {
     fn check_head(&self, rule: Rules, start_position: u32) -> Option<&Head> {
         self.cache.check_head(rule, start_position)
     }
-    // fn remove_head(&mut self, start_position: u32) {
-    //     println!("REMOVE HEAD! {:?}\x1b[0m", (start_position));
 
-    //     self.cache.remove_head(start_position);
-    // }
     fn rule_in_involved_set(&self, head: (Rules, u32), rule: Rules) -> bool {
         self.cache.rule_in_involved_set(head, rule)
     }
     fn connect_if_not_connected(&mut self, parent_index: Key, child_index: Key) {
         self.publisher
             .connect_if_not_connected(parent_index, child_index);
-    }
-
-    fn reset_head(&mut self, rule: Rules, start_position: u32) {
-        println!("RESETTING HEAD!");
-        self.cache.reset_head(rule, start_position);
     }
     fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>) {
         println!("SETTING HEAD");
