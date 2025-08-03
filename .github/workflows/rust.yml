@@ -43,6 +43,8 @@ jobs:
       run: |
         RUST_BACKTRACE=1
         cargo test --verbose
+        ./update_parsers.sh
+        cargo test --verbose
 
   Format:
     needs: Build_And_Cache
