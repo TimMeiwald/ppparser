@@ -19,7 +19,7 @@ pub fn expr<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &So
 #[allow(dead_code)]
 pub fn addition<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Subtraction, Rules::Addition, Rules::Expr].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
 	let closure_2 = _terminal(b'+');
 	let closure_3 = _sequence(&closure_1, &closure_2);
@@ -31,7 +31,7 @@ pub fn addition<T: Context + 'static>(parent: Key, context: &RefCell<T>, source:
 #[allow(dead_code)]
 pub fn subtraction<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Subtraction, Rules::Addition, Rules::Expr].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
 	let closure_2 = _terminal(b'-');
 	let closure_3 = _sequence(&closure_1, &closure_2);
@@ -67,7 +67,7 @@ pub fn integer<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: 
 #[allow(dead_code)]
 pub fn grammar<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
-	let involved_set: Vec<Rules> = [Rules::Subtraction, Rules::Addition, Rules::Expr].to_vec();
+	let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
 	let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
 	closure_1(parent, source, position)
 
