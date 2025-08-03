@@ -191,7 +191,6 @@ impl Context for BasicContext {
             .connect_if_not_connected(parent_index, child_index);
     }
     fn set_head(&mut self, start_position: u32, head_rule: Rules, involved_set: BTreeSet<Rules>) {
-        println!("SETTING HEAD");
         self.cache.set_head(start_position, head_rule, involved_set);
     }
     fn rule_in_eval_set(&self, head_index: (Rules, u32), rule: Rules) -> bool {

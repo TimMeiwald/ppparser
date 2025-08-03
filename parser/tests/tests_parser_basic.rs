@@ -140,7 +140,7 @@ mod tests {
         }
         println!("Result: {result:?}");
         // context.borrow().print_cache();
-        context.borrow().print_publisher();
+        // context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 11));
     }
     #[test]
