@@ -129,8 +129,8 @@ impl BasicCache {
             .heads
             .get(&head_index)
             .expect("Should always exist when calling rule_in_involved_set");
-        let is_involved = head.involved_set.contains(&rule);
-        is_involved
+
+        head.involved_set.contains(&rule)
     }
 
     pub fn rule_in_eval_set(&self, head_index: (Rules, u32), rule: Rules) -> bool {

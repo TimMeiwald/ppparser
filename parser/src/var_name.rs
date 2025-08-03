@@ -194,8 +194,6 @@ pub fn _var_name_kernel_growth_function<T: Context>(
         context
             .borrow_mut()
             .set_head(position, rule, involved_btree);
-        let mut count = 0;
-
         loop {
             context.borrow_mut().reinitialize_eval_set(rule, position);
 
@@ -204,8 +202,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             let memo_result = context.borrow_mut().check(rule, position);
 
             match memo_result {
-                None => {
-                }
+                None => {}
                 Some(memo_result) => {
                     //context.borrow_mut().print_node(memo_result.2);
                     current_key = memo_result.2;
@@ -245,7 +242,6 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             last_result = result;
             last_key = current_key;
             current_key = context.borrow_mut().reserve_publisher_entry(rule);
-            count += 1;
         }
     }
     last_result
@@ -292,7 +288,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
 ) -> (bool, u32) {
     let should = should_go_into_growth_function(rule, context, position);
     if should.0 {
-        let result = _var_name_kernel_growth_function(
+        _var_name_kernel_growth_function(
             involved_set,
             rule,
             context,
@@ -301,8 +297,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
             position,
             func,
             should.1,
-        );
-        result
+        )
     } else {
         // Runs if head is Some
         // Do not evaluate any rule that is not involved in this left recursion(i.e is not in the eval set.)
@@ -339,9 +334,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
                         .connect_if_not_connected(parent, memo.2);
                     (memo.0, memo.1)
                 }
-                None => {
-                    (false, position)
-                }
+                None => (false, position),
             }
         }
     }

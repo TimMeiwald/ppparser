@@ -40,14 +40,9 @@ impl BasicCache {
     }
 
     pub fn get_current_active_lr_position(&self) -> Option<(Rules, u32)> {
-        println!(
-            "Getting Current Active LR Position: {:?}",
-            self.current_active_left_recursion
-        );
         self.current_active_left_recursion
     }
     pub fn set_current_active_lr_position(&mut self, active_lr: Option<(Rules, u32)>) {
-        println!("Setting Current Active LR Position: {active_lr:?}");
         self.current_active_left_recursion = active_lr;
     }
 
@@ -118,7 +113,6 @@ impl BasicCache {
             .get_mut(&(rule, start_position))
             .expect("Should exist by now");
         head.eval_set = head.involved_set.clone();
-        // println!("Reinit Eval Set: {:?}", head.eval_set);
     }
 
     pub fn eval_set_is_empty(&self, rule: Rules, start_position: u32) -> bool {
@@ -126,7 +120,6 @@ impl BasicCache {
             .heads
             .get(&(rule, start_position))
             .expect("Should always exist when calling rule_in_eval_set");
-        // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
         head.eval_set.is_empty()
     }
     pub fn rule_in_involved_set(&self, head_index: (Rules, u32), rule: Rules) -> bool {
@@ -136,13 +129,8 @@ impl BasicCache {
             .heads
             .get(&head_index)
             .expect("Should always exist when calling rule_in_involved_set");
-        // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
-        let is_involved = head.involved_set.contains(&rule);
-        println!(
-            "Rule in involved set: Rule : {:?}, Start Position: {:?}, {:?}",
-            rule, head_index.1, is_involved
-        );
-        is_involved
+
+        head.involved_set.contains(&rule)
     }
 
     pub fn rule_in_eval_set(&self, head_index: (Rules, u32), rule: Rules) -> bool {
@@ -151,7 +139,6 @@ impl BasicCache {
             .heads
             .get(&head_index)
             .expect("Should always exist when calling rule_in_eval_set");
-        // println!("Rule: {:?}\nEval Set: {:?}", rule, head.eval_set);
         head.eval_set.contains(&rule)
     }
     pub fn remove_from_eval_set(&mut self, head_index: (Rules, u32), rule: Rules) {
