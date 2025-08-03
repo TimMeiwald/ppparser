@@ -1,27 +1,9 @@
 use anyhow::{bail, Ok, Result};
 use generator::GeneratedCode;
-use std::fs::{self, create_dir, File};
+use std::fs::{self, create_dir};
 use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::process::{exit, Command};
-pub fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> Result<()> {
-    fs::create_dir_all(&dst)?;
-    for entry in fs::read_dir(src)? {
-        let entry = entry?;
-        let ty = entry.file_type()?;
-        if ty.is_dir() {
-            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
-        } else {
-            fs::copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
-        }
-    }
-    Ok(())
-}
-
-pub fn copy_file(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> Result<u64> {
-    let f = fs::copy(src, dst)?;
-    Ok(f)
-}
 
 pub struct DataGenerator {
     name: String,
@@ -77,7 +59,7 @@ impl DataGenerator {
                     .arg(path)
                     .spawn()
                     .expect("Failed to run Cargo Init");
-                let r = f.wait();
+                let _r = f.wait();
                 println!("Cargo Dir: {:?}", path);
                 let mut f = Command::new("cargo")
                     .current_dir(path)
@@ -85,21 +67,21 @@ impl DataGenerator {
                     .arg("num")
                     .spawn()
                     .expect("Failed to add package num");
-                let r = f.wait();
+                let _r = f.wait();
                 let mut f = Command::new("cargo")
                     .current_dir(path)
                     .arg("add")
                     .arg("num-derive")
                     .spawn()
                     .expect("Failed to add package num-derive");
-                let r = f.wait();
+                let _r = f.wait();
                 let mut f = Command::new("cargo")
                     .current_dir(path)
                     .arg("add")
                     .arg("num-traits")
                     .spawn()
                     .expect("Failed to add package num-traits");
-                let r = f.wait();
+                let _r = f.wait();
                 let mut f = Command::new("cargo")
                     .current_dir(path)
                     .arg("add")
@@ -108,7 +90,7 @@ impl DataGenerator {
                     .arg("derive")
                     .spawn()
                     .expect("Failed to add package clap");
-                let r = f.wait();
+                let _r = f.wait();
 
                 let copy_folder = self.parser_core_dir.join("src");
                 let path = path.join("src");
@@ -126,26 +108,10 @@ impl DataGenerator {
                 fs::remove_file(path.join("sample_main.txt"))?;
             }
         }
-
-        // println!("Step 3");
-
-        // self.copy_all(&self.parser_core_dir)?;
-        // self.copy_all(&PathBuf::from_str("./parser").unwrap())?;
-
-        // self.copy_file(&PathBuf::from_str("Cargo.toml").unwrap())?;
-        // self.copy_file_with_dst(
-        //     &PathBuf::from_str("./data/Cargo.toml").unwrap(),
-        //     &PathBuf::from_str("Cargo.toml").unwrap(),
-        // )?;
-        // self.copy_file(&PathBuf::from_str("Cargo.lock").unwrap())?;
-        // self.copy_file(&PathBuf::from_str(".gitignore").unwrap())?;
-        // self.create_dir(&PathBuf::from_str("./parser/").unwrap())?;
-        // self.create_dir(&PathBuf::from_str("./parser/src/").unwrap())?;
-        // self.copy_file(&PathBuf::from_str("./parser/Cargo.toml").unwrap())?;
         Ok(())
     }
 
-    fn copy_dir_contents_to_dir(&self, target_dir: &PathBuf, source_dir: &PathBuf) -> Result<()> {
+    fn copy_dir_contents_to_dir(&self, target_dir: &Path, source_dir: &Path) -> Result<()> {
         if source_dir.is_dir() {
             for entry in fs::read_dir(source_dir)? {
                 println!("{:?}", entry);
@@ -165,7 +131,7 @@ impl DataGenerator {
                     "Attempting to copy contents from {:?} to {:?}",
                     e, new_file_path
                 );
-                let res = fs::copy(e, new_file_path)?;
+                let _res = fs::copy(e, new_file_path)?;
             }
 
             Ok(())
@@ -174,50 +140,6 @@ impl DataGenerator {
         }
     }
 
-    fn copy_all(&self, pathbuf: &Path) -> Result<()> {
-        let cache_target = &mut self.target_dir.clone();
-        cache_target.extend(pathbuf.iter());
-        println!("{:?}", cache_target);
-        copy_dir_all(pathbuf, cache_target)
-    }
-    fn copy_file(&self, pathbuf: &Path) -> Result<()> {
-        let cache_target = &mut self.target_dir.clone();
-        cache_target.extend(pathbuf.iter());
-        println!("{:?}", cache_target);
-        let success = copy_file(pathbuf, cache_target);
-        match success {
-            std::result::Result::Ok(_) => Ok(()),
-            Err(e) => {
-                bail!("Failed to create {:?}: {:?}", pathbuf, e)
-            }
-        }
-    }
-
-    fn copy_file_with_dst(&self, pathbuf: &Path, dst: &Path) -> Result<()> {
-        let cache_target = &mut self.target_dir.clone();
-        cache_target.extend(dst.iter());
-        println!("{:?}", cache_target);
-        let success = copy_file(pathbuf, cache_target);
-        match success {
-            std::result::Result::Ok(_) => Ok(()),
-            Err(e) => {
-                bail!("Failed to create {:?}: {:?}", pathbuf, e)
-            }
-        }
-    }
-
-    fn make_file(&self, pathbuf: &Path) -> Result<File> {
-        let cache_target = &mut self.target_dir.clone();
-        cache_target.extend(pathbuf.iter());
-        println!("{:?}", cache_target);
-        let success = std::fs::File::create(cache_target);
-        match success {
-            std::result::Result::Ok(f) => Ok(f),
-            Err(e) => {
-                bail!("Failed to create {:?}: {:?}", pathbuf, e)
-            }
-        }
-    }
     fn create_dir(&self, pathbuf: &Path) -> Result<()> {
         let cache_target = &mut self.target_dir.clone();
         cache_target.extend(pathbuf.iter());
@@ -231,18 +153,6 @@ impl DataGenerator {
                 } else {
                     Ok(())
                 }
-            }
-        }
-    }
-    fn remove_file(&self, pathbuf: &Path) -> Result<()> {
-        let cache_target = &mut self.target_dir.clone();
-        cache_target.extend(pathbuf.iter());
-        println!("{:?}", cache_target);
-        let success = std::fs::remove_file(cache_target);
-        match success {
-            std::result::Result::Ok(_) => Ok(()),
-            Err(e) => {
-                bail!("Failed to create {:?}: {:?}", pathbuf, e)
             }
         }
     }
