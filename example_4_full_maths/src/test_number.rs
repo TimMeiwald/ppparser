@@ -2,9 +2,6 @@
 mod tests {
     use core::cell::RefCell;
     use example_4_full_maths_parser::*;
-    use std::env;
-    use std::fs::{canonicalize, read_to_string};
-
     use crate::evaluate_tree;
 
     #[test]

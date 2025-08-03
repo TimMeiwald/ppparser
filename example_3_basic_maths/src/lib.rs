@@ -96,9 +96,6 @@ fn evaluate_tree_kernel(publisher: &BasicPublisher, source: &String, node: &Node
 mod tests {
     use core::cell::RefCell;
     use example_3_basic_maths_parser::*;
-    use std::env;
-    use std::fs::{canonicalize, read_to_string};
-
     use crate::evaluate_tree;
     #[test]
     fn test_1() {
