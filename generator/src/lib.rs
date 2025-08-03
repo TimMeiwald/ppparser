@@ -67,8 +67,8 @@ mod tests {
         match gen_code {
             Some(gen_code) => {
                 //gen_code.print();
-                print!("{}\n", gen_code.parser_file_content());
-                print!("{}\n", gen_code.rules_enum_file_content());
+                println!("{}", gen_code.parser_file_content());
+                println!("{}", gen_code.rules_enum_file_content());
             }
             None => {
                 panic!("Something went wrong")
@@ -83,8 +83,8 @@ mod tests {
         match gen_code {
             Some(gen_code) => {
                 //gen_code.print();
-                print!("{}\n", gen_code.parser_file_content());
-                print!("{}\n", gen_code.rules_enum_file_content());
+                println!("{}", gen_code.parser_file_content());
+                println!("{}", gen_code.rules_enum_file_content());
             }
             None => {
                 panic!("Something went wrong")
@@ -100,8 +100,8 @@ mod tests {
         match gen_code {
             Some(gen_code) => {
                 //gen_code.print();
-                print!("{}\n", gen_code.parser_file_content());
-                print!("{}\n", gen_code.rules_enum_file_content());
+                println!("{}", gen_code.parser_file_content());
+                println!("{}", gen_code.rules_enum_file_content());
             }
             None => {
                 panic!("Something went wrong")

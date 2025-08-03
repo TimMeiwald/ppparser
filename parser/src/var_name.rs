@@ -199,10 +199,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
 
         loop {
             println!("\n");
-            println!(
-                "GROWTH RULE: {:?}, POSITION: {:?}, LOOP COUNT: {:?}",
-                rule, position, count
-            );
+            println!("GROWTH RULE: {rule:?}, POSITION: {position:?}, LOOP COUNT: {count:?}");
             context.borrow_mut().reinitialize_eval_set(rule, position);
 
             result = func(current_key, context, source, position);
@@ -247,14 +244,14 @@ pub fn _var_name_kernel_growth_function<T: Context>(
                     last_key,
                 );
 
-                println!("LOOP: {:?}, Result: {:?}", count, result);
+                println!("LOOP: {count:?}, Result: {result:?}");
                 break;
             }
 
             last_result = result;
             last_key = current_key;
             current_key = context.borrow_mut().reserve_publisher_entry(rule);
-            println!("LOOP: {:?}, Result: {:?}", count, result);
+            println!("LOOP: {count:?}, Result: {result:?}");
             count += 1;
             println!("\n");
         }
@@ -275,10 +272,7 @@ pub fn should_go_into_growth_function<T: Context>(
     // Keeps triggering everytime which it should not do.
     let mut ctx = context.borrow_mut();
     let active_lr_position = ctx.get_current_active_lr_position();
-    println!(
-        "Should grow, Active LR: {:?}, Current Rule: {:?}",
-        active_lr_position, rule
-    );
+    println!("Should grow, Active LR: {active_lr_position:?}, Current Rule: {rule:?}");
     match active_lr_position {
         None => {
             let last_lr_position = ctx.get_current_active_lr_position();
@@ -340,7 +334,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
             context
                 .borrow_mut()
                 .remove_from_eval_set(active_lr_position, rule);
-            println!("CURRENT KEY: {:?}", current_key);
+            println!("CURRENT KEY: {current_key:?}");
             let result = func(current_key, context, source, position);
             context
                 .borrow_mut()
@@ -354,8 +348,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
             );
             context.borrow_mut().connect(parent, current_key);
             println!(
-                "Exiting Indirect Left Recursion - Not Memo, Parent: {:?}, Key: {:?}",
-                parent, current_key
+                "Exiting Indirect Left Recursion - Not Memo, Parent: {parent:?}, Key: {current_key:?}"
             );
 
             result

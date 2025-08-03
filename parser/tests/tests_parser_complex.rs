@@ -4,8 +4,6 @@
 mod tests {
     use ::parser::*;
     use core::cell::RefCell;
-    use std::env;
-    use std::fs::{canonicalize, read_to_string};
 
     // #[test]
     // fn test_ppparser_dsl_grammar_rule() {
@@ -76,7 +74,7 @@ mod tests {
             );
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         // context.borrow().print_publisher();
 
@@ -144,7 +142,7 @@ mod tests {
             );
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         // context.borrow().print_publisher();
 
@@ -205,7 +203,7 @@ mod tests {
             );
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         // context.borrow().print_publisher();
 
@@ -295,7 +293,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
-        let mut result: (bool, u32);
+        let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
             let involved_set = vec![Rules::test_fact_indirect];
@@ -367,7 +365,7 @@ mod tests {
             result = closure(Key(0), &source, position);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 1));
@@ -405,7 +403,7 @@ mod tests {
             result = closure(Key(0), &source, 0);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 1));
@@ -444,7 +442,7 @@ mod tests {
             result = closure(Key(0), &source, 0);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 9));
@@ -530,7 +528,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
-        let mut result: (bool, u32);
+        let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
             let involved_set = vec![Rules::test_fact_indirect];
@@ -576,7 +574,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
-        let mut result: (bool, u32);
+        let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
             let involved_set = vec![Rules::test_fact_indirect];

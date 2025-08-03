@@ -148,7 +148,7 @@ impl BinaryTreeWO {
                     format!("let closure_{:?} = _string_terminal_opt_ascii(&[", index.0);
 
                 for i in chars {
-                    r.push_str(&format!("b{:?},", i))
+                    r.push_str(&format!("b{i:?},"))
                 }
                 r.pop();
                 r.push_str("]);");

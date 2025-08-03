@@ -1,8 +1,5 @@
-use core::cell::RefCell;
 use criterion::Throughput;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use parser::parse;
-use std::env;
 use std::fs::{canonicalize, read_to_string};
 
 fn test_grammar() {
@@ -16,7 +13,7 @@ fn test_grammar() {
 }
 
 pub fn criterion_benchmark(c: &mut Criterion) {
-    c.bench_function("test pppparser grammar", |b| b.iter(|| test_grammar()));
+    c.bench_function("test pppparser grammar", |b| b.iter(test_grammar));
 }
 pub fn criterion_benchmark_throughput(c: &mut Criterion) {
     let path = "tests/test_data/Grammar.txt";

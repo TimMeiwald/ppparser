@@ -47,7 +47,7 @@ impl BasicCache {
         self.current_active_left_recursion
     }
     pub fn set_current_active_lr_position(&mut self, active_lr: Option<(Rules, u32)>) {
-        println!("Setting Current Active LR Position: {:?}", active_lr);
+        println!("Setting Current Active LR Position: {active_lr:?}");
         self.current_active_left_recursion = active_lr;
     }
 

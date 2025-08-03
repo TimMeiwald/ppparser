@@ -26,7 +26,7 @@ impl<'a> SymbolTable<'a> {
 
     pub fn print(&self) {
         for i in &self.names {
-            println!("{}", i)
+            println!("{i}")
         }
     }
 

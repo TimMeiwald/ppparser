@@ -47,11 +47,11 @@ impl DataGenerator {
 
         match r {
             Err(e) => {
-                println!("{}", e);
+                println!("{e}");
                 exit(1)
             }
             std::result::Result::Ok(_) => {
-                println!("Path to Init {:?}", path);
+                println!("Path to Init {path:?}");
                 println!("Step 2");
 
                 let mut f = Command::new("cargo")
@@ -60,7 +60,7 @@ impl DataGenerator {
                     .spawn()
                     .expect("Failed to run Cargo Init");
                 let _r = f.wait();
-                println!("Cargo Dir: {:?}", path);
+                println!("Cargo Dir: {path:?}");
                 let mut f = Command::new("cargo")
                     .current_dir(path)
                     .arg("add")
@@ -114,23 +114,20 @@ impl DataGenerator {
     fn copy_dir_contents_to_dir(&self, target_dir: &Path, source_dir: &Path) -> Result<()> {
         if source_dir.is_dir() {
             for entry in fs::read_dir(source_dir)? {
-                println!("{:?}", entry);
+                println!("{entry:?}");
                 let e = &entry?.path();
                 let file_name = e.file_name().expect("Should exist");
                 let new_file_path = target_dir.join(file_name);
 
-                println!("Creating File: {:?}", new_file_path);
+                println!("Creating File: {new_file_path:?}");
                 let res = std::fs::File::create(&new_file_path);
                 match res {
                     std::result::Result::Ok(_) => {}
                     Err(e) => {
-                        println!("{:?}", e)
+                        println!("{e:?}")
                     }
                 }
-                println!(
-                    "Attempting to copy contents from {:?} to {:?}",
-                    e, new_file_path
-                );
+                println!("Attempting to copy contents from {e:?} to {new_file_path:?}");
                 let _res = fs::copy(e, new_file_path)?;
             }
 

@@ -84,7 +84,7 @@ impl BasicPublisher {
         //println!("Connecting: {:?} <- {:?}", parent_index, child_index);
         debug_assert!(
             parent_index != child_index,
-            "Debug: Cannot connect a Node to itself! -> In BasicPublisher.connect, Parent: {:?}, Child: {:?}", parent_index, child_index
+            "Debug: Cannot connect a Node to itself! -> In BasicPublisher.connect, Parent: {parent_index:?}, Child: {child_index:?}"
         );
 
         let parent_node: &mut Node = self.get_mut_node(parent_index);

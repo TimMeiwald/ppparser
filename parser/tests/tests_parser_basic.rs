@@ -21,7 +21,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         context
@@ -44,7 +44,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         context
@@ -67,7 +67,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         context
@@ -90,7 +90,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         context
@@ -117,7 +117,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         let tree = context.into_inner();
         let publisher = tree.get_publisher();
@@ -138,7 +138,7 @@ mod tests {
                 _var_name_direct_left_recursion(Rules::test_LR_expr, &context, test_lr_expr);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 11));
@@ -156,7 +156,7 @@ mod tests {
                 _var_name_direct_left_recursion(Rules::test_LR_expr, &context, test_lr_expr);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 3));
@@ -176,7 +176,7 @@ mod tests {
                 _var_name_direct_left_recursion(Rules::test_LR_expr, &context, test_lr_expr);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 1));
@@ -196,7 +196,7 @@ mod tests {
             let executor = _var_name_direct_left_recursion(Rules::test_fact, &context, test_fact);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         //context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 9));
@@ -210,7 +210,7 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
         let result = executor(Key(0), &source, position);
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 13));
@@ -224,7 +224,7 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
         let result = executor(Key(0), &source, position);
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 13));
@@ -241,7 +241,7 @@ mod tests {
             let executor = _var_name_direct_left_recursion(Rules::test_term, &context, test_term);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 9));
@@ -266,7 +266,7 @@ mod tests {
             );
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         // context.borrow().print_publisher();
 
@@ -290,7 +290,7 @@ mod tests {
             );
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
         assert_eq!((result.0, result.1), (true, 11));
     }
@@ -325,7 +325,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
-        let mut result: (bool, u32);
+        let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
             let involved_set = vec![Rules::test_fact_indirect];
@@ -365,7 +365,7 @@ mod tests {
             result = closure(Key(0), &source, 0);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 11));
@@ -395,7 +395,7 @@ mod tests {
             result = closure(Key(0), &source, 0);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 3));
@@ -425,7 +425,7 @@ mod tests {
             result = closure(Key(0), &source, 0);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 1));
@@ -455,7 +455,7 @@ mod tests {
             result = closure(Key(0), &source, 0);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 3));
@@ -481,7 +481,7 @@ mod tests {
             result = closure(Key(0), &source, 0);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 3));
@@ -507,7 +507,7 @@ mod tests {
             result = closure(Key(0), &source, 0);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 1));
@@ -519,7 +519,7 @@ mod tests {
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
-        let mut result: (bool, u32);
+        let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
             let involved_set = vec![Rules::test_fact_indirect];
@@ -559,7 +559,7 @@ mod tests {
             result = closure(Key(0), &source, 0);
         }
 
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 11));
@@ -583,7 +583,7 @@ mod tests {
             );
             result = closure(Key(0), &source, 0);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         // context.borrow().print_cache();
 
         assert_eq!((result.0, result.1), (true, 7));

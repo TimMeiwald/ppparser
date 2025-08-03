@@ -107,7 +107,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -129,7 +129,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -151,7 +151,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -173,7 +173,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -195,7 +195,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -217,7 +217,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -239,7 +239,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -261,7 +261,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -283,7 +283,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -305,7 +305,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -327,7 +327,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -349,7 +349,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -371,7 +371,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -393,7 +393,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -414,7 +414,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();
@@ -435,7 +435,7 @@ mod tests {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
-        println!("Result: {:?}", result);
+        println!("Result: {result:?}");
         //context.borrow().print_cache();
         //context.borrow().print_publisher();
         let publisher = context.into_inner().get_publisher();

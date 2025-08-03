@@ -422,7 +422,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
-        let _f = stdout().flush().expect("Why did it not flush");
+        stdout().flush().expect("Why did it not flush");
         // println!("\n\n\n");
         //lr_detector.print_rules_name_map();
         //tree.print(Key(0), None);
@@ -461,7 +461,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
-        let _f = stdout().flush().expect("Why did it not flush");
+        stdout().flush().expect("Why did it not flush");
         // println!("\n\n\n");
         //lr_detector.print_rules_name_map();
         //tree.print(Key(0), None);
@@ -501,7 +501,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
-        let _f = stdout().flush().expect("Why did it not flush");
+        stdout().flush().expect("Why did it not flush");
         // println!("\n\n\n");
         //lr_detector.print_rules_name_map();
         //tree.print(Key(0), None);
@@ -538,7 +538,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
-        let _f = stdout().flush().expect("Why did it not flush");
+        stdout().flush().expect("Why did it not flush");
         // println!("\n\n\n");
         //lr_detector.print_rules_name_map();
         //tree.print(Key(0), None);
@@ -575,7 +575,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
-        let _f = stdout().flush().expect("Why did it not flush");
+        stdout().flush().expect("Why did it not flush");
         // println!("\n\n\n");
         //lr_detector.print_rules_name_map();
         //tree.print(Key(0), None);
@@ -611,7 +611,7 @@ mod tests {
         let tree = context.into_inner();
         let tree = &tree.get_publisher().clear_false();
         let _lr_detector = LeftRecursionDetector::new(tree, source);
-        let _f = stdout().flush().expect("Why did it not flush");
+        stdout().flush().expect("Why did it not flush");
         // println!("\n\n\n");
         //lr_detector.print_rules_name_map();
         //tree.print(Key(0), None);
