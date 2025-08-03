@@ -309,7 +309,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 Rules::Ordered_Choice => {
                     ret_key = Self::ordered_choice(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -319,7 +319,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Sequence => {
                     ret_key = Self::sequence(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -329,7 +329,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Atom => {
                     ret_key = Self::atom(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -359,7 +359,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 Rules::Atom => {
                     let mut key = Self::atom(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -395,7 +395,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 Rules::Atom => {
                     let mut key = Self::atom(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -430,7 +430,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 Rules::And_Predicate => {
                     ret_key = Self::and_predicate(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -440,7 +440,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Not_Predicate => {
                     ret_key = Self::not_predicate(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -450,7 +450,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::One_Or_More => {
                     ret_key = Self::one_or_more(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -460,7 +460,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Zero_Or_More => {
                     ret_key = Self::zero_or_more(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -470,7 +470,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Optional => {
                     ret_key = Self::optional(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -480,7 +480,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Nucleus => {
                     ret_key = Self::nucleus(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -511,7 +511,7 @@ impl GeneratedCode<'_> {
                 //Rules::Question_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -542,7 +542,7 @@ impl GeneratedCode<'_> {
                 //Rules::Plus => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -573,7 +573,7 @@ impl GeneratedCode<'_> {
                 //Rules::Star => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -605,7 +605,7 @@ impl GeneratedCode<'_> {
                 //Rules::Ampersand => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -636,7 +636,7 @@ impl GeneratedCode<'_> {
                 //Rules::Exclamation_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -667,7 +667,7 @@ impl GeneratedCode<'_> {
             match child_rule {
                 Rules::Subexpression => {
                     ret_key = Self::subexpression(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -680,7 +680,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Var_Name_Ref => {
                     ret_key = Self::var_name(
-                        &left_recursive_rules,
+                        left_recursive_rules,
                         out_tree,
                         symbol_table,
                         tree,
@@ -718,9 +718,9 @@ impl GeneratedCode<'_> {
             let child_rule = child_node.rule;
             match child_rule {
                 Rules::ASCII => {
-                    let contents = source[((child_node.start_position) as usize)
-                        ..((child_node.end_position) as usize)]
-                        .as_bytes()[0];
+                    let contents = source
+                        .as_bytes()[((child_node.start_position) as usize)
+                        ..((child_node.end_position) as usize)][0];
                     data.push(contents as char);
                 }
                 Rules::Integer => {

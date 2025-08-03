@@ -357,10 +357,10 @@ impl BinaryTreeWO {
         match &node.reference {
             Reference::LeftRecursiveRule(content, involved_set) => {
                 let mut contents_involved_set: String;
-                if involved_set.len() == 0 {
-                    contents_involved_set = format!("let involved_set: Vec<Rules> = [].to_vec();");
+                if involved_set.is_empty() {
+                    contents_involved_set = "let involved_set: Vec<Rules> = [].to_vec();".to_string();
                 } else {
-                    contents_involved_set = format!("let involved_set: Vec<Rules> = [");
+                    contents_involved_set = "let involved_set: Vec<Rules> = [".to_string();
                     for rule in involved_set {
                         let rule_str = |rule_name: String| {
                             let start_char = rule_name.chars().nth(0).expect("Should exist");

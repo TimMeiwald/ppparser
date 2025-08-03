@@ -1,20 +1,13 @@
 use crate::{BasicPublisher, Key, Node, Rules};
 use std::{
     collections::{HashMap, HashSet},
-    usize,
 };
-pub struct LeftRecursionDetector<'a> {
-    source: &'a String,
-    tree: &'a BasicPublisher,
-    left_recursion_rules: HashMap<String, HashSet<String>>,
+pub struct LeftRecursionDetector {
     rule_call_tree: RuleCallTree,
 }
-impl<'a> LeftRecursionDetector<'a> {
-    pub fn new(tree: &'a BasicPublisher, source: &'a String) -> Self {
+impl LeftRecursionDetector {
+    pub fn new(tree: &BasicPublisher, source: &String) -> Self {
         LeftRecursionDetector {
-            source,
-            tree,
-            left_recursion_rules: HashMap::new(),
             rule_call_tree: RuleCallTree::new(tree, source),
         }
     }
@@ -25,9 +18,7 @@ impl<'a> LeftRecursionDetector<'a> {
 
 #[derive(Debug, PartialEq, Clone)]
 enum LeftRecursive {
-    SelfCycleDetected,          // The rule itself is left recursive
     False,                      // Not left recursive
-    OtherCycleDetected(String), // Cycles were detected but is not the rule we're investigating
 }
 
 struct RuleCallTree {
@@ -67,12 +58,12 @@ impl RuleCallTree {
             rc_tree.rules_left_most_rule_refs
         );
         // If all left most rules are also not left recursive then we know that rule isn't left recursive either.
-        rc_tree.repeated_loop_over_cleanup_left_most_called_rules(tree, source);
+        rc_tree.repeated_loop_over_cleanup_left_most_called_rules();
         println!(
             "Rules -> IsLeftRecursive: {:#?}",
             rc_tree.is_rule_left_recursive
         );
-        rc_tree.create_involved_sets(tree, source);
+        rc_tree.create_involved_sets();
         println!("Rules -> InvolvedSets: {:#?}", rc_tree.involved_sets);
         // Copy over the left most rules but ignore any that aren't left recursive
         // These appear to be almost the correct involved_set.
@@ -84,7 +75,7 @@ impl RuleCallTree {
         rc_tree
     }
 
-    fn create_involved_sets(&mut self, tree: &BasicPublisher, source: &String) {
+    fn create_involved_sets(&mut self) {
         for (rule_name, left_most_rules) in &self.rules_left_most_rule_refs {
             let mut involved_set: HashSet<String> = HashSet::new();
             for rule in left_most_rules {
@@ -101,7 +92,7 @@ impl RuleCallTree {
                     }
                 }
             }
-            if involved_set.len() != 0 {
+            if !involved_set.is_empty() {
                 involved_set.insert(rule_name.to_string()); // Insert self rule
                 self.involved_sets
                     .insert(rule_name.to_string(), involved_set);
@@ -110,8 +101,6 @@ impl RuleCallTree {
     }
     fn repeated_loop_over_cleanup_left_most_called_rules(
         &mut self,
-        tree: &BasicPublisher,
-        source: &String,
     ) {
         let mut l = usize::MAX;
         println!(
@@ -124,11 +113,11 @@ impl RuleCallTree {
             l = self.is_rule_left_recursive.len();
             // If the below call adds more rules as left recursive we loop again
             // If it does not we break.
-            self.cleanup_left_most_called_rules(tree, source);
+            self.cleanup_left_most_called_rules();
         }
     }
 
-    fn cleanup_left_most_called_rules(&mut self, tree: &BasicPublisher, source: &String) {
+    fn cleanup_left_most_called_rules(&mut self) {
         for (rule_name, left_most_rule_refs) in &self.rules_left_most_rule_refs {
             // println!("Rule Name: {:#?}", rule_name);
             let mut is_not_left_recursive = true;
@@ -146,10 +135,6 @@ impl RuleCallTree {
                                 // Do nothing
                                 // println!("Left most ref is LeftRecursive::False");
                             }
-                            _ => {
-                                // println!("Left most ref is LeftRecursive::Other");
-                                is_not_left_recursive = false;
-                            }
                         }
                     }
                 }
@@ -162,7 +147,7 @@ impl RuleCallTree {
     }
     fn get_left_most_called_rules_of_all_rules(&mut self, tree: &BasicPublisher, source: &String) {
         let mut rule_strings = Vec::new();
-        for (rule, key) in &self.rules_keys {
+        for rule in self.rules_keys.keys() {
             match self.is_rule_left_recursive.get(rule) {
                 None => {}
                 Some(lr) => {
@@ -180,9 +165,9 @@ impl RuleCallTree {
             debug_assert!(node.rule == Rules::RHS);
             let mut left_most_rules: HashSet<String> = HashSet::new();
             println!("Rule Name: {:?}", rule_name.clone());
-            self.get_left_most_called_rules_of_rule(
+            Self::get_left_most_called_rules_of_rule(
                 rule_name.clone(),
-                &node,
+                node,
                 tree,
                 source,
                 &mut left_most_rules,
@@ -193,7 +178,6 @@ impl RuleCallTree {
     }
 
     fn get_left_most_called_rules_of_rule(
-        &mut self,
         rule_name: String,
         node: &Node,
         tree: &BasicPublisher,
@@ -221,7 +205,7 @@ impl RuleCallTree {
                     for child_key in children {
                         let child = tree.get_node(*child_key);
                         // println!("Child: {:?} {:?}", child.rule, child_key);
-                        self.get_left_most_called_rules_of_rule(
+                        Self::get_left_most_called_rules_of_rule(
                             rule_name.clone(),
                             child,
                             tree,
@@ -236,7 +220,7 @@ impl RuleCallTree {
                     // Sequence must have at least two children
                     let child = children[0];
                     let child = tree.get_node(child);
-                    self.get_left_most_called_rules_of_rule(
+                    Self::get_left_most_called_rules_of_rule(
                         rule_name.clone(),
                         child,
                         tree,
@@ -254,7 +238,7 @@ impl RuleCallTree {
                 | Rules::One_Or_More
                 | Rules::And_Predicate
                 | Rules::Not_Predicate => {
-                    self.get_left_most_called_rules_of_rule(
+                    Self::get_left_most_called_rules_of_rule(
                         rule_name.clone(),
                         child_node,
                         tree,
@@ -272,8 +256,8 @@ impl RuleCallTree {
                     left_most_rules.insert(rule_ref);
                     return;
                 }
-                random_ass_rule => {
-                    // println!("Random ass rule: {:?}", random_ass_rule)
+                _ => {
+                    // Do Nothing
                 }
             }
         }
@@ -321,10 +305,6 @@ impl RuleCallTree {
                                 LeftRecursive::False => {
                                     // If it's false it's fine and we can continue
                                 }
-                                _ => {
-                                    // Otherwise involved in LR somehow so false
-                                    are_all_referenced_rules_not_left_recursive = false;
-                                }
                             }
                         }
                     }
@@ -345,7 +325,7 @@ impl RuleCallTree {
         rhs
     }
 
-    fn get_rules_name(tree: &BasicPublisher, source: &String, node: &Node) -> String {
+    fn get_rules_name(tree: &BasicPublisher, source: &str, node: &Node) -> String {
         debug_assert_eq!(node.rule, Rules::Rule);
 
         let lhs = node.get_children()[0];
@@ -355,13 +335,13 @@ impl RuleCallTree {
         let var_name_decl = lhs.get_children()[0];
         let var_name_decl = tree.get_node(var_name_decl);
         debug_assert_eq!(var_name_decl.rule, Rules::Var_Name_Decl);
-        let s = var_name_decl.get_string(&source);
+        let s = var_name_decl.get_string(source);
         s[1..s.len() - 1].to_ascii_lowercase().to_string()
     }
 
-    fn get_rule_ref_name(source: &String, node: &Node) -> String {
+    fn get_rule_ref_name(source: &str, node: &Node) -> String {
         debug_assert_eq!(node.rule, Rules::Var_Name_Ref);
-        let s = node.get_string(&source);
+        let s = node.get_string(source);
         s[1..s.len() - 1].to_ascii_lowercase().to_string()
     }
 
@@ -374,12 +354,9 @@ impl RuleCallTree {
         let node_children = node.get_children();
         for child in node_children {
             let child_node = tree.get_node(*child);
-            match child_node.rule {
-                Rules::Var_Name_Ref => {
-                    // The Key for Rule references.
-                    referenced_rules.insert(Self::get_rule_ref_name(source, child_node));
-                }
-                _ => {}
+            if child_node.rule == Rules::Var_Name_Ref {
+                // The Key for Rule references.
+                referenced_rules.insert(Self::get_rule_ref_name(source, child_node));
             }
             Self::get_rules_referenced_by_rule(tree, source, child_node, referenced_rules);
         }
@@ -390,25 +367,22 @@ impl RuleCallTree {
         let node_children = node.get_children();
         for child in node_children {
             let child_node = tree.get_node(*child);
-            match child_node.rule {
-                Rules::Rule => {
-                    // The Key for the Rule itself
-                    let rule_name = Self::get_rules_name(tree, source, child_node);
-                    self.rules_keys.insert(rule_name.clone(), *child);
-                    let rules_rhs_index = Self::get_rule_rhs_index(child_node);
-                    self.rules_rhs_keys
-                        .insert(rule_name.clone(), rules_rhs_index);
-                    let mut rules_referenced_by_rule: HashSet<String> = HashSet::new();
-                    Self::get_rules_referenced_by_rule(
-                        tree,
-                        source,
-                        child_node,
-                        &mut rules_referenced_by_rule,
-                    );
-                    self.rules_referenced_by_rule
-                        .insert(rule_name, rules_referenced_by_rule);
-                }
-                _ => {}
+            if child_node.rule == Rules::Rule {
+                // The Key for the Rule itself
+                let rule_name = Self::get_rules_name(tree, source, child_node);
+                self.rules_keys.insert(rule_name.clone(), *child);
+                let rules_rhs_index = Self::get_rule_rhs_index(child_node);
+                self.rules_rhs_keys
+                    .insert(rule_name.clone(), rules_rhs_index);
+                let mut rules_referenced_by_rule: HashSet<String> = HashSet::new();
+                Self::get_rules_referenced_by_rule(
+                    tree,
+                    source,
+                    child_node,
+                    &mut rules_referenced_by_rule,
+                );
+                self.rules_referenced_by_rule
+                    .insert(rule_name, rules_referenced_by_rule);
             }
             self.walk_node_children(tree, source, child_node);
         }
