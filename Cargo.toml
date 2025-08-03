@@ -3,14 +3,14 @@ resolver = "2"
 members = [ "parser", 
             "generator", 
             "runner", 
-            "example_1_parser", 
-            "example_1", 
-            "example_2", 
-            "example_2_parser", 
-            "example_3_basic_maths", 
-            "example_3_basic_maths_parser",
-            "example_4_full_maths"
-            , "example_4_full_maths_parser"]
+            "examples/example_1_parser", 
+            "examples/example_1", 
+            "examples/example_2", 
+            "examples/example_2_parser", 
+            "examples/example_3_basic_maths", 
+            "examples/example_3_basic_maths_parser",
+            "examples/example_4_full_maths",
+            "examples/example_4_full_maths_parser"]
 
 [profile.dev]
 panic = "unwind"

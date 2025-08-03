@@ -587,7 +587,7 @@ mod tests {
     }
     #[test]
     fn test_example_2() {
-        let path = "../example_2/example_2.dsl";
+        let path = "../examples/example_2/example_2.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
