@@ -559,7 +559,6 @@ mod tests {
         assert_eq!((result.0, result.1), (true, src_len));
         let result = evaluate_tree(publisher, &string);
         assert_eq!(result, 1);
-        
     }
 
     #[test]
