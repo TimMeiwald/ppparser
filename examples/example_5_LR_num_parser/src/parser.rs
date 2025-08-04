@@ -32,3 +32,14 @@ pub fn expr<T: Context + 'static>(
     let closure_8 = _ordered_choice(&closure_6, &closure_7);
     closure_8(parent, source, position)
 }
+#[allow(dead_code)]
+pub fn grammar<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    closure_1(parent, source, position)
+}
