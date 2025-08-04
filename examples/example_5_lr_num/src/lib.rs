@@ -1,6 +1,5 @@
 use example_5_lr_num_parser::*;
 
-
 #[cfg(test)]
 mod tests {
     use ::example_5_lr_num_parser::*;
@@ -15,8 +14,7 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
         {
-            let executor =
-                _var_name(Rules::Expr, &context, expr);
+            let executor = _var_name(Rules::Expr, &context, expr);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -100,8 +98,7 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
         {
-            let executor =
-                _var_name(Rules::Expr, &context, expr);
+            let executor = _var_name(Rules::Expr, &context, expr);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -135,5 +132,4 @@ mod tests {
         expected_tree.print(Key(0), Some(true));
         assert_eq!(expected_tree, result_tree);
     }
-
 }
