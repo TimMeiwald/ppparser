@@ -10,7 +10,7 @@ members = [ "parser",
             "examples/example_3_basic_maths", 
             "examples/example_3_basic_maths_parser",
             "examples/example_4_full_maths",
-            "examples/example_4_full_maths_parser", "examples/example_5_LR_num_parser"]
+            "examples/example_4_full_maths_parser", "examples/example_5_lr_num_parser", ]
 
 [profile.dev]
 panic = "unwind"

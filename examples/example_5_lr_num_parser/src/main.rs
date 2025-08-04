@@ -1,5 +1,5 @@
 use clap::Parser;
-use example_5_LR_num_parser::*;
+use example_5_lr_num_parser::*;
 use std::{fs, path::PathBuf, process::exit};
 
 #[derive(Parser, Debug)]
