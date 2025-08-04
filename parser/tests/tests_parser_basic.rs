@@ -104,7 +104,7 @@ mod tests {
     #[test]
     fn test_dsl_grammar() {
         println!("{:?}", env::current_dir().unwrap());
-        let path = "tests/test_data/Grammar.txt";
+        let path = "Grammar.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
 
