@@ -16,7 +16,7 @@ pub static RULES_SIZE: u32 = 4;
 
 pub enum Rules {
     Grammar,
+    Fact,
     Num,
-    Test_fact,
-    Test_term,
+    Term,
 }

@@ -14,14 +14,16 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
         {
-            let executor = _var_name(Rules::Expr, &context, expr);
+            let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
+            let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, &context, expr);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
         // context.borrow().print_cache();
-        context.borrow().print_publisher();
+        // context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 11));
         let result_tree = context.into_inner().get_publisher();
+        result_tree.print(Key(0), Some(true));
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
         // Result: (true, 11)
@@ -61,29 +63,17 @@ mod tests {
         // test_lr_num
         let key_7 = expected_tree.add_node(Rules::Num, 0, 1, true);
         expected_tree.connect(key_6, key_7);
-        let key_8 = expected_tree.add_node(Rules::Num, 2, 3, true);
-        expected_tree.connect(key_5, key_8);
-        let key_9 = expected_tree.add_node(Rules::Num, 4, 5, true);
-        expected_tree.connect(key_4, key_9);
-        let key_10 = expected_tree.add_node(Rules::Num, 6, 7, true);
-        expected_tree.connect(key_3, key_10);
-        let key_11 = expected_tree.add_node(Rules::Num, 8, 9, true);
-        expected_tree.connect(key_2, key_11);
-        let key_12 = expected_tree.add_node(Rules::Num, 10, 11, true);
-        expected_tree.connect(key_1, key_12);
         // Num
-        let key_13 = expected_tree.add_node(Rules::Num, 0, 1, true);
-        expected_tree.connect(key_7, key_13);
         let key_14 = expected_tree.add_node(Rules::Num, 2, 3, true);
-        expected_tree.connect(key_8, key_14);
+        expected_tree.connect(key_5, key_14);
         let key_15 = expected_tree.add_node(Rules::Num, 4, 5, true);
-        expected_tree.connect(key_9, key_15);
+        expected_tree.connect(key_4, key_15);
         let key_16 = expected_tree.add_node(Rules::Num, 6, 7, true);
-        expected_tree.connect(key_10, key_16);
+        expected_tree.connect(key_3, key_16);
         let key_17 = expected_tree.add_node(Rules::Num, 8, 9, true);
-        expected_tree.connect(key_11, key_17);
+        expected_tree.connect(key_2, key_17);
         let key_18 = expected_tree.add_node(Rules::Num, 10, 11, true);
-        expected_tree.connect(key_12, key_18);
+        expected_tree.connect(key_1, key_18);
 
         println!("Expected tree:");
         expected_tree.print(Key(0), Some(true));
@@ -98,7 +88,8 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
         {
-            let executor = _var_name(Rules::Expr, &context, expr);
+            let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
+            let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, &context, expr);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -120,14 +111,10 @@ mod tests {
         expected_tree.connect(Key(0), key_1);
         let key_2 = expected_tree.add_node(Rules::Expr, 0, 1, true);
         expected_tree.connect(key_1, key_2);
-        let key_3 = expected_tree.add_node(Rules::Num, 0, 1, true);
-        expected_tree.connect(key_2, key_3);
         let key_6 = expected_tree.add_node(Rules::Num, 0, 1, true);
-        expected_tree.connect(key_3, key_6);
-        let key_4 = expected_tree.add_node(Rules::Num, 2, 3, true);
-        expected_tree.connect(key_1, key_4);
+        expected_tree.connect(key_2, key_6);
         let key_5 = expected_tree.add_node(Rules::Num, 2, 3, true);
-        expected_tree.connect(key_4, key_5);
+        expected_tree.connect(key_1, key_5);
         println!("Expected tree:");
         expected_tree.print(Key(0), Some(true));
         assert_eq!(expected_tree, result_tree);

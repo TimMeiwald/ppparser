@@ -12,7 +12,9 @@ members = [ "parser",
             "examples/example_4_full_maths",
             "examples/example_4_full_maths_parser", 
             "examples/example_5_lr_num", 
-            "examples/example_5_lr_num_parser", "examples/example_6_term_and_fact_parser", 
+            "examples/example_5_lr_num_parser", 
+            "examples/example_6_term_and_fact", 
+            "examples/example_6_term_and_fact_parser", 
             ]
 
 [profile.dev]

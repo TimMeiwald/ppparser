@@ -333,6 +333,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "example_6_term_and_fact"
+version = "2.0.0"
+dependencies = [
+ "example_6_term_and_fact_parser",
+ "indoc",
+]
+
+[[package]]
 name = "example_6_term_and_fact_parser"
 version = "0.1.0"
 dependencies = [
