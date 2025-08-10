@@ -4,4 +4,5 @@ cargo run -- -s ./examples/example_3_basic_maths/example_3_basic_maths.dsl -t ./
 cargo run -- -s ./examples/example_4_full_maths/example_4_full_maths.dsl -t ./examples/ -n example_4_full_maths_parser
 cargo run -- -s ./examples/example_5_lr_num/LR_num.dsl -t ./examples/ -n example_5_lr_num_parser
 cargo run -- -s ./examples/example_6_term_and_fact/term_and_fact.dsl -t ./examples/ -n example_6_term_and_fact_parser
+cargo run -- -s ./examples/example_7_indirect_lr_num/LR_num_indirect.dsl -t ./examples/ -n example_7_indirect_lr_num
 cargo fmt
