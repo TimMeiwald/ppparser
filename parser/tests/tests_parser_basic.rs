@@ -125,5 +125,4 @@ mod tests {
         //context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, src_len));
     }
-    
 }
