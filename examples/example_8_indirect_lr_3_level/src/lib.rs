@@ -11,8 +11,8 @@ mod tests {
         let position: u32 = 0;
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
-        {   
-            let executor = _var_name( Rules::Grammar, &context, grammar);
+        {
+            let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -41,6 +41,5 @@ mod tests {
 
         let result_tree = context.into_inner().get_publisher();
         result_tree.print(Key(0), Some(true));
-
     }
 }

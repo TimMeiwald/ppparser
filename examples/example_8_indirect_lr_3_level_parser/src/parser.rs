@@ -100,8 +100,6 @@ pub fn grammar<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Test_indirect_three_level_A,
         Rules::Test_indirect_three_level_B,
-        Rules::Test_indirect_three_level_C,
-
     ]
     .to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
