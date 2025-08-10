@@ -1,5 +1,5 @@
 use crate::{BasicPublisher, Key, Node, Rules};
-use std::collections::{HashMap, HashSet};
+use std::{collections::{HashMap, HashSet}, usize};
 pub struct LeftRecursionDetector {
     rule_call_tree: RuleCallTree,
 }
@@ -63,11 +63,7 @@ impl RuleCallTree {
         );
         rc_tree.create_involved_sets();
         println!("Rules -> InvolvedSets: {:#?}", rc_tree.involved_sets);
-        rc_tree.merge_dependent_sets();
-        rc_tree.merge_dependent_sets();
-        rc_tree.merge_dependent_sets();
-        rc_tree.merge_dependent_sets();
-        rc_tree.merge_dependent_sets();
+        rc_tree.merge_dependent_sets_loop_until_no_change();
 
         println!(
             "Rules -> InvolvedSets After Merge: {:#?}",
@@ -83,7 +79,21 @@ impl RuleCallTree {
 
         rc_tree
     }
+    fn involved_rule_count(&mut self) -> usize{
+        let mut count = 0;
+        for (_rule_name, set) in &self.involved_sets{
+            count += set.len();
+        }
+        count
+    }
 
+    fn merge_dependent_sets_loop_until_no_change(&mut self) {
+        let mut last_value = usize::MAX;
+        while self.involved_rule_count() != last_value{
+            self.merge_dependent_sets();
+            last_value = self.involved_rule_count();
+        }
+    }
     fn merge_dependent_sets(&mut self) {
         // If a rule depends on a rule that is itself left recursive then the involved set
         // Includes it's involved sets.
