@@ -1,7 +1,0 @@
-[package]
-name = "example_5_lr_num"
-version = "2.0.0"
-edition = "2021"
-[dependencies]
-indoc = "2"
-example_5_lr_num_parser = { path = "../example_5_lr_num_parser" }

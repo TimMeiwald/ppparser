@@ -15,7 +15,8 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         {
             let involved_set: Vec<Rules> = [Rules::Fact].to_vec();
-            let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Fact, &context, fact);
+            let executor =
+                _var_name_indirect_left_recursion(&involved_set, Rules::Fact, &context, fact);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -37,7 +38,7 @@ mod tests {
         //                     Key(7), Num, 2, 3, true, 0
         //         Key(11), test_LR_num, 4, 5, true, 1
         //             Key(12), Num, 4, 5, true, 0
-        
+
         let key_1 = expected_tree.add_node(Rules::Fact, 0, 9, true);
         expected_tree.connect(Key(0), key_1);
         let key_2 = expected_tree.add_node(Rules::Fact, 0, 7, true);
@@ -103,7 +104,8 @@ mod tests {
         let result: (bool, u32);
         {
             let involved_set: Vec<Rules> = [Rules::Term].to_vec();
-            let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Term, &context, term);
+            let executor =
+                _var_name_indirect_left_recursion(&involved_set, Rules::Term, &context, term);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");

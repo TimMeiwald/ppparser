@@ -15,7 +15,8 @@ mod tests {
         let result: (bool, u32);
         {
             let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
-            let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, &context, expr);
+            let executor =
+                _var_name_indirect_left_recursion(&involved_set, Rules::Expr, &context, expr);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -89,7 +90,8 @@ mod tests {
         let result: (bool, u32);
         {
             let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
-            let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, &context, expr);
+            let executor =
+                _var_name_indirect_left_recursion(&involved_set, Rules::Expr, &context, expr);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");

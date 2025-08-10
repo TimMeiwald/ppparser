@@ -1,8 +1,8 @@
-use example_5_lr_num_parser::*;
+use example_7_indirect_lr_num_parser::*;
 
 #[cfg(test)]
 mod tests {
-    use ::example_5_lr_num_parser::*;
+    use ::example_7_indirect_lr_num_parser::*;
     use core::cell::RefCell;
 
     #[test]
