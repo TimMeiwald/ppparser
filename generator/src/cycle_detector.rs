@@ -64,6 +64,11 @@ impl RuleCallTree {
         rc_tree.create_involved_sets();
         println!("Rules -> InvolvedSets: {:#?}", rc_tree.involved_sets);
         rc_tree.merge_dependent_sets();
+        rc_tree.merge_dependent_sets();
+        rc_tree.merge_dependent_sets();
+        rc_tree.merge_dependent_sets();
+        rc_tree.merge_dependent_sets();
+
         println!(
             "Rules -> InvolvedSets After Merge: {:#?}",
             rc_tree.involved_sets
