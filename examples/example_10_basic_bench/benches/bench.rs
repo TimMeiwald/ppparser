@@ -49,7 +49,7 @@ fn parse_rr(source: &str) -> (bool, u32, BasicPublisher) {
 pub fn criterion_benchmark_throughput(c: &mut Criterion) {
     let mut group = c.benchmark_group("example_10_basic_bench");
     for i in [
-        1000, 5000, 10000, 20000, 50000, 100000, 200000, 600000, 1000000,
+        1000, 5000, 10000, 20000, 50000, 100000, 200000, 600000, 1000000
     ] {
         // 600K and above may crash due to lack of stack.
         println!("Size: {i:?}");
@@ -59,14 +59,14 @@ pub fn criterion_benchmark_throughput(c: &mut Criterion) {
             b.iter(|| {
                 let (result, position, publisher) = parse_lr(black_box(&string));
                 assert_eq!(result, true);
-                assert_eq!(position as usize, i + 1)
+                assert_eq!(position as usize, i)
             });
         });
         group.bench_function("rr throughput", |b| {
             b.iter(|| {
                 let (result, position, publisher) = parse_rr(black_box(&string));
                 assert_eq!(result, true);
-                assert_eq!(position as usize, i + 1)
+                assert_eq!(position as usize, i)
             });
         });
     }
