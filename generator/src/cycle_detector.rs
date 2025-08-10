@@ -1,5 +1,8 @@
 use crate::{BasicPublisher, Key, Node, Rules};
-use std::{collections::{HashMap, HashSet}, usize};
+use std::{
+    collections::{HashMap, HashSet},
+    usize,
+};
 pub struct LeftRecursionDetector {
     rule_call_tree: RuleCallTree,
 }
@@ -79,9 +82,9 @@ impl RuleCallTree {
 
         rc_tree
     }
-    fn involved_rule_count(&mut self) -> usize{
+    fn involved_rule_count(&mut self) -> usize {
         let mut count = 0;
-        for (_rule_name, set) in &self.involved_sets{
+        for (_rule_name, set) in &self.involved_sets {
             count += set.len();
         }
         count
@@ -89,9 +92,11 @@ impl RuleCallTree {
 
     fn merge_dependent_sets_loop_until_no_change(&mut self) {
         let mut last_value = usize::MAX;
-        while self.involved_rule_count() != last_value{
+        let mut current_value = self.involved_rule_count();
+        while current_value != last_value {
+            last_value = current_value;
             self.merge_dependent_sets();
-            last_value = self.involved_rule_count();
+            current_value = self.involved_rule_count();
         }
     }
     fn merge_dependent_sets(&mut self) {
