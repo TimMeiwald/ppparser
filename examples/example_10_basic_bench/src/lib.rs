@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ::example_10_basic_bench::*;
+    use ::example_10_basic_bench_parser::*;
     use core::cell::RefCell;
 
     #[test]

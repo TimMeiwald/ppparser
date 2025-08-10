@@ -251,6 +251,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "example_10_basic_bench"
+version = "2.0.0"
+dependencies = [
+ "criterion",
+ "example_10_basic_bench_parser",
+ "indoc",
+]
+
+[[package]]
 name = "example_10_basic_bench_parser"
 version = "0.1.0"
 dependencies = [

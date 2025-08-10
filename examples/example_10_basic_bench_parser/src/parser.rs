@@ -4,33 +4,37 @@
 use crate::*;
 use std::cell::RefCell;
 #[allow(dead_code)]
-pub fn num<T: Context + 'static>(
+pub fn rr<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _ordered_choice_match_range(48, 57);
-    closure_1(parent, source, position)
+    //  rr ::= "1" <rr> / "1"
+    let closure_1 = _terminal(b'1');
+    let closure_2 = _var_name(Rules::Rr, context, rr);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _subexpression(&closure_3);
+    let closure_5 = _terminal(b'1');
+    let closure_6 = _ordered_choice(&closure_4, &closure_5);
+    closure_6(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn expr<T: Context + 'static>(
+pub fn lr<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    //  Should match 0-0-0-0-0-0-0-0 etc
-    let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
-    let closure_2 = _terminal(b'-');
+    //  lr ::= <lr> "1" / "1"
+    let involved_set: Vec<Rules> = [Rules::Lr].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Lr, context, lr);
+    let closure_2 = _terminal(b'1');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Num, context, num);
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name(Rules::Num, context, num);
-    let closure_8 = _ordered_choice(&closure_6, &closure_7);
-    closure_8(parent, source, position)
+    let closure_4 = _subexpression(&closure_3);
+    let closure_5 = _terminal(b'1');
+    let closure_6 = _ordered_choice(&closure_4, &closure_5);
+    closure_6(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn grammar<T: Context + 'static>(
@@ -39,7 +43,7 @@ pub fn grammar<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    // We do not use grammar for this benchmark but we need one for the generation to work.
+    let closure_1 = _var_name(Rules::Rr, context, rr);
     closure_1(parent, source, position)
 }

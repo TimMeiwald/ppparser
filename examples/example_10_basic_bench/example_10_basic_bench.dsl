@@ -1,3 +1,3 @@
-<num> = [0x30..0x39];
-<expr> = (<expr>, '-', <num>) / <num>; # Should match 0-0-0-0-0-0-0-0 etc #
-<Grammar> = <expr>; 
+<rr> = ('1', <rr>)/'1'; # rr ::= "1" <rr> / "1" #
+<lr> = (<lr>, '1')/'1'; # lr ::= <lr> "1" / "1" #
+<Grammar> = <rr>; #We do not use grammar for this benchmark but we need one for the generation to work. #

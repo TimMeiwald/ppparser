@@ -14,8 +14,10 @@ fn create_valid_string_to_parse(size: usize) -> String {
 
 pub fn criterion_benchmark_throughput(c: &mut Criterion) {
     let mut group = c.benchmark_group("example_10_basic_bench");
-    for i in [1000, 5000, 10000, 20000, 50000, 100000, 200000, 600000, 1000000] {
-        // 600K and above may crash due to lack of stack. 
+    for i in [
+        1000, 5000, 10000, 20000, 50000, 100000, 200000, 600000, 1000000,
+    ] {
+        // 600K and above may crash due to lack of stack.
         println!("Size: {i:?}");
         let string = create_valid_string_to_parse(i);
         group.throughput(Throughput::Bytes(i as u64));
@@ -23,9 +25,8 @@ pub fn criterion_benchmark_throughput(c: &mut Criterion) {
             b.iter(|| {
                 let (result, position, publisher) = parse(black_box(&string));
                 assert_eq!(result, true);
-                assert_eq!(position as usize, i+1)
-            }
-            );
+                assert_eq!(position as usize, i + 1)
+            });
         });
     }
     group.finish();
