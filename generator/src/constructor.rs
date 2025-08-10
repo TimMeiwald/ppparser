@@ -221,27 +221,6 @@ impl GeneratedCode<'_> {
 
             "#[allow(dead_code)]\npub fn {name}<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{"
         );
-        // let mut lr_rule_hdr: String = "".to_string();
-        // let lr_rules = left_recursive_rules.get_left_recursion_rules();
-        // let lr_rules_for_name = lr_rules.get(&name);
-        // if lr_rules_for_name.is_some() {
-        //     let lr_rules_for_name = lr_rules_for_name.expect("We just checked it's some");
-        //     // Then it's an LR rule and we need to add the involved set
-        //     // e.g exmaple below
-        //     // let involved_set = vec![
-        //     //     Rules::expr_addsub,
-        //     //     Rules::sub_expr,
-        //     //     Rules::expr_divmul,
-        //     //     Rules::div_expr,
-        //     //     Rules::mult_expr,
-        //     // ];
-        //     lr_rule_hdr.push_str("\tlet involved_set: Vec<Rules> = vec![");
-        //     for i in lr_rules_for_name {
-        //         lr_rule_hdr.push_str(&format!("Rules::{i}, ").to_string());
-        //     }
-        //     lr_rule_hdr = lr_rule_hdr[0..lr_rule_hdr.len()-2].to_string(); // Drops a comma
-        //     lr_rule_hdr.push_str("];");
-        // }
         let builder = format!(
             "{}\n{}\n{}\n}}\n",
             rule_header,
@@ -868,13 +847,13 @@ impl GeneratedCode<'_> {
 
         let is_left_recursive = left_recursive_rules
             .get_left_recursion_rules()
-            .get(&var_name.to_lowercase());
+            .get(&var_name);
         println!("IS_ LEFT RECUSRIVE = {is_left_recursive:?}");
         if is_left_recursive.is_some() {
             let contents = var_name.to_string();
             let involved_set = left_recursive_rules
                 .get_left_recursion_rules()
-                .get(&var_name.to_lowercase());
+                .get(&var_name);
             match involved_set {
                 None => {
                     panic!("Should have involved set")

@@ -1,0 +1,7 @@
+[package]
+name = "example_8_indirect_lr_3_level"
+version = "2.0.0"
+edition = "2021"
+[dependencies]
+indoc = "2"
+example_8_indirect_lr_3_level_parser = { path = "../example_8_indirect_lr_3_level_parser" }

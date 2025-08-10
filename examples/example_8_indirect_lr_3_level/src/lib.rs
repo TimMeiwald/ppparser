@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ::example_7_indirect_lr_num_parser::*;
+    use ::example_8_indirect_lr_3_level_parser::*;
     use core::cell::RefCell;
 
     #[test]

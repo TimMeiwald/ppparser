@@ -1,4 +1,3 @@
-
 #[cfg(test)]
 mod tests {
     use ::example_5_lr_num_parser::*;

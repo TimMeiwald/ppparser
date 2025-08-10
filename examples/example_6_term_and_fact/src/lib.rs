@@ -1,4 +1,3 @@
-
 #[cfg(test)]
 mod tests {
     use ::example_6_term_and_fact_parser::*;
