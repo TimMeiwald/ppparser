@@ -1,12 +1,11 @@
 use criterion::Throughput;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use example_10_basic_bench_parser::{
-    lr, rr, BasicContext, BasicPublisher, Context, Rules, Source, _var_name,
-    _var_name_indirect_left_recursion, RULES_SIZE, Key
+    lr, rr, BasicContext, BasicPublisher, Context, Key, Rules, Source, _var_name,
+    _var_name_indirect_left_recursion, RULES_SIZE,
 };
 use std::cell::RefCell;
 use std::fs::{canonicalize, read_to_string};
-
 
 fn create_valid_string_to_parse(size: usize) -> String {
     let mut string = String::with_capacity(size + 1);
@@ -22,12 +21,11 @@ fn parse_lr(source: &str) -> (bool, u32, BasicPublisher) {
     let position: u32 = 0;
     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
     let result: (bool, u32);
-        {
-            let involved_set: Vec<Rules> = [Rules::Lr].to_vec();
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Lr, &context, lr);
-            result = executor(Key(0), &source, position);
-        }
+    {
+        let involved_set: Vec<Rules> = [Rules::Lr].to_vec();
+        let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Lr, &context, lr);
+        result = executor(Key(0), &source, position);
+    }
     let gen_code = context.into_inner().get_publisher().clear_false();
     (result.0, result.1, gen_code)
 }
@@ -49,7 +47,7 @@ fn parse_rr(source: &str) -> (bool, u32, BasicPublisher) {
 pub fn criterion_benchmark_throughput(c: &mut Criterion) {
     let mut group = c.benchmark_group("example_10_basic_bench");
     for i in [
-        1000, 5000, 10000, 20000, 50000, 100000, 200000, 300000, 400000, 500000, 600000
+        1000, 5000, 10000, 20000, 50000, 100000, 200000, 300000, 400000, 500000, 600000,
     ] {
         // 600K and above may crash due to lack of stack.
         println!("Size: {i:?}");
