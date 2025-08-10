@@ -1050,6 +1050,7 @@ mod tests {
         let _gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
     }
 
+    #[should_panic]
     #[test]
     fn test_3() {
         let string = r#"<Atom> PASSTHROUGH = (<And_Predicate>/<Not_Predicate>/<One_Or_More>/<Zero_Or_More>/<Optional>/<Nucleus>), <Whitespace>;
@@ -1082,6 +1083,8 @@ mod tests {
         let _gen_code = GeneratedCode::new(&left_recursion_detector, &sym_table, tree, src);
         _gen_code.print();
     }
+
+    #[should_panic]
     #[test]
     fn test_9() {
         let string = r#"<Whitespace> Inline = (' '/'\n'/'\r'/'\t')*;
