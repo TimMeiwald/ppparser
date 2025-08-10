@@ -30,7 +30,13 @@ pub fn test_indirect_three_level_a<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
+    let involved_set: Vec<Rules> = [
+        Rules::Test_indirect_three_level_B,
+        Rules::Test_indirect_three_level_C,
+    ]
+    .to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
         Rules::Test_indirect_three_level_B,
         context,
         test_indirect_three_level_b,
@@ -51,7 +57,13 @@ pub fn test_indirect_three_level_b<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
+    let involved_set: Vec<Rules> = [
+        Rules::Test_indirect_three_level_A,
+        Rules::Test_indirect_three_level_C,
+    ]
+    .to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
         Rules::Test_indirect_three_level_C,
         context,
         test_indirect_three_level_c,
@@ -65,7 +77,13 @@ pub fn test_indirect_three_level_c<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
+    let involved_set: Vec<Rules> = [
+        Rules::Test_indirect_three_level_A,
+        Rules::Test_indirect_three_level_B,
+    ]
+    .to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
         Rules::Test_indirect_three_level_A,
         context,
         test_indirect_three_level_a,
@@ -79,7 +97,15 @@ pub fn grammar<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
+    let involved_set: Vec<Rules> = [
+        Rules::Test_indirect_three_level_A,
+        Rules::Test_indirect_three_level_B,
+        Rules::Test_indirect_three_level_C,
+
+    ]
+    .to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
         Rules::Test_indirect_three_level_A,
         context,
         test_indirect_three_level_a,

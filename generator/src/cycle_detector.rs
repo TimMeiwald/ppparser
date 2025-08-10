@@ -332,13 +332,13 @@ impl RuleCallTree {
         let var_name_decl = tree.get_node(var_name_decl);
         debug_assert_eq!(var_name_decl.rule, Rules::Var_Name_Decl);
         let s = var_name_decl.get_string(source);
-        s[1..s.len() - 1].to_ascii_lowercase().to_string()
+        s[1..s.len() - 1].to_string()
     }
 
     fn get_rule_ref_name(source: &str, node: &Node) -> String {
         debug_assert_eq!(node.rule, Rules::Var_Name_Ref);
         let s = node.get_string(source);
-        s[1..s.len() - 1].to_ascii_lowercase().to_string()
+        s[1..s.len() - 1].to_string()
     }
 
     fn get_rules_referenced_by_rule<'a>(
@@ -659,5 +659,3 @@ mod tests {
         // _gen_code.print();
     }
 }
-
-
