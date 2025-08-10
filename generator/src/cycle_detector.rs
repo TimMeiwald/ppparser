@@ -63,6 +63,9 @@ impl RuleCallTree {
         );
         rc_tree.create_involved_sets();
         println!("Rules -> InvolvedSets: {:#?}", rc_tree.involved_sets);
+        rc_tree.merge_dependent_sets();
+        println!("Rules -> InvolvedSets After Merge: {:#?}", rc_tree.involved_sets);
+
         // Copy over the left most rules but ignore any that aren't left recursive
         // These appear to be almost the correct involved_set.
         // Need to analyse their behaviour.
@@ -71,6 +74,24 @@ impl RuleCallTree {
         // Each involved set can include the calling rule(I think)
 
         rc_tree
+    }
+
+    fn merge_dependent_sets(&mut self) {
+        // If a rule depends on a rule that is itself left recursive then the involved set
+        // Includes it's involved sets.
+        let copied_involved_sets = self.involved_sets.clone();
+        for (rule_name, involved_set) in &copied_involved_sets {
+            let mut copied_set = involved_set.clone();
+
+            for subrule_name in involved_set {
+                let subrule_involved_set = copied_involved_sets.get(subrule_name).unwrap();
+                copied_set = copied_set
+                    .union(subrule_involved_set)
+                    .map(|string_ref| string_ref.clone())
+                    .collect();
+            }
+            self.involved_sets.insert(rule_name.clone(), copied_set);
+        }
     }
 
     fn create_involved_sets(&mut self) {
