@@ -4,7 +4,7 @@
 use crate::*;
 use std::cell::RefCell;
 #[allow(dead_code)]
-pub fn alphabet_upper<T: Context>(
+pub fn alphabet_upper<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -15,7 +15,7 @@ pub fn alphabet_upper<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn alphabet_lower<T: Context>(
+pub fn alphabet_lower<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -25,7 +25,7 @@ pub fn alphabet_lower<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn num<T: Context>(
+pub fn num<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -35,7 +35,7 @@ pub fn num<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn numnozero<T: Context>(
+pub fn numnozero<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -45,7 +45,7 @@ pub fn numnozero<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn hexval<T: Context>(
+pub fn hexval<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -57,7 +57,7 @@ pub fn hexval<T: Context>(
     closure_3(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn spaces<T: Context>(
+pub fn spaces<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -73,7 +73,7 @@ pub fn spaces<T: Context>(
     closure_7(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn specials<T: Context>(
+pub fn specials<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -99,7 +99,7 @@ pub fn specials<T: Context>(
     closure_11(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn ascii<T: Context>(
+pub fn ascii<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -109,7 +109,7 @@ pub fn ascii<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn apostrophe<T: Context>(
+pub fn apostrophe<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -119,7 +119,7 @@ pub fn apostrophe<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn quotationmark<T: Context>(
+pub fn quotationmark<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -129,7 +129,7 @@ pub fn quotationmark<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn left_angle_bracket<T: Context>(
+pub fn left_angle_bracket<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -139,7 +139,7 @@ pub fn left_angle_bracket<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn right_angle_bracket<T: Context>(
+pub fn right_angle_bracket<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -149,7 +149,7 @@ pub fn right_angle_bracket<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn left_bracket<T: Context>(
+pub fn left_bracket<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -159,7 +159,7 @@ pub fn left_bracket<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn right_bracket<T: Context>(
+pub fn right_bracket<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -169,7 +169,7 @@ pub fn right_bracket<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn assignment<T: Context>(
+pub fn assignment<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -179,7 +179,7 @@ pub fn assignment<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn end_rule<T: Context>(
+pub fn end_rule<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -189,7 +189,7 @@ pub fn end_rule<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn ampersand<T: Context>(
+pub fn ampersand<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -199,7 +199,7 @@ pub fn ampersand<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn exclamation_mark<T: Context>(
+pub fn exclamation_mark<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -209,7 +209,7 @@ pub fn exclamation_mark<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn plus<T: Context>(
+pub fn plus<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -219,7 +219,7 @@ pub fn plus<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn star<T: Context>(
+pub fn star<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -229,7 +229,7 @@ pub fn star<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn question_mark<T: Context>(
+pub fn question_mark<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -239,7 +239,7 @@ pub fn question_mark<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn comma<T: Context>(
+pub fn comma<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -249,7 +249,7 @@ pub fn comma<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn newline<T: Context>(
+pub fn newline<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -259,7 +259,7 @@ pub fn newline<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn backslash<T: Context>(
+pub fn backslash<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -269,7 +269,7 @@ pub fn backslash<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn var_name<T: Context>(
+pub fn var_name<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -298,7 +298,7 @@ pub fn var_name<T: Context>(
     closure_12(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn var_name_decl<T: Context>(
+pub fn var_name_decl<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -318,7 +318,7 @@ pub fn var_name_decl<T: Context>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn var_name_ref<T: Context>(
+pub fn var_name_ref<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -338,7 +338,7 @@ pub fn var_name_ref<T: Context>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn hex<T: Context>(
+pub fn hex<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -354,7 +354,7 @@ pub fn hex<T: Context>(
     closure_6(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn integer<T: Context>(
+pub fn integer<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -368,7 +368,7 @@ pub fn integer<T: Context>(
     closure_4(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn orderedchoicematchrange<T: Context>(
+pub fn orderedchoicematchrange<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -414,7 +414,7 @@ pub fn orderedchoicematchrange<T: Context>(
     closure_29(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn subexpression<T: Context>(
+pub fn subexpression<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -432,7 +432,7 @@ pub fn subexpression<T: Context>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn epsilon<T: Context>(
+pub fn epsilon<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -448,7 +448,7 @@ pub fn epsilon<T: Context>(
     closure_3(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn stringterminal<T: Context>(
+pub fn stringterminal<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -487,7 +487,7 @@ pub fn stringterminal<T: Context>(
     closure_21(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn terminal<T: Context>(
+pub fn terminal<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -526,7 +526,7 @@ pub fn terminal<T: Context>(
     closure_22(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn nucleus<T: Context>(
+pub fn nucleus<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -553,7 +553,7 @@ pub fn nucleus<T: Context>(
     closure_12(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn atom<T: Context>(
+pub fn atom<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -578,7 +578,7 @@ pub fn atom<T: Context>(
     closure_14(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn and_predicate<T: Context>(
+pub fn and_predicate<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -592,7 +592,7 @@ pub fn and_predicate<T: Context>(
     closure_3(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn not_predicate<T: Context>(
+pub fn not_predicate<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -606,7 +606,7 @@ pub fn not_predicate<T: Context>(
     closure_3(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn sequence<T: Context>(
+pub fn sequence<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -640,7 +640,7 @@ pub fn sequence<T: Context>(
     closure_17(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn ordered_choice<T: Context>(
+pub fn ordered_choice<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -676,7 +676,7 @@ pub fn ordered_choice<T: Context>(
     closure_17(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn one_or_more<T: Context>(
+pub fn one_or_more<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -693,7 +693,7 @@ pub fn one_or_more<T: Context>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn zero_or_more<T: Context>(
+pub fn zero_or_more<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -710,7 +710,7 @@ pub fn zero_or_more<T: Context>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn optional<T: Context>(
+pub fn optional<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -728,7 +728,7 @@ pub fn optional<T: Context>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn whitespace<T: Context>(
+pub fn whitespace<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -746,7 +746,7 @@ pub fn whitespace<T: Context>(
     closure_9(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn rhs<T: Context>(
+pub fn rhs<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -760,7 +760,7 @@ pub fn rhs<T: Context>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn lhs<T: Context>(
+pub fn lhs<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -782,7 +782,7 @@ pub fn lhs<T: Context>(
     closure_9(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn rule<T: Context>(
+pub fn rule<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -821,7 +821,7 @@ pub fn rule<T: Context>(
     closure_18(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn grammar<T: Context>(
+pub fn grammar<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -838,7 +838,7 @@ pub fn grammar<T: Context>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn comment<T: Context>(
+pub fn comment<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -865,7 +865,7 @@ pub fn comment<T: Context>(
     closure_14(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn semantic_instructions<T: Context>(
+pub fn semantic_instructions<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -879,39 +879,40 @@ pub fn semantic_instructions<T: Context>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn delete<T: Context>(
+pub fn delete<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(b"DELETE");
+    let closure_1 = _string_terminal_opt_ascii(&[b'D', b'E', b'L', b'E', b'T', b'E']);
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn passthrough<T: Context>(
+pub fn passthrough<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(b"PASSTHROUGH");
+    let closure_1 = _string_terminal_opt_ascii(&[
+        b'P', b'A', b'S', b'S', b'T', b'H', b'R', b'O', b'U', b'G', b'H',
+    ]);
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn inline<T: Context>(
+pub fn inline<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     // Comment
-    let closure_1 = _string_terminal_opt_ascii(b"Inline");
+    let closure_1 = _string_terminal_opt_ascii(&[b'I', b'n', b'l', b'i', b'n', b'e']);
     closure_1(parent, source, position)
 }
-
 #[allow(dead_code)]
-pub fn test_lr_num<T: Context>(
+pub fn test_lr_num<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -921,20 +922,26 @@ pub fn test_lr_num<T: Context>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn test_lr_expr<T: Context>(
+pub fn test_lr_expr<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     //  Should match 0-0-0-0-0-0-0-0 etc
-    let closure_1 = _var_name_direct_left_recursion(Rules::test_LR_expr, context, test_lr_expr);
+    let involved_set: Vec<Rules> = [Rules::Test_LR_expr].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Test_LR_expr,
+        context,
+        test_lr_expr,
+    );
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_4 = _var_name(Rules::Test_LR_num, context, test_lr_num);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_7 = _var_name(Rules::Test_LR_num, context, test_lr_num);
     let closure_8 = _ordered_choice(&closure_6, &closure_7);
     closure_8(parent, source, position)
 }
@@ -946,10 +953,10 @@ pub fn test_indirect_lr_num<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> =
-        [Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num].to_vec();
+        [Rules::Test_indirect_LR_expr, Rules::Test_indirect_LR_num].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
         &involved_set,
-        Rules::test_indirect_LR_expr,
+        Rules::Test_indirect_LR_expr,
         context,
         test_indirect_lr_expr,
     );
@@ -964,60 +971,74 @@ pub fn test_indirect_lr_expr<T: Context + 'static>(
 ) -> (bool, u32) {
     //  Should match 0-0-0-0-0-0-0-0 etc
     let involved_set: Vec<Rules> =
-        [Rules::test_indirect_LR_expr, Rules::test_indirect_LR_num].to_vec();
+        [Rules::Test_indirect_LR_expr, Rules::Test_indirect_LR_num].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
         &involved_set,
-        Rules::test_indirect_LR_num,
+        Rules::Test_indirect_LR_num,
         context,
         test_indirect_lr_num,
     );
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_4 = _var_name(Rules::Test_LR_num, context, test_lr_num);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_7 = _var_name(Rules::Test_LR_num, context, test_lr_num);
     let closure_8 = _ordered_choice(&closure_6, &closure_7);
     closure_8(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn test_term<T: Context>(
+pub fn test_term<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name_direct_left_recursion(Rules::test_term, context, test_term);
+    let involved_set: Vec<Rules> = [Rules::Test_term].to_vec();
+    let closure_1 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Test_term, context, test_term);
     let closure_2 = _terminal(b'+');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let involved_set: Vec<Rules> = [Rules::Test_fact].to_vec();
+    let closure_4 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Test_fact, context, test_fact);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name_direct_left_recursion(Rules::test_term, context, test_term);
+    let involved_set: Vec<Rules> = [Rules::Test_term].to_vec();
+    let closure_7 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Test_term, context, test_term);
     let closure_8 = _terminal(b'-');
     let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let involved_set: Vec<Rules> = [Rules::Test_fact].to_vec();
+    let closure_10 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Test_fact, context, test_fact);
     let closure_11 = _sequence(&closure_9, &closure_10);
     let closure_12 = _subexpression(&closure_11);
     let closure_13 = _ordered_choice(&closure_6, &closure_12);
-    let closure_14 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let involved_set: Vec<Rules> = [Rules::Test_fact].to_vec();
+    let closure_14 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Test_fact, context, test_fact);
     let closure_15 = _ordered_choice(&closure_13, &closure_14);
     closure_15(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn test_fact<T: Context>(
+pub fn test_fact<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let involved_set: Vec<Rules> = [Rules::Test_fact].to_vec();
+    let closure_1 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Test_fact, context, test_fact);
     let closure_2 = _terminal(b'*');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Num, context, num);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name_direct_left_recursion(Rules::test_fact, context, test_fact);
+    let involved_set: Vec<Rules> = [Rules::Test_fact].to_vec();
+    let closure_7 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Test_fact, context, test_fact);
     let closure_8 = _terminal(b'/');
     let closure_9 = _sequence(&closure_7, &closure_8);
     let closure_10 = _var_name(Rules::Num, context, num);
@@ -1028,7 +1049,6 @@ pub fn test_fact<T: Context>(
     let closure_15 = _ordered_choice(&closure_13, &closure_14);
     closure_15(parent, source, position)
 }
-
 #[allow(dead_code)]
 pub fn test_term_indirect<T: Context + 'static>(
     parent: Key,
@@ -1036,45 +1056,47 @@ pub fn test_term_indirect<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![Rules::test_term_indirect];
-    let involved_set_for_test_fact = vec![Rules::test_fact_indirect];
-
+    let involved_set: Vec<Rules> = [Rules::Test_term_indirect].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
         &involved_set,
-        Rules::test_term_indirect,
+        Rules::Test_term_indirect,
         context,
         test_term_indirect,
     );
     let closure_2 = _terminal(b'+');
     let closure_3 = _sequence(&closure_1, &closure_2);
+    let involved_set: Vec<Rules> = [Rules::Test_fact_indirect].to_vec();
     let closure_4 = _var_name_indirect_left_recursion(
-        &involved_set_for_test_fact,
-        Rules::test_fact_indirect,
+        &involved_set,
+        Rules::Test_fact_indirect,
         context,
         test_fact_indirect,
     );
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
+    let involved_set: Vec<Rules> = [Rules::Test_term_indirect].to_vec();
     let closure_7 = _var_name_indirect_left_recursion(
         &involved_set,
-        Rules::test_term_indirect,
+        Rules::Test_term_indirect,
         context,
         test_term_indirect,
     );
     let closure_8 = _terminal(b'-');
     let closure_9 = _sequence(&closure_7, &closure_8);
+    let involved_set: Vec<Rules> = [Rules::Test_fact_indirect].to_vec();
     let closure_10 = _var_name_indirect_left_recursion(
-        &involved_set_for_test_fact,
-        Rules::test_fact_indirect,
+        &involved_set,
+        Rules::Test_fact_indirect,
         context,
         test_fact_indirect,
     );
     let closure_11 = _sequence(&closure_9, &closure_10);
     let closure_12 = _subexpression(&closure_11);
     let closure_13 = _ordered_choice(&closure_6, &closure_12);
+    let involved_set: Vec<Rules> = [Rules::Test_fact_indirect].to_vec();
     let closure_14 = _var_name_indirect_left_recursion(
-        &involved_set_for_test_fact,
-        Rules::test_fact_indirect,
+        &involved_set,
+        Rules::Test_fact_indirect,
         context,
         test_fact_indirect,
     );
@@ -1088,10 +1110,10 @@ pub fn test_fact_indirect<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set = vec![Rules::test_fact_indirect];
+    let involved_set: Vec<Rules> = [Rules::Test_fact_indirect].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
         &involved_set,
-        Rules::test_fact_indirect,
+        Rules::Test_fact_indirect,
         context,
         test_fact_indirect,
     );
@@ -1100,9 +1122,10 @@ pub fn test_fact_indirect<T: Context + 'static>(
     let closure_4 = _var_name(Rules::Num, context, num);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
+    let involved_set: Vec<Rules> = [Rules::Test_fact_indirect].to_vec();
     let closure_7 = _var_name_indirect_left_recursion(
         &involved_set,
-        Rules::test_fact_indirect,
+        Rules::Test_fact_indirect,
         context,
         test_fact_indirect,
     );
@@ -1117,49 +1140,70 @@ pub fn test_fact_indirect<T: Context + 'static>(
     closure_15(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn test_indirect_three_level_a<T: Context>(
+pub fn test_indirect_three_level_a<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
-        Rules::test_indirect_three_level_B,
+    let involved_set: Vec<Rules> = [
+        Rules::Test_indirect_three_level_A,
+        Rules::Test_indirect_three_level_B,
+        Rules::Test_indirect_three_level_C,
+    ]
+    .to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Test_indirect_three_level_B,
         context,
         test_indirect_three_level_b,
     );
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_4 = _var_name(Rules::Test_LR_num, context, test_lr_num);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _var_name(Rules::test_LR_num, context, test_lr_num);
+    let closure_7 = _var_name(Rules::Test_LR_num, context, test_lr_num);
     let closure_8 = _ordered_choice(&closure_6, &closure_7);
     closure_8(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn test_indirect_three_level_b<T: Context>(
+pub fn test_indirect_three_level_b<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
-        Rules::test_indirect_three_level_C,
+    let involved_set: Vec<Rules> = [
+        Rules::Test_indirect_three_level_A,
+        Rules::Test_indirect_three_level_B,
+        Rules::Test_indirect_three_level_C,
+    ]
+    .to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Test_indirect_three_level_C,
         context,
         test_indirect_three_level_c,
     );
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn test_indirect_three_level_c<T: Context>(
+pub fn test_indirect_three_level_c<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
-        Rules::test_indirect_three_level_A,
+    let involved_set: Vec<Rules> = [
+        Rules::Test_indirect_three_level_A,
+        Rules::Test_indirect_three_level_B,
+        Rules::Test_indirect_three_level_C,
+    ]
+    .to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Test_indirect_three_level_A,
         context,
         test_indirect_three_level_a,
     );

@@ -1,7 +1,5 @@
 use crate::{BasicPublisher, Key, Node, Rules};
-use std::{
-    collections::{HashMap, HashSet},
-};
+use std::collections::{HashMap, HashSet};
 pub struct LeftRecursionDetector {
     rule_call_tree: RuleCallTree,
 }
@@ -109,9 +107,7 @@ impl RuleCallTree {
                 let subrule_involved_set = copied_involved_sets
                     .get(subrule_name)
                     .unwrap_or_else(|| panic!("Rule: {subrule_name:?} should exist"));
-                copied_set = copied_set
-                    .union(subrule_involved_set).cloned()
-                    .collect();
+                copied_set = copied_set.union(subrule_involved_set).cloned().collect();
             }
             self.involved_sets.insert(rule_name.clone(), copied_set);
         }

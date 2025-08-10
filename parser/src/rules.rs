@@ -1,5 +1,4 @@
 #![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually
-
 use num_derive::FromPrimitive;
 impl From<u32> for Rules {
     fn from(i: u32) -> Rules {
@@ -10,7 +9,6 @@ impl From<u32> for Rules {
         }
     }
 }
-
 #[allow(dead_code)]
 pub static RULES_SIZE: u32 = 43;
 #[allow(clippy::upper_case_acronyms)] // Again due to generation -> Might solve eventually
@@ -49,15 +47,15 @@ pub enum Rules {
     Var_Name_Decl,
     Var_Name_Ref,
     Zero_Or_More,
-    test_LR_expr,
-    test_LR_num,
-    test_fact,
-    test_fact_indirect,
-    test_indirect_LR_expr,
-    test_indirect_LR_num,
-    test_indirect_three_level_A,
-    test_indirect_three_level_B,
-    test_indirect_three_level_C,
-    test_term,
-    test_term_indirect,
+    Test_LR_expr,
+    Test_LR_num,
+    Test_fact,
+    Test_fact_indirect,
+    Test_indirect_LR_expr,
+    Test_indirect_LR_num,
+    Test_indirect_three_level_A,
+    Test_indirect_three_level_B,
+    Test_indirect_three_level_C,
+    Test_term,
+    Test_term_indirect,
 }
