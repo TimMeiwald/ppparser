@@ -46,7 +46,7 @@ jobs:
         ./update_parsers.sh
         cargo test --verbose
   Bench:
-    needs: Build_And_Cache
+    needs: [Build_And_Cache, Release_Test, Format, Lint]
     runs-on: ubuntu-latest
     steps: 
     - name: Checkout code
