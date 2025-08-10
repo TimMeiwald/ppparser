@@ -21,7 +21,7 @@ pub fn criterion_benchmark_throughput(c: &mut Criterion) {
         println!("Size: {i:?}");
         let string = create_valid_string_to_parse(i);
         group.throughput(Throughput::Bytes(i as u64));
-        group.bench_function("test pppparser grammar_throughput", |b| {
+        group.bench_function("example_5_lr_num throughput", |b| {
             b.iter(|| {
                 let (result, position, publisher) = parse(black_box(&string));
                 assert_eq!(result, true);
