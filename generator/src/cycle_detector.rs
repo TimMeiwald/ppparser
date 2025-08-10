@@ -87,7 +87,9 @@ impl RuleCallTree {
             let mut copied_set = involved_set.clone();
 
             for subrule_name in involved_set {
-                let subrule_involved_set = copied_involved_sets.get(subrule_name).expect(&format!("Rule: {subrule_name:?} should exist"));
+                let subrule_involved_set = copied_involved_sets
+                    .get(subrule_name)
+                    .expect(&format!("Rule: {subrule_name:?} should exist"));
                 copied_set = copied_set
                     .union(subrule_involved_set)
                     .map(|string_ref| string_ref.clone())

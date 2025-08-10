@@ -6,4 +6,5 @@ cargo run -- -s ./examples/example_5_lr_num/LR_num.dsl -t ./examples/ -n example
 cargo run -- -s ./examples/example_6_term_and_fact/term_and_fact.dsl -t ./examples/ -n example_6_term_and_fact_parser
 cargo run -- -s ./examples/example_7_indirect_lr_num/LR_num_indirect.dsl -t ./examples/ -n example_7_indirect_lr_num_parser
 cargo run -- -s ./examples/example_8_indirect_lr_3_level/LR_num_indirect_3_level.dsl -t ./examples/ -n example_8_indirect_lr_3_level_parser
+cargo run -- -s ./examples/example_9_indirect_lr_5_level/LR_num_indirect_5_level.dsl -t ./examples/ -n example_9_indirect_lr_5_level_parser
 cargo fmt
