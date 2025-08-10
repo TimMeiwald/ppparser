@@ -1,4 +1,3 @@
-use example_7_indirect_lr_num_parser::*;
 
 #[cfg(test)]
 mod tests {
