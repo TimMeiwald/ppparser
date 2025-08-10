@@ -1,14 +1,14 @@
 [package]
-name = "example_5_lr_num"
+name = "example_10_basic_bench"
 version = "2.0.0"
 edition = "2021"
 [dependencies]
 indoc = "2"
-example_5_lr_num_parser = { path = "../example_5_lr_num_parser" }
+example_10_basic_bench_parser = { path = "../example_10_basic_bench_parser" }
 
 [dev-dependencies]
 criterion = "0.5.1"
 
 [[bench]]
-name = "example_5_lr_num_benchmark"
+name = "bench"
 harness = false
