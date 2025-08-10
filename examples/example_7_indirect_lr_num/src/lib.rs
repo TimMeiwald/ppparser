@@ -6,7 +6,7 @@ mod tests {
     use core::cell::RefCell;
 
     #[test]
-    fn test_left_recursion_direct_1() {
+    fn test_left_recursion_1() {
         let string = "1-2-3-7-9-1   ".to_string();
         let src_len = string.len() as u32;
         let source = Source::new(&string);
@@ -50,16 +50,31 @@ mod tests {
         // test_lr_expr
         let key_1 = expected_tree.add_node(Rules::Expr, 0, 11, true);
         expected_tree.connect(Key(0), key_1);
+
+        let key_2i = expected_tree.add_node(Rules::Intermediate, 0, 9, true);
+        expected_tree.connect(key_1, key_2i);
         let key_2 = expected_tree.add_node(Rules::Expr, 0, 9, true);
-        expected_tree.connect(key_1, key_2);
+        expected_tree.connect(key_2i, key_2);
+
+        let key_3i = expected_tree.add_node(Rules::Intermediate, 0, 7, true);
+        expected_tree.connect(key_2, key_3i);
         let key_3 = expected_tree.add_node(Rules::Expr, 0, 7, true);
-        expected_tree.connect(key_2, key_3);
+        expected_tree.connect(key_3i, key_3);
+
+        let key_4i = expected_tree.add_node(Rules::Intermediate, 0, 5, true);
+        expected_tree.connect(key_3, key_4i);
         let key_4 = expected_tree.add_node(Rules::Expr, 0, 5, true);
-        expected_tree.connect(key_3, key_4);
+        expected_tree.connect(key_4i, key_4);
+
+        let key_5i = expected_tree.add_node(Rules::Intermediate, 0, 3, true);
+        expected_tree.connect(key_4, key_5i);
         let key_5 = expected_tree.add_node(Rules::Expr, 0, 3, true);
-        expected_tree.connect(key_4, key_5);
+        expected_tree.connect(key_5i, key_5);
+
+        let key_6i = expected_tree.add_node(Rules::Intermediate, 0, 1, true);
+        expected_tree.connect(key_5, key_6i);
         let key_6 = expected_tree.add_node(Rules::Expr, 0, 1, true);
-        expected_tree.connect(key_5, key_6);
+        expected_tree.connect(key_6i, key_6);
         // test_lr_num
         let key_7 = expected_tree.add_node(Rules::Num, 0, 1, true);
         expected_tree.connect(key_6, key_7);
@@ -80,7 +95,7 @@ mod tests {
         assert_eq!(expected_tree, result_tree);
     }
     #[test]
-    fn test_left_recursion_direct_2() {
+    fn test_left_recursion_2() {
         let string = "1-2   ".to_string();
         let src_len = string.len() as u32;
         let source = Source::new(&string);
@@ -94,10 +109,11 @@ mod tests {
         }
         println!("Result: {result:?}");
         // context.borrow().print_cache();
-        context.borrow().print_publisher();
+        // context.borrow().print_publisher();
         assert_eq!((result.0, result.1), (true, 3));
 
         let result_tree = context.into_inner().get_publisher();
+        result_tree.print(Key(0), Some(true));
         // Create comparative BasicPublisher
         let mut expected_tree = BasicPublisher::new(src_len as usize, RULES_SIZE as usize);
         // Key(0), Grammar, 0, 0, true, 1
@@ -109,10 +125,12 @@ mod tests {
         //             Key(6), Num, 2, 3, true, 0
         let key_1 = expected_tree.add_node(Rules::Expr, 0, 3, true);
         expected_tree.connect(Key(0), key_1);
-        let key_2 = expected_tree.add_node(Rules::Expr, 0, 1, true);
+        let key_2 = expected_tree.add_node(Rules::Intermediate, 0, 1, true);
         expected_tree.connect(key_1, key_2);
+        let key_3 = expected_tree.add_node(Rules::Expr, 0, 1, true);
+        expected_tree.connect(key_2, key_3);
         let key_6 = expected_tree.add_node(Rules::Num, 0, 1, true);
-        expected_tree.connect(key_2, key_6);
+        expected_tree.connect(key_3, key_6);
         let key_5 = expected_tree.add_node(Rules::Num, 2, 3, true);
         expected_tree.connect(key_1, key_5);
         println!("Expected tree:");
