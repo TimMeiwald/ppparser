@@ -137,7 +137,7 @@ mod tests {
     #[test]
     fn test() {
         println!("{:?}", env::current_dir().unwrap());
-        let path = "../parser/tests/test_data/Grammar.txt";
+        let path = "../parser/Grammar.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();

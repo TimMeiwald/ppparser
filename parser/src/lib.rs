@@ -21,8 +21,4 @@ pub use publisher::{
 pub use rules::Rules;
 pub use rules::RULES_SIZE;
 pub use source::Source;
-pub use var_name::{
-    _var_name,
-    _var_name_direct_left_recursion, // _var_name_indirect_left_recursion,
-    _var_name_indirect_left_recursion,
-};
+pub use var_name::{_var_name, _var_name_indirect_left_recursion};

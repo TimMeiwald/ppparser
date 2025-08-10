@@ -61,7 +61,7 @@ mod tests {
     use std::fs::canonicalize;
     #[test]
     fn test() {
-        let path = "../parser/tests/test_data/Grammar.txt";
+        let path = "../parser/Grammar.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let gen_code = generate_parser(&pathbuf);
         match gen_code {
@@ -77,7 +77,7 @@ mod tests {
     }
     #[test]
     fn test_calculator() {
-        let path = "../generator/tests/calculator.dsl";
+        let path = "../examples/example_4_full_maths/example_4_full_maths.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let gen_code = generate_parser(&pathbuf);
         match gen_code {

@@ -63,6 +63,13 @@ impl RuleCallTree {
         );
         rc_tree.create_involved_sets();
         println!("Rules -> InvolvedSets: {:#?}", rc_tree.involved_sets);
+        rc_tree.merge_dependent_sets_loop_until_no_change();
+
+        println!(
+            "Rules -> InvolvedSets After Merge: {:#?}",
+            rc_tree.involved_sets
+        );
+
         // Copy over the left most rules but ignore any that aren't left recursive
         // These appear to be almost the correct involved_set.
         // Need to analyse their behaviour.
@@ -71,6 +78,39 @@ impl RuleCallTree {
         // Each involved set can include the calling rule(I think)
 
         rc_tree
+    }
+    fn involved_rule_count(&mut self) -> usize {
+        let mut count = 0;
+        for set in self.involved_sets.values() {
+            count += set.len();
+        }
+        count
+    }
+
+    fn merge_dependent_sets_loop_until_no_change(&mut self) {
+        let mut last_value = usize::MAX;
+        let mut current_value = self.involved_rule_count();
+        while current_value != last_value {
+            last_value = current_value;
+            self.merge_dependent_sets();
+            current_value = self.involved_rule_count();
+        }
+    }
+    fn merge_dependent_sets(&mut self) {
+        // If a rule depends on a rule that is itself left recursive then the involved set
+        // Includes it's involved sets.
+        let copied_involved_sets = self.involved_sets.clone();
+        for (rule_name, involved_set) in &copied_involved_sets {
+            let mut copied_set = involved_set.clone();
+
+            for subrule_name in involved_set {
+                let subrule_involved_set = copied_involved_sets
+                    .get(subrule_name)
+                    .unwrap_or_else(|| panic!("Rule: {subrule_name:?} should exist"));
+                copied_set = copied_set.union(subrule_involved_set).cloned().collect();
+            }
+            self.involved_sets.insert(rule_name.clone(), copied_set);
+        }
     }
 
     fn create_involved_sets(&mut self) {
@@ -332,13 +372,13 @@ impl RuleCallTree {
         let var_name_decl = tree.get_node(var_name_decl);
         debug_assert_eq!(var_name_decl.rule, Rules::Var_Name_Decl);
         let s = var_name_decl.get_string(source);
-        s[1..s.len() - 1].to_ascii_lowercase().to_string()
+        s[1..s.len() - 1].to_string()
     }
 
     fn get_rule_ref_name(source: &str, node: &Node) -> String {
         debug_assert_eq!(node.rule, Rules::Var_Name_Ref);
         let s = node.get_string(source);
-        s[1..s.len() - 1].to_ascii_lowercase().to_string()
+        s[1..s.len() - 1].to_string()
     }
 
     fn get_rules_referenced_by_rule<'a>(
@@ -514,7 +554,7 @@ mod tests {
 
     #[test]
     fn test_no_lr() {
-        let path = "../parser/tests/test_data/Grammar.txt";
+        let path = "../parser/Grammar.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
@@ -551,7 +591,7 @@ mod tests {
 
     #[test]
     fn test_calculator() {
-        let path = "../generator/tests/calculator.dsl";
+        let path = "../examples/example_4_full_maths/example_4_full_maths.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();
@@ -588,6 +628,43 @@ mod tests {
     #[test]
     fn test_example_2() {
         let path = "../examples/example_2/example_2.dsl";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+        let string2 = string.clone();
+        let src_len = string.len();
+        let source = Source::new(&string);
+        let position = 0;
+        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let result = grammar(Key(0), &context, &source, position);
+
+        // Checks full file was parsed.
+        if result.1 != string2.len() as u32 {
+            panic!(
+                "Failed to parse grammar due to syntax error on Line: {:?}",
+                count_lines(&string2, result.1)
+            )
+        } else {
+            // println!("Successfully parsed")
+        }
+        let source = &String::from(source);
+        let tree = context.into_inner();
+        let tree = &tree.get_publisher().clear_false();
+        let _lr_detector = LeftRecursionDetector::new(tree, source);
+        stdout().flush().expect("Why did it not flush");
+        // println!("\n\n\n");
+        //lr_detector.print_rules_name_map();
+        //tree.print(Key(0), None);
+        // let src = &String::from(source);
+        // let sym_table = SymbolTable::new(tree, src);
+        // sym_table.print();
+        // let _gen_code = GeneratedCode::new(&sym_table, &tree, src);
+        // _gen_code.print();
+    }
+
+    #[test]
+    fn test_example_3() {
+        let path = "../examples/example_8_indirect_lr_3_level/LR_num_indirect_3_level.dsl";
         let pathbuf = canonicalize(path).expect("If it's moved change the string above");
         let string = read_to_string(pathbuf).expect("If it's moved change the string above");
         let string2 = string.clone();

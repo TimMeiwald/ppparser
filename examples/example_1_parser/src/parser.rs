@@ -10,10 +10,10 @@ pub fn expr<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr].to_vec();
+    let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
     let closure_1 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Addition, context, addition);
-    let involved_set: Vec<Rules> = [Rules::Expr, Rules::Subtraction].to_vec();
+    let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
     let closure_2 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Subtraction, context, subtraction);
     let closure_3 = _ordered_choice(&closure_1, &closure_2);

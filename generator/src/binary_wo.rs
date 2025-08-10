@@ -144,14 +144,15 @@ impl BinaryTreeWO {
         let node = &self.nodes[usize::from(index)];
         match &node.reference {
             Reference::StringTerminalAsciiOpt(chars) => {
-                let mut r: String =
-                    format!("let closure_{:?} = _string_terminal_opt_ascii(&[", index.0);
+                let mut r: String = format!(
+                    r#"let closure_{:?} = _string_terminal_opt_ascii(b""#,
+                    index.0
+                );
 
                 for i in chars {
-                    r.push_str(&format!("b{i:?},"))
+                    r.push_str(&format!("{i}"))
                 }
-                r.pop();
-                r.push_str("]);");
+                r.push_str(r#"");"#);
                 stack.push(r);
                 index
             }

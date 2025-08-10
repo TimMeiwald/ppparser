@@ -58,19 +58,3 @@
 <Delete> = "DELETE";
 <Passthrough> = "PASSTHROUGH";
 <Inline> = "Inline"; #Comment#
-
-<test_LR_num> = <Num>;
-<test_LR_expr> = (<test_LR_expr>, '-', <test_LR_num>) / <test_LR_num>; # Should match 0-0-0-0-0-0-0-0 etc #
-
-<test_indirect_LR_num> = <test_indirect_LR_expr>;
-<test_indirect_LR_expr> = (<test_indirect_LR_num>, '-', <test_LR_num>) / <test_LR_num>; # Should match 0-0-0-0-0-0-0-0 etc #
-
-<test_term> = (<test_term>, '+', <test_fact>)/(<test_term>, '-', <test_fact>)/<test_fact>;
-<test_fact> = (<test_fact>, '*', <Num>)/(<test_fact>, '/', <Num>)/<Num>;
-
-<test_term_indirect> = (<test_term_indirect>, '+', <test_fact_indirect>)/(<test_term_indirect>, '-', <test_fact_indirect>)/<test_fact_indirect>;
-<test_fact_indirect> = (<test_fact_indirect>, '*', <Num>)/(<test_fact_indirect>, '/', <Num>)/<Num>;
-
-<test_indirect_three_level_A> = (<test_indirect_three_level_B>, '-', <test_LR_num>) / <test_LR_num>;
-<test_indirect_three_level_B> = <test_indirect_three_level_C>;
-<test_indirect_three_level_C> = <test_indirect_three_level_A>;

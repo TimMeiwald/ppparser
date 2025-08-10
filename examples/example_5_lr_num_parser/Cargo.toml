@@ -1,0 +1,10 @@
+[package]
+name = "example_5_lr_num_parser"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.42", features = ["derive"] }
+num = "0.4.3"
+num-derive = "0.4.2"
+num-traits = "0.2.19"

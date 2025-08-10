@@ -10,7 +10,18 @@ members = [ "parser",
             "examples/example_3_basic_maths", 
             "examples/example_3_basic_maths_parser",
             "examples/example_4_full_maths",
-            "examples/example_4_full_maths_parser"]
+            "examples/example_4_full_maths_parser", 
+            "examples/example_5_lr_num", 
+            "examples/example_5_lr_num_parser", 
+            "examples/example_6_term_and_fact", 
+            "examples/example_6_term_and_fact_parser", 
+            "examples/example_7_indirect_lr_num", 
+            "examples/example_7_indirect_lr_num_parser", 
+            "examples/example_8_indirect_lr_3_level", 
+            "examples/example_8_indirect_lr_3_level_parser", 
+            "examples/example_9_indirect_lr_5_level",
+            "examples/example_9_indirect_lr_5_level_parser",
+            ]
 
 [profile.dev]
 panic = "unwind"

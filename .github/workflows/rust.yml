@@ -45,6 +45,22 @@ jobs:
         cargo test --verbose
         ./update_parsers.sh
         cargo test --verbose
+  Bench:
+    needs: Release_Test
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Rust Cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        shared-key: ${{ env.CI_NAME }}
+        save-if: "false"
+    - name: Bench
+      run: |
+        RUST_BACKTRACE=1
+        ./update_parsers.sh
+        cargo bench
 
   Format:
     needs: Build_And_Cache
@@ -75,6 +91,7 @@ jobs:
       env:
         RUSTFLAGS: "-Dwarnings"
       run: cargo clippy
+
   Release_Test:
         needs: [Test, Format, Lint]
         runs-on: ubuntu-latest
