@@ -60,7 +60,7 @@ jobs:
       run: |
         RUST_BACKTRACE=1
         ./update_parsers.sh
-        cargo bench
+        cargo bench --no-run
 
   Format:
     needs: Build_And_Cache

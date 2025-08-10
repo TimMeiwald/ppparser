@@ -1,1 +1,1 @@
-RUSTFLAGS=["-Ctarget-cpu=native"]
+RUSTFLAGS="-C link-args=-Wl,-zstack-size=16777216,target-cpu=native"

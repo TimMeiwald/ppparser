@@ -20,7 +20,9 @@ members = [ "parser",
             "examples/example_8_indirect_lr_3_level", 
             "examples/example_8_indirect_lr_3_level_parser", 
             "examples/example_9_indirect_lr_5_level",
-            "examples/example_9_indirect_lr_5_level_parser",
+            "examples/example_9_indirect_lr_5_level_parser", 
+            "examples/example_10_basic_bench",
+            "examples/example_10_basic_bench_parser",
             ]
 
 [profile.dev]
