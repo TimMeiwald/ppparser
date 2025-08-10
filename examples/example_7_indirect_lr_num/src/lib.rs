@@ -14,7 +14,7 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
         {
-            let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
+            let involved_set: Vec<Rules> = [Rules::Expr, Rules::Intermediate].to_vec();
             let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, &context, expr);
             result = executor(Key(0), &source, position);
         }
@@ -88,7 +88,7 @@ mod tests {
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
         let result: (bool, u32);
         {
-            let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
+            let involved_set: Vec<Rules> = [Rules::Expr, Rules::Intermediate].to_vec();
             let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, &context, expr);
             result = executor(Key(0), &source, position);
         }
