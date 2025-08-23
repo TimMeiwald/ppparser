@@ -25,8 +25,6 @@ where
     #[allow(dead_code)]
     fn print_publisher(&self);
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)>;
-    fn check_lr(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key, LR)>;
-
     fn connect(&mut self, parent_key: Key, child_key: Key);
     fn reserve_publisher_entry(&mut self, rule: Rules) -> Key;
     fn create_cache_entry(
@@ -140,9 +138,6 @@ impl Context for BasicContext {
     }
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         self.cache.check(rule, start_position)
-    }
-    fn check_lr(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key, LR)> {
-        self.cache.check_direct_lr(rule, start_position)
     }
     fn check_head(&self, rule: Rules, start_position: u32) -> Option<&Head> {
         self.cache.check_head(rule, start_position)
