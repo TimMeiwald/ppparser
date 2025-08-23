@@ -38,16 +38,6 @@ where
         key: Key,
     );
     fn connect_if_not_connected(&mut self, parent_index: Key, child_index: Key);
-    fn create_cache_entry_direct_lr(
-        &mut self,
-        rule: Rules,
-        is_true: bool,
-        start_position: u32,
-        end_position: u32,
-        key: Key,
-        lr: LR,
-    );
-
     fn update_publisher_entry(
         &mut self,
         key: Key,
@@ -139,18 +129,6 @@ impl Context for BasicContext {
     ) {
         self.cache
             .insert(rule, is_true, start_position, end_position, key);
-    }
-    fn create_cache_entry_direct_lr(
-        &mut self,
-        rule: Rules,
-        is_true: bool,
-        start_position: u32,
-        end_position: u32,
-        key: Key,
-        lr: LR,
-    ) {
-        self.cache
-            .insert_direct_lr(rule, is_true, start_position, end_position, key, lr);
     }
 
     fn update_publisher_entry(
