@@ -9,16 +9,10 @@ pub struct Head {
     pub involved_set: BTreeSet<Rules>,
     pub eval_set: BTreeSet<Rules>,
 }
-#[derive(Debug, Copy, Clone)]
-pub enum LR {
-    Set,
-    Unset,
-}
 
 #[derive(Debug)]
 pub struct BasicCache {
     cache: HashMap<(Rules, u32), (bool, u32, Key)>,
-    left_recursion_cache: HashMap<(Rules, u32), (bool, u32, Key, LR)>,
     heads: HashMap<(Rules, u32), Head>,
     current_active_left_recursion: Option<(Rules, u32)>,
 }
@@ -33,7 +27,6 @@ impl BasicCache {
     pub fn new() -> Self {
         BasicCache {
             cache: HashMap::new(),
-            left_recursion_cache: HashMap::new(),
             heads: HashMap::new(),
             current_active_left_recursion: None,
         }
@@ -59,27 +52,6 @@ impl BasicCache {
     }
     pub fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         self.cache.get(&(rule, start_position)).copied()
-    }
-    pub fn insert_direct_lr(
-        &mut self,
-        rule: Rules,
-        is_true: bool,
-        start_position: u32,
-        end_position: u32,
-        key: Key,
-        lr: LR,
-    ) {
-        self.left_recursion_cache
-            .insert((rule, start_position), (is_true, end_position, key, lr));
-    }
-    pub fn check_direct_lr(
-        &self,
-        rule: Rules,
-        start_position: u32,
-    ) -> Option<(bool, u32, Key, LR)> {
-        self.left_recursion_cache
-            .get(&(rule, start_position))
-            .copied()
     }
 
     pub fn check_head(&self, rule: Rules, start_position: u32) -> Option<&Head> {
@@ -115,13 +87,6 @@ impl BasicCache {
         head.eval_set = head.involved_set.clone();
     }
 
-    pub fn eval_set_is_empty(&self, rule: Rules, start_position: u32) -> bool {
-        let head = self
-            .heads
-            .get(&(rule, start_position))
-            .expect("Should always exist when calling rule_in_eval_set");
-        head.eval_set.is_empty()
-    }
     pub fn rule_in_involved_set(&self, head_index: (Rules, u32), rule: Rules) -> bool {
         // Return true if it's in eval set
 

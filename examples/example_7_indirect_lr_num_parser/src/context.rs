@@ -2,7 +2,7 @@
 use super::Key;
 use crate::{
     Rules,
-    cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache, LR},
+    cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache},
     publisher::{DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher},
 };
 use std::collections::BTreeSet;
@@ -17,7 +17,6 @@ where
     // Associated types so I can tie specific Cache/Publisher pairs together since they can be mutually exclusive
     // I.e NOOP Cache prohibits IndirectLeftRecursionPublisher since you need a cache to do indirect left recursion.
     type C;
-
     type P;
     #[allow(dead_code)]
     fn new(size_of_source: usize, number_of_rules: usize) -> Self;
@@ -26,10 +25,7 @@ where
     #[allow(dead_code)]
     fn print_publisher(&self);
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)>;
-    fn check_lr(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key, LR)>;
-
     fn connect(&mut self, parent_key: Key, child_key: Key);
-    fn connect_front(&mut self, parent_key: Key, child_key: Key);
     fn reserve_publisher_entry(&mut self, rule: Rules) -> Key;
     fn create_cache_entry(
         &mut self,
@@ -40,16 +36,6 @@ where
         key: Key,
     );
     fn connect_if_not_connected(&mut self, parent_index: Key, child_index: Key);
-    fn create_cache_entry_direct_lr(
-        &mut self,
-        rule: Rules,
-        is_true: bool,
-        start_position: u32,
-        end_position: u32,
-        key: Key,
-        lr: LR,
-    );
-
     fn update_publisher_entry(
         &mut self,
         key: Key,
@@ -66,9 +52,6 @@ where
     fn remove_from_eval_set(&mut self, head_index: (Rules, u32), rule: Rules);
     fn reinitialize_eval_set(&mut self, rule: Rules, start_position: u32);
     fn get_publisher(self) -> Self::P;
-    fn clear_node_of_children(&mut self, node: Key);
-    fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool;
-    fn disconnect(&mut self, parent: Key, child: Key);
     fn print_node(&self, node: Key);
     fn get_current_active_lr_position(&self) -> Option<(Rules, u32)>;
     fn set_current_active_lr_position(&mut self, position: Option<(Rules, u32)>);
@@ -113,15 +96,6 @@ impl Context for BasicContext {
     fn print_cache(&self) {
         println!("{:?}", &self.cache)
     }
-    fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool {
-        self.cache.eval_set_is_empty(rule, start_position)
-    }
-    fn clear_node_of_children(&mut self, node: Key) {
-        self.publisher.clear_node_of_children(node);
-    }
-    fn disconnect(&mut self, parent: Key, child: Key) {
-        self.publisher.disconnect(parent, child);
-    }
     fn print_publisher(&self) {
         println!("\n\n{:?}", &self.publisher)
     }
@@ -135,9 +109,6 @@ impl Context for BasicContext {
     fn connect(&mut self, parent_key: Key, child_key: Key) {
         self.publisher.connect(parent_key, child_key);
     }
-    fn connect_front(&mut self, parent_key: Key, child_key: Key) {
-        self.publisher.connect_front(parent_key, child_key);
-    }
     fn create_cache_entry(
         &mut self,
         rule: Rules,
@@ -148,18 +119,6 @@ impl Context for BasicContext {
     ) {
         self.cache
             .insert(rule, is_true, start_position, end_position, key);
-    }
-    fn create_cache_entry_direct_lr(
-        &mut self,
-        rule: Rules,
-        is_true: bool,
-        start_position: u32,
-        end_position: u32,
-        key: Key,
-        lr: LR,
-    ) {
-        self.cache
-            .insert_direct_lr(rule, is_true, start_position, end_position, key, lr);
     }
 
     fn update_publisher_entry(
@@ -175,9 +134,6 @@ impl Context for BasicContext {
     }
     fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         self.cache.check(rule, start_position)
-    }
-    fn check_lr(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key, LR)> {
-        self.cache.check_direct_lr(rule, start_position)
     }
     fn check_head(&self, rule: Rules, start_position: u32) -> Option<&Head> {
         self.cache.check_head(rule, start_position)

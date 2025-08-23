@@ -922,41 +922,6 @@ mod tests {
     use std::env;
     use std::fs::{canonicalize, read_to_string};
 
-    // #[test]
-    // fn test_java_grammar_parser() {
-    //     println!("{:?}", env::current_dir().unwrap());
-    //     let path = "../java_parser/src/java_grammar_definition_parser.txt";
-    //     let pathbuf = canonicalize(path).expect("If it's moved change the string above");
-    //     let string = read_to_string(pathbuf).expect("If it's moved change the string above");
-    //     let string2 = string.clone();
-    //     let src_len = string.len() as u32;
-    //     let source = Source::new(string);
-    //     let position: u32 = 0;
-    //     let context = Context::<MyCache4, Tree>::new(src_len, RULES_SIZE);
-    //     let result = grammar(&context, &source, position);
-
-    //     // Checks full file was parsed.
-    //     if result.1 != string2.len() as u32 {
-    //         panic!(
-    //             "Failed to parse grammar due to syntax error on Line: {:?}",
-    //             count_lines(&string2, result.1)
-    //         )
-    //     } else {
-    //         println!("Successfully parsed")
-    //     }
-    //     let tree = context.borrow();
-    //     //tree.print(Key(0), None);
-    //     let tree = &tree.clear_false();
-    //     let src = &String::from(source);
-    //     let sym_table = SymbolTable::new(tree, src);
-    //     //sym_table.print();
-    //     let gen_code = GeneratedCode::new(&sym_table, &tree, src);
-    //     println!("{}", gen_code.rules_enum);
-    //     for i in gen_code.rules {
-    //         println!("{}", i)
-    //     }
-    // }
-
     #[test]
     fn test_5() {
         let string = "<Rule>='A'/'B'/'C'/'D';   #   Ein Kommentar   #  ".to_string();
