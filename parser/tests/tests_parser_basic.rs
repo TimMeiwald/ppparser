@@ -11,7 +11,7 @@ mod tests {
     use std::fs::{canonicalize, read_to_string};
     #[test]
     fn test_ppparser_dsl_grammar_rule() {
-        let string = "<Spaces> PASSTHROUGH = '\n'/'\t'/'\r'/' ';".to_string();
+        let string = "<Spaces> = '\n'/'\t'/'\r'/' ';".to_string();
         let src_len = string.len() as u32;
         let source = Source::new(&string);
         let position: u32 = 0;
