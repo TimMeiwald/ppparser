@@ -1,7 +1,7 @@
 #[allow(unused_imports)] // So that I don't need to keep adding or removing whilst testing
 use super::Key;
 use crate::{
-    cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache, LR},
+    cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache},
     publisher::{DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher},
     Rules,
 };
