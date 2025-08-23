@@ -22,7 +22,7 @@ fn count_lines(source: &String, start_position: u32) -> u32 {
     new_line_count
 }
 
-pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode> {
+pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode<'_>> {
     let string = read_to_string(source).expect("If it's moved change the string above");
     let string2 = string.clone();
     let src_len = string.len();

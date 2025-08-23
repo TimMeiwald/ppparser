@@ -305,24 +305,24 @@ impl PartialEq for Node {
             println!("Start Position must match!");
             self.print(0);
             other.print(0);
-            return false;
+            false
         } else if self.end_position != other.end_position {
             println!("End Position must match!");
             self.print(0);
             other.print(0);
-            return false;
+            false
         } else if self.result != other.result {
             println!("Result(boolean) must be identical!");
             self.print(0);
             other.print(0);
-            return false;
+            false
         } else if self.children.len() != other.children.len() {
             println!("Number of children must be identical!.");
             self.print(0);
             other.print(0);
-            return false;
+            false
         } else {
-            return true;
+            true
         }
     }
 }
