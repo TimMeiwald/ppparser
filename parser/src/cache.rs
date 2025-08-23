@@ -60,7 +60,7 @@ impl BasicCache {
     pub fn check(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key)> {
         self.cache.get(&(rule, start_position)).copied()
     }
-    
+
     pub fn check_head(&self, rule: Rules, start_position: u32) -> Option<&Head> {
         let head = self.heads.get(&(rule, start_position));
         #[allow(clippy::manual_map)]
