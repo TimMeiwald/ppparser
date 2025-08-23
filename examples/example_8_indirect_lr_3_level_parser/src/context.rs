@@ -17,7 +17,6 @@ where
     // Associated types so I can tie specific Cache/Publisher pairs together since they can be mutually exclusive
     // I.e NOOP Cache prohibits IndirectLeftRecursionPublisher since you need a cache to do indirect left recursion.
     type C;
-
     type P;
     #[allow(dead_code)]
     fn new(size_of_source: usize, number_of_rules: usize) -> Self;
@@ -29,7 +28,6 @@ where
     fn check_lr(&self, rule: Rules, start_position: u32) -> Option<(bool, u32, Key, LR)>;
 
     fn connect(&mut self, parent_key: Key, child_key: Key);
-    fn connect_front(&mut self, parent_key: Key, child_key: Key);
     fn reserve_publisher_entry(&mut self, rule: Rules) -> Key;
     fn create_cache_entry(
         &mut self,
@@ -68,7 +66,6 @@ where
     fn get_publisher(self) -> Self::P;
     fn clear_node_of_children(&mut self, node: Key);
     fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool;
-    fn disconnect(&mut self, parent: Key, child: Key);
     fn print_node(&self, node: Key);
     fn get_current_active_lr_position(&self) -> Option<(Rules, u32)>;
     fn set_current_active_lr_position(&mut self, position: Option<(Rules, u32)>);
@@ -119,9 +116,6 @@ impl Context for BasicContext {
     fn clear_node_of_children(&mut self, node: Key) {
         self.publisher.clear_node_of_children(node);
     }
-    fn disconnect(&mut self, parent: Key, child: Key) {
-        self.publisher.disconnect(parent, child);
-    }
     fn print_publisher(&self) {
         println!("\n\n{:?}", &self.publisher)
     }
@@ -134,9 +128,6 @@ impl Context for BasicContext {
     }
     fn connect(&mut self, parent_key: Key, child_key: Key) {
         self.publisher.connect(parent_key, child_key);
-    }
-    fn connect_front(&mut self, parent_key: Key, child_key: Key) {
-        self.publisher.connect_front(parent_key, child_key);
     }
     fn create_cache_entry(
         &mut self,
