@@ -2,7 +2,7 @@
 use super::Key;
 use crate::{
     Rules,
-    cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache, LR},
+    cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache},
     publisher::{DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher},
 };
 use std::collections::BTreeSet;

@@ -9,11 +9,6 @@ pub struct Head {
     pub involved_set: BTreeSet<Rules>,
     pub eval_set: BTreeSet<Rules>,
 }
-#[derive(Debug, Copy, Clone)]
-pub enum LR {
-    Set,
-    Unset,
-}
 
 #[derive(Debug)]
 pub struct BasicCache {
