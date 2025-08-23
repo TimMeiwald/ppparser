@@ -871,31 +871,7 @@ pub fn semantic_instructions<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Delete, context, delete);
-    let closure_2 = _var_name(Rules::Passthrough, context, passthrough);
-    let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Inline, context, inline);
-    let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    closure_5(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn delete<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(b"DELETE");
-    closure_1(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn passthrough<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(b"PASSTHROUGH");
+    let closure_1 = _var_name(Rules::Inline, context, inline);
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]

@@ -1163,7 +1163,7 @@ mod tests {
 
     #[test]
     fn test_ordered_choice_match_range() {
-        let string = r#"<Atom> PASSTHROUGH = ['A'..'Z'];
+        let string = r#"<Atom> = ['A'..'Z'];
         "#
         .to_string();
         let string2 = string.clone();
@@ -1237,7 +1237,7 @@ mod tests {
 
     #[test]
     fn test_string_terminal() {
-        let string = r#"<Atom> PASSTHROUGH = "COLLECT";
+        let string = r#"<Atom> = "COLLECT";
         "#
         .to_string();
         let string2 = string.clone();
@@ -1274,7 +1274,7 @@ mod tests {
 
     #[test]
     fn test_string_terminal_emoji_codepoint() {
-        let string = r#"<Atom> PASSTHROUGH = 0x0001F600;
+        let string = r#"<Atom> = 0x0001F600;
         "#
         .to_string();
         let string2 = string.clone();
