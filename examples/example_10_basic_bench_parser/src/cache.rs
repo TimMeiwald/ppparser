@@ -18,7 +18,6 @@ pub enum LR {
 #[derive(Debug)]
 pub struct BasicCache {
     cache: HashMap<(Rules, u32), (bool, u32, Key)>,
-    left_recursion_cache: HashMap<(Rules, u32), (bool, u32, Key, LR)>,
     heads: HashMap<(Rules, u32), Head>,
     current_active_left_recursion: Option<(Rules, u32)>,
 }
@@ -33,7 +32,6 @@ impl BasicCache {
     pub fn new() -> Self {
         BasicCache {
             cache: HashMap::new(),
-            left_recursion_cache: HashMap::new(),
             heads: HashMap::new(),
             current_active_left_recursion: None,
         }
