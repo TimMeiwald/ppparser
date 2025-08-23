@@ -52,7 +52,6 @@ where
     fn remove_from_eval_set(&mut self, head_index: (Rules, u32), rule: Rules);
     fn reinitialize_eval_set(&mut self, rule: Rules, start_position: u32);
     fn get_publisher(self) -> Self::P;
-    fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool;
     fn print_node(&self, node: Key);
     fn get_current_active_lr_position(&self) -> Option<(Rules, u32)>;
     fn set_current_active_lr_position(&mut self, position: Option<(Rules, u32)>);
@@ -96,9 +95,6 @@ impl Context for BasicContext {
     #[allow(dead_code)]
     fn print_cache(&self) {
         println!("{:?}", &self.cache)
-    }
-    fn eval_set_is_empty(&self, start_position: u32, rule: Rules) -> bool {
-        self.cache.eval_set_is_empty(rule, start_position)
     }
     fn print_publisher(&self) {
         println!("\n\n{:?}", &self.publisher)
