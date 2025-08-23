@@ -36,8 +36,8 @@
 <StringTerminal> = (<Apostrophe>, !<Apostrophe>, (<ASCII>, (!<Apostrophe>,<ASCII>)+), <Apostrophe>)/<Hex>/<Integer>; #Multibyte matches essentially#
 
 <Terminal> = (<QuotationMark>,<ASCII>,<QuotationMark>)/(<QuotationMark>,'\',('n'/'r'/'t'),<QuotationMark>)/<Epsilon>;
-<Nucleus> PASSTHROUGH = (<OrderedChoiceMatchRange>/<Subexpression>/<Terminal>/<StringTerminal>/<Var_Name_Ref>), <Whitespace>;
-<Atom> PASSTHROUGH = (<And_Predicate>/<Not_Predicate>/<One_Or_More>/<Zero_Or_More>/<Optional>/<Nucleus>), <Whitespace>;
+<Nucleus> = (<OrderedChoiceMatchRange>/<Subexpression>/<Terminal>/<StringTerminal>/<Var_Name_Ref>), <Whitespace>;
+<Atom> = (<And_Predicate>/<Not_Predicate>/<One_Or_More>/<Zero_Or_More>/<Optional>/<Nucleus>), <Whitespace>;
 
 <And_Predicate> = <Ampersand>, <Nucleus>;
 <Not_Predicate> = <Exclamation_Mark>, <Nucleus>;
@@ -48,13 +48,11 @@
 <Optional> = <Nucleus>, <Whitespace>, <Question_Mark>;
 
 <Whitespace> Inline = (' '/'\n'/'\r'/'\t')*;
-<RHS> PASSTHROUGH = <Sequence>/<Ordered_Choice>/<Atom>;
+<RHS> = <Sequence>/<Ordered_Choice>/<Atom>;
 <LHS> = <Var_Name_Decl>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
 <Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;
 <Grammar> = <Rule>+, <Whitespace>?;
 #Lemme just check comments work# #Double up dem comments#
 <Comment> = <Whitespace>, '#', (!'#',<ASCII>)*, '#', <Whitespace>;
-<Semantic_Instructions> = <Delete>/<Passthrough>/<Inline>;
-<Delete> = "DELETE";
-<Passthrough> = "PASSTHROUGH";
+<Semantic_Instructions> = <Inline>;
 <Inline> = "Inline"; #Comment#
