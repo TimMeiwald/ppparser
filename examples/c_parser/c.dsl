@@ -11,6 +11,7 @@
 <digits> Inline = ['0'..'9'];
 
 <int> = <digits>+;
+<floating_constant> = (<digits>+, '.', <digits>*), ('f'/'F'/'l'/'L'/'')?;
 
 <valid_thing_name> Inline = (<letters>/'_'), (<letters>/<digits>/'_')*; # Things can be ctypes or variables etc. #
 <name> = !(<reserved_words>), <valid_thing_name>;
@@ -19,21 +20,24 @@
 <reserved_words> = "void"/"int"/"float"/"double"/"return"; # Not all there yet # 
 
 
+<structure> = "struct", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
+
 <function_declaration> = <function_header>, <wsc>, ';';
 <function_definition> = <function_header>, <wsc>, <function_body>;
 <function_header> = <ctype>, <ws>, <name>, <ws>, <function_parameters>; 
 <function_parameters> = '(', <ws>, (<parameter>, <ws>, (',', <ws>, <parameter>)*)?, <ws>, ')', <wsc>;
 <parameter> = <ctype>, <ws>, <name>;
-<function_body> = '{', <wsc>, (<statement>, <wsc>)*, <wsc>, '}';
+<function_body> = '{', <wsc>, (<statement>, <wsc>)*, '}';
 
-<function_call> = <name>, <ws>, '(', <ws>, (<expression>, <ws>, (',', <ws>, <expression>)*)?, <ws>, ')';
-<statement> = (<function_call>/<statement_return>/<statement_variable_assignment>), <wsc>, ';'; #WIP#
+<function_call> = <name>, <ws>, '(', <ws>, (<expression>, <ws>, (',', <ws>, <expression>)*)?, <ws>, ')', <ws>, ';', <wsc>;
 
-<statement_return> = "return", <ws>, <expression>;
-<statement_variable_assignment> = <ctype>, <ws>, <name>, <ws>, '=', <ws>, <expression>;
+<statement> = (<structure>/<function_call>/<statement_return>/<statement_variable_assignment>); #WIP#
+<statement_return> = "return", <ws>, <expression>, <ws>, ';', <wsc>;
+<statement_variable_assignment> = <ctype>, <ws>, <name>, <ws>, '=', <ws>, <expression>, <ws>, ';', <wsc>;
+<statement_variable_declaration> = <ctype>, <ws>, <name>, <ws>, ';';
 
-<expression> = <name>/<int>;
+<expression> = <name>/<floating_constant>/<int>;
 
 
 
-<Grammar> = <wsc>, (<function_definition>/<function_declaration>)*, <wsc>;
+<Grammar> = <wsc>, (<function_definition>/<function_declaration>/<structure>)*, <wsc>;

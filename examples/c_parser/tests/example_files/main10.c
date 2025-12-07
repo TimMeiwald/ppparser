@@ -1,0 +1,4 @@
+struct myStruct
+{
+    int x;
+};

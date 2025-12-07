@@ -58,3 +58,22 @@ fn test_function_definition_5() {
     );
     assert_eq!(result, (true, src.len() as u32));
 }
+
+#[test]
+fn test_function_definition_6() {
+    let src = "
+
+int main()
+{
+    float y = 20.5;
+    struct myStruct
+    { int x; float y; // Should be just fine
+    };
+}";
+    let result = shared(
+        src,
+        function_definition::<BasicContext>,
+        Rules::Function_definition,
+    );
+    assert_eq!(result, (true, src.len() as u32));
+}
