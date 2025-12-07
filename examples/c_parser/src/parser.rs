@@ -517,6 +517,26 @@ pub fn statement_return<T: Context + 'static>(
     closure_11(parent, source, position)
 }
 #[allow(dead_code)]
+pub fn array<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'[');
+    let closure_2 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Int, context, int);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _terminal(b']');
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    closure_9(parent, source, position)
+}
+#[allow(dead_code)]
 pub fn statement_variable_assignment<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
@@ -529,24 +549,27 @@ pub fn statement_variable_assignment<T: Context + 'static>(
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Name, context, name);
     let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 =
+    let closure_6 = _var_name(Rules::Array, context, array);
+    let closure_7 = _optional(&closure_6);
+    let closure_8 = _sequence(&closure_5, &closure_7);
+    let closure_9 =
         move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = _terminal(b'=');
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 =
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _terminal(b'=');
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    let closure_13 =
         move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    let closure_12 = _var_name(Rules::Expression, context, expression);
-    let closure_13 = _sequence(&closure_11, &closure_12);
-    let closure_14 =
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let closure_15 = _var_name(Rules::Expression, context, expression);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 =
         move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_15 = _sequence(&closure_13, &closure_14);
-    let closure_16 = _terminal(b';');
-    let closure_17 = _sequence(&closure_15, &closure_16);
-    let closure_18 = _var_name(Rules::Wsc, context, wsc);
-    let closure_19 = _sequence(&closure_17, &closure_18);
-    closure_19(parent, source, position)
+    let closure_18 = _sequence(&closure_16, &closure_17);
+    let closure_19 = _terminal(b';');
+    let closure_20 = _sequence(&closure_18, &closure_19);
+    let closure_21 = _var_name(Rules::Wsc, context, wsc);
+    let closure_22 = _sequence(&closure_20, &closure_21);
+    closure_22(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn statement_variable_declaration<T: Context + 'static>(
@@ -561,12 +584,15 @@ pub fn statement_variable_declaration<T: Context + 'static>(
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(Rules::Name, context, name);
     let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 =
+    let closure_6 = _var_name(Rules::Array, context, array);
+    let closure_7 = _optional(&closure_6);
+    let closure_8 = _sequence(&closure_5, &closure_7);
+    let closure_9 =
         move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = _terminal(b';');
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    closure_9(parent, source, position)
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _terminal(b';');
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    closure_12(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn expression<T: Context + 'static>(

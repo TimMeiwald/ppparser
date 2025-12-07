@@ -33,8 +33,10 @@
 
 <statement> = (<structure>/<function_call>/<statement_return>/<statement_variable_assignment>); #WIP#
 <statement_return> = "return", <ws>, <expression>, <ws>, ';', <wsc>;
-<statement_variable_assignment> = <ctype>, <ws>, <name>, <ws>, '=', <ws>, <expression>, <ws>, ';', <wsc>;
-<statement_variable_declaration> = <ctype>, <ws>, <name>, <ws>, ';';
+
+<array> = '[', <ws>, <int>, <ws>, ']';
+<statement_variable_assignment> = <ctype>, <ws>, <name>, <array>?, <ws>, '=', <ws>, <expression>, <ws>, ';', <wsc>;
+<statement_variable_declaration> = <ctype>, <ws>, <name>, <array>?, <ws>, ';';
 
 <expression> = <name>/<floating_constant>/<int>;
 
