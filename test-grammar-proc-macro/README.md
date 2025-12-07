@@ -1,0 +1,1 @@
+The purpose of this macro is to generate tests from a directory of test files. 
