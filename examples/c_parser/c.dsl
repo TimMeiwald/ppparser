@@ -16,7 +16,7 @@
 <name> = !(<reserved_words>), <valid_thing_name>;
 <ctype> = <valid_thing_name>;
 
-<reserved_words> = "void"/"int"/"float"/"double"; # Not all there yet # 
+<reserved_words> = "void"/"int"/"float"/"double"/"return"; # Not all there yet # 
 
 
 <function_declaration> = <function_header>, <wsc>, ';';
@@ -26,10 +26,14 @@
 <parameter> = <ctype>, <ws>, <name>;
 <function_body> = '{', <wsc>, (<statement>, <wsc>)*, <wsc>, '}';
 
-<function_call> = <name>, <ws>, '(', <ws>, (<name>, <ws>, (',', <ws>, <name>)*)?, <ws>, ')';
-<statement> = (<function_call>/<return_statement>), <wsc>, ';'; #WIP#
+<function_call> = <name>, <ws>, '(', <ws>, (<expression>, <ws>, (',', <ws>, <expression>)*)?, <ws>, ')';
+<statement> = (<function_call>/<statement_return>/<statement_variable_assignment>), <wsc>, ';'; #WIP#
 
-<return_statement> = "return", <ws>, <expression>;
+<statement_return> = "return", <ws>, <expression>;
+<statement_variable_assignment> = <ctype>, <ws>, <name>, <ws>, '=', <ws>, <expression>;
+
 <expression> = <name>/<int>;
+
+
 
 <Grammar> = <wsc>, (<function_definition>/<function_declaration>)*, <wsc>;
