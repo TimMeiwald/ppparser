@@ -20,10 +20,12 @@
 <reserved_words> = "char"/"void"/"int"/"float"/"double"/"return"; # Not all there yet # 
 
 
-<structure> = "struct", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
+<structure> = <wsc>, "struct", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
+<enum_value> Inline = <name>, <ws>, ('=', <ws>, <int>)?;
+<enumeration> = <wsc>, "enum", <ws>, <name>, <ws>, '{', <wsc>, (<enum_value>, ',', <wsc>)*, (<enum_value>, <wsc>)? ,'}', <wsc>, ';';
 
 <function_declaration> = <function_header>, <wsc>, ';';
-<function_definition> = <function_header>, <wsc>, <function_body>;
+<function_definition> = <wsc>, <function_header>, <wsc>, <function_body>;
 <function_header> = <ctype>, <ws>, <name>, <ws>, <function_parameters>; 
 <function_parameters> = '(', <ws>, (<parameter>, <ws>, (',', <ws>, <parameter>)*)?, <ws>, ')', <wsc>;
 <parameter> = <ctype>, <ws>, <name>;
@@ -31,7 +33,7 @@
 
 <function_call> = <name>, <ws>, '(', <ws>, (<expression>, <ws>, (',', <ws>, <expression>)*)?, <ws>, ')', <ws>, ';', <wsc>;
 
-<statement> = (<structure>/<function_call>/<statement_return>/<statement_variable_assignment>); #WIP#
+<statement> = (<structure>/<enumeration>/<function_call>/<statement_return>/<statement_variable_assignment>);
 <statement_return> = "return", <ws>, <expression>, <ws>, ';', <wsc>;
 
 <array> = '[', <ws>, <int>, <ws>, ']';
@@ -42,4 +44,4 @@
 
 
 
-<Grammar> = <wsc>, (<function_definition>/<function_declaration>/<structure>)*, <wsc>;
+<Grammar> = <wsc>, (<function_definition>/<function_declaration>/<structure>/<enumeration>)*, <wsc>;

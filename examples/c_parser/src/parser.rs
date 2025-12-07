@@ -267,36 +267,108 @@ pub fn structure<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(b"struct");
-    let closure_2 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_1 = _var_name(Rules::Wsc, context, wsc);
+    let closure_2 = _string_terminal_opt_ascii(b"struct");
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Name, context, name);
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 =
+    let closure_4 =
         move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _var_name(Rules::Name, context, name);
     let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = _terminal(b'{');
+    let closure_8 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
     let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::Wsc, context, wsc);
+    let closure_10 = _terminal(b'{');
     let closure_11 = _sequence(&closure_9, &closure_10);
-    let closure_12 = _var_name(
+    let closure_12 = _var_name(Rules::Wsc, context, wsc);
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    let closure_14 = _var_name(
         Rules::Statement_variable_declaration,
         context,
         statement_variable_declaration,
     );
-    let closure_13 = _var_name(Rules::Wsc, context, wsc);
-    let closure_14 = _sequence(&closure_12, &closure_13);
-    let closure_15 = _subexpression(&closure_14);
-    let closure_16 = _zero_or_more(&closure_15);
-    let closure_17 = _sequence(&closure_11, &closure_16);
-    let closure_18 = _terminal(b'}');
-    let closure_19 = _sequence(&closure_17, &closure_18);
-    let closure_20 = _var_name(Rules::Wsc, context, wsc);
+    let closure_15 = _var_name(Rules::Wsc, context, wsc);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 = _subexpression(&closure_16);
+    let closure_18 = _zero_or_more(&closure_17);
+    let closure_19 = _sequence(&closure_13, &closure_18);
+    let closure_20 = _terminal(b'}');
     let closure_21 = _sequence(&closure_19, &closure_20);
-    let closure_22 = _terminal(b';');
+    let closure_22 = _var_name(Rules::Wsc, context, wsc);
     let closure_23 = _sequence(&closure_21, &closure_22);
-    closure_23(parent, source, position)
+    let closure_24 = _terminal(b';');
+    let closure_25 = _sequence(&closure_23, &closure_24);
+    closure_25(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn enum_value<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Name, context, name);
+    let closure_2 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _terminal(b'=');
+    let closure_5 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_6 = _sequence(&closure_4, &closure_5);
+    let closure_7 = _var_name(Rules::Int, context, int);
+    let closure_8 = _sequence(&closure_6, &closure_7);
+    let closure_9 = _subexpression(&closure_8);
+    let closure_10 = _optional(&closure_9);
+    let closure_11 = _sequence(&closure_3, &closure_10);
+    closure_11(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn enumeration<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Wsc, context, wsc);
+    let closure_2 = _string_terminal_opt_ascii(b"enum");
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _var_name(Rules::Name, context, name);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _terminal(b'{');
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = _var_name(Rules::Wsc, context, wsc);
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    let closure_14 = move |parent: Key, source: &Source, position: u32| {
+        enum_value(parent, context, source, position)
+    };
+    let closure_15 = _terminal(b',');
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 = _var_name(Rules::Wsc, context, wsc);
+    let closure_18 = _sequence(&closure_16, &closure_17);
+    let closure_19 = _subexpression(&closure_18);
+    let closure_20 = _zero_or_more(&closure_19);
+    let closure_21 = _sequence(&closure_13, &closure_20);
+    let closure_22 = move |parent: Key, source: &Source, position: u32| {
+        enum_value(parent, context, source, position)
+    };
+    let closure_23 = _var_name(Rules::Wsc, context, wsc);
+    let closure_24 = _sequence(&closure_22, &closure_23);
+    let closure_25 = _subexpression(&closure_24);
+    let closure_26 = _optional(&closure_25);
+    let closure_27 = _sequence(&closure_21, &closure_26);
+    let closure_28 = _terminal(b'}');
+    let closure_29 = _sequence(&closure_27, &closure_28);
+    let closure_30 = _var_name(Rules::Wsc, context, wsc);
+    let closure_31 = _sequence(&closure_29, &closure_30);
+    let closure_32 = _terminal(b';');
+    let closure_33 = _sequence(&closure_31, &closure_32);
+    closure_33(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn function_declaration<T: Context + 'static>(
@@ -319,12 +391,14 @@ pub fn function_definition<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Function_header, context, function_header);
-    let closure_2 = _var_name(Rules::Wsc, context, wsc);
+    let closure_1 = _var_name(Rules::Wsc, context, wsc);
+    let closure_2 = _var_name(Rules::Function_header, context, function_header);
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Function_body, context, function_body);
+    let closure_4 = _var_name(Rules::Wsc, context, wsc);
     let closure_5 = _sequence(&closure_3, &closure_4);
-    closure_5(parent, source, position)
+    let closure_6 = _var_name(Rules::Function_body, context, function_body);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    closure_7(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn function_header<T: Context + 'static>(
@@ -479,20 +553,21 @@ pub fn statement<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    // WIP
     let closure_1 = _var_name(Rules::Structure, context, structure);
-    let closure_2 = _var_name(Rules::Function_call, context, function_call);
+    let closure_2 = _var_name(Rules::Enumeration, context, enumeration);
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Statement_return, context, statement_return);
+    let closure_4 = _var_name(Rules::Function_call, context, function_call);
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _var_name(
+    let closure_6 = _var_name(Rules::Statement_return, context, statement_return);
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    let closure_8 = _var_name(
         Rules::Statement_variable_assignment,
         context,
         statement_variable_assignment,
     );
-    let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    let closure_8 = _subexpression(&closure_7);
-    closure_8(parent, source, position)
+    let closure_9 = _ordered_choice(&closure_7, &closure_8);
+    let closure_10 = _subexpression(&closure_9);
+    closure_10(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn statement_return<T: Context + 'static>(
@@ -621,10 +696,12 @@ pub fn grammar<T: Context + 'static>(
     let closure_4 = _ordered_choice(&closure_2, &closure_3);
     let closure_5 = _var_name(Rules::Structure, context, structure);
     let closure_6 = _ordered_choice(&closure_4, &closure_5);
-    let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _zero_or_more(&closure_7);
-    let closure_9 = _sequence(&closure_1, &closure_8);
-    let closure_10 = _var_name(Rules::Wsc, context, wsc);
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    closure_11(parent, source, position)
+    let closure_7 = _var_name(Rules::Enumeration, context, enumeration);
+    let closure_8 = _ordered_choice(&closure_6, &closure_7);
+    let closure_9 = _subexpression(&closure_8);
+    let closure_10 = _zero_or_more(&closure_9);
+    let closure_11 = _sequence(&closure_1, &closure_10);
+    let closure_12 = _var_name(Rules::Wsc, context, wsc);
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    closure_13(parent, source, position)
 }
