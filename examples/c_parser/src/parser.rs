@@ -247,16 +247,18 @@ pub fn reserved_words<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     //  Not all there yet
-    let closure_1 = _string_terminal_opt_ascii(b"void");
-    let closure_2 = _string_terminal_opt_ascii(b"int");
+    let closure_1 = _string_terminal_opt_ascii(b"char");
+    let closure_2 = _string_terminal_opt_ascii(b"void");
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _string_terminal_opt_ascii(b"float");
+    let closure_4 = _string_terminal_opt_ascii(b"int");
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _string_terminal_opt_ascii(b"double");
+    let closure_6 = _string_terminal_opt_ascii(b"float");
     let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    let closure_8 = _string_terminal_opt_ascii(b"return");
+    let closure_8 = _string_terminal_opt_ascii(b"double");
     let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    closure_9(parent, source, position)
+    let closure_10 = _string_terminal_opt_ascii(b"return");
+    let closure_11 = _ordered_choice(&closure_9, &closure_10);
+    closure_11(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn structure<T: Context + 'static>(
@@ -413,7 +415,16 @@ pub fn function_body<T: Context + 'static>(
     let closure_9 = _sequence(&closure_3, &closure_8);
     let closure_10 = _terminal(b'}');
     let closure_11 = _sequence(&closure_9, &closure_10);
-    closure_11(parent, source, position)
+    let closure_12 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_13 = _terminal(b';');
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let closure_15 = _subexpression(&closure_14);
+    let closure_16 = _optional(&closure_15);
+    let closure_17 = _sequence(&closure_11, &closure_16);
+    let closure_18 = _var_name(Rules::Wsc, context, wsc);
+    let closure_19 = _sequence(&closure_17, &closure_18);
+    closure_19(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn function_call<T: Context + 'static>(

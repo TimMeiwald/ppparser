@@ -17,7 +17,7 @@
 <name> = !(<reserved_words>), <valid_thing_name>;
 <ctype> = <valid_thing_name>;
 
-<reserved_words> = "void"/"int"/"float"/"double"/"return"; # Not all there yet # 
+<reserved_words> = "char"/"void"/"int"/"float"/"double"/"return"; # Not all there yet # 
 
 
 <structure> = "struct", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
@@ -27,7 +27,7 @@
 <function_header> = <ctype>, <ws>, <name>, <ws>, <function_parameters>; 
 <function_parameters> = '(', <ws>, (<parameter>, <ws>, (',', <ws>, <parameter>)*)?, <ws>, ')', <wsc>;
 <parameter> = <ctype>, <ws>, <name>;
-<function_body> = '{', <wsc>, (<statement>, <wsc>)*, '}';
+<function_body> = '{', <wsc>, (<statement>, <wsc>)*, '}', (<ws>, ';')?, <wsc>;
 
 <function_call> = <name>, <ws>, '(', <ws>, (<expression>, <ws>, (',', <ws>, <expression>)*)?, <ws>, ')', <ws>, ';', <wsc>;
 
