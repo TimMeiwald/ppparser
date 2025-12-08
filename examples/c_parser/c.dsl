@@ -21,6 +21,7 @@
 
 
 <structure> = <wsc>, "struct", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
+<union> = <wsc>, "union", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
 <enum_value> Inline = <name>, <ws>, ('=', <ws>, <int>)?;
 <enumeration> = <wsc>, "enum", <ws>, <name>, <ws>, '{', <wsc>, (<enum_value>, ',', <wsc>)*, (<enum_value>, <wsc>)? ,'}', <wsc>, ';';
 
