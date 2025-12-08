@@ -19,14 +19,16 @@
 
 <reserved_words> = "char"/"void"/"int"/"float"/"double"/"return"; # Not all there yet # 
 
+<structure_definition> = <wsc>, "struct", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
+<structure_declaration> = <wsc>, "struct", <ws>, <name>, <ws>, <name>, <ws>, ';';
+<structure_declaration_and_initialization> = <wsc>, "struct", <ws>, <name>, <ws>, <name>, <ws>, '=', <ws>, '{', <wsc>, (<expression>, ',', <wsc>)*, (<expression>, <wsc>)? ,'}', <wsc>, ';';
 
-<structure> = <wsc>, "struct", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
 <union> = <wsc>, "union", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
 <enum_value> Inline = <name>, <ws>, ('=', <ws>, <int>)?;
 <enumeration> = <wsc>, "enum", <ws>, <name>, <ws>, '{', <wsc>, (<enum_value>, ',', <wsc>)*, (<enum_value>, <wsc>)? ,'}', <wsc>, ';';
 
-<function_declaration> = <function_header>, <wsc>, ';';
 <function_definition> = <wsc>, <function_header>, <wsc>, <function_body>;
+<function_declaration> = <function_header>, <wsc>, ';';
 <function_header> = <ctype>, <ws>, <name>, <ws>, <function_parameters>; 
 <function_parameters> = '(', <ws>, (<parameter>, <ws>, (',', <ws>, <parameter>)*)?, <ws>, ')', <wsc>;
 <parameter> = <ctype>, <ws>, <name>;
@@ -34,7 +36,7 @@
 
 <function_call> = <name>, <ws>, '(', <ws>, (<expression>, <ws>, (',', <ws>, <expression>)*)?, <ws>, ')', <ws>, ';', <wsc>;
 
-<statement> = (<structure>/<enumeration>/<function_call>/<statement_return>/<statement_variable_assignment>);
+<statement> = <structure_definition>/<structure_declaration>/<structure_declaration_and_initialization>/<union>/<enumeration>/<function_call>/<statement_return>/<statement_variable_assignment>;
 <statement_return> = "return", <ws>, <expression>, <ws>, ';', <wsc>;
 
 <array> = '[', <ws>, <int>, <ws>, ']';
@@ -45,4 +47,4 @@
 
 
 
-<Grammar> = <wsc>, (<function_definition>/<function_declaration>/<structure>/<enumeration>)*, <wsc>;
+<Grammar> = <wsc>, (<function_definition>/<function_declaration>/<structure_definition>/<structure_declaration>/<structure_declaration_and_initialization>/<enumeration>/<union>)*, <wsc>;
