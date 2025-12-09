@@ -8,5 +8,6 @@
 # cargo run -- -s ./examples/example_8_indirect_lr_3_level/LR_num_indirect_3_level.dsl -t ./examples/ -n example_8_indirect_lr_3_level_parser
 # cargo run -- -s ./examples/example_9_indirect_lr_5_level/LR_num_indirect_5_level.dsl -t ./examples/ -n example_9_indirect_lr_5_level_parser
 # cargo run -- -s ./examples/example_10_basic_bench/example_10_basic_bench.dsl -t ./examples/ -n example_10_basic_bench_parser
+# cargo run -- -s ./examples/c_parser/c.dsl -t ./examples/ -n c_parser
 cargo run -- -s ./examples/experimental_parser/grammar.dsl -t ./examples/ -n experimental_parser
 cargo fmt
