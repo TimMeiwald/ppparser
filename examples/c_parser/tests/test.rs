@@ -27,4 +27,6 @@ pub fn shared<'a>(
     result
 }
 
+test_grammar_files_in_dir!("examples/c_parser/tests/example_files/structs/");
+
 test_grammar_files_in_dir!("examples/c_parser/tests/example_files");

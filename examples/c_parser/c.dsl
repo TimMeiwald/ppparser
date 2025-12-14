@@ -46,13 +46,14 @@
 <statement_return> = "return", <ws>, <expression>, <ws>, ';', <wsc>;
 <statement_modifier> = "struct"/"enum"/"union";
 <statement> =    (<statement_modifier>?, <ws>, ((<ctype>, <ws>, <identifier>)/<identifier>), <ws>, '=', <ws>, (<expression>/<complex_initialization>), <ws>, ';')
-                /(<statement_modifier>?, <ws>, <ctype>, <ws>, <name>, <ws>, ';')
+                /(<statement_modifier>?, <ws>, <ctype>, <ws>, <name>, <ws>, <array>?, <ws>, ';')
                 /<statement_return>
                 /(<expression>, <ws>, ';')
                 /<function_definition>
                 /<function_declaration>
                 /<union>
                 /<structure>
-                /<enumeration>;
+                /<enumeration>
+                ;
 
 <Grammar> = (<wsc>, <statement>)*, <wsc>;
