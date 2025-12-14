@@ -1,7 +1,7 @@
 use super::{Context, Rules, Source};
 use crate::Key;
 use core::{cell::RefCell, panic};
-use std::{collections::BTreeSet, thread::current};
+use std::{collections::BTreeSet, thread::{current, sleep}, time::{self, Duration}};
 
 fn memoized_behaviour<T: Context>(
     context: &RefCell<T>,
@@ -40,6 +40,8 @@ pub fn _var_name<T: Context>(
     context: &RefCell<T>,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> impl Fn(Key, &Source, u32) -> (bool, u32) + '_ {
+    println!("Creating var name kernel with {rule:?}");
+    sleep(Duration::from_millis(100));
     move |parent: Key, source: &Source, position: u32| {
         _var_name_kernel(rule, context, parent, source, position, func)
     }

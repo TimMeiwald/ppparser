@@ -15,6 +15,105 @@ pub fn ascii<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
+pub fn s<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    //  Some whitespace is necessary for differentiating words
+    let closure_1 = _terminal(b' ');
+    closure_1(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn ws_kernel<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    //  Some whitespace are never relevant
+    let closure_1 = _terminal(b' ');
+    let closure_2 = _terminal(b'\t');
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _terminal(b'\r');
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    let closure_6 = _terminal(b'\n');
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    closure_8(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn ws<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        ws_kernel(parent, context, source, position)
+    };
+    let closure_2 = _zero_or_more(&closure_1);
+    closure_2(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn wsc<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    //  Comments should be retained for e.g formatters
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        ws_kernel(parent, context, source, position)
+    };
+    let closure_2 = _var_name(Rules::Comment, context, comment);
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Multiline_comment, context, multiline_comment);
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _zero_or_more(&closure_6);
+    closure_7(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn multiline_comment<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _string_terminal_opt_ascii(b"/*");
+    let closure_2 = _string_terminal_opt_ascii(b"*/");
+    let closure_3 = _not_predicate(&closure_2);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ascii(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _zero_or_more(&closure_6);
+    let closure_8 = _sequence(&closure_1, &closure_7);
+    let closure_9 = _string_terminal_opt_ascii(b"*/");
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    closure_10(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn comment<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _string_terminal_opt_ascii(b"//");
+    let closure_2 = _terminal(b'\n');
+    let closure_3 = _not_predicate(&closure_2);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ascii(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _zero_or_more(&closure_6);
+    let closure_8 = _sequence(&closure_1, &closure_7);
+    closure_8(parent, source, position)
+}
+#[allow(dead_code)]
 pub fn keyword<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
@@ -121,21 +220,21 @@ pub fn identifier<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Identifier_nondigit, context, identifier_nondigit);
     let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-    let closure_2 =
+    let closure_1 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
-    let closure_3 = _var_name(Rules::Identifier_nondigit, context, identifier_nondigit);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _ordered_choice(&closure_1, &closure_5);
+    let closure_2 = _var_name(Rules::Identifier_nondigit, context, identifier_nondigit);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _subexpression(&closure_3);
     let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-    let closure_7 =
+    let closure_5 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
-    let closure_8 = _var_name(Rules::Digit, context, digit);
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _subexpression(&closure_9);
-    let closure_11 = _ordered_choice(&closure_6, &closure_10);
+    let closure_6 = _var_name(Rules::Digit, context, digit);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 = _ordered_choice(&closure_4, &closure_8);
+    let closure_10 = _var_name(Rules::Identifier_nondigit, context, identifier_nondigit);
+    let closure_11 = _ordered_choice(&closure_9, &closure_10);
     closure_11(parent, source, position)
 }
 #[allow(dead_code)]
@@ -221,8 +320,20 @@ pub fn constant<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Integer_constant, context, integer_constant);
-    let closure_2 = _var_name(Rules::Floating_constant, context, floating_constant);
+    let closure_1 = _var_name(Rules::Floating_constant, context, floating_constant);
+    let involved_set: Vec<Rules> = [
+        Rules::Binary_constant,
+        Rules::Decimal_constant,
+        Rules::Integer_constant,
+        Rules::Octal_constant,
+    ]
+    .to_vec();
+    let closure_2 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Integer_constant,
+        context,
+        integer_constant,
+    );
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
     let involved_set: Vec<Rules> = [Rules::Enumeration_constant, Rules::Identifier].to_vec();
     let closure_4 = _var_name_indirect_left_recursion(
@@ -243,24 +354,48 @@ pub fn integer_constant<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Decimal_constant, context, decimal_constant);
+    let involved_set: Vec<Rules> = [Rules::Decimal_constant].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Decimal_constant,
+        context,
+        decimal_constant,
+    );
     let closure_2 = _var_name(Rules::Integer_suffix, context, integer_suffix);
     let closure_3 = _optional(&closure_2);
     let closure_4 = _sequence(&closure_1, &closure_3);
     let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _var_name(Rules::Binary_constant, context, binary_constant);
+    let involved_set: Vec<Rules> = [Rules::Binary_constant].to_vec();
+    let closure_6 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Binary_constant,
+        context,
+        binary_constant,
+    );
     let closure_7 = _var_name(Rules::Integer_suffix, context, integer_suffix);
     let closure_8 = _optional(&closure_7);
     let closure_9 = _sequence(&closure_6, &closure_8);
     let closure_10 = _subexpression(&closure_9);
     let closure_11 = _ordered_choice(&closure_5, &closure_10);
-    let closure_12 = _var_name(Rules::Octal_constant, context, octal_constant);
+    let involved_set: Vec<Rules> = [Rules::Octal_constant].to_vec();
+    let closure_12 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Octal_constant,
+        context,
+        octal_constant,
+    );
     let closure_13 = _var_name(Rules::Integer_suffix, context, integer_suffix);
     let closure_14 = _optional(&closure_13);
     let closure_15 = _sequence(&closure_12, &closure_14);
     let closure_16 = _subexpression(&closure_15);
     let closure_17 = _ordered_choice(&closure_11, &closure_16);
-    let closure_18 = _var_name(Rules::Hexadecimal_constant, context, hexadecimal_constant);
+    let involved_set: Vec<Rules> = [Rules::Hexadecimal_constant].to_vec();
+    let closure_18 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Hexadecimal_constant,
+        context,
+        hexadecimal_constant,
+    );
     let closure_19 = _var_name(Rules::Integer_suffix, context, integer_suffix);
     let closure_20 = _optional(&closure_19);
     let closure_21 = _sequence(&closure_18, &closure_20);
@@ -275,13 +410,19 @@ pub fn decimal_constant<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Nonzero_digit, context, nonzero_digit);
-    let closure_2 = _subexpression(&closure_1);
-    let closure_3 = _var_name(Rules::Decimal_constant, context, decimal_constant);
-    let closure_4 = _var_name(Rules::Digit, context, digit);
-    let closure_5 = _sequence(&closure_3, &closure_4);
+    let involved_set: Vec<Rules> = [Rules::Decimal_constant].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Decimal_constant,
+        context,
+        decimal_constant,
+    );
+    let closure_2 = _var_name(Rules::Digit, context, digit);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _subexpression(&closure_3);
+    let closure_5 = _var_name(Rules::Nonzero_digit, context, nonzero_digit);
     let closure_6 = _subexpression(&closure_5);
-    let closure_7 = _ordered_choice(&closure_2, &closure_6);
+    let closure_7 = _ordered_choice(&closure_4, &closure_6);
     closure_7(parent, source, position)
 }
 #[allow(dead_code)]
@@ -291,11 +432,17 @@ pub fn binary_constant<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Binary_prefix, context, binary_prefix);
+    let involved_set: Vec<Rules> = [Rules::Binary_constant].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Binary_constant,
+        context,
+        binary_constant,
+    );
     let closure_2 = _var_name(Rules::Binary_digit, context, binary_digit);
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _subexpression(&closure_3);
-    let closure_5 = _var_name(Rules::Binary_constant, context, binary_constant);
+    let closure_5 = _var_name(Rules::Binary_prefix, context, binary_prefix);
     let closure_6 = _var_name(Rules::Binary_digit, context, binary_digit);
     let closure_7 = _sequence(&closure_5, &closure_6);
     let closure_8 = _subexpression(&closure_7);
@@ -333,12 +480,18 @@ pub fn octal_constant<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _terminal(b'0');
-    let closure_2 = _var_name(Rules::Octal_constant, context, octal_constant);
-    let closure_3 = _var_name(Rules::Octal_digit, context, octal_digit);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _ordered_choice(&closure_1, &closure_5);
+    let involved_set: Vec<Rules> = [Rules::Octal_constant].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Octal_constant,
+        context,
+        octal_constant,
+    );
+    let closure_2 = _var_name(Rules::Octal_digit, context, octal_digit);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _subexpression(&closure_3);
+    let closure_5 = _terminal(b'0');
+    let closure_6 = _ordered_choice(&closure_4, &closure_5);
     closure_6(parent, source, position)
 }
 #[allow(dead_code)]
@@ -348,11 +501,17 @@ pub fn hexadecimal_constant<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Hexadecimal_prefix, context, hexadecimal_prefix);
+    let involved_set: Vec<Rules> = [Rules::Hexadecimal_constant].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Hexadecimal_constant,
+        context,
+        hexadecimal_constant,
+    );
     let closure_2 = _var_name(Rules::Hexadecimal_digit, context, hexadecimal_digit);
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _subexpression(&closure_3);
-    let closure_5 = _var_name(Rules::Hexadecimal_constant, context, hexadecimal_constant);
+    let closure_5 = _var_name(Rules::Hexadecimal_prefix, context, hexadecimal_prefix);
     let closure_6 = _var_name(Rules::Hexadecimal_digit, context, hexadecimal_digit);
     let closure_7 = _sequence(&closure_5, &closure_6);
     let closure_8 = _subexpression(&closure_7);
@@ -620,12 +779,8 @@ pub fn digit_sequence<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Digit, context, digit);
-    let closure_2 = _var_name(Rules::Digit_sequence, context, digit_sequence);
-    let closure_3 = _var_name(Rules::Digit, context, digit);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _ordered_choice(&closure_1, &closure_5);
-    closure_6(parent, source, position)
+    let closure_2 = _zero_or_more(&closure_1);
+    closure_2(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn hexadecimal_fractional_constant<T: Context + 'static>(
@@ -739,7 +894,13 @@ pub fn character_constant<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _terminal(b'\'');
-    let closure_2 = _var_name(Rules::C_char_sequence, context, c_char_sequence);
+    let involved_set: Vec<Rules> = [Rules::C_char_sequence].to_vec();
+    let closure_2 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::C_char_sequence,
+        context,
+        c_char_sequence,
+    );
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _terminal(b'\'');
     let closure_5 = _sequence(&closure_3, &closure_4);
@@ -747,7 +908,13 @@ pub fn character_constant<T: Context + 'static>(
     let closure_7 = _terminal(b'L');
     let closure_8 = _terminal(b'\'');
     let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::C_char_sequence, context, c_char_sequence);
+    let involved_set: Vec<Rules> = [Rules::C_char_sequence].to_vec();
+    let closure_10 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::C_char_sequence,
+        context,
+        c_char_sequence,
+    );
     let closure_11 = _sequence(&closure_9, &closure_10);
     let closure_12 = _terminal(b'\'');
     let closure_13 = _sequence(&closure_11, &closure_12);
@@ -762,12 +929,18 @@ pub fn c_char_sequence<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::C_char, context, c_char);
-    let closure_2 = _var_name(Rules::C_char_sequence, context, c_char_sequence);
-    let closure_3 = _var_name(Rules::C_char, context, c_char);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _ordered_choice(&closure_1, &closure_5);
+    let involved_set: Vec<Rules> = [Rules::C_char_sequence].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::C_char_sequence,
+        context,
+        c_char_sequence,
+    );
+    let closure_2 = _var_name(Rules::C_char, context, c_char);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _subexpression(&closure_3);
+    let closure_5 = _var_name(Rules::C_char, context, c_char);
+    let closure_6 = _ordered_choice(&closure_4, &closure_5);
     closure_6(parent, source, position)
 }
 #[allow(dead_code)]
@@ -785,15 +958,13 @@ pub fn c_char<T: Context + 'static>(
     let closure_6 = _terminal(b'\n');
     let closure_7 = _not_predicate(&closure_6);
     let closure_8 = _sequence(&closure_5, &closure_7);
-    let closure_9 = _var_name(Rules::Escape_sequence, context, escape_sequence);
-    let closure_10 = _not_predicate(&closure_9);
-    let closure_11 = _sequence(&closure_8, &closure_10);
-    let closure_12 =
+    let closure_9 =
         move |parent: Key, source: &Source, position: u32| ascii(parent, context, source, position);
-    let closure_13 = _sequence(&closure_11, &closure_12);
-    let closure_14 = _subexpression(&closure_13);
-    let closure_15 = _zero_or_more(&closure_14);
-    closure_15(parent, source, position)
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _subexpression(&closure_10);
+    let closure_12 = _var_name(Rules::Escape_sequence, context, escape_sequence);
+    let closure_13 = _ordered_choice(&closure_11, &closure_12);
+    closure_13(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn escape_sequence<T: Context + 'static>(
@@ -802,6 +973,7 @@ pub fn escape_sequence<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
+    //  Removed /<hexadecimal_escape_sequence> temporarily as breaking stuff
     let closure_1 = _var_name(
         Rules::Simple_escape_sequence,
         context,
@@ -810,18 +982,12 @@ pub fn escape_sequence<T: Context + 'static>(
     let closure_2 = _var_name(Rules::Octal_escape_sequence, context, octal_escape_sequence);
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
     let closure_4 = _var_name(
-        Rules::Hexadecimal_escape_sequence,
-        context,
-        hexadecimal_escape_sequence,
-    );
-    let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _var_name(
         Rules::Universal_character_name,
         context,
         universal_character_name,
     );
-    let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    closure_7(parent, source, position)
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    closure_5(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn simple_escape_sequence<T: Context + 'static>(
@@ -830,7 +996,7 @@ pub fn simple_escape_sequence<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    // "\a"/ "\b"/ "\f"/ "\n"/ "\r"/ "\t"/ "\v"/ "\'"/ "\"" /"\\" /"\?";
+    //  PLACEHOLDER: HAVENT ADDED EVERYTHING YET, "\a"/ "\b"/ "\f"/ "\n"/ "\r"/ "\t"/ "\v"/ "\'"/ "\"" /"\\" /"\?";
     let closure_1 = _string_terminal_opt_ascii(b"PLACEHOLDER");
     closure_1(parent, source, position)
 }
@@ -896,7 +1062,13 @@ pub fn string_literal<T: Context + 'static>(
     let closure_2 = _optional(&closure_1);
     let closure_3 = _terminal(b'"');
     let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _var_name(Rules::S_char_sequence, context, s_char_sequence);
+    let involved_set: Vec<Rules> = [Rules::S_char_sequence].to_vec();
+    let closure_5 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::S_char_sequence,
+        context,
+        s_char_sequence,
+    );
     let closure_6 = _optional(&closure_5);
     let closure_7 = _sequence(&closure_4, &closure_6);
     let closure_8 = _terminal(b'"');
@@ -926,12 +1098,18 @@ pub fn s_char_sequence<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::S_char, context, s_char);
-    let closure_2 = _var_name(Rules::S_char_sequence, context, s_char_sequence);
-    let closure_3 = _var_name(Rules::S_char, context, s_char);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _ordered_choice(&closure_1, &closure_5);
+    let involved_set: Vec<Rules> = [Rules::S_char_sequence].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::S_char_sequence,
+        context,
+        s_char_sequence,
+    );
+    let closure_2 = _var_name(Rules::S_char, context, s_char);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _subexpression(&closure_3);
+    let closure_5 = _var_name(Rules::S_char, context, s_char);
+    let closure_6 = _ordered_choice(&closure_4, &closure_5);
     closure_6(parent, source, position)
 }
 #[allow(dead_code)]
@@ -941,7 +1119,7 @@ pub fn s_char<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _terminal(b'\'');
+    let closure_1 = _terminal(b'"');
     let closure_2 = _not_predicate(&closure_1);
     let closure_3 = _terminal(b'\\');
     let closure_4 = _not_predicate(&closure_3);
@@ -949,15 +1127,13 @@ pub fn s_char<T: Context + 'static>(
     let closure_6 = _terminal(b'\n');
     let closure_7 = _not_predicate(&closure_6);
     let closure_8 = _sequence(&closure_5, &closure_7);
-    let closure_9 = _var_name(Rules::Escape_sequence, context, escape_sequence);
-    let closure_10 = _not_predicate(&closure_9);
-    let closure_11 = _sequence(&closure_8, &closure_10);
-    let closure_12 =
+    let closure_9 =
         move |parent: Key, source: &Source, position: u32| ascii(parent, context, source, position);
-    let closure_13 = _sequence(&closure_11, &closure_12);
-    let closure_14 = _subexpression(&closure_13);
-    let closure_15 = _zero_or_more(&closure_14);
-    closure_15(parent, source, position)
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _subexpression(&closure_10);
+    let closure_12 = _var_name(Rules::Escape_sequence, context, escape_sequence);
+    let closure_13 = _ordered_choice(&closure_11, &closure_12);
+    closure_13(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn punctuator<T: Context + 'static>(
@@ -1242,54 +1418,67 @@ pub fn primary_expression<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
     let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
+    let closure_2 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
     let involved_set: Vec<Rules> = [
+        Rules::Binary_constant,
         Rules::Constant,
+        Rules::Decimal_constant,
         Rules::Enumeration_constant,
         Rules::Identifier,
+        Rules::Integer_constant,
+        Rules::Octal_constant,
     ]
     .to_vec();
-    let closure_2 =
+    let closure_3 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Constant, context, constant);
-    let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::String_literal, context, string_literal);
-    let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _terminal(b'(');
+    let closure_4 = _ordered_choice(&closure_2, &closure_3);
+    let closure_5 = _var_name(Rules::String_literal, context, string_literal);
+    let closure_6 = _ordered_choice(&closure_4, &closure_5);
+    let closure_7 = _terminal(b'(');
+    let closure_8 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_9 = _sequence(&closure_7, &closure_8);
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
-    let closure_7 =
+    let closure_10 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Expression, context, expression);
-    let closure_8 = _sequence(&closure_6, &closure_7);
-    let closure_9 = _terminal(b')');
-    let closure_10 = _sequence(&closure_8, &closure_9);
-    let closure_11 = _subexpression(&closure_10);
-    let closure_12 = _ordered_choice(&closure_5, &closure_11);
-    let closure_13 = _var_name(Rules::Generic_selection, context, generic_selection);
-    let closure_14 = _ordered_choice(&closure_12, &closure_13);
-    closure_14(parent, source, position)
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    let closure_14 = _terminal(b')');
+    let closure_15 = _sequence(&closure_13, &closure_14);
+    let closure_16 = _subexpression(&closure_15);
+    let closure_17 = _ordered_choice(&closure_6, &closure_16);
+    let closure_18 = _var_name(Rules::Generic_selection, context, generic_selection);
+    let closure_19 = _ordered_choice(&closure_17, &closure_18);
+    let closure_20 = _subexpression(&closure_19);
+    let closure_21 = _sequence(&closure_1, &closure_20);
+    let closure_22 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_23 = _sequence(&closure_21, &closure_22);
+    closure_23(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn generic_selection<T: Context + 'static>(
@@ -1307,17 +1496,13 @@ pub fn generic_selection<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -1371,17 +1556,13 @@ pub fn generic_association<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -1404,17 +1585,13 @@ pub fn generic_association<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -1438,27 +1615,8 @@ pub fn postfix_expression<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Primary_expression,
-    ]
-    .to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Primary_expression,
-        context,
-        primary_expression,
-    );
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-    ]
-    .to_vec();
+    let closure_1 = _var_name(Rules::Primary_expression, context, primary_expression);
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression].to_vec();
     let closure_2 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Postfix_expression,
@@ -1473,18 +1631,14 @@ pub fn postfix_expression<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -1497,14 +1651,7 @@ pub fn postfix_expression<T: Context + 'static>(
     let closure_8 = _sequence(&closure_6, &closure_7);
     let closure_9 = _subexpression(&closure_8);
     let closure_10 = _ordered_choice(&closure_1, &closure_9);
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression].to_vec();
     let closure_11 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Postfix_expression,
@@ -1520,17 +1667,13 @@ pub fn postfix_expression<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -1548,14 +1691,7 @@ pub fn postfix_expression<T: Context + 'static>(
     let closure_18 = _sequence(&closure_16, &closure_17);
     let closure_19 = _subexpression(&closure_18);
     let closure_20 = _ordered_choice(&closure_10, &closure_19);
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression].to_vec();
     let closure_21 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Postfix_expression,
@@ -1570,14 +1706,7 @@ pub fn postfix_expression<T: Context + 'static>(
     let closure_25 = _sequence(&closure_23, &closure_24);
     let closure_26 = _subexpression(&closure_25);
     let closure_27 = _ordered_choice(&closure_20, &closure_26);
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression].to_vec();
     let closure_28 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Postfix_expression,
@@ -1592,14 +1721,7 @@ pub fn postfix_expression<T: Context + 'static>(
     let closure_32 = _sequence(&closure_30, &closure_31);
     let closure_33 = _subexpression(&closure_32);
     let closure_34 = _ordered_choice(&closure_27, &closure_33);
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression].to_vec();
     let closure_35 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Postfix_expression,
@@ -1610,14 +1732,7 @@ pub fn postfix_expression<T: Context + 'static>(
     let closure_37 = _sequence(&closure_35, &closure_36);
     let closure_38 = _subexpression(&closure_37);
     let closure_39 = _ordered_choice(&closure_34, &closure_38);
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression].to_vec();
     let closure_40 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Postfix_expression,
@@ -1671,17 +1786,13 @@ pub fn argument_expression_list<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -1700,17 +1811,13 @@ pub fn argument_expression_list<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -1730,17 +1837,13 @@ pub fn argument_expression_list<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -1764,14 +1867,7 @@ pub fn unary_expression<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Postfix_expression,
@@ -1779,15 +1875,7 @@ pub fn unary_expression<T: Context + 'static>(
         postfix_expression,
     );
     let closure_2 = _string_terminal_opt_ascii(b"++");
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression, Rules::Unary_expression].to_vec();
     let closure_3 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Unary_expression,
@@ -1798,15 +1886,7 @@ pub fn unary_expression<T: Context + 'static>(
     let closure_5 = _subexpression(&closure_4);
     let closure_6 = _ordered_choice(&closure_1, &closure_5);
     let closure_7 = _string_terminal_opt_ascii(b"--");
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression, Rules::Unary_expression].to_vec();
     let closure_8 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Unary_expression,
@@ -1819,11 +1899,7 @@ pub fn unary_expression<T: Context + 'static>(
     let closure_12 = _var_name(Rules::Unary_operator, context, unary_operator);
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -1837,15 +1913,7 @@ pub fn unary_expression<T: Context + 'static>(
     let closure_15 = _subexpression(&closure_14);
     let closure_16 = _ordered_choice(&closure_11, &closure_15);
     let closure_17 = _string_terminal_opt_ascii(b"sizeof");
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression, Rules::Unary_expression].to_vec();
     let closure_18 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Unary_expression,
@@ -1902,15 +1970,7 @@ pub fn cast_expression<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression, Rules::Unary_expression].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Unary_expression,
@@ -1924,11 +1984,7 @@ pub fn cast_expression<T: Context + 'static>(
     let closure_6 = _sequence(&closure_4, &closure_5);
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -1952,11 +2008,7 @@ pub fn multiplicative_expression<T: Context + 'static>(
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -1968,12 +2020,8 @@ pub fn multiplicative_expression<T: Context + 'static>(
     );
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -1987,11 +2035,7 @@ pub fn multiplicative_expression<T: Context + 'static>(
     let closure_4 = _sequence(&closure_2, &closure_3);
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2006,12 +2050,8 @@ pub fn multiplicative_expression<T: Context + 'static>(
     let closure_8 = _ordered_choice(&closure_1, &closure_7);
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2025,11 +2065,7 @@ pub fn multiplicative_expression<T: Context + 'static>(
     let closure_11 = _sequence(&closure_9, &closure_10);
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2044,12 +2080,8 @@ pub fn multiplicative_expression<T: Context + 'static>(
     let closure_15 = _ordered_choice(&closure_8, &closure_14);
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2063,11 +2095,7 @@ pub fn multiplicative_expression<T: Context + 'static>(
     let closure_18 = _sequence(&closure_16, &closure_17);
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2091,12 +2119,8 @@ pub fn additive_expression<T: Context + 'static>(
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2109,12 +2133,8 @@ pub fn additive_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2128,12 +2148,8 @@ pub fn additive_expression<T: Context + 'static>(
     let closure_4 = _sequence(&closure_2, &closure_3);
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2149,12 +2165,8 @@ pub fn additive_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2168,12 +2180,8 @@ pub fn additive_expression<T: Context + 'static>(
     let closure_11 = _sequence(&closure_9, &closure_10);
     let involved_set: Vec<Rules> = [
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2198,12 +2206,8 @@ pub fn shift_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2216,12 +2220,8 @@ pub fn shift_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
@@ -2237,12 +2237,8 @@ pub fn shift_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2258,12 +2254,8 @@ pub fn shift_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
@@ -2279,12 +2271,8 @@ pub fn shift_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
@@ -2309,12 +2297,8 @@ pub fn relational_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
@@ -2328,12 +2312,8 @@ pub fn relational_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2350,12 +2330,8 @@ pub fn relational_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
@@ -2372,12 +2348,8 @@ pub fn relational_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2394,12 +2366,8 @@ pub fn relational_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
@@ -2416,12 +2384,8 @@ pub fn relational_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2438,12 +2402,8 @@ pub fn relational_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
@@ -2460,12 +2420,8 @@ pub fn relational_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2482,12 +2438,8 @@ pub fn relational_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
@@ -2513,12 +2465,8 @@ pub fn equality_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2533,13 +2481,9 @@ pub fn equality_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2556,12 +2500,8 @@ pub fn equality_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2579,13 +2519,9 @@ pub fn equality_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2602,12 +2538,8 @@ pub fn equality_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2634,13 +2566,9 @@ pub fn and_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2656,13 +2584,9 @@ pub fn and_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2679,13 +2603,9 @@ pub fn and_expression<T: Context + 'static>(
     let involved_set: Vec<Rules> = [
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2713,13 +2633,9 @@ pub fn exclusive_or_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2735,14 +2651,10 @@ pub fn exclusive_or_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2760,13 +2672,9 @@ pub fn exclusive_or_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2794,14 +2702,10 @@ pub fn inclusive_or_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2817,15 +2721,11 @@ pub fn inclusive_or_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2843,14 +2743,10 @@ pub fn inclusive_or_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2878,15 +2774,11 @@ pub fn logical_and_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2902,16 +2794,12 @@ pub fn logical_and_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2929,15 +2817,11 @@ pub fn logical_and_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2965,16 +2849,12 @@ pub fn logical_or_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -2990,17 +2870,13 @@ pub fn logical_or_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3018,16 +2894,12 @@ pub fn logical_or_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3055,17 +2927,13 @@ pub fn conditional_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3081,17 +2949,13 @@ pub fn conditional_expression<T: Context + 'static>(
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3111,18 +2975,14 @@ pub fn conditional_expression<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3138,17 +2998,13 @@ pub fn conditional_expression<T: Context + 'static>(
         Rules::Additive_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3177,17 +3033,13 @@ pub fn assignment_expression<T: Context + 'static>(
         Rules::Additive_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3199,15 +3051,7 @@ pub fn assignment_expression<T: Context + 'static>(
         context,
         conditional_expression,
     );
-    let involved_set: Vec<Rules> = [
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Identifier,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
+    let involved_set: Vec<Rules> = [Rules::Postfix_expression, Rules::Unary_expression].to_vec();
     let closure_2 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Unary_expression,
@@ -3222,17 +3066,13 @@ pub fn assignment_expression<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3292,17 +3132,13 @@ pub fn expression<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3320,18 +3156,14 @@ pub fn expression<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3347,17 +3179,13 @@ pub fn expression<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3386,17 +3214,13 @@ pub fn constant_expression<T: Context + 'static>(
         Rules::Additive_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -3446,60 +3270,82 @@ pub fn declaration_specifiers<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_2 = _var_name(
         Rules::Storage_class_specifier,
         context,
         storage_class_specifier,
     );
-    let closure_2 = _var_name(
+    let closure_3 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = _var_name(
         Rules::Declaration_specifiers,
         context,
         declaration_specifiers,
     );
-    let closure_3 = _optional(&closure_2);
-    let closure_4 = _sequence(&closure_1, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _var_name(Rules::Type_specifier, context, type_specifier);
-    let closure_7 = _var_name(
+    let closure_6 = _optional(&closure_5);
+    let closure_7 = _sequence(&closure_4, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 = _var_name(Rules::Type_specifier, context, type_specifier);
+    let closure_10 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = _var_name(
         Rules::Declaration_specifiers,
         context,
         declaration_specifiers,
     );
-    let closure_8 = _optional(&closure_7);
-    let closure_9 = _sequence(&closure_6, &closure_8);
-    let closure_10 = _subexpression(&closure_9);
-    let closure_11 = _ordered_choice(&closure_5, &closure_10);
-    let closure_12 = _var_name(Rules::Type_qualifier, context, type_qualifier);
-    let closure_13 = _var_name(
+    let closure_13 = _optional(&closure_12);
+    let closure_14 = _sequence(&closure_11, &closure_13);
+    let closure_15 = _subexpression(&closure_14);
+    let closure_16 = _ordered_choice(&closure_8, &closure_15);
+    let closure_17 = _var_name(Rules::Type_qualifier, context, type_qualifier);
+    let closure_18 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_19 = _sequence(&closure_17, &closure_18);
+    let closure_20 = _var_name(
         Rules::Declaration_specifiers,
         context,
         declaration_specifiers,
     );
-    let closure_14 = _optional(&closure_13);
-    let closure_15 = _sequence(&closure_12, &closure_14);
-    let closure_16 = _subexpression(&closure_15);
-    let closure_17 = _ordered_choice(&closure_11, &closure_16);
-    let closure_18 = _var_name(Rules::Function_specifier, context, function_specifier);
-    let closure_19 = _var_name(
+    let closure_21 = _optional(&closure_20);
+    let closure_22 = _sequence(&closure_19, &closure_21);
+    let closure_23 = _subexpression(&closure_22);
+    let closure_24 = _ordered_choice(&closure_16, &closure_23);
+    let closure_25 = _var_name(Rules::Function_specifier, context, function_specifier);
+    let closure_26 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_27 = _sequence(&closure_25, &closure_26);
+    let closure_28 = _var_name(
         Rules::Declaration_specifiers,
         context,
         declaration_specifiers,
     );
-    let closure_20 = _optional(&closure_19);
-    let closure_21 = _sequence(&closure_18, &closure_20);
-    let closure_22 = _subexpression(&closure_21);
-    let closure_23 = _ordered_choice(&closure_17, &closure_22);
-    let closure_24 = _var_name(Rules::Alignment_specifier, context, alignment_specifier);
-    let closure_25 = _var_name(
+    let closure_29 = _optional(&closure_28);
+    let closure_30 = _sequence(&closure_27, &closure_29);
+    let closure_31 = _subexpression(&closure_30);
+    let closure_32 = _ordered_choice(&closure_24, &closure_31);
+    let closure_33 = _var_name(Rules::Alignment_specifier, context, alignment_specifier);
+    let closure_34 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_35 = _sequence(&closure_33, &closure_34);
+    let closure_36 = _var_name(
         Rules::Declaration_specifiers,
         context,
         declaration_specifiers,
     );
-    let closure_26 = _optional(&closure_25);
-    let closure_27 = _sequence(&closure_24, &closure_26);
-    let closure_28 = _subexpression(&closure_27);
-    let closure_29 = _ordered_choice(&closure_23, &closure_28);
-    closure_29(parent, source, position)
+    let closure_37 = _optional(&closure_36);
+    let closure_38 = _sequence(&closure_35, &closure_37);
+    let closure_39 = _subexpression(&closure_38);
+    let closure_40 = _ordered_choice(&closure_32, &closure_39);
+    let closure_41 = _subexpression(&closure_40);
+    let closure_42 = _sequence(&closure_1, &closure_41);
+    let closure_43 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_44 = _sequence(&closure_42, &closure_43);
+    closure_44(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn attribute_seq<T: Context + 'static>(
@@ -3551,14 +3397,22 @@ pub fn init_declarator_list<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Init_declarator, context, init_declarator);
-    let closure_2 = _var_name(Rules::Init_declarator_list, context, init_declarator_list);
+    let closure_2 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
     let closure_3 = _terminal(b',');
     let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _var_name(Rules::Init_declarator, context, init_declarator);
+    let closure_5 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
     let closure_6 = _sequence(&closure_4, &closure_5);
-    let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _ordered_choice(&closure_1, &closure_7);
-    closure_8(parent, source, position)
+    let closure_7 = _var_name(Rules::Init_declarator, context, init_declarator);
+    let closure_8 = _sequence(&closure_6, &closure_7);
+    let closure_9 = _subexpression(&closure_8);
+    let closure_10 = _zero_or_more(&closure_9);
+    let closure_11 = _sequence(&closure_1, &closure_10);
+    let closure_12 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    closure_13(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn init_declarator<T: Context + 'static>(
@@ -3567,39 +3421,48 @@ pub fn init_declarator<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Declarator, context, declarator);
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
     let closure_2 = _var_name(Rules::Declarator, context, declarator);
-    let closure_3 = _terminal(b'=');
-    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_3 = _var_name(Rules::Declarator, context, declarator);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _terminal(b'=');
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_9 = _sequence(&closure_7, &closure_8);
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Initializer,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
-    let closure_5 =
+    let closure_10 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Initializer, context, initializer);
-    let closure_6 = _sequence(&closure_4, &closure_5);
-    let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _ordered_choice(&closure_1, &closure_7);
-    closure_8(parent, source, position)
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = _subexpression(&closure_11);
+    let closure_13 = _ordered_choice(&closure_2, &closure_12);
+    let closure_14 = _subexpression(&closure_13);
+    let closure_15 = _sequence(&closure_1, &closure_14);
+    let closure_16 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_17 = _sequence(&closure_15, &closure_16);
+    closure_17(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn storage_class_specifier<T: Context + 'static>(
@@ -3740,31 +3603,60 @@ pub fn struct_or_union_specifier<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Struct_or_union, context, struct_or_union);
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_2 = _var_name(Rules::Struct_or_union, context, struct_or_union);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
     let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-    let closure_2 =
+    let closure_6 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
-    let closure_3 = _optional(&closure_2);
-    let closure_4 = _sequence(&closure_1, &closure_3);
-    let closure_5 = _terminal(b'{');
-    let closure_6 = _sequence(&closure_4, &closure_5);
-    let closure_7 = _var_name(
+    let closure_7 = _optional(&closure_6);
+    let closure_8 = _sequence(&closure_5, &closure_7);
+    let closure_9 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _terminal(b'{');
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    let closure_13 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let involved_set: Vec<Rules> = [Rules::Struct_declaration_list].to_vec();
+    let closure_15 = _var_name_indirect_left_recursion(
+        &involved_set,
         Rules::Struct_declaration_list,
         context,
         struct_declaration_list,
     );
-    let closure_8 = _sequence(&closure_6, &closure_7);
-    let closure_9 = _terminal(b'}');
-    let closure_10 = _sequence(&closure_8, &closure_9);
-    let closure_11 = _subexpression(&closure_10);
-    let closure_12 = _var_name(Rules::Struct_or_union, context, struct_or_union);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_18 = _sequence(&closure_16, &closure_17);
+    let closure_19 = _terminal(b'}');
+    let closure_20 = _sequence(&closure_18, &closure_19);
+    let closure_21 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_22 = _sequence(&closure_20, &closure_21);
+    let closure_23 = _subexpression(&closure_22);
+    let closure_24 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_25 = _var_name(Rules::Struct_or_union, context, struct_or_union);
+    let closure_26 = _sequence(&closure_24, &closure_25);
+    let closure_27 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_28 = _sequence(&closure_26, &closure_27);
     let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-    let closure_13 =
+    let closure_29 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
-    let closure_14 = _sequence(&closure_12, &closure_13);
-    let closure_15 = _subexpression(&closure_14);
-    let closure_16 = _ordered_choice(&closure_11, &closure_15);
-    closure_16(parent, source, position)
+    let closure_30 = _sequence(&closure_28, &closure_29);
+    let closure_31 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_32 = _sequence(&closure_30, &closure_31);
+    let closure_33 = _subexpression(&closure_32);
+    let closure_34 = _ordered_choice(&closure_23, &closure_33);
+    closure_34(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn struct_or_union<T: Context + 'static>(
@@ -3785,17 +3677,32 @@ pub fn struct_declaration_list<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Struct_declaration, context, struct_declaration);
-    let closure_2 = _var_name(
+    let involved_set: Vec<Rules> = [Rules::Struct_declaration_list].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
         Rules::Struct_declaration_list,
         context,
         struct_declaration_list,
     );
-    let closure_3 = _var_name(Rules::Struct_declaration, context, struct_declaration);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _ordered_choice(&closure_1, &closure_5);
-    closure_6(parent, source, position)
+    let closure_2 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Struct_declaration, context, struct_declaration);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_10 = _var_name(Rules::Struct_declaration, context, struct_declaration);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    let closure_14 = _subexpression(&closure_13);
+    let closure_15 = _ordered_choice(&closure_8, &closure_14);
+    closure_15(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn struct_declaration<T: Context + 'static>(
@@ -3804,28 +3711,46 @@ pub fn struct_declaration<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_2 = _var_name(
         Rules::Specifier_qualifier_list,
         context,
         specifier_qualifier_list,
     );
-    let closure_2 = _var_name(
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let involved_set: Vec<Rules> = [Rules::Struct_declarator_list].to_vec();
+    let closure_6 = _var_name_indirect_left_recursion(
+        &involved_set,
         Rules::Struct_declarator_list,
         context,
         struct_declarator_list,
     );
-    let closure_3 = _optional(&closure_2);
-    let closure_4 = _sequence(&closure_1, &closure_3);
-    let closure_5 = _terminal(b';');
-    let closure_6 = _sequence(&closure_4, &closure_5);
-    let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _var_name(
+    let closure_7 = _optional(&closure_6);
+    let closure_8 = _sequence(&closure_5, &closure_7);
+    let closure_9 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _terminal(b';');
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    let closure_13 = _subexpression(&closure_12);
+    let closure_14 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_15 = _var_name(
         Rules::Static_assert_declaration,
         context,
         static_assert_declaration,
     );
-    let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    closure_9(parent, source, position)
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_18 = _sequence(&closure_16, &closure_17);
+    let closure_19 = _subexpression(&closure_18);
+    let closure_20 = _ordered_choice(&closure_13, &closure_19);
+    closure_20(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn specifier_qualifier_list<T: Context + 'static>(
@@ -3834,36 +3759,63 @@ pub fn specifier_qualifier_list<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Type_specifier, context, type_specifier);
-    let closure_2 = _var_name(
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_2 = _var_name(Rules::Type_specifier, context, type_specifier);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _var_name(
         Rules::Specifier_qualifier_list,
         context,
         specifier_qualifier_list,
     );
-    let closure_3 = _optional(&closure_2);
-    let closure_4 = _sequence(&closure_1, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _var_name(Rules::Type_qualifier, context, type_qualifier);
-    let closure_7 = _var_name(
+    let closure_7 = _optional(&closure_6);
+    let closure_8 = _sequence(&closure_5, &closure_7);
+    let closure_9 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _subexpression(&closure_10);
+    let closure_12 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_13 = _var_name(Rules::Type_qualifier, context, type_qualifier);
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let closure_15 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 = _var_name(
         Rules::Specifier_qualifier_list,
         context,
         specifier_qualifier_list,
     );
-    let closure_8 = _optional(&closure_7);
-    let closure_9 = _sequence(&closure_6, &closure_8);
-    let closure_10 = _subexpression(&closure_9);
-    let closure_11 = _ordered_choice(&closure_5, &closure_10);
-    let closure_12 = _var_name(Rules::Alignment_specifier, context, alignment_specifier);
-    let closure_13 = _var_name(
+    let closure_18 = _optional(&closure_17);
+    let closure_19 = _sequence(&closure_16, &closure_18);
+    let closure_20 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_21 = _sequence(&closure_19, &closure_20);
+    let closure_22 = _subexpression(&closure_21);
+    let closure_23 = _ordered_choice(&closure_11, &closure_22);
+    let closure_24 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_25 = _var_name(Rules::Alignment_specifier, context, alignment_specifier);
+    let closure_26 = _sequence(&closure_24, &closure_25);
+    let closure_27 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_28 = _sequence(&closure_26, &closure_27);
+    let closure_29 = _var_name(
         Rules::Specifier_qualifier_list,
         context,
         specifier_qualifier_list,
     );
-    let closure_14 = _optional(&closure_13);
-    let closure_15 = _sequence(&closure_12, &closure_14);
-    let closure_16 = _subexpression(&closure_15);
-    let closure_17 = _ordered_choice(&closure_11, &closure_16);
-    closure_17(parent, source, position)
+    let closure_30 = _optional(&closure_29);
+    let closure_31 = _sequence(&closure_28, &closure_30);
+    let closure_32 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_33 = _sequence(&closure_31, &closure_32);
+    let closure_34 = _subexpression(&closure_33);
+    let closure_35 = _ordered_choice(&closure_23, &closure_34);
+    closure_35(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn struct_declarator_list<T: Context + 'static>(
@@ -3872,19 +3824,37 @@ pub fn struct_declarator_list<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Struct_declarator, context, struct_declarator);
-    let closure_2 = _var_name(
+    let involved_set: Vec<Rules> = [Rules::Struct_declarator_list].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
         Rules::Struct_declarator_list,
         context,
         struct_declarator_list,
     );
-    let closure_3 = _terminal(b',');
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _var_name(Rules::Struct_declarator, context, struct_declarator);
-    let closure_6 = _sequence(&closure_4, &closure_5);
-    let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _ordered_choice(&closure_1, &closure_7);
-    closure_8(parent, source, position)
+    let closure_2 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _terminal(b',');
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _var_name(Rules::Struct_declarator, context, struct_declarator);
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = _subexpression(&closure_11);
+    let closure_13 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_14 = _var_name(Rules::Struct_declarator, context, struct_declarator);
+    let closure_15 = _sequence(&closure_13, &closure_14);
+    let closure_16 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_17 = _sequence(&closure_15, &closure_16);
+    let closure_18 = _subexpression(&closure_17);
+    let closure_19 = _ordered_choice(&closure_12, &closure_18);
+    closure_19(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn struct_declarator<T: Context + 'static>(
@@ -3894,195 +3864,22 @@ pub fn struct_declarator<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Declarator, context, declarator);
-    let closure_2 = _var_name(Rules::Declarator, context, declarator);
-    let closure_3 = _optional(&closure_2);
-    let closure_4 = _terminal(b':');
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Constant_expression,
-        Rules::Enumeration_constant,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Identifier,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_6 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Constant_expression,
-        context,
-        constant_expression,
-    );
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = _subexpression(&closure_7);
-    let closure_9 = _ordered_choice(&closure_1, &closure_8);
-    closure_9(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn enum_specifier<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(b"enum");
-    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-    let closure_2 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
-    let closure_3 = _optional(&closure_2);
-    let closure_4 = _sequence(&closure_1, &closure_3);
-    let closure_5 = _terminal(b'{');
-    let closure_6 = _sequence(&closure_4, &closure_5);
-    let involved_set: Vec<Rules> = [
-        Rules::Enumeration_constant,
-        Rules::Enumerator,
-        Rules::Enumerator_list,
-        Rules::Identifier,
-    ]
-    .to_vec();
-    let closure_7 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Enumerator_list,
-        context,
-        enumerator_list,
-    );
-    let closure_8 = _sequence(&closure_6, &closure_7);
-    let closure_9 = _terminal(b'}');
-    let closure_10 = _sequence(&closure_8, &closure_9);
-    let closure_11 = _subexpression(&closure_10);
-    let closure_12 = _string_terminal_opt_ascii(b"enum");
-    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-    let closure_13 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
-    let closure_14 = _optional(&closure_13);
-    let closure_15 = _sequence(&closure_12, &closure_14);
-    let closure_16 = _terminal(b'{');
-    let closure_17 = _sequence(&closure_15, &closure_16);
-    let involved_set: Vec<Rules> = [
-        Rules::Enumeration_constant,
-        Rules::Enumerator,
-        Rules::Enumerator_list,
-        Rules::Identifier,
-    ]
-    .to_vec();
-    let closure_18 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Enumerator_list,
-        context,
-        enumerator_list,
-    );
-    let closure_19 = _sequence(&closure_17, &closure_18);
-    let closure_20 = _terminal(b',');
-    let closure_21 = _sequence(&closure_19, &closure_20);
-    let closure_22 = _terminal(b'}');
-    let closure_23 = _sequence(&closure_21, &closure_22);
-    let closure_24 = _subexpression(&closure_23);
-    let closure_25 = _ordered_choice(&closure_11, &closure_24);
-    let closure_26 = _string_terminal_opt_ascii(b"enum");
-    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-    let closure_27 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
-    let closure_28 = _sequence(&closure_26, &closure_27);
-    let closure_29 = _subexpression(&closure_28);
-    let closure_30 = _ordered_choice(&closure_25, &closure_29);
-    closure_30(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn enumerator_list<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [
-        Rules::Enumeration_constant,
-        Rules::Enumerator,
-        Rules::Identifier,
-    ]
-    .to_vec();
-    let closure_1 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Enumerator, context, enumerator);
-    let involved_set: Vec<Rules> = [
-        Rules::Enumeration_constant,
-        Rules::Enumerator,
-        Rules::Enumerator_list,
-        Rules::Identifier,
-    ]
-    .to_vec();
-    let closure_2 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Enumerator_list,
-        context,
-        enumerator_list,
-    );
-    let closure_3 = _terminal(b',');
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let involved_set: Vec<Rules> = [
-        Rules::Enumeration_constant,
-        Rules::Enumerator,
-        Rules::Identifier,
-    ]
-    .to_vec();
-    let closure_5 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Enumerator, context, enumerator);
-    let closure_6 = _sequence(&closure_4, &closure_5);
-    let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _ordered_choice(&closure_1, &closure_7);
-    closure_8(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn enumerator<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [Rules::Enumeration_constant, Rules::Identifier].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Enumeration_constant,
-        context,
-        enumeration_constant,
-    );
-    let involved_set: Vec<Rules> = [Rules::Enumeration_constant, Rules::Identifier].to_vec();
-    let closure_2 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Enumeration_constant,
-        context,
-        enumeration_constant,
-    );
-    let closure_3 = _terminal(b'=');
+    let closure_2 = _optional(&closure_1);
+    let closure_3 = _terminal(b':');
     let closure_4 = _sequence(&closure_2, &closure_3);
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
         Rules::Constant_expression,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -4096,8 +3893,185 @@ pub fn enumerator<T: Context + 'static>(
     );
     let closure_6 = _sequence(&closure_4, &closure_5);
     let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _ordered_choice(&closure_1, &closure_7);
-    closure_8(parent, source, position)
+    let closure_8 = _var_name(Rules::Declarator, context, declarator);
+    let closure_9 = _ordered_choice(&closure_7, &closure_8);
+    closure_9(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn enum_specifier<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_2 = _string_terminal_opt_ascii(b"enum");
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
+    let closure_6 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
+    let closure_7 = _optional(&closure_6);
+    let closure_8 = _sequence(&closure_5, &closure_7);
+    let closure_9 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _terminal(b'{');
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    let closure_13 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let closure_15 = _var_name(Rules::Enumerator_list, context, enumerator_list);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_18 = _sequence(&closure_16, &closure_17);
+    let closure_19 = _terminal(b'}');
+    let closure_20 = _sequence(&closure_18, &closure_19);
+    let closure_21 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_22 = _sequence(&closure_20, &closure_21);
+    let closure_23 = _subexpression(&closure_22);
+    let closure_24 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_25 = _string_terminal_opt_ascii(b"enum");
+    let closure_26 = _sequence(&closure_24, &closure_25);
+    let closure_27 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_28 = _sequence(&closure_26, &closure_27);
+    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
+    let closure_29 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
+    let closure_30 = _optional(&closure_29);
+    let closure_31 = _sequence(&closure_28, &closure_30);
+    let closure_32 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_33 = _sequence(&closure_31, &closure_32);
+    let closure_34 = _terminal(b'{');
+    let closure_35 = _sequence(&closure_33, &closure_34);
+    let closure_36 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_37 = _sequence(&closure_35, &closure_36);
+    let closure_38 = _var_name(Rules::Enumerator_list, context, enumerator_list);
+    let closure_39 = _sequence(&closure_37, &closure_38);
+    let closure_40 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_41 = _sequence(&closure_39, &closure_40);
+    let closure_42 = _terminal(b',');
+    let closure_43 = _sequence(&closure_41, &closure_42);
+    let closure_44 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_45 = _sequence(&closure_43, &closure_44);
+    let closure_46 = _terminal(b'}');
+    let closure_47 = _sequence(&closure_45, &closure_46);
+    let closure_48 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_49 = _sequence(&closure_47, &closure_48);
+    let closure_50 = _subexpression(&closure_49);
+    let closure_51 = _ordered_choice(&closure_23, &closure_50);
+    let closure_52 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_53 = _string_terminal_opt_ascii(b"enum");
+    let closure_54 = _sequence(&closure_52, &closure_53);
+    let closure_55 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_56 = _sequence(&closure_54, &closure_55);
+    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
+    let closure_57 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
+    let closure_58 = _sequence(&closure_56, &closure_57);
+    let closure_59 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_60 = _sequence(&closure_58, &closure_59);
+    let closure_61 = _subexpression(&closure_60);
+    let closure_62 = _ordered_choice(&closure_51, &closure_61);
+    closure_62(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn enumerator_list<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_2 = _var_name(Rules::Enumerator, context, enumerator);
+    let closure_3 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = _subexpression(&closure_4);
+    let closure_6 = _zero_or_more(&closure_5);
+    let closure_7 = _sequence(&closure_1, &closure_6);
+    closure_7(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn enumerator<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let involved_set: Vec<Rules> = [Rules::Enumeration_constant, Rules::Identifier].to_vec();
+    let closure_2 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Enumeration_constant,
+        context,
+        enumeration_constant,
+    );
+    let involved_set: Vec<Rules> = [Rules::Enumeration_constant, Rules::Identifier].to_vec();
+    let closure_3 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Enumeration_constant,
+        context,
+        enumeration_constant,
+    );
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _terminal(b'=');
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let involved_set: Vec<Rules> = [
+        Rules::AND_expression,
+        Rules::Additive_expression,
+        Rules::Cast_expression,
+        Rules::Conditional_expression,
+        Rules::Constant_expression,
+        Rules::Equality_expression,
+        Rules::Exclusive_OR_expression,
+        Rules::Inclusive_OR_expression,
+        Rules::Logical_AND_expression,
+        Rules::Logical_OR_expression,
+        Rules::Multiplicative_expression,
+        Rules::Postfix_expression,
+        Rules::Relational_expression,
+        Rules::Shift_expression,
+        Rules::Unary_expression,
+    ]
+    .to_vec();
+    let closure_10 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Constant_expression,
+        context,
+        constant_expression,
+    );
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = _subexpression(&closure_11);
+    let closure_13 = _ordered_choice(&closure_2, &closure_12);
+    let closure_14 = _subexpression(&closure_13);
+    let closure_15 = _sequence(&closure_1, &closure_14);
+    let closure_16 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_17 = _sequence(&closure_15, &closure_16);
+    closure_17(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn atomic_type_specifier<T: Context + 'static>(
@@ -4106,14 +4080,29 @@ pub fn atomic_type_specifier<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(b"_Atomic");
-    let closure_2 = _terminal(b'(');
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_2 = _string_terminal_opt_ascii(b"_Atomic");
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Type_name, context, type_name);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
     let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _terminal(b')');
+    let closure_6 = _terminal(b'(');
     let closure_7 = _sequence(&closure_5, &closure_6);
-    closure_7(parent, source, position)
+    let closure_8 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _var_name(Rules::Type_name, context, type_name);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    let closure_14 = _terminal(b')');
+    let closure_15 = _sequence(&closure_13, &closure_14);
+    let closure_16 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_17 = _sequence(&closure_15, &closure_16);
+    closure_17(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn type_qualifier<T: Context + 'static>(
@@ -4166,18 +4155,14 @@ pub fn alignment_specifier<T: Context + 'static>(
         Rules::Additive_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
         Rules::Constant_expression,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -4205,7 +4190,7 @@ pub fn declarator<T: Context + 'static>(
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Pointer, context, pointer);
     let closure_2 = _optional(&closure_1);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator, Rules::Identifier].to_vec();
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
     let closure_3 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Direct_declarator,
@@ -4222,211 +4207,204 @@ pub fn direct_declarator<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-    let closure_1 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
-    let closure_2 = _terminal(b'(');
-    let closure_3 = _var_name(Rules::Declarator, context, declarator);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _terminal(b')');
-    let closure_6 = _sequence(&closure_4, &closure_5);
+    let closure_1 = _terminal(b'(');
+    let closure_2 = _var_name(Rules::Declarator, context, declarator);
+    let closure_3 = _terminal(b'"');
+    let closure_4 = _terminal(b'"');
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _ordered_choice(&closure_2, &closure_5);
     let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _ordered_choice(&closure_1, &closure_7);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator, Rules::Identifier].to_vec();
-    let closure_9 = _var_name_indirect_left_recursion(
+    let closure_8 = _sequence(&closure_1, &closure_7);
+    let closure_9 = _terminal(b')');
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _subexpression(&closure_10);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
+    let closure_12 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Direct_declarator,
         context,
         direct_declarator,
     );
-    let closure_10 = _terminal(b'[');
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    let closure_12 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
-    let closure_13 = _optional(&closure_12);
-    let closure_14 = _sequence(&closure_11, &closure_13);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Identifier,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Primary_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_15 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Assignment_expression,
-        context,
-        assignment_expression,
-    );
+    let closure_13 = _terminal(b'[');
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let closure_15 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
     let closure_16 = _optional(&closure_15);
     let closure_17 = _sequence(&closure_14, &closure_16);
-    let closure_18 = _terminal(b']');
-    let closure_19 = _sequence(&closure_17, &closure_18);
-    let closure_20 = _subexpression(&closure_19);
-    let closure_21 = _ordered_choice(&closure_8, &closure_20);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator, Rules::Identifier].to_vec();
-    let closure_22 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Direct_declarator,
-        context,
-        direct_declarator,
-    );
-    let closure_23 = _terminal(b'[');
-    let closure_24 = _sequence(&closure_22, &closure_23);
-    let closure_25 = _string_terminal_opt_ascii(b"static");
-    let closure_26 = _sequence(&closure_24, &closure_25);
-    let closure_27 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
-    let closure_28 = _optional(&closure_27);
-    let closure_29 = _sequence(&closure_26, &closure_28);
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
-    let closure_30 = _var_name_indirect_left_recursion(
+    let closure_18 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Assignment_expression,
         context,
         assignment_expression,
     );
-    let closure_31 = _sequence(&closure_29, &closure_30);
-    let closure_32 = _terminal(b']');
-    let closure_33 = _sequence(&closure_31, &closure_32);
-    let closure_34 = _subexpression(&closure_33);
-    let closure_35 = _ordered_choice(&closure_21, &closure_34);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator, Rules::Identifier].to_vec();
-    let closure_36 = _var_name_indirect_left_recursion(
+    let closure_19 = _optional(&closure_18);
+    let closure_20 = _sequence(&closure_17, &closure_19);
+    let closure_21 = _terminal(b']');
+    let closure_22 = _sequence(&closure_20, &closure_21);
+    let closure_23 = _subexpression(&closure_22);
+    let closure_24 = _ordered_choice(&closure_11, &closure_23);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
+    let closure_25 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Direct_declarator,
         context,
         direct_declarator,
     );
-    let closure_37 = _terminal(b'[');
-    let closure_38 = _sequence(&closure_36, &closure_37);
-    let closure_39 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
-    let closure_40 = _sequence(&closure_38, &closure_39);
-    let closure_41 = _string_terminal_opt_ascii(b"static");
-    let closure_42 = _sequence(&closure_40, &closure_41);
+    let closure_26 = _terminal(b'[');
+    let closure_27 = _sequence(&closure_25, &closure_26);
+    let closure_28 = _string_terminal_opt_ascii(b"static");
+    let closure_29 = _sequence(&closure_27, &closure_28);
+    let closure_30 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
+    let closure_31 = _optional(&closure_30);
+    let closure_32 = _sequence(&closure_29, &closure_31);
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
     ]
     .to_vec();
-    let closure_43 = _var_name_indirect_left_recursion(
+    let closure_33 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Assignment_expression,
         context,
         assignment_expression,
     );
-    let closure_44 = _sequence(&closure_42, &closure_43);
-    let closure_45 = _terminal(b']');
-    let closure_46 = _sequence(&closure_44, &closure_45);
-    let closure_47 = _subexpression(&closure_46);
-    let closure_48 = _ordered_choice(&closure_35, &closure_47);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator, Rules::Identifier].to_vec();
-    let closure_49 = _var_name_indirect_left_recursion(
+    let closure_34 = _sequence(&closure_32, &closure_33);
+    let closure_35 = _terminal(b']');
+    let closure_36 = _sequence(&closure_34, &closure_35);
+    let closure_37 = _subexpression(&closure_36);
+    let closure_38 = _ordered_choice(&closure_24, &closure_37);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
+    let closure_39 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Direct_declarator,
         context,
         direct_declarator,
     );
-    let closure_50 = _terminal(b'[');
-    let closure_51 = _sequence(&closure_49, &closure_50);
-    let closure_52 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
-    let closure_53 = _optional(&closure_52);
-    let closure_54 = _sequence(&closure_51, &closure_53);
-    let closure_55 = _terminal(b'*');
-    let closure_56 = _sequence(&closure_54, &closure_55);
-    let closure_57 = _terminal(b']');
-    let closure_58 = _sequence(&closure_56, &closure_57);
-    let closure_59 = _subexpression(&closure_58);
-    let closure_60 = _ordered_choice(&closure_48, &closure_59);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator, Rules::Identifier].to_vec();
-    let closure_61 = _var_name_indirect_left_recursion(
+    let closure_40 = _terminal(b'[');
+    let closure_41 = _sequence(&closure_39, &closure_40);
+    let closure_42 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
+    let closure_43 = _sequence(&closure_41, &closure_42);
+    let closure_44 = _string_terminal_opt_ascii(b"static");
+    let closure_45 = _sequence(&closure_43, &closure_44);
+    let involved_set: Vec<Rules> = [
+        Rules::AND_expression,
+        Rules::Additive_expression,
+        Rules::Assignment_expression,
+        Rules::Cast_expression,
+        Rules::Conditional_expression,
+        Rules::Equality_expression,
+        Rules::Exclusive_OR_expression,
+        Rules::Inclusive_OR_expression,
+        Rules::Logical_AND_expression,
+        Rules::Logical_OR_expression,
+        Rules::Multiplicative_expression,
+        Rules::Postfix_expression,
+        Rules::Relational_expression,
+        Rules::Shift_expression,
+        Rules::Unary_expression,
+    ]
+    .to_vec();
+    let closure_46 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Assignment_expression,
+        context,
+        assignment_expression,
+    );
+    let closure_47 = _sequence(&closure_45, &closure_46);
+    let closure_48 = _terminal(b']');
+    let closure_49 = _sequence(&closure_47, &closure_48);
+    let closure_50 = _subexpression(&closure_49);
+    let closure_51 = _ordered_choice(&closure_38, &closure_50);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
+    let closure_52 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Direct_declarator,
         context,
         direct_declarator,
     );
-    let closure_62 = _terminal(b'(');
-    let closure_63 = _sequence(&closure_61, &closure_62);
-    let closure_64 = _var_name(Rules::Parameter_type_list, context, parameter_type_list);
-    let closure_65 = _sequence(&closure_63, &closure_64);
-    let closure_66 = _terminal(b')');
-    let closure_67 = _sequence(&closure_65, &closure_66);
-    let closure_68 = _subexpression(&closure_67);
-    let closure_69 = _ordered_choice(&closure_60, &closure_68);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator, Rules::Identifier].to_vec();
-    let closure_70 = _var_name_indirect_left_recursion(
+    let closure_53 = _terminal(b'[');
+    let closure_54 = _sequence(&closure_52, &closure_53);
+    let closure_55 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
+    let closure_56 = _optional(&closure_55);
+    let closure_57 = _sequence(&closure_54, &closure_56);
+    let closure_58 = _terminal(b'*');
+    let closure_59 = _sequence(&closure_57, &closure_58);
+    let closure_60 = _terminal(b']');
+    let closure_61 = _sequence(&closure_59, &closure_60);
+    let closure_62 = _subexpression(&closure_61);
+    let closure_63 = _ordered_choice(&closure_51, &closure_62);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
+    let closure_64 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Direct_declarator,
         context,
         direct_declarator,
     );
-    let closure_71 = _terminal(b'(');
-    let closure_72 = _sequence(&closure_70, &closure_71);
-    let involved_set: Vec<Rules> = [Rules::Identifier, Rules::Identifier_list].to_vec();
+    let closure_65 = _terminal(b'(');
+    let closure_66 = _sequence(&closure_64, &closure_65);
+    let closure_67 = _var_name(Rules::Parameter_type_list, context, parameter_type_list);
+    let closure_68 = _sequence(&closure_66, &closure_67);
+    let closure_69 = _terminal(b')');
+    let closure_70 = _sequence(&closure_68, &closure_69);
+    let closure_71 = _subexpression(&closure_70);
+    let closure_72 = _ordered_choice(&closure_63, &closure_71);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
     let closure_73 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Direct_declarator,
+        context,
+        direct_declarator,
+    );
+    let closure_74 = _terminal(b'(');
+    let closure_75 = _sequence(&closure_73, &closure_74);
+    let involved_set: Vec<Rules> = [Rules::Identifier, Rules::Identifier_list].to_vec();
+    let closure_76 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Identifier_list,
         context,
         identifier_list,
     );
-    let closure_74 = _optional(&closure_73);
-    let closure_75 = _sequence(&closure_72, &closure_74);
-    let closure_76 = _terminal(b')');
-    let closure_77 = _sequence(&closure_75, &closure_76);
-    let closure_78 = _subexpression(&closure_77);
-    let closure_79 = _ordered_choice(&closure_69, &closure_78);
-    closure_79(parent, source, position)
+    let closure_77 = _optional(&closure_76);
+    let closure_78 = _sequence(&closure_75, &closure_77);
+    let closure_79 = _terminal(b')');
+    let closure_80 = _sequence(&closure_78, &closure_79);
+    let closure_81 = _subexpression(&closure_80);
+    let closure_82 = _ordered_choice(&closure_72, &closure_81);
+    let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
+    let closure_83 =
+        _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
+    let closure_84 = _ordered_choice(&closure_82, &closure_83);
+    closure_84(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn pointer<T: Context + 'static>(
@@ -4623,17 +4601,13 @@ pub fn direct_abstract_declarator<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -4671,17 +4645,13 @@ pub fn direct_abstract_declarator<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -4717,17 +4687,13 @@ pub fn direct_abstract_declarator<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -4806,17 +4772,13 @@ pub fn initializer<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -4861,18 +4823,14 @@ pub fn initializer_list<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Initializer,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -4894,18 +4852,14 @@ pub fn initializer_list<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Initializer,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -4958,18 +4912,14 @@ pub fn designator<T: Context + 'static>(
         Rules::Additive_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
         Rules::Constant_expression,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5009,18 +4959,14 @@ pub fn static_assert_declaration<T: Context + 'static>(
         Rules::Additive_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
         Rules::Constant_expression,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5065,19 +5011,15 @@ pub fn statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
         Rules::Expression_statement,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5134,18 +5076,14 @@ pub fn jump_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5183,8 +5121,6 @@ pub fn compound_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5196,7 +5132,6 @@ pub fn compound_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5225,12 +5160,13 @@ pub fn declaration_list<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Declaration, context, declaration);
-    let closure_2 = _var_name(Rules::Declaration_list, context, declaration_list);
-    let closure_3 = _var_name(Rules::Declaration, context, declaration);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _ordered_choice(&closure_1, &closure_5);
-    closure_6(parent, source, position)
+    let closure_2 = _zero_or_more(&closure_1);
+    let closure_3 = _var_name(Rules::Declaration_list, context, declaration_list);
+    let closure_4 = _var_name(Rules::Declaration, context, declaration);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _ordered_choice(&closure_2, &closure_6);
+    closure_7(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn statement_list<T: Context + 'static>(
@@ -5245,8 +5181,6 @@ pub fn statement_list<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5258,7 +5192,6 @@ pub fn statement_list<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5273,8 +5206,6 @@ pub fn statement_list<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5286,7 +5217,6 @@ pub fn statement_list<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5306,8 +5236,6 @@ pub fn statement_list<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5319,7 +5247,6 @@ pub fn statement_list<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5346,18 +5273,14 @@ pub fn expression_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5386,18 +5309,14 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5414,8 +5333,6 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5427,7 +5344,6 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5445,8 +5361,6 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5458,7 +5372,6 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5478,18 +5391,14 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5513,18 +5422,14 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5542,18 +5447,14 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5571,18 +5472,14 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5600,8 +5497,6 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5613,7 +5508,6 @@ pub fn iteration_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5643,18 +5537,14 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5671,8 +5561,6 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5684,7 +5572,6 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5704,18 +5591,14 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5732,8 +5615,6 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5745,7 +5626,6 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5763,8 +5643,6 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5776,7 +5654,6 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5797,18 +5674,14 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5825,8 +5698,6 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5838,7 +5709,6 @@ pub fn selection_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5870,8 +5740,6 @@ pub fn labeled_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5883,7 +5751,6 @@ pub fn labeled_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5900,18 +5767,14 @@ pub fn labeled_statement<T: Context + 'static>(
         Rules::Additive_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
         Rules::Constant_expression,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -5932,8 +5795,6 @@ pub fn labeled_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5945,7 +5806,6 @@ pub fn labeled_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -5966,8 +5826,6 @@ pub fn labeled_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
@@ -5979,7 +5837,6 @@ pub fn labeled_statement<T: Context + 'static>(
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Statement,
@@ -6013,18 +5870,14 @@ pub fn try_except_statement<T: Context + 'static>(
         Rules::Assignment_expression,
         Rules::Cast_expression,
         Rules::Conditional_expression,
-        Rules::Constant,
-        Rules::Enumeration_constant,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
         Rules::Expression,
-        Rules::Identifier,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
         Rules::Multiplicative_expression,
         Rules::Postfix_expression,
-        Rules::Primary_expression,
         Rules::Relational_expression,
         Rules::Shift_expression,
         Rules::Unary_expression,
@@ -6064,12 +5917,18 @@ pub fn translation_unit<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::External_declaration, context, external_declaration);
-    let closure_2 = _var_name(Rules::Translation_unit, context, translation_unit);
-    let closure_3 = _var_name(Rules::External_declaration, context, external_declaration);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _ordered_choice(&closure_1, &closure_5);
+    let involved_set: Vec<Rules> = [Rules::Translation_unit].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Translation_unit,
+        context,
+        translation_unit,
+    );
+    let closure_2 = _var_name(Rules::External_declaration, context, external_declaration);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _subexpression(&closure_3);
+    let closure_5 = _var_name(Rules::External_declaration, context, external_declaration);
+    let closure_6 = _ordered_choice(&closure_4, &closure_5);
     closure_6(parent, source, position)
 }
 #[allow(dead_code)]
@@ -6079,10 +5938,17 @@ pub fn external_declaration<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Function_definition, context, function_definition);
-    let closure_2 = _var_name(Rules::Declaration, context, declaration);
-    let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    closure_3(parent, source, position)
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_2 = _var_name(Rules::Function_definition, context, function_definition);
+    let closure_3 = _var_name(Rules::Declaration, context, declaration);
+    let closure_4 = _ordered_choice(&closure_2, &closure_3);
+    let closure_5 = _subexpression(&closure_4);
+    let closure_6 = _sequence(&closure_1, &closure_5);
+    let closure_7 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_8 = _sequence(&closure_6, &closure_7);
+    closure_8(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn function_definition<T: Context + 'static>(
@@ -6091,20 +5957,32 @@ pub fn function_definition<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_2 = _var_name(
         Rules::Declaration_specifiers,
         context,
         declaration_specifiers,
     );
-    let closure_2 = _optional(&closure_1);
-    let closure_3 = _var_name(Rules::Declarator, context, declarator);
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _var_name(Rules::Declaration_list, context, declaration_list);
-    let closure_6 = _optional(&closure_5);
-    let closure_7 = _sequence(&closure_4, &closure_6);
-    let closure_8 = _var_name(Rules::Compound_statement, context, compound_statement);
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    closure_9(parent, source, position)
+    let closure_3 = _optional(&closure_2);
+    let closure_4 = _sequence(&closure_1, &closure_3);
+    let closure_5 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_6 = _sequence(&closure_4, &closure_5);
+    let closure_7 = _var_name(Rules::Declarator, context, declarator);
+    let closure_8 = _sequence(&closure_6, &closure_7);
+    let closure_9 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _var_name(Rules::Declaration_list, context, declaration_list);
+    let closure_12 = _optional(&closure_11);
+    let closure_13 = _sequence(&closure_10, &closure_12);
+    let closure_14 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_15 = _sequence(&closure_13, &closure_14);
+    let closure_16 = _var_name(Rules::Compound_statement, context, compound_statement);
+    let closure_17 = _sequence(&closure_15, &closure_16);
+    closure_17(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn grammar<T: Context + 'static>(
@@ -6113,6 +5991,18 @@ pub fn grammar<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Translation_unit, context, translation_unit);
-    closure_1(parent, source, position)
+    let closure_1 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let involved_set: Vec<Rules> = [Rules::Translation_unit].to_vec();
+    let closure_2 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Translation_unit,
+        context,
+        translation_unit,
+    );
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    closure_5(parent, source, position)
 }

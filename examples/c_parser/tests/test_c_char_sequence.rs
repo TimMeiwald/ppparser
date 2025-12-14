@@ -2,8 +2,7 @@ mod test;
 
 use std::cell::RefCell;
 
-use c_parser::*;
-use c_parser::{BasicContext, Rules, identifier};
+use c_parser::{BasicContext, Rules, c_char_sequence, *};
 
 pub fn shared<'a>(
     input: &str,
@@ -16,7 +15,7 @@ pub fn shared<'a>(
     let result: (bool, u32);
     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
     {
-        let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
+        let involved_set: Vec<Rules> = [Rules::C_char_sequence].to_vec();
         let executor = _var_name_indirect_left_recursion(&involved_set, rule, &context, func);
         result = executor(Key(0), &source, 0);
     }
@@ -31,21 +30,20 @@ pub fn shared<'a>(
 
 #[test]
 fn test_1() {
-    let src = "-";
-    let result = shared(src, identifier::<BasicContext>, Rules::Identifier);
-    assert_eq!(result, (false, 0));
-}
-
-#[test]
-fn test_2() {
-    let src = "MyStruct";
-    let result = shared(src, identifier::<BasicContext>, Rules::Identifier);
+    let src = "struct";
+    let result = shared(src, c_char_sequence::<BasicContext>, Rules::C_char_sequence);
     assert_eq!(result, (true, src.len() as u32));
 }
 
 #[test]
-fn test_3() {
-    let src = "MyStruct ";
-    let result = shared(src, identifier::<BasicContext>, Rules::Identifier);
+fn test_2() {
+    let src = "struct\n";
+    let result = shared(src, c_char_sequence::<BasicContext>, Rules::C_char_sequence);
     assert_eq!(result, (true, (src.len() - 1) as u32));
+}
+#[test]
+fn test_3() {
+    let src = "s ";
+    let result = shared(src, c_char_sequence::<BasicContext>, Rules::C_char_sequence);
+    assert_eq!(result, (true, src.len() as u32));
 }

@@ -1,17 +1,23 @@
 <ascii> Inline = [0x00..0xFF]; # Any ASCII char # 
+<s> Inline = ' '; # Some whitespace is necessary for differentiating words # 
+<ws_kernel> Inline = (' '/'\t'/'\r'/'\n'); # Some whitespace are never relevant # 
+<ws> Inline = <ws_kernel>*;
+<wsc> = (<ws_kernel>/<comment>/<multiline_comment>)*; # Comments should be retained for e.g formatters #
+<multiline_comment> = "/*", (!"*/", <ascii>)*, "*/";
+<comment> = "//", (!'\n', <ascii>)*;
 
 <keyword> = "one"/ "of"/ "auto"/ "break"/ "case"/ "char"/ "const"/ "continue"/ "default"/ "do"/ "double"/ "else"/ "enum"/ "extern"/ "float"/ "for"/ "goto"/ "if"/ "inline"/ "int"/ "long"/ "register"/ "restrict"/ "return"/ "short"/ "signed"/ "sizeof"/ "static"/ "struct"/ "switch"/ "typedef"/ "union"/ "unsigned"/ "void"/ "volatile"/ "while"/ "_Alignas"/ "_Alignof"/ "_Atomic"/ "_Bool"/ "_Complex"/ "_Generic"/ " _Imaginary"/ "_Noreturn"/ "_Static_assert"/ "_Thread_local";
-<identifier> =  <identifier_nondigit>/
-                (<identifier>, <identifier_nondigit>)/
-                (<identifier>, <digit>);
+<identifier> =  (<identifier>, <identifier_nondigit>)
+                /(<identifier>, <digit>)
+                /<identifier_nondigit>;
 <identifier_nondigit> = <nondigit>/<universal_character_name>;
 <nondigit> = ['A'..'Z']/['a'..'z']/'_';
 <digit> = ['0'..'9'];
 <universal_character_name> = ("\\u", <hex_quad>)/("\\U", <hex_quad>, <hex_quad>);
 <hex_quad> = <hexadecimal_digit>, <hexadecimal_digit>, <hexadecimal_digit>, <hexadecimal_digit>;
 
-<constant> = <integer_constant>/
-             <floating_constant>/
+<constant> = <floating_constant>/
+             <integer_constant>/
              <enumeration_constant>/
              <character_constant>;
 
@@ -20,17 +26,15 @@
                      (<octal_constant>, <integer_suffix>?)/
                      (<hexadecimal_constant>, <integer_suffix>?);
 
-<decimal_constant> = (<nonzero_digit>)/
-                     (<decimal_constant>, <digit>);
+<decimal_constant> = (<decimal_constant>, <digit>)/(<nonzero_digit>);
 
-<binary_constant> = (<binary_prefix>, <binary_digit>)/
-                    (<binary_constant>, <binary_digit>);
+<binary_constant> = (<binary_constant>, <binary_digit>)/(<binary_prefix>, <binary_digit>);
 
 <binary_prefix> = "0b"/"0B";
 <binary_digit> = '0'/'1';
-<octal_constant> = '0'/(<octal_constant>, <octal_digit>);
-<hexadecimal_constant> = (<hexadecimal_prefix>, <hexadecimal_digit>)/
-                         (<hexadecimal_constant>, <hexadecimal_digit>);
+<octal_constant> = (<octal_constant>, <octal_digit>)/'0';
+<hexadecimal_constant> = (<hexadecimal_constant>, <hexadecimal_digit>)
+                         /(<hexadecimal_prefix>, <hexadecimal_digit>);
 <hexadecimal_prefix> = "0x"/"0X";
 <nonzero_digit> = ['1'..'9'];
 <octal_digit> = ['0'..'7'];
@@ -51,11 +55,11 @@
 <hexadecimal_floating_constant> = (<hexadecimal_prefix>, <hexadecimal_fractional_constant>, <binary_exponent_part>?, <floating_suffix>?)/
                                   (<hexadecimal_prefix>, <hexadecimal_digit_sequence>, <binary_exponent_part>, <floating_suffix>?);
 
-<fractional_constant> = (<digit_sequence>?, '.', <digit_sequence>)/
-                        (<digit_sequence>, '.');
+<fractional_constant> = (<digit_sequence>?, '.', <digit_sequence>)
+                        /(<digit_sequence>, '.');
 <exponent_part> = ('e', <sign>?, <digit_sequence>) / ('E', <sign>?, <digit_sequence>);
 <sign> = '+'/'-';
-<digit_sequence> = <digit> / (<digit_sequence>, <digit>);
+<digit_sequence> = <digit>*;
 <hexadecimal_fractional_constant> = (<hexadecimal_digit_sequence>?, '.', <hexadecimal_digit_sequence>)/
                                     (<hexadecimal_digit_sequence>, '.');
 <binary_exponent_part> =    ('p', <sign>?, <digit_sequence>)/
@@ -66,14 +70,15 @@
 <enumeration_constant> = <identifier>;
 <character_constant> =  (''', <c_char_sequence>, ''')/
                         ('L', ''', <c_char_sequence>, ''');
-<c_char_sequence> = <c_char> / (<c_char_sequence>, <c_char>);
-<c_char> = (!''', !'\', !'\n', !<escape_sequence>, <ascii>)*;
+<c_char_sequence> = (<c_char_sequence>, <c_char>)/<c_char>;
+<c_char> =  (!''', !'\', !'\n', <ascii>)
+            /<escape_sequence>;
+
 <escape_sequence> = <simple_escape_sequence>
                     / <octal_escape_sequence>
-                    / <hexadecimal_escape_sequence>
-                    / <universal_character_name>;
+                    / <universal_character_name>; # Removed /<hexadecimal_escape_sequence> temporarily as breaking stuff#
                     
-<simple_escape_sequence> = "PLACEHOLDER"; #"\a"/ "\b"/ "\f"/ "\n"/ "\r"/ "\t"/ "\v"/ "\'"/ "\"" /"\\" /"\?";#
+<simple_escape_sequence> = "PLACEHOLDER"; # PLACEHOLDER: HAVENT ADDED EVERYTHING YET, "\a"/ "\b"/ "\f"/ "\n"/ "\r"/ "\t"/ "\v"/ "\'"/ "\"" /"\\" /"\?";#
 <octal_escape_sequence> =   ('\', <octal_digit>)
                             / ('\', <octal_digit>, <octal_digit>)
                             / ('\', <octal_digit>, <octal_digit>, <octal_digit>);
@@ -85,8 +90,9 @@
                     / 'U'
                     / 'L';
 
-<s_char_sequence> = <s_char>/(<s_char_sequence>, <s_char>);
-<s_char> = (!''', !'\', !'\n', !<escape_sequence>, <ascii>)*;
+<s_char_sequence> = (<s_char_sequence>, <s_char>)/<s_char>;
+<s_char> =  (!'"', !'\', !'\n', <ascii>)
+            /<escape_sequence>;
 <punctuator> = '['
 	/ ']'
 	/ '('
@@ -161,11 +167,11 @@
 	/ (<pp_number>, '.');
 
 
-<primary_expression> = <identifier>
-	/ <constant>
-	/ <string_literal>
-	/ ('(', <expression>, ')')
-	/ <generic_selection>;
+<primary_expression> = <ws>,    (<identifier>
+                                / <constant>
+                                / <string_literal>
+                                / ('(', <ws>, <expression>, <ws>, ')')
+                                / <generic_selection>), <ws>;
 
 <generic_selection> = "_Generic", '(', <assignment_expression>, ',', <generic_assoc_list>, ')';
 
@@ -270,11 +276,11 @@
 <declaration> = (<declaration_specifiers>, <attribute_seq>?, <init_declarator_list>?, ';')
 	/ <static_assert_declaration>;
 
-<declaration_specifiers> = (<storage_class_specifier>, <declaration_specifiers>?)
-	/ (<type_specifier>, <declaration_specifiers>?)
-	/ (<type_qualifier>, <declaration_specifiers>?)
-	/ (<function_specifier>, <declaration_specifiers>?)
-	/ (<alignment_specifier>, <declaration_specifiers>?);
+<declaration_specifiers> = <ws>,  ((<storage_class_specifier>, <ws>, <declaration_specifiers>?)
+                                / (<type_specifier>, <ws>, <declaration_specifiers>?)
+                                / (<type_qualifier>, <ws>, <declaration_specifiers>?)
+                                / (<function_specifier>, <ws>, <declaration_specifiers>?)
+                                / (<alignment_specifier>, <ws>, <declaration_specifiers>?)), <ws>;
 
 <attribute_seq> = <attribute>
 	/ (<attribute>, <attribute_seq>?);
@@ -289,11 +295,8 @@
 	/ "__thiscall"
 	/ "__vectorcall";
 
-<init_declarator_list> = <init_declarator>
-	/ (<init_declarator_list>, ',', <init_declarator>);
-
-<init_declarator> = <declarator>
-	/ (<declarator>, '=', <initializer>);
+<init_declarator_list> = <init_declarator>, (<ws>, ',', <ws>, <init_declarator>)*, <ws>;
+<init_declarator> = <ws>, (<declarator>/(<declarator>, <ws>, '=', <ws>, <initializer>)), <ws>;
 
 <storage_class_specifier> = "auto"
 	/ "extern"
@@ -331,39 +334,37 @@
 	/ <enum_specifier>
 	/ <typedef_name>;
 
-<struct_or_union_specifier> = (<struct_or_union>, <identifier>?, '{', <struct_declaration_list>, '}')
-	/ (<struct_or_union>, <identifier>);
+<struct_or_union_specifier> = (<ws>, <struct_or_union>, <ws>, <identifier>?, <ws>, '{', <ws>, <struct_declaration_list>, <ws>, '}', <ws>)
+	                        / (<ws>, <struct_or_union>, <ws>, <identifier>, <ws>);
 
 <struct_or_union> = "struct"
 	/ "union";
 
-<struct_declaration_list> = <struct_declaration>
-	/ (<struct_declaration_list>, <struct_declaration>);
+<struct_declaration_list> = (<struct_declaration_list>, <ws>, <struct_declaration>, <ws>)
+                            /(<ws>, <struct_declaration>, <ws>);
 
-<struct_declaration> = (<specifier_qualifier_list>, <struct_declarator_list>?, ';')
-	/ <static_assert_declaration>;
+<struct_declaration> =  (<ws>, <specifier_qualifier_list>, <ws>, <struct_declarator_list>?, <ws>, ';')
+	                    /(<ws>, <static_assert_declaration>, <ws>);
+                        
+<specifier_qualifier_list> = (<ws>, <type_specifier>, <ws>, <specifier_qualifier_list>?, <ws>)
+	/ (<ws>, <type_qualifier>, <ws>, <specifier_qualifier_list>?, <ws>)
+	/ (<ws>, <alignment_specifier>, <ws>, <specifier_qualifier_list>?, <ws>);
 
-<specifier_qualifier_list> = (<type_specifier>, <specifier_qualifier_list>?)
-	/ (<type_qualifier>, <specifier_qualifier_list>?)
-	/ (<alignment_specifier>, <specifier_qualifier_list>?);
+<struct_declarator_list> =  (<struct_declarator_list>, <ws>, ',', <ws>, <struct_declarator>, <ws>)
+                            /(<ws>, <struct_declarator>, <ws>);
 
-<struct_declarator_list> = <struct_declarator>
-	/ (<struct_declarator_list>, ',', <struct_declarator>);
+<struct_declarator> =   (<declarator>?, ':', <constant_expression>)
+                        /<declarator>;
 
-<struct_declarator> = <declarator>
-	/ (<declarator>?, ':', <constant_expression>);
+<enum_specifier> = (<ws>, "enum", <ws>, <identifier>?, <ws>, '{', <ws>, <enumerator_list>, <ws>, '}', <ws>)
+	/ (<ws>, "enum", <ws>, <identifier>?, <ws>, '{', <ws>, <enumerator_list>, <ws>, ',', <ws>, '}', <ws>)
+	/ (<ws>, "enum", <ws>, <identifier>, <ws>);
 
-<enum_specifier> = ("enum", <identifier>?, '{', <enumerator_list>, '}')
-	/ ("enum", <identifier>?, '{', <enumerator_list>, ',', '}')
-	/ ("enum", <identifier>);
+<enumerator_list> = <ws>, (<enumerator>, <ws>)*;
 
-<enumerator_list> = <enumerator>
-	/ (<enumerator_list>, ',', <enumerator>);
+<enumerator> = <ws>, (<enumeration_constant>/(<enumeration_constant>, <ws>, '=', <ws>, <constant_expression>)), <ws>;
 
-<enumerator> = <enumeration_constant>
-	/ (<enumeration_constant>, '=', <constant_expression>);
-
-<atomic_type_specifier> = "_Atomic", '(', <type_name>, ')';
+<atomic_type_specifier> = <ws>, "_Atomic", <ws>, '(', <ws>, <type_name>, <ws>, ')', <ws>;
 
 <type_qualifier> = "const"
 	/ "restrict"
@@ -378,14 +379,14 @@
 
 <declarator> = <pointer>?, <direct_declarator>;
 
-<direct_declarator> = <identifier>
-	/ ('(', <declarator>, ')')
-	/ (<direct_declarator>, '[', <type_qualifier_list>?, <assignment_expression>?, ']')
-	/ (<direct_declarator>, '[', "static", <type_qualifier_list>?, <assignment_expression>, ']')
-	/ (<direct_declarator>, '[', <type_qualifier_list>, "static", <assignment_expression>, ']')
-	/ (<direct_declarator>, '[', <type_qualifier_list>?, '*', ']')
-	/ (<direct_declarator>, '(', <parameter_type_list>, ')')
-	/ (<direct_declarator>, '(', <identifier_list>?, ')');
+<direct_declarator> =   ('(', <declarator>, ')')
+                        / (<direct_declarator>, '[', <type_qualifier_list>?, <assignment_expression>?, ']')
+                        / (<direct_declarator>, '[', "static", <type_qualifier_list>?, <assignment_expression>, ']')
+                        / (<direct_declarator>, '[', <type_qualifier_list>, "static", <assignment_expression>, ']')
+                        / (<direct_declarator>, '[', <type_qualifier_list>?, '*', ']')
+                        / (<direct_declarator>, '(', <parameter_type_list>, ')')
+                        / (<direct_declarator>, '(', <identifier_list>?, ')')
+                        /<identifier>;
 
 <pointer> = ('*', <type_qualifier_list>?)
 	/ ('*', <type_qualifier_list>?, <pointer>);
@@ -453,7 +454,7 @@
 
 <compound_statement> = ('{', <declaration_list>?, <statement_list>?, '}');
 
-<declaration_list> = <declaration>
+<declaration_list> = <declaration>*
 	/ (<declaration_list>, <declaration>);
 
 <statement_list> = <statement>
@@ -477,13 +478,11 @@
 
 <try_finally_statement> = ("__try", <compound_statement>, "__finally", <compound_statement>);
 
-<translation_unit> = <external_declaration>
-	/ (<translation_unit>, <external_declaration>);
+<translation_unit> = (<translation_unit>, <external_declaration>)/<external_declaration>;
 
-<external_declaration> = <function_definition>
-	/ <declaration>;
+<external_declaration> = <ws>, (<function_definition>/<declaration>), <ws>;
 
-<function_definition> = <declaration_specifiers>?, <declarator>, <declaration_list>?, <compound_statement>;
+<function_definition> = <ws>, <declaration_specifiers>?, <ws>, <declarator>, <ws>, <declaration_list>?, <ws>, <compound_statement>;
 
-<Grammar> = <translation_unit>;
+<Grammar> = <ws>, <translation_unit>, <ws>;
 

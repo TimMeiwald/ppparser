@@ -10,7 +10,7 @@ impl From<u32> for Rules {
     }
 }
 #[allow(dead_code)]
-pub static RULES_SIZE: u32 = 134;
+pub static RULES_SIZE: u32 = 137;
 #[allow(clippy::upper_case_acronyms)] // Again due to generation -> Might solve eventually
 #[derive(PartialEq, Eq, Hash, FromPrimitive, Clone, Copy, Debug, Ord, PartialOrd)]
 
@@ -34,6 +34,7 @@ pub enum Rules {
     C_char_sequence,
     Cast_expression,
     Character_constant,
+    Comment,
     Compound_statement,
     Conditional_expression,
     Constant,
@@ -102,6 +103,7 @@ pub enum Rules {
     Logical_OR_expression,
     Long_long_suffix,
     Long_suffix,
+    Multiline_comment,
     Multiplicative_expression,
     Nondigit,
     Nonzero_digit,
@@ -149,4 +151,5 @@ pub enum Rules {
     Unary_operator,
     Universal_character_name,
     Unsigned_suffix,
+    Wsc,
 }

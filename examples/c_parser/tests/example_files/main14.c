@@ -1,4 +1,4 @@
-struct myStruct
+union myUnion
 {
     int x;
 };
