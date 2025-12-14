@@ -9,4 +9,5 @@ int main()
         float y; // Should be just fine
         char z[30];
     };
+    union myUnion x = { 0, 20, "Thing"};
 }

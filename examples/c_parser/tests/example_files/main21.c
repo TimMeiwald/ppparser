@@ -6,10 +6,10 @@ struct myStruct
 int main()
 {   
     struct myStruct b;
-    b.x = 5;
+    b.y = 5;
     int x = 10;
     int y = 20;
-    struct myStruct a = { x/y, 0 };
+    struct myStruct a = { x, 0 };
     int x = a.x;
     return 0;
 }

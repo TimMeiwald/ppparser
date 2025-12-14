@@ -10,7 +10,7 @@ impl From<u32> for Rules {
     }
 }
 #[allow(dead_code)]
-pub static RULES_SIZE: u32 = 27;
+pub static RULES_SIZE: u32 = 28;
 #[allow(clippy::upper_case_acronyms)] // Again due to generation -> Might solve eventually
 #[derive(PartialEq, Eq, Hash, FromPrimitive, Clone, Copy, Debug, Ord, PartialOrd)]
 
@@ -18,6 +18,7 @@ pub enum Rules {
     Grammar,
     Array,
     Comment,
+    Complex_initialization,
     Ctype,
     Enumeration,
     Expression,
@@ -28,18 +29,18 @@ pub enum Rules {
     Function_definition,
     Function_header,
     Function_parameters,
+    Identifier,
     Int,
     Multiline_comment,
     Name,
     Parameter,
     Reserved_words,
     Statement,
+    Statement_modifier,
     Statement_return,
-    Statement_variable_assignment,
     Statement_variable_declaration,
-    Structure_declaration,
-    Structure_declaration_and_initialization,
-    Structure_definition,
+    String,
+    Structure,
     Union,
     Wsc,
 }

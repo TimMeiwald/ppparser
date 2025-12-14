@@ -184,6 +184,26 @@ pub fn floating_constant<T: Context + 'static>(
     closure_22(parent, source, position)
 }
 #[allow(dead_code)]
+pub fn string<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'"');
+    let closure_2 = _terminal(b'"');
+    let closure_3 = _not_predicate(&closure_2);
+    let closure_4 =
+        move |parent: Key, source: &Source, position: u32| ascii(parent, context, source, position);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 = _subexpression(&closure_5);
+    let closure_7 = _zero_or_more(&closure_6);
+    let closure_8 = _sequence(&closure_1, &closure_7);
+    let closure_9 = _terminal(b'"');
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    closure_10(parent, source, position)
+}
+#[allow(dead_code)]
 pub fn valid_thing_name<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
@@ -228,6 +248,22 @@ pub fn name<T: Context + 'static>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
+pub fn identifier<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Name, context, name);
+    let closure_2 = _terminal(b'.');
+    let closure_3 = _var_name(Rules::Name, context, name);
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = _subexpression(&closure_4);
+    let closure_6 = _zero_or_more(&closure_5);
+    let closure_7 = _sequence(&closure_1, &closure_6);
+    closure_7(parent, source, position)
+}
+#[allow(dead_code)]
 pub fn ctype<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
@@ -261,7 +297,7 @@ pub fn reserved_words<T: Context + 'static>(
     closure_11(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn structure_definition<T: Context + 'static>(
+pub fn structure<T: Context + 'static>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -299,87 +335,6 @@ pub fn structure_definition<T: Context + 'static>(
     let closure_24 = _terminal(b';');
     let closure_25 = _sequence(&closure_23, &closure_24);
     closure_25(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn structure_declaration<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Wsc, context, wsc);
-    let closure_2 = _string_terminal_opt_ascii(b"struct");
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::Name, context, name);
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::Name, context, name);
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    let closure_12 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_13 = _sequence(&closure_11, &closure_12);
-    let closure_14 = _terminal(b';');
-    let closure_15 = _sequence(&closure_13, &closure_14);
-    closure_15(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn structure_declaration_and_initialization<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Wsc, context, wsc);
-    let closure_2 = _string_terminal_opt_ascii(b"struct");
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::Name, context, name);
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::Name, context, name);
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    let closure_12 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_13 = _sequence(&closure_11, &closure_12);
-    let closure_14 = _terminal(b'=');
-    let closure_15 = _sequence(&closure_13, &closure_14);
-    let closure_16 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_17 = _sequence(&closure_15, &closure_16);
-    let closure_18 = _terminal(b'{');
-    let closure_19 = _sequence(&closure_17, &closure_18);
-    let closure_20 = _var_name(Rules::Wsc, context, wsc);
-    let closure_21 = _sequence(&closure_19, &closure_20);
-    let closure_22 = _var_name(Rules::Expression, context, expression);
-    let closure_23 = _terminal(b',');
-    let closure_24 = _sequence(&closure_22, &closure_23);
-    let closure_25 = _var_name(Rules::Wsc, context, wsc);
-    let closure_26 = _sequence(&closure_24, &closure_25);
-    let closure_27 = _subexpression(&closure_26);
-    let closure_28 = _zero_or_more(&closure_27);
-    let closure_29 = _sequence(&closure_21, &closure_28);
-    let closure_30 = _var_name(Rules::Expression, context, expression);
-    let closure_31 = _var_name(Rules::Wsc, context, wsc);
-    let closure_32 = _sequence(&closure_30, &closure_31);
-    let closure_33 = _subexpression(&closure_32);
-    let closure_34 = _optional(&closure_33);
-    let closure_35 = _sequence(&closure_29, &closure_34);
-    let closure_36 = _terminal(b'}');
-    let closure_37 = _sequence(&closure_35, &closure_36);
-    let closure_38 = _var_name(Rules::Wsc, context, wsc);
-    let closure_39 = _sequence(&closure_37, &closure_38);
-    let closure_40 = _terminal(b';');
-    let closure_41 = _sequence(&closure_39, &closure_40);
-    closure_41(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn union<T: Context + 'static>(
@@ -588,7 +543,7 @@ pub fn parameter<T: Context + 'static>(
     let closure_2 =
         move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Name, context, name);
+    let closure_4 = _var_name(Rules::Identifier, context, identifier);
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
@@ -658,68 +613,7 @@ pub fn function_call<T: Context + 'static>(
     let closure_23 = _sequence(&closure_21, &closure_22);
     let closure_24 = _terminal(b')');
     let closure_25 = _sequence(&closure_23, &closure_24);
-    let closure_26 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_27 = _sequence(&closure_25, &closure_26);
-    let closure_28 = _terminal(b';');
-    let closure_29 = _sequence(&closure_27, &closure_28);
-    let closure_30 = _var_name(Rules::Wsc, context, wsc);
-    let closure_31 = _sequence(&closure_29, &closure_30);
-    closure_31(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn statement<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Structure_definition, context, structure_definition);
-    let closure_2 = _var_name(Rules::Structure_declaration, context, structure_declaration);
-    let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _var_name(
-        Rules::Structure_declaration_and_initialization,
-        context,
-        structure_declaration_and_initialization,
-    );
-    let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::Union, context, union);
-    let closure_7 = _ordered_choice(&closure_5, &closure_6);
-    let closure_8 = _var_name(Rules::Enumeration, context, enumeration);
-    let closure_9 = _ordered_choice(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::Function_call, context, function_call);
-    let closure_11 = _ordered_choice(&closure_9, &closure_10);
-    let closure_12 = _var_name(Rules::Statement_return, context, statement_return);
-    let closure_13 = _ordered_choice(&closure_11, &closure_12);
-    let closure_14 = _var_name(
-        Rules::Statement_variable_assignment,
-        context,
-        statement_variable_assignment,
-    );
-    let closure_15 = _ordered_choice(&closure_13, &closure_14);
-    closure_15(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn statement_return<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(b"return");
-    let closure_2 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Expression, context, expression);
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = _terminal(b';');
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _var_name(Rules::Wsc, context, wsc);
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    closure_11(parent, source, position)
+    closure_25(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn array<T: Context + 'static>(
@@ -740,41 +634,6 @@ pub fn array<T: Context + 'static>(
     let closure_8 = _terminal(b']');
     let closure_9 = _sequence(&closure_7, &closure_8);
     closure_9(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn statement_variable_assignment<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Ctype, context, ctype);
-    let closure_2 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Name, context, name);
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _var_name(Rules::Array, context, array);
-    let closure_7 = _optional(&closure_6);
-    let closure_8 = _sequence(&closure_5, &closure_7);
-    let closure_9 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_10 = _sequence(&closure_8, &closure_9);
-    let closure_11 = _terminal(b'=');
-    let closure_12 = _sequence(&closure_10, &closure_11);
-    let closure_13 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_14 = _sequence(&closure_12, &closure_13);
-    let closure_15 = _var_name(Rules::Expression, context, expression);
-    let closure_16 = _sequence(&closure_14, &closure_15);
-    let closure_17 =
-        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
-    let closure_18 = _sequence(&closure_16, &closure_17);
-    let closure_19 = _terminal(b';');
-    let closure_20 = _sequence(&closure_18, &closure_19);
-    let closure_21 = _var_name(Rules::Wsc, context, wsc);
-    let closure_22 = _sequence(&closure_20, &closure_21);
-    closure_22(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn statement_variable_declaration<T: Context + 'static>(
@@ -806,12 +665,167 @@ pub fn expression<T: Context + 'static>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _var_name(Rules::Name, context, name);
-    let closure_2 = _var_name(Rules::Floating_constant, context, floating_constant);
+    let closure_1 = _var_name(Rules::Floating_constant, context, floating_constant);
+    let closure_2 = _var_name(Rules::Int, context, int);
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Int, context, int);
+    let closure_4 = _var_name(Rules::String, context, string);
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    let closure_6 = _var_name(Rules::Function_call, context, function_call);
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    let closure_8 = _var_name(Rules::Identifier, context, identifier);
+    let closure_9 = _ordered_choice(&closure_7, &closure_8);
+    closure_9(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn complex_initialization<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _terminal(b'{');
+    let closure_2 = _var_name(Rules::Wsc, context, wsc);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Expression, context, expression);
+    let closure_5 = _terminal(b',');
+    let closure_6 = _sequence(&closure_4, &closure_5);
+    let closure_7 = _var_name(Rules::Wsc, context, wsc);
+    let closure_8 = _sequence(&closure_6, &closure_7);
+    let closure_9 = _subexpression(&closure_8);
+    let closure_10 = _zero_or_more(&closure_9);
+    let closure_11 = _sequence(&closure_3, &closure_10);
+    let closure_12 = _var_name(Rules::Expression, context, expression);
+    let closure_13 = _var_name(Rules::Wsc, context, wsc);
+    let closure_14 = _sequence(&closure_12, &closure_13);
+    let closure_15 = _subexpression(&closure_14);
+    let closure_16 = _optional(&closure_15);
+    let closure_17 = _sequence(&closure_11, &closure_16);
+    let closure_18 = _terminal(b'}');
+    let closure_19 = _sequence(&closure_17, &closure_18);
+    closure_19(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn statement_return<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _string_terminal_opt_ascii(b"return");
+    let closure_2 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _var_name(Rules::Expression, context, expression);
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    let closure_6 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _terminal(b';');
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _var_name(Rules::Wsc, context, wsc);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    closure_11(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn statement_modifier<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _string_terminal_opt_ascii(b"struct");
+    let closure_2 = _string_terminal_opt_ascii(b"enum");
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _string_terminal_opt_ascii(b"union");
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
     closure_5(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn statement<T: Context + 'static>(
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(Rules::Statement_modifier, context, statement_modifier);
+    let closure_2 = _optional(&closure_1);
+    let closure_3 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = _var_name(Rules::Ctype, context, ctype);
+    let closure_6 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _var_name(Rules::Identifier, context, identifier);
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _subexpression(&closure_9);
+    let closure_11 = _var_name(Rules::Identifier, context, identifier);
+    let closure_12 = _ordered_choice(&closure_10, &closure_11);
+    let closure_13 = _subexpression(&closure_12);
+    let closure_14 = _sequence(&closure_4, &closure_13);
+    let closure_15 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 = _terminal(b'=');
+    let closure_18 = _sequence(&closure_16, &closure_17);
+    let closure_19 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_20 = _sequence(&closure_18, &closure_19);
+    let closure_21 = _var_name(Rules::Expression, context, expression);
+    let closure_22 = _var_name(
+        Rules::Complex_initialization,
+        context,
+        complex_initialization,
+    );
+    let closure_23 = _ordered_choice(&closure_21, &closure_22);
+    let closure_24 = _subexpression(&closure_23);
+    let closure_25 = _sequence(&closure_20, &closure_24);
+    let closure_26 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_27 = _sequence(&closure_25, &closure_26);
+    let closure_28 = _terminal(b';');
+    let closure_29 = _sequence(&closure_27, &closure_28);
+    let closure_30 = _subexpression(&closure_29);
+    let closure_31 = _var_name(Rules::Statement_modifier, context, statement_modifier);
+    let closure_32 = _optional(&closure_31);
+    let closure_33 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_34 = _sequence(&closure_32, &closure_33);
+    let closure_35 = _var_name(Rules::Ctype, context, ctype);
+    let closure_36 = _sequence(&closure_34, &closure_35);
+    let closure_37 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_38 = _sequence(&closure_36, &closure_37);
+    let closure_39 = _var_name(Rules::Name, context, name);
+    let closure_40 = _sequence(&closure_38, &closure_39);
+    let closure_41 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_42 = _sequence(&closure_40, &closure_41);
+    let closure_43 = _terminal(b';');
+    let closure_44 = _sequence(&closure_42, &closure_43);
+    let closure_45 = _subexpression(&closure_44);
+    let closure_46 = _ordered_choice(&closure_30, &closure_45);
+    let closure_47 = _var_name(Rules::Statement_return, context, statement_return);
+    let closure_48 = _ordered_choice(&closure_46, &closure_47);
+    let closure_49 = _var_name(Rules::Expression, context, expression);
+    let closure_50 =
+        move |parent: Key, source: &Source, position: u32| ws(parent, context, source, position);
+    let closure_51 = _sequence(&closure_49, &closure_50);
+    let closure_52 = _terminal(b';');
+    let closure_53 = _sequence(&closure_51, &closure_52);
+    let closure_54 = _subexpression(&closure_53);
+    let closure_55 = _ordered_choice(&closure_48, &closure_54);
+    let closure_56 = _var_name(Rules::Function_definition, context, function_definition);
+    let closure_57 = _ordered_choice(&closure_55, &closure_56);
+    let closure_58 = _var_name(Rules::Function_declaration, context, function_declaration);
+    let closure_59 = _ordered_choice(&closure_57, &closure_58);
+    let closure_60 = _var_name(Rules::Union, context, union);
+    let closure_61 = _ordered_choice(&closure_59, &closure_60);
+    let closure_62 = _var_name(Rules::Structure, context, structure);
+    let closure_63 = _ordered_choice(&closure_61, &closure_62);
+    let closure_64 = _var_name(Rules::Enumeration, context, enumeration);
+    let closure_65 = _ordered_choice(&closure_63, &closure_64);
+    closure_65(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn grammar<T: Context + 'static>(
@@ -821,27 +835,11 @@ pub fn grammar<T: Context + 'static>(
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = _var_name(Rules::Wsc, context, wsc);
-    let closure_2 = _var_name(Rules::Function_definition, context, function_definition);
-    let closure_3 = _var_name(Rules::Function_declaration, context, function_declaration);
-    let closure_4 = _ordered_choice(&closure_2, &closure_3);
-    let closure_5 = _var_name(Rules::Structure_definition, context, structure_definition);
-    let closure_6 = _ordered_choice(&closure_4, &closure_5);
-    let closure_7 = _var_name(Rules::Structure_declaration, context, structure_declaration);
-    let closure_8 = _ordered_choice(&closure_6, &closure_7);
-    let closure_9 = _var_name(
-        Rules::Structure_declaration_and_initialization,
-        context,
-        structure_declaration_and_initialization,
-    );
-    let closure_10 = _ordered_choice(&closure_8, &closure_9);
-    let closure_11 = _var_name(Rules::Enumeration, context, enumeration);
-    let closure_12 = _ordered_choice(&closure_10, &closure_11);
-    let closure_13 = _var_name(Rules::Union, context, union);
-    let closure_14 = _ordered_choice(&closure_12, &closure_13);
-    let closure_15 = _subexpression(&closure_14);
-    let closure_16 = _zero_or_more(&closure_15);
-    let closure_17 = _sequence(&closure_1, &closure_16);
-    let closure_18 = _var_name(Rules::Wsc, context, wsc);
-    let closure_19 = _sequence(&closure_17, &closure_18);
-    closure_19(parent, source, position)
+    let closure_2 = _var_name(Rules::Statement, context, statement);
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _subexpression(&closure_3);
+    let closure_5 = _zero_or_more(&closure_4);
+    let closure_6 = _var_name(Rules::Wsc, context, wsc);
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    closure_7(parent, source, position)
 }
