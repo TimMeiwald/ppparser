@@ -1,1 +1,2 @@
 /target
+*.out # So C test compilations aren't an issue

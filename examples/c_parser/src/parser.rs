@@ -4209,27 +4209,22 @@ pub fn direct_declarator<T: Context + 'static>(
 ) -> (bool, u32) {
     let closure_1 = _terminal(b'(');
     let closure_2 = _var_name(Rules::Declarator, context, declarator);
-    let closure_3 = _terminal(b'"');
-    let closure_4 = _terminal(b'"');
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = _terminal(b')');
     let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _ordered_choice(&closure_2, &closure_5);
-    let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _sequence(&closure_1, &closure_7);
-    let closure_9 = _terminal(b')');
-    let closure_10 = _sequence(&closure_8, &closure_9);
-    let closure_11 = _subexpression(&closure_10);
+    let closure_6 = _subexpression(&closure_5);
     let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
-    let closure_12 = _var_name_indirect_left_recursion(
+    let closure_7 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Direct_declarator,
         context,
         direct_declarator,
     );
-    let closure_13 = _terminal(b'[');
-    let closure_14 = _sequence(&closure_12, &closure_13);
-    let closure_15 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
-    let closure_16 = _optional(&closure_15);
-    let closure_17 = _sequence(&closure_14, &closure_16);
+    let closure_8 = _terminal(b'[');
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
+    let closure_11 = _optional(&closure_10);
+    let closure_12 = _sequence(&closure_9, &closure_11);
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
@@ -4248,74 +4243,74 @@ pub fn direct_declarator<T: Context + 'static>(
         Rules::Unary_expression,
     ]
     .to_vec();
-    let closure_18 = _var_name_indirect_left_recursion(
+    let closure_13 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Assignment_expression,
         context,
         assignment_expression,
     );
-    let closure_19 = _optional(&closure_18);
-    let closure_20 = _sequence(&closure_17, &closure_19);
-    let closure_21 = _terminal(b']');
+    let closure_14 = _optional(&closure_13);
+    let closure_15 = _sequence(&closure_12, &closure_14);
+    let closure_16 = _terminal(b']');
+    let closure_17 = _sequence(&closure_15, &closure_16);
+    let closure_18 = _subexpression(&closure_17);
+    let closure_19 = _ordered_choice(&closure_6, &closure_18);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
+    let closure_20 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Direct_declarator,
+        context,
+        direct_declarator,
+    );
+    let closure_21 = _terminal(b'[');
     let closure_22 = _sequence(&closure_20, &closure_21);
-    let closure_23 = _subexpression(&closure_22);
-    let closure_24 = _ordered_choice(&closure_11, &closure_23);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
-    let closure_25 = _var_name_indirect_left_recursion(
+    let closure_23 = _string_terminal_opt_ascii(b"static");
+    let closure_24 = _sequence(&closure_22, &closure_23);
+    let closure_25 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
+    let closure_26 = _optional(&closure_25);
+    let closure_27 = _sequence(&closure_24, &closure_26);
+    let involved_set: Vec<Rules> = [
+        Rules::AND_expression,
+        Rules::Additive_expression,
+        Rules::Assignment_expression,
+        Rules::Cast_expression,
+        Rules::Conditional_expression,
+        Rules::Equality_expression,
+        Rules::Exclusive_OR_expression,
+        Rules::Inclusive_OR_expression,
+        Rules::Logical_AND_expression,
+        Rules::Logical_OR_expression,
+        Rules::Multiplicative_expression,
+        Rules::Postfix_expression,
+        Rules::Relational_expression,
+        Rules::Shift_expression,
+        Rules::Unary_expression,
+    ]
+    .to_vec();
+    let closure_28 = _var_name_indirect_left_recursion(
         &involved_set,
-        Rules::Direct_declarator,
+        Rules::Assignment_expression,
         context,
-        direct_declarator,
+        assignment_expression,
     );
-    let closure_26 = _terminal(b'[');
-    let closure_27 = _sequence(&closure_25, &closure_26);
-    let closure_28 = _string_terminal_opt_ascii(b"static");
     let closure_29 = _sequence(&closure_27, &closure_28);
-    let closure_30 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
-    let closure_31 = _optional(&closure_30);
-    let closure_32 = _sequence(&closure_29, &closure_31);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_33 = _var_name_indirect_left_recursion(
+    let closure_30 = _terminal(b']');
+    let closure_31 = _sequence(&closure_29, &closure_30);
+    let closure_32 = _subexpression(&closure_31);
+    let closure_33 = _ordered_choice(&closure_19, &closure_32);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
+    let closure_34 = _var_name_indirect_left_recursion(
         &involved_set,
-        Rules::Assignment_expression,
+        Rules::Direct_declarator,
         context,
-        assignment_expression,
+        direct_declarator,
     );
-    let closure_34 = _sequence(&closure_32, &closure_33);
-    let closure_35 = _terminal(b']');
+    let closure_35 = _terminal(b'[');
     let closure_36 = _sequence(&closure_34, &closure_35);
-    let closure_37 = _subexpression(&closure_36);
-    let closure_38 = _ordered_choice(&closure_24, &closure_37);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
-    let closure_39 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Direct_declarator,
-        context,
-        direct_declarator,
-    );
-    let closure_40 = _terminal(b'[');
-    let closure_41 = _sequence(&closure_39, &closure_40);
-    let closure_42 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
-    let closure_43 = _sequence(&closure_41, &closure_42);
-    let closure_44 = _string_terminal_opt_ascii(b"static");
-    let closure_45 = _sequence(&closure_43, &closure_44);
+    let closure_37 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
+    let closure_38 = _sequence(&closure_36, &closure_37);
+    let closure_39 = _string_terminal_opt_ascii(b"static");
+    let closure_40 = _sequence(&closure_38, &closure_39);
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
@@ -4334,77 +4329,77 @@ pub fn direct_declarator<T: Context + 'static>(
         Rules::Unary_expression,
     ]
     .to_vec();
-    let closure_46 = _var_name_indirect_left_recursion(
+    let closure_41 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Assignment_expression,
         context,
         assignment_expression,
     );
-    let closure_47 = _sequence(&closure_45, &closure_46);
-    let closure_48 = _terminal(b']');
+    let closure_42 = _sequence(&closure_40, &closure_41);
+    let closure_43 = _terminal(b']');
+    let closure_44 = _sequence(&closure_42, &closure_43);
+    let closure_45 = _subexpression(&closure_44);
+    let closure_46 = _ordered_choice(&closure_33, &closure_45);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
+    let closure_47 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Direct_declarator,
+        context,
+        direct_declarator,
+    );
+    let closure_48 = _terminal(b'[');
     let closure_49 = _sequence(&closure_47, &closure_48);
-    let closure_50 = _subexpression(&closure_49);
-    let closure_51 = _ordered_choice(&closure_38, &closure_50);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
-    let closure_52 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Direct_declarator,
-        context,
-        direct_declarator,
-    );
-    let closure_53 = _terminal(b'[');
+    let closure_50 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
+    let closure_51 = _optional(&closure_50);
+    let closure_52 = _sequence(&closure_49, &closure_51);
+    let closure_53 = _terminal(b'*');
     let closure_54 = _sequence(&closure_52, &closure_53);
-    let closure_55 = _var_name(Rules::Type_qualifier_list, context, type_qualifier_list);
-    let closure_56 = _optional(&closure_55);
-    let closure_57 = _sequence(&closure_54, &closure_56);
-    let closure_58 = _terminal(b'*');
-    let closure_59 = _sequence(&closure_57, &closure_58);
-    let closure_60 = _terminal(b']');
+    let closure_55 = _terminal(b']');
+    let closure_56 = _sequence(&closure_54, &closure_55);
+    let closure_57 = _subexpression(&closure_56);
+    let closure_58 = _ordered_choice(&closure_46, &closure_57);
+    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
+    let closure_59 = _var_name_indirect_left_recursion(
+        &involved_set,
+        Rules::Direct_declarator,
+        context,
+        direct_declarator,
+    );
+    let closure_60 = _terminal(b'(');
     let closure_61 = _sequence(&closure_59, &closure_60);
-    let closure_62 = _subexpression(&closure_61);
-    let closure_63 = _ordered_choice(&closure_51, &closure_62);
+    let closure_62 = _var_name(Rules::Parameter_type_list, context, parameter_type_list);
+    let closure_63 = _sequence(&closure_61, &closure_62);
+    let closure_64 = _terminal(b')');
+    let closure_65 = _sequence(&closure_63, &closure_64);
+    let closure_66 = _subexpression(&closure_65);
+    let closure_67 = _ordered_choice(&closure_58, &closure_66);
     let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
-    let closure_64 = _var_name_indirect_left_recursion(
+    let closure_68 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Direct_declarator,
         context,
         direct_declarator,
     );
-    let closure_65 = _terminal(b'(');
-    let closure_66 = _sequence(&closure_64, &closure_65);
-    let closure_67 = _var_name(Rules::Parameter_type_list, context, parameter_type_list);
-    let closure_68 = _sequence(&closure_66, &closure_67);
-    let closure_69 = _terminal(b')');
+    let closure_69 = _terminal(b'(');
     let closure_70 = _sequence(&closure_68, &closure_69);
-    let closure_71 = _subexpression(&closure_70);
-    let closure_72 = _ordered_choice(&closure_63, &closure_71);
-    let involved_set: Vec<Rules> = [Rules::Direct_declarator].to_vec();
-    let closure_73 = _var_name_indirect_left_recursion(
-        &involved_set,
-        Rules::Direct_declarator,
-        context,
-        direct_declarator,
-    );
-    let closure_74 = _terminal(b'(');
-    let closure_75 = _sequence(&closure_73, &closure_74);
     let involved_set: Vec<Rules> = [Rules::Identifier, Rules::Identifier_list].to_vec();
-    let closure_76 = _var_name_indirect_left_recursion(
+    let closure_71 = _var_name_indirect_left_recursion(
         &involved_set,
         Rules::Identifier_list,
         context,
         identifier_list,
     );
-    let closure_77 = _optional(&closure_76);
-    let closure_78 = _sequence(&closure_75, &closure_77);
-    let closure_79 = _terminal(b')');
-    let closure_80 = _sequence(&closure_78, &closure_79);
-    let closure_81 = _subexpression(&closure_80);
-    let closure_82 = _ordered_choice(&closure_72, &closure_81);
+    let closure_72 = _optional(&closure_71);
+    let closure_73 = _sequence(&closure_70, &closure_72);
+    let closure_74 = _terminal(b')');
+    let closure_75 = _sequence(&closure_73, &closure_74);
+    let closure_76 = _subexpression(&closure_75);
+    let closure_77 = _ordered_choice(&closure_67, &closure_76);
     let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-    let closure_83 =
+    let closure_78 =
         _var_name_indirect_left_recursion(&involved_set, Rules::Identifier, context, identifier);
-    let closure_84 = _ordered_choice(&closure_82, &closure_83);
-    closure_84(parent, source, position)
+    let closure_79 = _ordered_choice(&closure_77, &closure_78);
+    closure_79(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn pointer<T: Context + 'static>(
