@@ -270,6 +270,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "example_11_external_rule_call_parser"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "num",
+ "num-derive",
+ "num-traits",
+]
+
+[[package]]
 name = "example_1_parser"
 version = "0.1.0"
 dependencies = [

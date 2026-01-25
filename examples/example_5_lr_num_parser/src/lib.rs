@@ -1,6 +1,7 @@
 #![allow(unused_imports)]
 mod cache;
 mod context;
+mod hooked_calls;
 mod keys;
 pub mod parse;
 pub mod parser;

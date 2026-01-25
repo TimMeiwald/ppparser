@@ -8,5 +8,5 @@ cargo run -- -s ./examples/example_7_indirect_lr_num/LR_num_indirect.dsl -t ./ex
 cargo run -- -s ./examples/example_8_indirect_lr_3_level/LR_num_indirect_3_level.dsl -t ./examples/ -n example_8_indirect_lr_3_level_parser --offline
 cargo run -- -s ./examples/example_9_indirect_lr_5_level/LR_num_indirect_5_level.dsl -t ./examples/ -n example_9_indirect_lr_5_level_parser --offline
 cargo run -- -s ./examples/example_10_basic_bench/example_10_basic_bench.dsl -t ./examples/ -n example_10_basic_bench_parser --offline
-cargo run -- -s ./examples/example_11_external_rule_call/example_11_external_rule_call.dsl -t ./examples/ -n example_11_external_rule_call_parser --offline
+cargo run -- -s ./examples/example_11_external_rule_call/example_11_external_rule_call.dsl -t ./examples/ -n example_11_external_rule_call_parser
 cargo fmt

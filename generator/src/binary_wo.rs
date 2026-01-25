@@ -253,7 +253,7 @@ impl BinaryTreeWO {
         match &node.reference {
             Reference::HookedCall(var_name) => {
                 stack.push(format!(
-                    "let closure_{:?} = var_name(&closure_{:?});",
+                    "let closure_{:?} = {var_name}(&closure_{:?});",
                     index.0, key1.0
                 ));
                 index
