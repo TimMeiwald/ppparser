@@ -1,0 +1,1 @@
+<Grammar> = logger("Hello World!"); # Matches 'Hello World!' exactly but has external hooks. # 

@@ -78,7 +78,6 @@ mod tests {
         assert_eq!((result.0, result.1), (true, src_len));
     }
 
-
     #[test]
     fn test_external_rule_call() {
         let string = "<Spaces> = external_rule_call(['A'..'Z'], 'Z');".to_string();
