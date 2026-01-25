@@ -2,7 +2,7 @@ use super::binary_wo::{BinaryTreeWO, Reference};
 use crate::{cycle_detector::LeftRecursionDetector, symbol_table::SymbolTable};
 use ::parser::*;
 use indoc::indoc;
-use std::{env::var, panic::panic_any};
+use std::panic::panic_any;
 
 pub struct GeneratedCode<'a> {
     // String per rule so we can seperate into files per rule.
@@ -61,20 +61,20 @@ impl GeneratedCode<'_> {
             use std::cell::RefCell;"##
         }
         .to_string();
-        if hooked_call_imports_required.len() != 0 {
+        if !hooked_call_imports_required.is_empty() {
             let mut import = r#"use crate::hooked_calls::{"#.to_string();
             for hooked_call in hooked_call_imports_required {
-                import += &(hooked_call + &",".to_string());
+                import += &(hooked_call + ",");
             }
             import.pop(); // Remove last comma
             import += "};";
-            parser_header = (parser_header.to_owned() + &import);
+            parser_header = parser_header.to_owned() + &import ;
         }
 
         let s = GeneratedCode {
             rules_enum_header,
             rules_size_header,
-            parser_header: parser_header,
+            parser_header,
             rules,
             rules_enum,
             num_rules,
