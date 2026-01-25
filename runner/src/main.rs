@@ -15,6 +15,10 @@ struct Args {
     /// Name of parser.
     #[arg(short, long)]
     name: String,
+    /// Offline, whether to init the cargo repo. Since it needs online access to update this can be disabled
+    /// Cannot be used the first time you initialize a new package. Can be used to update a new parser faster.
+    #[arg(short, long, action = clap::ArgAction::SetFalse)]
+    offline: bool,
 }
 
 // source = "./parser_core/tests/Grammar.txt"
@@ -49,6 +53,7 @@ fn main() {
         "./parser",
         source,
         args.name,
+        args.offline,
     );
     match data.generate_data() {
         Ok(()) => println!("Success"),

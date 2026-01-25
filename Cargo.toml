@@ -23,7 +23,6 @@ members = [ "parser",
             "examples/example_9_indirect_lr_5_level_parser", 
             "examples/example_10_basic_bench",
             "examples/example_10_basic_bench_parser", 
-            "examples/c_parser", 
             "test-grammar-proc-macro",
             ]
 

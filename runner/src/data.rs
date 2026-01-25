@@ -10,14 +10,22 @@ pub struct DataGenerator {
     target_dir: PathBuf,
     parser_core_dir: PathBuf,
     source: PathBuf,
+    offline: bool,
 }
 impl DataGenerator {
-    pub fn new(target_dir: PathBuf, parser_core_dir: &str, source: PathBuf, name: String) -> Self {
+    pub fn new(
+        target_dir: PathBuf,
+        parser_core_dir: &str,
+        source: PathBuf,
+        name: String,
+        offline: bool,
+    ) -> Self {
         let dir_data = DataGenerator {
             name,
             parser_core_dir: PathBuf::from(parser_core_dir),
             target_dir,
             source,
+            offline,
         };
         dir_data
             .verify()
@@ -53,44 +61,45 @@ impl DataGenerator {
             std::result::Result::Ok(_) => {
                 println!("Path to Init {path:?}");
                 println!("Step 2");
-
-                let mut f = Command::new("cargo")
-                    .arg("init")
-                    .arg(path)
-                    .spawn()
-                    .expect("Failed to run Cargo Init");
-                let _r = f.wait();
-                println!("Cargo Dir: {path:?}");
-                let mut f = Command::new("cargo")
-                    .current_dir(path)
-                    .arg("add")
-                    .arg("num")
-                    .spawn()
-                    .expect("Failed to add package num");
-                let _r = f.wait();
-                let mut f = Command::new("cargo")
-                    .current_dir(path)
-                    .arg("add")
-                    .arg("num-derive")
-                    .spawn()
-                    .expect("Failed to add package num-derive");
-                let _r = f.wait();
-                let mut f = Command::new("cargo")
-                    .current_dir(path)
-                    .arg("add")
-                    .arg("num-traits")
-                    .spawn()
-                    .expect("Failed to add package num-traits");
-                let _r = f.wait();
-                let mut f = Command::new("cargo")
-                    .current_dir(path)
-                    .arg("add")
-                    .arg("clap")
-                    .arg("--features")
-                    .arg("derive")
-                    .spawn()
-                    .expect("Failed to add package clap");
-                let _r = f.wait();
+                if self.offline {
+                    let mut f = Command::new("cargo")
+                        .arg("init")
+                        .arg(path)
+                        .spawn()
+                        .expect("Failed to run Cargo Init");
+                    let _r = f.wait();
+                    println!("Cargo Dir: {path:?}");
+                    let mut f = Command::new("cargo")
+                        .current_dir(path)
+                        .arg("add")
+                        .arg("num")
+                        .spawn()
+                        .expect("Failed to add package num");
+                    let _r = f.wait();
+                    let mut f = Command::new("cargo")
+                        .current_dir(path)
+                        .arg("add")
+                        .arg("num-derive")
+                        .spawn()
+                        .expect("Failed to add package num-derive");
+                    let _r = f.wait();
+                    let mut f = Command::new("cargo")
+                        .current_dir(path)
+                        .arg("add")
+                        .arg("num-traits")
+                        .spawn()
+                        .expect("Failed to add package num-traits");
+                    let _r = f.wait();
+                    let mut f = Command::new("cargo")
+                        .current_dir(path)
+                        .arg("add")
+                        .arg("clap")
+                        .arg("--features")
+                        .arg("derive")
+                        .spawn()
+                        .expect("Failed to add package clap");
+                    let _r = f.wait();
+                }
 
                 let copy_folder = self.parser_core_dir.join("src");
                 let path = path.join("src");
