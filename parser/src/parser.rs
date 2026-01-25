@@ -298,7 +298,7 @@ pub fn subexpression<T: Context + 'static>(parent: Key, context: &RefCell<T>, so
 
 }
 #[allow(dead_code)]
-pub fn external_rule_call<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
+pub fn hooked_call<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 	//  Allows for handling context senstive grammars by calling out to handwritten code. 
 	let closure_1 = move |parent: Key, source: &Source, position: u32| var_name(parent, context, source, position);
 	let closure_2 = move |parent: Key, source: &Source, position: u32| left_bracket(parent, context, source, position);
@@ -378,7 +378,7 @@ pub fn terminal<T: Context + 'static>(parent: Key, context: &RefCell<T>, source:
 pub fn nucleus<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {
 
 	let closure_1 = _var_name(Rules::OrderedChoiceMatchRange, context, orderedchoicematchrange);
-	let closure_2 = _var_name(Rules::External_Rule_Call, context, external_rule_call);
+	let closure_2 = _var_name(Rules::Hooked_Call, context, hooked_call);
 	let closure_3 = _ordered_choice(&closure_1, &closure_2);
 	let closure_4 = _var_name(Rules::Subexpression, context, subexpression);
 	let closure_5 = _ordered_choice(&closure_3, &closure_4);
