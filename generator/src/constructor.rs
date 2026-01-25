@@ -68,7 +68,7 @@ impl GeneratedCode<'_> {
             }
             import.pop(); // Remove last comma
             import += "};";
-            parser_header = parser_header.to_owned() + &import ;
+            parser_header = parser_header.to_owned() + &import;
         }
 
         let s = GeneratedCode {
