@@ -24,6 +24,7 @@ pub enum Reference {
     StringTerminalAsciiOpt(Vec<char>),
     InlinedRule(String),
     LeftRecursiveRule(String, Vec<String>),
+    HookedCall(String),
 }
 
 pub struct BinaryTreeWO {
@@ -103,6 +104,7 @@ impl BinaryTreeWO {
             Reference::StringTerminalAsciiOpt(_) => self.string_terminal_ascii_opt(stack, index),
             Reference::InlinedRule(_) => self.inlined_rule(stack, index),
             Reference::LeftRecursiveRule(..) => self.left_recursive_rule(stack, index),
+            Reference::HookedCall(_) => self.hooked_call(stack, index),
             Reference::Exec | Reference::Null => {
                 panic!("Exec should only exist once and NULL should never exist")
             }
@@ -236,6 +238,22 @@ impl BinaryTreeWO {
             Reference::ZeroOrMore => {
                 stack.push(format!(
                     "let closure_{:?} = _zero_or_more(&closure_{:?});",
+                    index.0, key1.0
+                ));
+                index
+            }
+            _ => {
+                panic!("Shouldn't happen")
+            }
+        }
+    }
+    fn hooked_call(&self, stack: &mut Vec<String>, index: Key) -> Key {
+        let node = &self.nodes[usize::from(index)];
+        let key1 = self.match_ref(stack, node.lhs.expect("Should always have a left node"));
+        match &node.reference {
+            Reference::HookedCall(var_name) => {
+                stack.push(format!(
+                    "let closure_{:?} = var_name(&closure_{:?});",
                     index.0, key1.0
                 ));
                 index

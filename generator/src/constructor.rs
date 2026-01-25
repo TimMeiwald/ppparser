@@ -2,13 +2,13 @@ use super::binary_wo::{BinaryTreeWO, Reference};
 use crate::{cycle_detector::LeftRecursionDetector, symbol_table::SymbolTable};
 use ::parser::*;
 use indoc::indoc;
-use std::panic::panic_any;
+use std::{env::var, panic::panic_any};
 
 pub struct GeneratedCode<'a> {
     // String per rule so we can seperate into files per rule.
     pub rules_enum_header: &'a str,
     pub rules_size_header: &'a str,
-    pub parser_header: &'a str,
+    pub parser_header: String,
     pub num_rules: usize,
     pub rules: Vec<String>,
     pub rules_enum: String,
@@ -23,7 +23,14 @@ impl GeneratedCode<'_> {
         source: &str,
     ) -> Self {
         println!("Generating Code");
-        let rules = Self::generate(left_recursive_rules, symbol_table, tree, source);
+        let mut hooked_call_imports_required: Vec<String> = Vec::new();
+        let rules = Self::generate(
+            &mut hooked_call_imports_required,
+            left_recursive_rules,
+            symbol_table,
+            tree,
+            source,
+        );
         let (rules_enum, num_rules) = Self::generate_rules_enum(symbol_table);
         let rules_enum_header = indoc! {
             r##"#![allow(non_camel_case_types)] // Again due to generation -> Might solve eventually
@@ -46,18 +53,27 @@ impl GeneratedCode<'_> {
             r##"#[allow(dead_code)]
                 pub static RULES_SIZE: u32 = "##
         };
-        let parser_header = indoc! {
+        let mut parser_header = indoc! {
             r##"#![allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
             #![allow(unused_variables)] // Generated Code also, since everything passes stuff
             #![allow(unused_imports)] // Generated Code also, since everything passes stuff
             use crate::*;
             use std::cell::RefCell;"##
-        };
-
+        }.to_string();
+        if hooked_call_imports_required.len() != 0{
+            let mut import = r#"use crate::hooked_calls::{"#.to_string();
+            for hooked_call in hooked_call_imports_required{
+                import += &(hooked_call + &",".to_string());
+            }
+            import.pop(); // Remove last comma
+            import += "};";
+            parser_header = (parser_header.to_owned() + &import);
+        }
+        
         let s = GeneratedCode {
             rules_enum_header,
             rules_size_header,
-            parser_header,
+            parser_header: parser_header,
             rules,
             rules_enum,
             num_rules,
@@ -101,6 +117,7 @@ impl GeneratedCode<'_> {
     }
 
     fn generate(
+        hooked_call_imports_required: &mut Vec<String>,
         left_recursive_rules: &LeftRecursionDetector,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -119,6 +136,7 @@ impl GeneratedCode<'_> {
             let child_index = node.get_children()[counter];
             // Recurse.
             let rule = Self::match_rule(
+                hooked_call_imports_required,
                 left_recursive_rules,
                 symbol_table,
                 tree,
@@ -155,6 +173,7 @@ impl GeneratedCode<'_> {
     }
 
     fn match_rule(
+        hooked_call_imports_required: &mut Vec<String>,
         left_recursive_rules: &LeftRecursionDetector,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -163,7 +182,14 @@ impl GeneratedCode<'_> {
     ) -> String {
         let node = tree.get_node(index);
         match node.rule {
-            Rules::Rule => Self::rule(left_recursive_rules, symbol_table, tree, source, index),
+            Rules::Rule => Self::rule(
+                hooked_call_imports_required,
+                left_recursive_rules,
+                symbol_table,
+                tree,
+                source,
+                index,
+            ),
             _ => {
                 todo!("Not yet implemented")
             }
@@ -171,6 +197,7 @@ impl GeneratedCode<'_> {
     }
 
     fn rule(
+        hooked_call_imports_required: &mut Vec<String>,
         left_recursive_rules: &LeftRecursionDetector,
         symbol_table: &SymbolTable,
         tree: &BasicPublisher,
@@ -191,6 +218,7 @@ impl GeneratedCode<'_> {
                 Rules::RHS => {
                     let mut out_tree = BinaryTreeWO::new();
                     let rhs_key = Self::rhs(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         &mut out_tree,
                         symbol_table,
@@ -274,6 +302,7 @@ impl GeneratedCode<'_> {
     }
 
     fn rhs(
+        hooked_call_imports_required: &mut Vec<String>,
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -287,6 +316,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 Rules::Ordered_Choice => {
                     ret_key = Self::ordered_choice(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -297,6 +327,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Sequence => {
                     ret_key = Self::sequence(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -307,6 +338,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Atom => {
                     ret_key = Self::atom(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -322,6 +354,8 @@ impl GeneratedCode<'_> {
     }
 
     fn ordered_choice(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -337,6 +371,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 Rules::Atom => {
                     let mut key = Self::atom(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -358,6 +393,8 @@ impl GeneratedCode<'_> {
     }
 
     fn sequence(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -373,6 +410,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 Rules::Atom => {
                     let mut key = Self::atom(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -394,6 +432,8 @@ impl GeneratedCode<'_> {
     }
 
     fn atom(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -408,6 +448,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 Rules::And_Predicate => {
                     ret_key = Self::and_predicate(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -418,6 +459,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Not_Predicate => {
                     ret_key = Self::not_predicate(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -428,6 +470,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::One_Or_More => {
                     ret_key = Self::one_or_more(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -438,6 +481,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Zero_Or_More => {
                     ret_key = Self::zero_or_more(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -448,6 +492,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Optional => {
                     ret_key = Self::optional(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -458,6 +503,7 @@ impl GeneratedCode<'_> {
                 }
                 Rules::Nucleus => {
                     ret_key = Self::nucleus(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -474,6 +520,8 @@ impl GeneratedCode<'_> {
     }
 
     fn optional(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -489,6 +537,7 @@ impl GeneratedCode<'_> {
                 //Rules::Question_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -505,6 +554,8 @@ impl GeneratedCode<'_> {
         ret_key
     }
     fn one_or_more(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -520,6 +571,7 @@ impl GeneratedCode<'_> {
                 //Rules::Plus => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -536,6 +588,8 @@ impl GeneratedCode<'_> {
         ret_key
     }
     fn zero_or_more(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -551,6 +605,7 @@ impl GeneratedCode<'_> {
                 //Rules::Star => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -568,6 +623,8 @@ impl GeneratedCode<'_> {
     }
 
     fn and_predicate(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -583,6 +640,7 @@ impl GeneratedCode<'_> {
                 //Rules::Ampersand => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -600,6 +658,8 @@ impl GeneratedCode<'_> {
     }
 
     fn not_predicate(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -614,6 +674,7 @@ impl GeneratedCode<'_> {
                 //Rules::Exclamation_Mark => {}
                 Rules::Nucleus => {
                     let key = Self::nucleus(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -631,6 +692,8 @@ impl GeneratedCode<'_> {
     }
 
     fn nucleus(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -645,6 +708,7 @@ impl GeneratedCode<'_> {
             match child_rule {
                 Rules::Subexpression => {
                     ret_key = Self::subexpression(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -673,6 +737,17 @@ impl GeneratedCode<'_> {
                 Rules::StringTerminal => {
                     ret_key = Self::string_terminal(out_tree, symbol_table, tree, source, *i);
                 }
+                Rules::Hooked_Call => {
+                    ret_key = Self::hooked_call(
+                        hooked_call_imports_required,
+                        left_recursive_rules,
+                        out_tree,
+                        symbol_table,
+                        tree,
+                        source,
+                        *i,
+                    );
+                }
                 _ => {
                     let err_msg = format!("nucleus, Rule: {child_rule:?}");
                     panic_any(err_msg);
@@ -680,6 +755,48 @@ impl GeneratedCode<'_> {
             }
         }
         ret_key
+    }
+
+    fn hooked_call(
+        hooked_call_imports_required: &mut Vec<String>,
+        left_recursive_rules: &LeftRecursionDetector,
+        out_tree: &mut BinaryTreeWO,
+        symbol_table: &SymbolTable,
+        tree: &BasicPublisher,
+        source: &str,
+        index: Key,
+    ) -> Key {
+        let node = tree.get_node(index);
+        let child = node.get_children()[0];
+        let child_node = tree.get_node(child);
+        // Since var name is inlined it won't appear as a node so we take the
+        // hooekd call start position to the start of the first child node.
+        let var_name =
+            &source[((node.start_position) as usize)..((child_node.start_position - 1) as usize)];
+        hooked_call_imports_required.push(var_name.to_string());
+        // We create the hooked call exactly like a subexpression except we then substitute calls to an external
+        // file that then in turn calls back to the generated code with <var_name>_kernel
+        // For now it's on the user to make sure they don't reuse the same names. Due too laziness not because it's hard.
+
+        // This allows us to essentially intercept what a subexpression may result in and then change the logic based on some
+        // outside construct. E.g the typedef problem in C requires us to keep track of defined typedefs in order to determine
+        // how to parse a function declaration as it depends on whether something is a defined typedef which can be any string.
+        // This is because C is a context sensitive grammar, Traditionally the Lexer handles this bit making the rest of the parser
+        // context insensitive. Since we are scannerless however we need a way to resolve this.
+        let subexpr = Self::subexpression(
+            hooked_call_imports_required,
+            left_recursive_rules,
+            out_tree,
+            symbol_table,
+            tree,
+            source,
+            index,
+        );
+        out_tree.push(
+            Reference::HookedCall(var_name.to_string()),
+            Some(subexpr),
+            None,
+        )
     }
 
     fn string_terminal(
@@ -712,7 +829,6 @@ impl GeneratedCode<'_> {
                             .expect("Should be valid codepoint"),
                     );
                 }
-                //Rules::Apostrophe => {}
                 _ => {
                     let err_msg = format!("string_terminal, Rule: {child_rule:?}");
                     panic_any(err_msg);
@@ -802,6 +918,8 @@ impl GeneratedCode<'_> {
     }
 
     fn subexpression(
+        hooked_call_imports_required: &mut Vec<String>,
+
         left_recursive_rules: &LeftRecursionDetector,
         out_tree: &mut BinaryTreeWO,
         symbol_table: &SymbolTable,
@@ -815,6 +933,7 @@ impl GeneratedCode<'_> {
             match tree.get_node(*i).rule {
                 Rules::RHS => {
                     let key = Self::rhs(
+                        hooked_call_imports_required,
                         left_recursive_rules,
                         out_tree,
                         symbol_table,
@@ -824,7 +943,6 @@ impl GeneratedCode<'_> {
                     );
                     ret_key = out_tree.push(Reference::Subexpression, Some(key), None);
                 }
-                //Rules::Left_Bracket | Rules::Right_Bracket => {}
                 _ => panic!("subexpression"),
             }
         }
