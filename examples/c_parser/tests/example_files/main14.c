@@ -1,4 +1,0 @@
-struct myStruct
-{
-    int x;
-};
