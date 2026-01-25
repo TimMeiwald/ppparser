@@ -12,16 +12,17 @@
 
 <int> = <digits>+;
 <floating_constant> = (<digits>+, '.', <digits>*), ('f'/'F'/'l'/'L'/'')?;
+<string> = '"', (!'"', <ascii>)*, '"';
+
 
 <valid_thing_name> Inline = (<letters>/'_'), (<letters>/<digits>/'_')*; # Things can be ctypes or variables etc. #
 <name> = !(<reserved_words>), <valid_thing_name>;
+<identifier> = <name>, ('.', <name>)*;
 <ctype> = <valid_thing_name>;
 
 <reserved_words> = "char"/"void"/"int"/"float"/"double"/"return"; # Not all there yet # 
 
-<structure_definition> = <wsc>, "struct", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
-<structure_declaration> = <wsc>, "struct", <ws>, <name>, <ws>, <name>, <ws>, ';';
-<structure_declaration_and_initialization> = <wsc>, "struct", <ws>, <name>, <ws>, <name>, <ws>, '=', <ws>, '{', <wsc>, (<expression>, ',', <wsc>)*, (<expression>, <wsc>)? ,'}', <wsc>, ';';
+<structure> = <wsc>, "struct", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
 
 <union> = <wsc>, "union", <ws>, <name>, <ws>, '{', <wsc>, (<statement_variable_declaration>, <wsc>)* ,'}', <wsc>, ';';
 <enum_value> Inline = <name>, <ws>, ('=', <ws>, <int>)?;
@@ -31,20 +32,28 @@
 <function_declaration> = <function_header>, <wsc>, ';';
 <function_header> = <ctype>, <ws>, <name>, <ws>, <function_parameters>; 
 <function_parameters> = '(', <ws>, (<parameter>, <ws>, (',', <ws>, <parameter>)*)?, <ws>, ')', <wsc>;
-<parameter> = <ctype>, <ws>, <name>;
+<parameter> = <ctype>, <ws>, <identifier>;
 <function_body> = '{', <wsc>, (<statement>, <wsc>)*, '}', (<ws>, ';')?, <wsc>;
 
-<function_call> = <name>, <ws>, '(', <ws>, (<expression>, <ws>, (',', <ws>, <expression>)*)?, <ws>, ')', <ws>, ';', <wsc>;
+<function_call> = <name>, <ws>, '(', <ws>, (<expression>, <ws>, (',', <ws>, <expression>)*)?, <ws>, ')';
 
-<statement> = <structure_definition>/<structure_declaration>/<structure_declaration_and_initialization>/<union>/<enumeration>/<function_call>/<statement_return>/<statement_variable_assignment>;
-<statement_return> = "return", <ws>, <expression>, <ws>, ';', <wsc>;
 
 <array> = '[', <ws>, <int>, <ws>, ']';
-<statement_variable_assignment> = <ctype>, <ws>, <name>, <array>?, <ws>, '=', <ws>, <expression>, <ws>, ';', <wsc>;
 <statement_variable_declaration> = <ctype>, <ws>, <name>, <array>?, <ws>, ';';
 
-<expression> = <name>/<floating_constant>/<int>;
+<expression> = <floating_constant>/<int>/<string>/<function_call>/<identifier>;
+<complex_initialization> = '{', <wsc>, (<expression>, ',', <wsc>)*, (<expression>, <wsc>)? ,'}';
+<statement_return> = "return", <ws>, <expression>, <ws>, ';', <wsc>;
+<statement_modifier> = "struct"/"enum"/"union";
+<statement> =    (<statement_modifier>?, <ws>, ((<ctype>, <ws>, <identifier>)/<identifier>), <ws>, '=', <ws>, (<expression>/<complex_initialization>), <ws>, ';')
+                /(<statement_modifier>?, <ws>, <ctype>, <ws>, <name>, <ws>, <array>?, <ws>, ';')
+                /<statement_return>
+                /(<expression>, <ws>, ';')
+                /<function_definition>
+                /<function_declaration>
+                /<union>
+                /<structure>
+                /<enumeration>
+                ;
 
-
-
-<Grammar> = <wsc>, (<function_definition>/<function_declaration>/<structure_definition>/<structure_declaration>/<structure_declaration_and_initialization>/<enumeration>/<union>)*, <wsc>;
+<Grammar> = (<wsc>, <statement>)*, <wsc>;

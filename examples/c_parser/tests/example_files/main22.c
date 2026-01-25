@@ -2,10 +2,11 @@ struct myStruct
 {
     int x;
 };
-struct myStruct a = { 20 };
 
-int main()
+
+struct myStruct main()
 {   
     struct myStruct a = { 20 };
-    return 0;
+    a.x = 50;
+    return a;
 }

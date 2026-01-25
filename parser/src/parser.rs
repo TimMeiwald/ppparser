@@ -662,18 +662,22 @@ pub fn ordered_choice<T: Context + 'static>(
     let closure_8 = _var_name(Rules::Atom, context, atom);
     let closure_9 = _sequence(&closure_7, &closure_8);
     let closure_10 = move |parent: Key, source: &Source, position: u32| {
-        backslash(parent, context, source, position)
-    };
-    let closure_11 = move |parent: Key, source: &Source, position: u32| {
         whitespace(parent, context, source, position)
     };
+    let closure_11 = move |parent: Key, source: &Source, position: u32| {
+        backslash(parent, context, source, position)
+    };
     let closure_12 = _sequence(&closure_10, &closure_11);
-    let closure_13 = _var_name(Rules::Atom, context, atom);
+    let closure_13 = move |parent: Key, source: &Source, position: u32| {
+        whitespace(parent, context, source, position)
+    };
     let closure_14 = _sequence(&closure_12, &closure_13);
-    let closure_15 = _subexpression(&closure_14);
-    let closure_16 = _zero_or_more(&closure_15);
-    let closure_17 = _sequence(&closure_9, &closure_16);
-    closure_17(parent, source, position)
+    let closure_15 = _var_name(Rules::Atom, context, atom);
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 = _subexpression(&closure_16);
+    let closure_18 = _zero_or_more(&closure_17);
+    let closure_19 = _sequence(&closure_9, &closure_18);
+    closure_19(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn one_or_more<T: Context + 'static>(

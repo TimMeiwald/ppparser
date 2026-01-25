@@ -1,5 +1,5 @@
 
 int main() {
-  myFunction(); // call the function
+  myFunction();
   return 0;
 } 

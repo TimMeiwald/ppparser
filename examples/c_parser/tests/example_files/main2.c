@@ -1,4 +1,2 @@
 
-int main(int whatever)
-{
-}
+int main(int whatever){}

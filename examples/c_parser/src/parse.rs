@@ -1,6 +1,6 @@
 use crate::parser::grammar;
 use crate::var_name::_var_name;
-use crate::{Key, context::BasicContext, rules::RULES_SIZE};
+use crate::{context::BasicContext, rules::RULES_SIZE, Key};
 
 use super::*;
 use core::cell::RefCell;
