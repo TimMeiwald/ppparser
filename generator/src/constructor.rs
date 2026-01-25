@@ -59,17 +59,18 @@ impl GeneratedCode<'_> {
             #![allow(unused_imports)] // Generated Code also, since everything passes stuff
             use crate::*;
             use std::cell::RefCell;"##
-        }.to_string();
-        if hooked_call_imports_required.len() != 0{
+        }
+        .to_string();
+        if hooked_call_imports_required.len() != 0 {
             let mut import = r#"use crate::hooked_calls::{"#.to_string();
-            for hooked_call in hooked_call_imports_required{
+            for hooked_call in hooked_call_imports_required {
                 import += &(hooked_call + &",".to_string());
             }
             import.pop(); // Remove last comma
             import += "};";
             parser_header = (parser_header.to_owned() + &import);
         }
-        
+
         let s = GeneratedCode {
             rules_enum_header,
             rules_size_header,
