@@ -7,10 +7,11 @@
 <comment> = "//", (!'\n', <ascii>)*;
 
 <keyword> = "one"/ "of"/ "auto"/ "break"/ "case"/ "char"/ "const"/ "continue"/ "default"/ "do"/ "double"/ "else"/ "enum"/ "extern"/ "float"/ "for"/ "goto"/ "if"/ "inline"/ "int"/ "long"/ "register"/ "restrict"/ "return"/ "short"/ "signed"/ "sizeof"/ "static"/ "struct"/ "switch"/ "typedef"/ "union"/ "unsigned"/ "void"/ "volatile"/ "while"/ "_Alignas"/ "_Alignof"/ "_Atomic"/ "_Bool"/ "_Complex"/ "_Generic"/ " _Imaginary"/ "_Noreturn"/ "_Static_assert"/ "_Thread_local";
-<identifier> =  (<identifier>, <identifier_nondigit>)
+<identifier> = <identifier_nondigit>, (<identifier_nondigit>/<digit>)*;
+#<identifier> =  (<identifier>, <identifier_nondigit>)
                 /(<identifier>, <digit>)
-                /<identifier_nondigit>;
-<identifier_nondigit> = <nondigit>/<universal_character_name>;
+                /<identifier_nondigit>;#
+<identifier_nondigit> Inline = <nondigit>/<universal_character_name>;
 <nondigit> = ['A'..'Z']/['a'..'z']/'_';
 <digit> = ['0'..'9'];
 <universal_character_name> = ("\\u", <hex_quad>)/("\\U", <hex_quad>, <hex_quad>);
@@ -273,8 +274,8 @@
 
 <constant_expression> = <conditional_expression>;
 
-<declaration> = (<declaration_specifiers>, <attribute_seq>?, <init_declarator_list>?, ';')
-	/ <static_assert_declaration>;
+<declaration> = (<ws>, <declaration_specifiers>, <ws>, <attribute_seq>?, <ws>, <init_declarator_list>?, <ws>, ';')
+	/ (<ws>, <static_assert_declaration>, <ws>);
 
 <declaration_specifiers> = <ws>,  ((<storage_class_specifier>, <ws>, <declaration_specifiers>?)
                                 / (<type_specifier>, <ws>, <declaration_specifiers>?)
@@ -377,34 +378,32 @@
 <alignment_specifier> = ("_Alignas", '(', <type_name>, ')')
 	/ ("_Alignas", '(', <constant_expression>, ')');
 
-<declarator> = <pointer>?, <direct_declarator>;
+<declarator> = <ws>, <pointer>?, <direct_declarator>, <ws>;
 
-<direct_declarator> =   ('(', <declarator>, ')')
-                        / (<direct_declarator>, '[', <type_qualifier_list>?, <assignment_expression>?, ']')
-                        / (<direct_declarator>, '[', "static", <type_qualifier_list>?, <assignment_expression>, ']')
-                        / (<direct_declarator>, '[', <type_qualifier_list>, "static", <assignment_expression>, ']')
-                        / (<direct_declarator>, '[', <type_qualifier_list>?, '*', ']')
-                        / (<direct_declarator>, '(', <parameter_type_list>, ')')
-                        / (<direct_declarator>, '(', <identifier_list>?, ')')
-                        /<identifier>;
+<direct_declarator> = 		('(', <ws>, <declarator>, <ws>, ')')
+							/ (<direct_declarator>, '[', <type_qualifier_list>?, <assignment_expression>?, ']')
+							/ (<direct_declarator>, '[', "static", <type_qualifier_list>?, <assignment_expression>, ']')
+							/ (<direct_declarator>, '[', <type_qualifier_list>, "static", <assignment_expression>, ']')
+							/ (<direct_declarator>, '[', <type_qualifier_list>?, '*', ']')
+							/ (<direct_declarator>, '(', <parameter_type_list>, ')')
+							/ (<direct_declarator>, '(', <identifier_list>?, ')')
+							/<identifier>;
 
 <pointer> = ('*', <type_qualifier_list>?)
 	/ ('*', <type_qualifier_list>?, <pointer>);
 
-<type_qualifier_list> = <type_qualifier>
-	/ (<type_qualifier_list>, <type_qualifier>);
+<type_qualifier_list> = (<type_qualifier_list>, <type_qualifier>)/<type_qualifier>;
 
 <parameter_type_list> = <parameter_list>
 	/ (<parameter_list>, ',', "...");
 
-<parameter_list> = <parameter_declaration>
-	/ (<parameter_list>, ',', <parameter_declaration>);
+<parameter_list> = 	(<parameter_list>, ',', <parameter_declaration>)
+					/<parameter_declaration>;
 
-<parameter_declaration> = (<declaration_specifiers>, <declarator>)
-	/ (<declaration_specifiers>, <abstract_declarator>?);
+<parameter_declaration> = <ws>, ((<declaration_specifiers>, <ws>, <declarator>)
+	/ (<declaration_specifiers>, <ws>, <abstract_declarator>?)), <ws>;
 
-<identifier_list> = <identifier>
-	/ (<identifier_list>, ',', <identifier>);
+<identifier_list> = (<identifier_list>, ',', <identifier>)/<identifier>;
 
 <type_name> = <specifier_qualifier_list>, <abstract_declarator>?;
 
@@ -418,7 +417,7 @@
 	/ (<direct_abstract_declarator>, '[', <type_qualifier_list>?, '*', ']')
 	/ (<direct_abstract_declarator>?, '(', <parameter_type_list>?, ')');
 
-<typedef_name> = <identifier>;
+<typedef_name> = <identifier>, &' ';
 
 <initializer> = <assignment_expression>
 	/ ('{', <initializer_list>, '}')
@@ -437,28 +436,26 @@
 
 <static_assert_declaration> = "_Static_assert", '(', <constant_expression>, ',', <string_literal>, ')', ';';
 
-<statement> = <labeled_statement>
+<statement> = <ws>, (<labeled_statement>
 	/ <compound_statement>
 	/ <expression_statement>
 	/ <selection_statement>
 	/ <iteration_statement>
 	/ <jump_statement>
 	/ <try_except_statement>
-	/ <try_finally_statement>;
+	/ <try_finally_statement>), <ws>;
 
-<jump_statement> = ("goto", <identifier>, ';')
+<jump_statement> = <ws>, (("goto", <identifier>, ';')
 	/ ("continue", ';')
 	/ ("break", ';')
 	/ ("return", <expression>?, ';')
-	/ ("__leave", ';');
+	/ ("__leave", ';')), <ws>;
 
-<compound_statement> = ('{', <declaration_list>?, <statement_list>?, '}');
+<compound_statement> = <ws>, ('{', <ws>, <declaration_list>?, <ws>, <statement_list>?, <ws>, '}'), <ws>;
 
-<declaration_list> = <declaration>*
-	/ (<declaration_list>, <declaration>);
+<declaration_list> = <ws>, (<declaration>, <ws>)+;
 
-<statement_list> = <statement>
-	/ (<statement_list>, <statement>);
+<statement_list> = (<statement_list>, <statement>)/<statement>;
 
 <expression_statement> = <expression>?, ';';
 
@@ -482,7 +479,7 @@
 
 <external_declaration> = <ws>, (<function_definition>/<declaration>), <ws>;
 
-<function_definition> = <ws>, <declaration_specifiers>?, <ws>, <declarator>, <ws>, <declaration_list>?, <ws>, <compound_statement>;
+<function_definition> = <ws>, <declaration_specifiers>?, <ws>, <declarator>, <ws>, <declaration_list>?, <ws>, <compound_statement>, <ws>;
 
 <Grammar> = <ws>, <translation_unit>, <ws>;
 

@@ -506,7 +506,7 @@ direct-declarator:
     direct-declarator [ type-qualifier-list static assignment-expression ]
     direct-declarator [ type-qualifier-listopt * ]
     direct-declarator ( parameter-type-list )
-    direct-declarator ( identifier-listopt )3
+    direct-declarator ( identifier-listopt )
 
 pointer:
     * type-qualifier-listopt
