@@ -32,11 +32,12 @@
 
 
 <Subexpression> = <Left_Bracket>,<RHS>,<Right_Bracket>;
+<External_Rule_Call> = <Var_Name>, <Left_Bracket>,<RHS>,<Right_Bracket>; # Allows for handling context senstive grammars by calling out to handwritten code. # 
 <Epsilon> = <QuotationMark>, <QuotationMark>;
 <StringTerminal> = (<Apostrophe>, !<Apostrophe>, (<ASCII>, (!<Apostrophe>,<ASCII>)+), <Apostrophe>)/<Hex>/<Integer>; #Multibyte matches essentially#
 
 <Terminal> = (<QuotationMark>,<ASCII>,<QuotationMark>)/(<QuotationMark>,'\',('n'/'r'/'t'),<QuotationMark>)/<Epsilon>;
-<Nucleus> = (<OrderedChoiceMatchRange>/<Subexpression>/<Terminal>/<StringTerminal>/<Var_Name_Ref>), <Whitespace>;
+<Nucleus> = (<OrderedChoiceMatchRange>/<External_Rule_Call>/<Subexpression>/<Terminal>/<StringTerminal>/<Var_Name_Ref>), <Whitespace>;
 <Atom> = (<And_Predicate>/<Not_Predicate>/<One_Or_More>/<Zero_Or_More>/<Optional>/<Nucleus>), <Whitespace>;
 
 <And_Predicate> = <Ampersand>, <Nucleus>;
