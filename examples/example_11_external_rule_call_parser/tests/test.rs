@@ -1,8 +1,7 @@
-
 #[cfg(test)]
 mod tests {
-    use example_11_external_rule_call_parser::*;
     use core::cell::RefCell;
+    use example_11_external_rule_call_parser::*;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
     #[test]
@@ -27,5 +26,4 @@ mod tests {
             .print(Key(0), Some(true));
         assert_eq!((result.0, result.1), (true, src_len));
     }
-
 }
