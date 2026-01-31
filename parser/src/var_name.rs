@@ -189,7 +189,10 @@ pub fn should_go_into_growth_function<'context_lifetime, T: Context<'context_lif
     }
 }
 
-pub fn _var_name_kernel_indirect_left_recursion<'context_lifetime, T: Context<'context_lifetime>>(
+pub fn _var_name_kernel_indirect_left_recursion<
+    'context_lifetime,
+    T: Context<'context_lifetime>,
+>(
     involved_set: &Vec<Rules>,
     rule: Rules,
     context: &RefCell<T>,

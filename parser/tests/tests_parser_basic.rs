@@ -18,7 +18,11 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
+        let context = RefCell::new(BasicContext::new(
+            src_len as usize,
+            RULES_SIZE as usize,
+            NoopState,
+        ));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -41,7 +45,11 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
+        let context = RefCell::new(BasicContext::new(
+            src_len as usize,
+            RULES_SIZE as usize,
+            NoopState,
+        ));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -64,7 +72,11 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
+        let context = RefCell::new(BasicContext::new(
+            src_len as usize,
+            RULES_SIZE as usize,
+            NoopState,
+        ));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -87,7 +99,11 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
+        let context = RefCell::new(BasicContext::new(
+            src_len as usize,
+            RULES_SIZE as usize,
+            NoopState,
+        ));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -110,7 +126,11 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
+        let context = RefCell::new(BasicContext::new(
+            src_len as usize,
+            RULES_SIZE as usize,
+            NoopState,
+        ));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -137,7 +157,11 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
+        let context = RefCell::new(BasicContext::new(
+            src_len as usize,
+            RULES_SIZE as usize,
+            NoopState,
+        ));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
