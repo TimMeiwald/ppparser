@@ -3,7 +3,7 @@ use crate::Key;
 use core::{cell::RefCell, panic};
 use std::{collections::BTreeSet, thread::current};
 
-fn memoized_behaviour<T: Context>(
+fn memoized_behaviour<'context_lifetime, T: Context<'context_lifetime>>(
     context: &RefCell<T>,
     _rule: Rules,
     parent: Key,
@@ -16,7 +16,7 @@ fn memoized_behaviour<T: Context>(
     (is_true, end_position)
 }
 
-fn default_behaviour<T: Context>(
+fn default_behaviour<'context_lifetime, T: Context<'context_lifetime>>(
     source: &Source,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
     context: &RefCell<T>,
@@ -35,7 +35,7 @@ fn default_behaviour<T: Context>(
     f
 }
 
-pub fn _var_name<T: Context>(
+pub fn _var_name<'context_lifetime, T: Context<'context_lifetime>>(
     rule: Rules,
     context: &RefCell<T>,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
@@ -45,7 +45,7 @@ pub fn _var_name<T: Context>(
     }
 }
 
-pub fn _var_name_kernel<T: Context>(
+pub fn _var_name_kernel<'context_lifetime, T: Context<'context_lifetime>>(
     rule: Rules,
     context: &RefCell<T>,
     parent: Key,
@@ -68,12 +68,12 @@ pub fn _var_name_kernel<T: Context>(
     }
 }
 
-pub fn _var_name_indirect_left_recursion<'a, T: Context + 'static>(
-    involved_set: &'a Vec<Rules>,
+pub fn _var_name_indirect_left_recursion<'context_lifetime, T: Context<'context_lifetime>>(
+    involved_set: &'context_lifetime Vec<Rules>,
     rule: Rules,
-    context: &'a RefCell<T>,
+    context: &'context_lifetime RefCell<T>,
     func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
-) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'a {
+) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'context_lifetime {
     move |parent: Key, source: &Source, position: u32| {
         _var_name_kernel_indirect_left_recursion(
             involved_set,
@@ -96,7 +96,7 @@ fn convert_vec_to_btree_set(involved_set: &Vec<Rules>) -> BTreeSet<Rules> {
 }
 
 #[allow(clippy::too_many_arguments)]
-pub fn _var_name_kernel_growth_function<T: Context>(
+pub fn _var_name_kernel_growth_function<'context_lifetime, T: Context<'context_lifetime>>(
     involved_set: &Vec<Rules>,
     rule: Rules,
     context: &RefCell<T>,
@@ -159,7 +159,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
     last_result
 }
 
-pub fn should_go_into_growth_function<T: Context>(
+pub fn should_go_into_growth_function<'context_lifetime, T: Context<'context_lifetime>>(
     rule: Rules,
     context: &RefCell<T>,
     position: u32,
@@ -189,7 +189,7 @@ pub fn should_go_into_growth_function<T: Context>(
     }
 }
 
-pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
+pub fn _var_name_kernel_indirect_left_recursion<'context_lifetime, T: Context<'context_lifetime>>(
     involved_set: &Vec<Rules>,
     rule: Rules,
     context: &RefCell<T>,

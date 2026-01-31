@@ -9,6 +9,8 @@ mod tests {
     use core::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
+
+    struct NoopState;
     #[test]
     fn test_ppparser_dsl_grammar_rule() {
         let string = "<Spaces> = '\n'/'\t'/'\r'/' ';".to_string();
@@ -16,7 +18,7 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -39,7 +41,7 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -62,7 +64,7 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -85,7 +87,7 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -108,7 +110,7 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);
@@ -135,7 +137,7 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let result: (bool, u32);
-        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState));
         {
             let executor = _var_name(Rules::Grammar, &context, grammar);
             result = executor(Key(0), &source, position);

@@ -4,7 +4,7 @@
 use crate::*;
 use std::cell::RefCell;
 #[allow(dead_code)]
-pub fn alphabet_upper<T: Context + 'static>(
+pub fn alphabet_upper<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -15,7 +15,7 @@ pub fn alphabet_upper<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn alphabet_lower<T: Context + 'static>(
+pub fn alphabet_lower<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -25,7 +25,7 @@ pub fn alphabet_lower<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn num<T: Context + 'static>(
+pub fn num<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -35,7 +35,7 @@ pub fn num<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn numnozero<T: Context + 'static>(
+pub fn numnozero<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -45,7 +45,7 @@ pub fn numnozero<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn hexval<T: Context + 'static>(
+pub fn hexval<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -57,7 +57,7 @@ pub fn hexval<T: Context + 'static>(
     closure_3(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn spaces<T: Context + 'static>(
+pub fn spaces<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -73,7 +73,7 @@ pub fn spaces<T: Context + 'static>(
     closure_7(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn specials<T: Context + 'static>(
+pub fn specials<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -99,7 +99,7 @@ pub fn specials<T: Context + 'static>(
     closure_11(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn ascii<T: Context + 'static>(
+pub fn ascii<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -109,7 +109,7 @@ pub fn ascii<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn apostrophe<T: Context + 'static>(
+pub fn apostrophe<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -119,7 +119,7 @@ pub fn apostrophe<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn quotationmark<T: Context + 'static>(
+pub fn quotationmark<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -129,7 +129,7 @@ pub fn quotationmark<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn left_angle_bracket<T: Context + 'static>(
+pub fn left_angle_bracket<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -139,7 +139,7 @@ pub fn left_angle_bracket<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn right_angle_bracket<T: Context + 'static>(
+pub fn right_angle_bracket<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -149,7 +149,7 @@ pub fn right_angle_bracket<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn left_bracket<T: Context + 'static>(
+pub fn left_bracket<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -159,7 +159,7 @@ pub fn left_bracket<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn right_bracket<T: Context + 'static>(
+pub fn right_bracket<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -169,7 +169,7 @@ pub fn right_bracket<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn assignment<T: Context + 'static>(
+pub fn assignment<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -179,7 +179,7 @@ pub fn assignment<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn end_rule<T: Context + 'static>(
+pub fn end_rule<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -189,7 +189,7 @@ pub fn end_rule<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn ampersand<T: Context + 'static>(
+pub fn ampersand<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -199,7 +199,7 @@ pub fn ampersand<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn exclamation_mark<T: Context + 'static>(
+pub fn exclamation_mark<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -209,7 +209,7 @@ pub fn exclamation_mark<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn plus<T: Context + 'static>(
+pub fn plus<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -219,7 +219,7 @@ pub fn plus<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn star<T: Context + 'static>(
+pub fn star<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -229,7 +229,7 @@ pub fn star<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn question_mark<T: Context + 'static>(
+pub fn question_mark<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -239,7 +239,7 @@ pub fn question_mark<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn comma<T: Context + 'static>(
+pub fn comma<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -249,7 +249,7 @@ pub fn comma<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn newline<T: Context + 'static>(
+pub fn newline<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -259,7 +259,7 @@ pub fn newline<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn backslash<T: Context + 'static>(
+pub fn backslash<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -269,7 +269,7 @@ pub fn backslash<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn var_name<T: Context + 'static>(
+pub fn var_name<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -298,7 +298,7 @@ pub fn var_name<T: Context + 'static>(
     closure_12(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn var_name_decl<T: Context + 'static>(
+pub fn var_name_decl<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -318,7 +318,7 @@ pub fn var_name_decl<T: Context + 'static>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn var_name_ref<T: Context + 'static>(
+pub fn var_name_ref<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -338,7 +338,7 @@ pub fn var_name_ref<T: Context + 'static>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn hex<T: Context + 'static>(
+pub fn hex<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -354,7 +354,7 @@ pub fn hex<T: Context + 'static>(
     closure_6(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn integer<T: Context + 'static>(
+pub fn integer<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -368,7 +368,7 @@ pub fn integer<T: Context + 'static>(
     closure_4(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn orderedchoicematchrange<T: Context + 'static>(
+pub fn orderedchoicematchrange<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -414,7 +414,7 @@ pub fn orderedchoicematchrange<T: Context + 'static>(
     closure_29(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn subexpression<T: Context + 'static>(
+pub fn subexpression<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -432,7 +432,7 @@ pub fn subexpression<T: Context + 'static>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn hooked_call<T: Context + 'static>(
+pub fn hooked_call<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -455,7 +455,7 @@ pub fn hooked_call<T: Context + 'static>(
     closure_7(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn epsilon<T: Context + 'static>(
+pub fn epsilon<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -471,7 +471,7 @@ pub fn epsilon<T: Context + 'static>(
     closure_3(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn stringterminal<T: Context + 'static>(
+pub fn stringterminal<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -510,7 +510,7 @@ pub fn stringterminal<T: Context + 'static>(
     closure_21(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn terminal<T: Context + 'static>(
+pub fn terminal<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -549,7 +549,7 @@ pub fn terminal<T: Context + 'static>(
     closure_22(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn nucleus<T: Context + 'static>(
+pub fn nucleus<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -578,7 +578,7 @@ pub fn nucleus<T: Context + 'static>(
     closure_14(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn atom<T: Context + 'static>(
+pub fn atom<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -603,7 +603,7 @@ pub fn atom<T: Context + 'static>(
     closure_14(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn and_predicate<T: Context + 'static>(
+pub fn and_predicate<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -617,7 +617,7 @@ pub fn and_predicate<T: Context + 'static>(
     closure_3(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn not_predicate<T: Context + 'static>(
+pub fn not_predicate<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -631,7 +631,7 @@ pub fn not_predicate<T: Context + 'static>(
     closure_3(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn sequence<T: Context + 'static>(
+pub fn sequence<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -665,7 +665,7 @@ pub fn sequence<T: Context + 'static>(
     closure_17(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn ordered_choice<T: Context + 'static>(
+pub fn ordered_choice<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -705,7 +705,7 @@ pub fn ordered_choice<T: Context + 'static>(
     closure_19(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn one_or_more<T: Context + 'static>(
+pub fn one_or_more<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -722,7 +722,7 @@ pub fn one_or_more<T: Context + 'static>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn zero_or_more<T: Context + 'static>(
+pub fn zero_or_more<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -739,7 +739,7 @@ pub fn zero_or_more<T: Context + 'static>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn optional<T: Context + 'static>(
+pub fn optional<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -757,7 +757,7 @@ pub fn optional<T: Context + 'static>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn whitespace<T: Context + 'static>(
+pub fn whitespace<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -775,7 +775,7 @@ pub fn whitespace<T: Context + 'static>(
     closure_9(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn rhs<T: Context + 'static>(
+pub fn rhs<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -794,7 +794,7 @@ pub fn rhs<T: Context + 'static>(
     closure_8(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn lhs<T: Context + 'static>(
+pub fn lhs<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -816,7 +816,7 @@ pub fn lhs<T: Context + 'static>(
     closure_9(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn rule<T: Context + 'static>(
+pub fn rule<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -855,7 +855,7 @@ pub fn rule<T: Context + 'static>(
     closure_18(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn grammar<T: Context + 'static>(
+pub fn grammar<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -872,7 +872,7 @@ pub fn grammar<T: Context + 'static>(
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn comment<T: Context + 'static>(
+pub fn comment<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -899,7 +899,7 @@ pub fn comment<T: Context + 'static>(
     closure_14(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn semantic_instructions<T: Context + 'static>(
+pub fn semantic_instructions<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -909,7 +909,7 @@ pub fn semantic_instructions<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn inline<T: Context + 'static>(
+pub fn inline<'context_lifetime, T: Context<'context_lifetime>>(
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
