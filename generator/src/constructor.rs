@@ -248,7 +248,7 @@ impl GeneratedCode<'_> {
         let name = name.expect("Must have name");
         let rule_header = format!(
 
-            "#[allow(dead_code)]\npub fn {name}<'context_lifetime, T: Context<'context_lifetime>>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{"
+            "#[allow(dead_code)]\npub fn {name}<T: Context>(user_state: &RefCell<UserState>, parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{"
         );
         let builder = format!(
             "{}\n{}\n{}\n}}\n",
@@ -1049,10 +1049,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
@@ -1081,10 +1081,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
@@ -1113,10 +1113,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-        // Checks full file was parsed.
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position); // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
                 "Failed to parse grammar due to syntax error on Line: {:?}",
@@ -1144,10 +1144,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
@@ -1180,10 +1180,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
@@ -1215,11 +1215,11 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-        //tree.print(Key(0), None);
-        // Checks full file was parsed.
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position); //tree.print(Key(0), None);
+                                                                                // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
                 "Failed to parse grammar due to syntax error on Line: {:?}",
@@ -1256,8 +1256,8 @@ mod tests {
     //     let src_len = string.len();
     //     let source = Source::new(&string);
     //     let position = 0;
-    //     let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-    //     let context: RefCell<BasicContext<NoopState>> = context.into();
+    //     let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+    //     let context: RefCell<BasicContext> = context.into();
     //     let result = grammar(Key(0), &context, &source, position);
     //     //tree.print(Key(0), None);
     //     // Checks full file was parsed.
@@ -1290,10 +1290,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
@@ -1327,10 +1327,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
@@ -1364,10 +1364,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
@@ -1401,10 +1401,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-        // Checks full file was parsed.
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position); // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
                 "Failed to parse grammar due to syntax error on Line: {:?}",
@@ -1438,10 +1438,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(
@@ -1495,10 +1495,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
-        let context: RefCell<BasicContext<NoopState>> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
-
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
             panic!(

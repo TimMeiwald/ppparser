@@ -9,6 +9,7 @@ mod parser_core;
 mod publisher;
 mod rules;
 mod source;
+mod user_state;
 mod var_name;
 use cache::{BasicCache, DirectLeftRecursionCache, IndirectLeftRecursionCache};
 pub use context::{BasicContext, Context};
@@ -22,4 +23,5 @@ pub use publisher::{
 pub use rules::Rules;
 pub use rules::RULES_SIZE;
 pub use source::Source;
+pub use user_state::UserState;
 pub use var_name::{_var_name, _var_name_indirect_left_recursion};

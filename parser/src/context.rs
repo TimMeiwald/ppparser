@@ -9,7 +9,7 @@ use std::collections::BTreeSet;
 
 use super::{BasicCache, BasicPublisher};
 
-pub trait Context<'context_lifetime>
+pub trait Context
 where
     Self::C: core::fmt::Debug, // Cache
     Self::P: core::fmt::Debug,
@@ -18,11 +18,8 @@ where
     // I.e NOOP Cache prohibits IndirectLeftRecursionPublisher since you need a cache to do indirect left recursion.
     type C; // Cache
     type P; // Publisher
-    type U; // User global state(used for e.g context sensitive behaviours with hooked calls(e.g to store typedefs in C))
-    fn get_user_state(&'context_lifetime self) -> &'context_lifetime Self::U;
-    fn get_user_state_mut(&'context_lifetime mut self) -> &'context_lifetime mut Self::U;
     #[allow(dead_code)]
-    fn new(size_of_source: usize, number_of_rules: usize, user_state: Self::U) -> Self;
+    fn new(size_of_source: usize, number_of_rules: usize) -> Self;
     #[allow(dead_code)]
     fn print_cache(&self);
     #[allow(dead_code)]
@@ -60,10 +57,9 @@ where
     fn set_current_active_lr_position(&mut self, position: Option<(Rules, u32)>);
 }
 
-pub struct BasicContext<U> {
+pub struct BasicContext {
     cache: BasicCache,
     publisher: BasicPublisher,
-    user_state: U,
 }
 #[allow(dead_code)]
 pub struct DirectLeftRecursionContext {
@@ -76,23 +72,15 @@ pub struct IndirectLeftRecursionContext {
     publisher: IndirectLeftRecursionPublisher,
 }
 
-impl<U> Context<'_> for BasicContext<U> {
+impl Context for BasicContext {
     type C = BasicCache;
     type P = BasicPublisher;
-    type U = U;
 
-    fn new(size_of_source: usize, number_of_rules: usize, user_state: U) -> Self {
+    fn new(size_of_source: usize, number_of_rules: usize) -> Self {
         BasicContext {
             cache: Self::C::new(),
             publisher: Self::P::new(size_of_source, number_of_rules),
-            user_state,
         }
-    }
-    fn get_user_state(&self) -> &'_ Self::U {
-        &self.user_state
-    }
-    fn get_user_state_mut(&mut self) -> &'_ mut Self::U {
-        &mut self.user_state
     }
 
     fn get_current_active_lr_position(&self) -> Option<(Rules, u32)> {
@@ -179,29 +167,25 @@ mod tests {
     use super::*;
     use core::cell::RefCell;
 
-    struct NoopUserState; // Empty struct since we don't have any user state required.
-
     #[test]
     fn test() {
         let context = BasicContext {
             cache: BasicCache::new(),
             publisher: BasicPublisher::new(0, 0),
-            user_state: NoopUserState,
         };
         context.print_cache();
         context.print_publisher();
     }
     #[test]
     fn test3() {
-        let context = BasicContext::new(0, 0, NoopUserState);
+        let context = BasicContext::new(0, 0);
         context.print_cache();
         context.print_publisher();
     }
 
     #[test]
     fn test2() {
-        let context: RefCell<BasicContext<NoopUserState>> =
-            RefCell::new(BasicContext::new(0, 0, NoopUserState));
+        let context: RefCell<BasicContext> = RefCell::new(BasicContext::new(0, 0));
         let borrowed_context = context.borrow();
         borrowed_context.print_cache();
         borrowed_context.print_publisher();

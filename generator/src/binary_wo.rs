@@ -253,7 +253,7 @@ impl BinaryTreeWO {
         match &node.reference {
             Reference::HookedCall(var_name) => {
                 stack.push(format!(
-                    "let closure_{:?} = {var_name}(&closure_{:?});",
+                    "let closure_{:?} = {var_name}(user_state, context, &closure_{:?});",
                     index.0, key1.0
                 ));
                 index
@@ -358,7 +358,7 @@ impl BinaryTreeWO {
                 };
 
                 let contents = format!(
-                    "let closure_{:?} = _var_name(Rules::{}, context, {});",
+                    "let closure_{:?} = _var_name(user_state, Rules::{}, context, {});",
                     index.0,
                     rule_str(content.to_string()),
                     content.to_lowercase()
@@ -426,7 +426,7 @@ impl BinaryTreeWO {
         match &node.reference {
             Reference::InlinedRule(content) => {
                 let contents = format!(
-                    "let closure_{} = move |parent: Key, source: &Source, position: u32| {}(parent, context, source, position);",
+                    "let closure_{} = move |parent: Key, source: &Source, position: u32| {}(user_state, parent, context, source, position);",
                     index.0,
                     content.to_lowercase()
                 );
