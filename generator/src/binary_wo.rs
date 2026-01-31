@@ -247,13 +247,14 @@ impl BinaryTreeWO {
             }
         }
     }
+
     fn hooked_call(&self, stack: &mut Vec<String>, index: Key) -> Key {
         let node = &self.nodes[usize::from(index)];
         let key1 = self.match_ref(stack, node.lhs.expect("Should always have a left node"));
         match &node.reference {
             Reference::HookedCall(var_name) => {
                 stack.push(format!(
-                    "let closure_{:?} = {var_name}(user_state, context, &closure_{:?});",
+                    "let closure_{:?} = {var_name}(user_state, parent, context, source, position, &closure_{:?});",
                     index.0, key1.0
                 ));
                 index
