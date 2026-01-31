@@ -134,6 +134,9 @@ mod tests {
     use std::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
+
+    struct NoopState;
+
     #[test]
     fn test() {
         println!("{:?}", env::current_dir().unwrap());
@@ -144,8 +147,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
 
         // Checks full file was parsed.
@@ -173,8 +176,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -200,8 +203,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -231,8 +234,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {

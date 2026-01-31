@@ -436,6 +436,7 @@ mod tests {
     use std::fs::{canonicalize, read_to_string};
     use std::io::stdout;
     use std::io::Write;
+    struct NoopState;
     #[test]
     fn test_var_name_no_lr() {
         let string = r##"<Var_Name> Inline = (<Alphabet_Lower>/<Alphabet_Upper>),(<Alphabet_Lower>/<Alphabet_Upper>/'_')*;
@@ -445,8 +446,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
 
         // Checks full file was parsed.
@@ -484,8 +485,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
 
         // Checks full file was parsed.
@@ -524,8 +525,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
 
         // Checks full file was parsed.
@@ -561,8 +562,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
 
         // Checks full file was parsed.
@@ -598,8 +599,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
 
         // Checks full file was parsed.
@@ -634,8 +635,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
 
         // Checks full file was parsed.
@@ -671,8 +672,8 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
-        let context: RefCell<BasicContext> = context.into();
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize, NoopState);
+        let context: RefCell<BasicContext<NoopState>> = context.into();
         let result = grammar(Key(0), &context, &source, position);
 
         // Checks full file was parsed.
