@@ -1,5 +1,5 @@
 use super::{Context, Rules, Source};
-use crate::Key;
+use crate::{Key, UserState, user_state};
 use core::{cell::RefCell, panic};
 use std::{collections::BTreeSet, thread::current};
 
@@ -17,15 +17,16 @@ fn memoized_behaviour<T: Context>(
 }
 
 fn default_behaviour<T: Context>(
+    user_state: &RefCell<UserState>,
     source: &Source,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
     context: &RefCell<T>,
     rule: Rules,
     parent: Key,
     start_position: u32,
 ) -> (bool, u32) {
     let current_key = context.borrow_mut().reserve_publisher_entry(rule);
-    let f = func(current_key, context, source, start_position);
+    let f = func(user_state, current_key, context, source, start_position);
     let mut c = context.borrow_mut();
     c.create_cache_entry(rule, f.0, start_position, f.1, current_key);
     c.update_publisher_entry(current_key, f.0, start_position, f.1);
@@ -35,23 +36,25 @@ fn default_behaviour<T: Context>(
     f
 }
 
-pub fn _var_name<T: Context>(
+pub fn _var_name<'a, T: Context>(
+    user_state: &'a RefCell<UserState>,
     rule: Rules,
-    context: &RefCell<T>,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
-) -> impl Fn(Key, &Source, u32) -> (bool, u32) + '_ {
+    context: &'a RefCell<T>,
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'a {
     move |parent: Key, source: &Source, position: u32| {
-        _var_name_kernel(rule, context, parent, source, position, func)
+        _var_name_kernel(user_state, rule, context, parent, source, position, func)
     }
 }
 
 pub fn _var_name_kernel<T: Context>(
+    user_state: &RefCell<UserState>,
     rule: Rules,
     context: &RefCell<T>,
     parent: Key,
     source: &Source,
     position: u32,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let memo = context.borrow().check(rule, position);
     match memo {
@@ -64,11 +67,11 @@ pub fn _var_name_kernel<T: Context>(
             end_position,
             memoized_key,
         ),
-        None => default_behaviour(source, func, context, rule, parent, position),
+        None => default_behaviour(user_state, source, func, context, rule, parent, position),
     }
 }
 
-pub fn _var_name_indirect_left_recursion<'a, T: Context + 'static>(
+pub fn _var_name_indirect_left_recursion<'a, T: Context>(
     involved_set: &'a Vec<Rules>,
     rule: Rules,
     context: &'a RefCell<T>,
