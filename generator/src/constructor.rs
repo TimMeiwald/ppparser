@@ -248,7 +248,7 @@ impl GeneratedCode<'_> {
         let name = name.expect("Must have name");
         let rule_header = format!(
 
-            "#[allow(dead_code)]\npub fn {name}<T: Context + 'static>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{"
+            "#[allow(dead_code)]\npub fn {name}<'context_lifetime, T: Context<'context_lifetime>>(parent: Key, context: &RefCell<T>, source: &Source, position: u32) -> (bool, u32) {{"
         );
         let builder = format!(
             "{}\n{}\n{}\n}}\n",
