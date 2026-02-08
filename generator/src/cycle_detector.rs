@@ -254,8 +254,26 @@ impl RuleCallTree {
                 Rules::Sequence => {
                     let children = child_node.get_children();
                     // Sequence must have at least two children
-                    let child = children[0];
-                    let child = tree.get_node(child);
+                    // We ignore any children that are Zero or More or Optional 
+                    // As they always return True which means LR algo cannot work with them
+                    // Therefore the first true left recursive element is the first 
+                    // element that is not Zero or More or Optional
+                    for child in node_children {
+                        let child_node = tree.get_node(*child);
+                        match child_node.rule {
+                            Rules::Optional | Rules::Zero_Or_More => {
+                                // Do nothing
+                            }
+                            _ => {
+                                break
+                            }
+                        }
+                    if tree.get_node(*child).rule == Rules::Optional | Rules::Zero_Or_More{
+                        // Means last child is also still optional or zero or more so we return early
+                        return;
+                    }
+                    // If it gets here the first child not a optional or zero or more exists and we check that for LR. 
+                    let child = tree.get_node(*child);
                     Self::get_left_most_called_rules_of_rule(
                         rule_name.clone(),
                         child,
