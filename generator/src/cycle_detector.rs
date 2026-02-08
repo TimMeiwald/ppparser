@@ -270,8 +270,8 @@ impl RuleCallTree {
                 | Rules::Nucleus
                 | Rules::Subexpression
                 | Rules::Hooked_Call
-                | Rules::Optional
-                | Rules::Zero_Or_More
+                // | Rules::Optional
+                // | Rules::Zero_Or_More
                 | Rules::One_Or_More
                 | Rules::And_Predicate
                 | Rules::Not_Predicate => {
