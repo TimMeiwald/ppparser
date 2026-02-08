@@ -28,7 +28,7 @@ pub fn generate_parser(source: &PathBuf) -> Option<GeneratedCode<'_>> {
     let src_len = string.len();
     let source = Source::new(&string);
     let position: u32 = 0;
-    let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+    let context = BasicContext::new(src_len, RULES_SIZE as usize);
     let context: RefCell<BasicContext> = context.into();
     let user_state = RefCell::new(UserState::new());
     let result = grammar(&user_state, Key(0), &context, &source, position);
