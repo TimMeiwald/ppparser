@@ -408,7 +408,7 @@ impl BinaryTreeWO {
                 };
 
                 let contents = format!(
-                    "let closure_{:?} = _var_name_indirect_left_recursion(&involved_set, Rules::{}, context, {});",
+                    "let closure_{:?} = _var_name_indirect_left_recursion(user_state, &involved_set, Rules::{}, context, {});",
                     index.0,
                     rule_str(content.to_string()),
                     content.to_lowercase()
