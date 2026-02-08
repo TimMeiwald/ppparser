@@ -78,3 +78,14 @@ fn test_7() {
     );
     assert_eq!(result, (true, src.len() as u32));
 }
+
+#[test]
+fn test_8() {
+    let src = "int main (){}";
+    let result = shared(
+        src,
+        function_definition::<BasicContext>,
+        Rules::Function_definition,
+    );
+    assert_eq!(result, (true, src.len() as u32));
+}

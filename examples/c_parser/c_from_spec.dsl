@@ -417,7 +417,7 @@
 	/ (<direct_abstract_declarator>, '[', <type_qualifier_list>?, '*', ']')
 	/ (<direct_abstract_declarator>?, '(', <parameter_type_list>?, ')');
 
-<typedef_name> = <identifier>, &' ';
+<typedef_name> = typedef_name_handler(<identifier>); # This call gets hooked. It should only return true if there is a typedef of that name as C is context sensitive #
 
 <initializer> = <assignment_expression>
 	/ ('{', <initializer_list>, '}')

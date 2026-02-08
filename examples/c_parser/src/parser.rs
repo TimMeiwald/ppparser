@@ -1,6 +1,7 @@
 #![allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
 #![allow(unused_variables)] // Generated Code also, since everything passes stuff
 #![allow(unused_imports)] // Generated Code also, since everything passes stuff
+use crate::hooked_calls::typedef_name_handler;
 use crate::*;
 use std::cell::RefCell;
 #[allow(dead_code)]
@@ -5535,11 +5536,12 @@ pub fn typedef_name<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
+    // This call gets hooked. It should only return true if there is a typedef of that name as C is context sensitive
+
     let closure_1 = _var_name(user_state, Rules::Identifier, context, identifier);
-    let closure_2 = _terminal(b' ');
-    let closure_3 = _and_predicate(&closure_2);
-    let closure_4 = _sequence(&closure_1, &closure_3);
-    closure_4(parent, source, position)
+    let closure_2 = _subexpression(&closure_1);
+    let closure_3 = typedef_name_handler(user_state, parent, context, source, position, &closure_2);
+    closure_3(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn initializer<T: Context>(
