@@ -252,7 +252,6 @@ impl RuleCallTree {
                     return;
                 }
                 Rules::Sequence => {
-                    let children = child_node.get_children();
                     // Sequence must have at least two children
                     // We ignore any children that are Zero or More or Optional 
                     // As they always return True which means LR algo cannot work with them
@@ -268,7 +267,8 @@ impl RuleCallTree {
                                 break
                             }
                         }
-                    if tree.get_node(*child).rule == Rules::Optional | Rules::Zero_Or_More{
+                    }
+                    if tree.get_node(*child).rule == Rules::Optional || tree.get_node(*child).rule == Rules::Zero_Or_More{
                         // Means last child is also still optional or zero or more so we return early
                         return;
                     }
