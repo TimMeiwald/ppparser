@@ -127,7 +127,18 @@ impl DataGenerator {
                 let e = &entry?.path();
                 let file_name = e.file_name().expect("Should exist");
                 let new_file_path = target_dir.join(file_name);
-
+                if file_name == "hooked_calls.rs" || file_name == "user_state.rs" {
+                    let hooked_calls_exists_already: bool = std::fs::exists(&new_file_path)?;
+                    match hooked_calls_exists_already {
+                        false => {
+                            // Continue where we create a new file
+                        }
+                        true => {
+                            // We do not overwrite the file if it exists since it's handwritten
+                            continue;
+                        }
+                    }
+                }
                 println!("Creating File: {new_file_path:?}");
                 let res = std::fs::File::create(&new_file_path);
                 match res {

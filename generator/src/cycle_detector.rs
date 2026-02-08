@@ -252,10 +252,28 @@ impl RuleCallTree {
                     return;
                 }
                 Rules::Sequence => {
-                    let children = child_node.get_children();
                     // Sequence must have at least two children
-                    let child = children[0];
-                    let child = tree.get_node(child);
+                    // We ignore any children that are Zero or More or Optional 
+                    // As they always return True which means LR algo cannot work with them
+                    // Therefore the first true left recursive element is the first 
+                    // element that is not Zero or More or Optional
+                    for child in node_children {
+                        let child_node = tree.get_node(*child);
+                        match child_node.rule {
+                            Rules::Optional | Rules::Zero_Or_More => {
+                                // Do nothing
+                            }
+                            _ => {
+                                break
+                            }
+                        }
+                    }
+                    if tree.get_node(*child).rule == Rules::Optional || tree.get_node(*child).rule == Rules::Zero_Or_More{
+                        // Means last child is also still optional or zero or more so we return early
+                        return;
+                    }
+                    // If it gets here the first child not a optional or zero or more exists and we check that for LR. 
+                    let child = tree.get_node(*child);
                     Self::get_left_most_called_rules_of_rule(
                         rule_name.clone(),
                         child,
@@ -269,8 +287,9 @@ impl RuleCallTree {
                 | Rules::RHS
                 | Rules::Nucleus
                 | Rules::Subexpression
-                | Rules::Optional
-                | Rules::Zero_Or_More
+                | Rules::Hooked_Call
+                // | Rules::Optional
+                // | Rules::Zero_Or_More
                 | Rules::One_Or_More
                 | Rules::And_Predicate
                 | Rules::Not_Predicate => {
@@ -445,9 +464,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
         let context: RefCell<BasicContext> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
 
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -484,9 +504,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
         let context: RefCell<BasicContext> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
 
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -524,9 +545,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
         let context: RefCell<BasicContext> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
 
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -561,9 +583,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
         let context: RefCell<BasicContext> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
 
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -598,9 +621,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
         let context: RefCell<BasicContext> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
 
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -634,9 +658,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
         let context: RefCell<BasicContext> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
 
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {
@@ -671,9 +696,10 @@ mod tests {
         let src_len = string.len();
         let source = Source::new(&string);
         let position = 0;
-        let context = BasicContext::new(src_len, RULES_SIZE as usize);
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
         let context: RefCell<BasicContext> = context.into();
-        let result = grammar(Key(0), &context, &source, position);
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
 
         // Checks full file was parsed.
         if result.1 != string2.len() as u32 {

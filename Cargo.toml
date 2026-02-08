@@ -3,6 +3,7 @@ resolver = "2"
 members = [ "parser", 
             "generator", 
             "runner", 
+            "test-grammar-proc-macro", 
             "examples/example_1_parser", 
             "examples/example_1", 
             "examples/example_2", 
@@ -23,7 +24,7 @@ members = [ "parser",
             "examples/example_9_indirect_lr_5_level_parser", 
             "examples/example_10_basic_bench",
             "examples/example_10_basic_bench_parser", 
-            "test-grammar-proc-macro",
+            "examples/example_11_external_rule_call_parser",
             ]
 
 [profile.dev]

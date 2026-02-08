@@ -38,6 +38,13 @@ impl<'a> Source<'a> {
             None
         }
     }
+    pub fn get_string(&self, start_position: u32, end_position: u32) -> Option<&str> {
+        if start_position > self.source_len || end_position > self.source_len {
+            None
+        } else {
+            Some(&self.source[(start_position as usize)..(end_position as usize)])
+        }
+    }
 
     pub fn get_len(&self) -> u32 {
         self.source_len

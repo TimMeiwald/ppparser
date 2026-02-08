@@ -11,13 +11,13 @@ use super::{BasicCache, BasicPublisher};
 
 pub trait Context
 where
-    Self::C: core::fmt::Debug,
+    Self::C: core::fmt::Debug, // Cache
     Self::P: core::fmt::Debug,
 {
     // Associated types so I can tie specific Cache/Publisher pairs together since they can be mutually exclusive
     // I.e NOOP Cache prohibits IndirectLeftRecursionPublisher since you need a cache to do indirect left recursion.
-    type C;
-    type P;
+    type C; // Cache
+    type P; // Publisher
     #[allow(dead_code)]
     fn new(size_of_source: usize, number_of_rules: usize) -> Self;
     #[allow(dead_code)]
@@ -82,6 +82,7 @@ impl Context for BasicContext {
             publisher: Self::P::new(size_of_source, number_of_rules),
         }
     }
+
     fn get_current_active_lr_position(&self) -> Option<(Rules, u32)> {
         self.cache.get_current_active_lr_position()
     }

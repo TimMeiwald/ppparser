@@ -1,5 +1,5 @@
 use super::{Context, Rules, Source};
-use crate::Key;
+use crate::{user_state, Key, UserState};
 use core::{cell::RefCell, panic};
 use std::{collections::BTreeSet, thread::current};
 
@@ -16,16 +16,18 @@ fn memoized_behaviour<T: Context>(
     (is_true, end_position)
 }
 
+#[allow(clippy::type_complexity)]
 fn default_behaviour<T: Context>(
+    user_state: &RefCell<UserState>,
     source: &Source,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
     context: &RefCell<T>,
     rule: Rules,
     parent: Key,
     start_position: u32,
 ) -> (bool, u32) {
     let current_key = context.borrow_mut().reserve_publisher_entry(rule);
-    let f = func(current_key, context, source, start_position);
+    let f = func(user_state, current_key, context, source, start_position);
     let mut c = context.borrow_mut();
     c.create_cache_entry(rule, f.0, start_position, f.1, current_key);
     c.update_publisher_entry(current_key, f.0, start_position, f.1);
@@ -35,23 +37,27 @@ fn default_behaviour<T: Context>(
     f
 }
 
-pub fn _var_name<T: Context>(
+#[allow(clippy::type_complexity)]
+pub fn _var_name<'a, T: Context>(
+    user_state: &'a RefCell<UserState>,
     rule: Rules,
-    context: &RefCell<T>,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
-) -> impl Fn(Key, &Source, u32) -> (bool, u32) + '_ {
+    context: &'a RefCell<T>,
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'a {
     move |parent: Key, source: &Source, position: u32| {
-        _var_name_kernel(rule, context, parent, source, position, func)
+        _var_name_kernel(user_state, rule, context, parent, source, position, func)
     }
 }
 
+#[allow(clippy::type_complexity)]
 pub fn _var_name_kernel<T: Context>(
+    user_state: &RefCell<UserState>,
     rule: Rules,
     context: &RefCell<T>,
     parent: Key,
     source: &Source,
     position: u32,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let memo = context.borrow().check(rule, position);
     match memo {
@@ -64,18 +70,21 @@ pub fn _var_name_kernel<T: Context>(
             end_position,
             memoized_key,
         ),
-        None => default_behaviour(source, func, context, rule, parent, position),
+        None => default_behaviour(user_state, source, func, context, rule, parent, position),
     }
 }
 
-pub fn _var_name_indirect_left_recursion<'a, T: Context + 'static>(
+#[allow(clippy::type_complexity)]
+pub fn _var_name_indirect_left_recursion<'a, T: Context>(
+    user_state: &'a RefCell<UserState>,
     involved_set: &'a Vec<Rules>,
     rule: Rules,
     context: &'a RefCell<T>,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'a {
     move |parent: Key, source: &Source, position: u32| {
         _var_name_kernel_indirect_left_recursion(
+            user_state,
             involved_set,
             rule,
             context,
@@ -96,14 +105,16 @@ fn convert_vec_to_btree_set(involved_set: &Vec<Rules>) -> BTreeSet<Rules> {
 }
 
 #[allow(clippy::too_many_arguments)]
+#[allow(clippy::type_complexity)]
 pub fn _var_name_kernel_growth_function<T: Context>(
+    user_state: &RefCell<UserState>,
     involved_set: &Vec<Rules>,
     rule: Rules,
     context: &RefCell<T>,
     parent: Key,
     source: &Source,
     position: u32,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
     last_lr_position: Option<(Rules, u32)>,
 ) -> (bool, u32) {
     // If head is none, return what is stored in the memo table.
@@ -125,7 +136,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             .set_head(position, rule, involved_btree);
         loop {
             context.borrow_mut().reinitialize_eval_set(rule, position);
-            result = func(current_key, context, source, position);
+            result = func(user_state, current_key, context, source, position);
             let memo_result = context.borrow_mut().check(rule, position);
             match memo_result {
                 None => {}
@@ -189,18 +200,22 @@ pub fn should_go_into_growth_function<T: Context>(
     }
 }
 
+#[allow(clippy::type_complexity)]
+#[allow(clippy::too_many_arguments)]
 pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
+    user_state: &RefCell<UserState>,
     involved_set: &Vec<Rules>,
     rule: Rules,
     context: &RefCell<T>,
     parent: Key,
     source: &Source,
     position: u32,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let should = should_go_into_growth_function(rule, context, position);
     if should.0 {
         _var_name_kernel_growth_function(
+            user_state,
             involved_set,
             rule,
             context,
@@ -223,7 +238,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
             context
                 .borrow_mut()
                 .remove_from_eval_set(active_lr_position, rule);
-            let result = func(current_key, context, source, position);
+            let result = func(user_state, current_key, context, source, position);
             context
                 .borrow_mut()
                 .update_publisher_entry(current_key, result.0, position, result.1);

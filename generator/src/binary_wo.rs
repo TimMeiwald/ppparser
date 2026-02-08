@@ -24,6 +24,7 @@ pub enum Reference {
     StringTerminalAsciiOpt(Vec<char>),
     InlinedRule(String),
     LeftRecursiveRule(String, Vec<String>),
+    HookedCall(String),
 }
 
 pub struct BinaryTreeWO {
@@ -103,6 +104,7 @@ impl BinaryTreeWO {
             Reference::StringTerminalAsciiOpt(_) => self.string_terminal_ascii_opt(stack, index),
             Reference::InlinedRule(_) => self.inlined_rule(stack, index),
             Reference::LeftRecursiveRule(..) => self.left_recursive_rule(stack, index),
+            Reference::HookedCall(_) => self.hooked_call(stack, index),
             Reference::Exec | Reference::Null => {
                 panic!("Exec should only exist once and NULL should never exist")
             }
@@ -245,6 +247,23 @@ impl BinaryTreeWO {
             }
         }
     }
+
+    fn hooked_call(&self, stack: &mut Vec<String>, index: Key) -> Key {
+        let node = &self.nodes[usize::from(index)];
+        let key1 = self.match_ref(stack, node.lhs.expect("Should always have a left node"));
+        match &node.reference {
+            Reference::HookedCall(var_name) => {
+                stack.push(format!(
+                    "let closure_{:?} = {var_name}(user_state, parent, context, source, position, &closure_{:?});",
+                    index.0, key1.0
+                ));
+                index
+            }
+            _ => {
+                panic!("Shouldn't happen")
+            }
+        }
+    }
     fn subexpression(&self, stack: &mut Vec<String>, index: Key) -> Key {
         let node = &self.nodes[usize::from(index)];
         let key1 = self.match_ref(stack, node.lhs.expect("Should always have a left node"));
@@ -340,7 +359,7 @@ impl BinaryTreeWO {
                 };
 
                 let contents = format!(
-                    "let closure_{:?} = _var_name(Rules::{}, context, {});",
+                    "let closure_{:?} = _var_name(user_state, Rules::{}, context, {});",
                     index.0,
                     rule_str(content.to_string()),
                     content.to_lowercase()
@@ -389,7 +408,7 @@ impl BinaryTreeWO {
                 };
 
                 let contents = format!(
-                    "let closure_{:?} = _var_name_indirect_left_recursion(&involved_set, Rules::{}, context, {});",
+                    "let closure_{:?} = _var_name_indirect_left_recursion(user_state, &involved_set, Rules::{}, context, {});",
                     index.0,
                     rule_str(content.to_string()),
                     content.to_lowercase()
@@ -408,7 +427,7 @@ impl BinaryTreeWO {
         match &node.reference {
             Reference::InlinedRule(content) => {
                 let contents = format!(
-                    "let closure_{} = move |parent: Key, source: &Source, position: u32| {}(parent, context, source, position);",
+                    "let closure_{} = move |parent: Key, source: &Source, position: u32| {}(user_state, parent, context, source, position);",
                     index.0,
                     content.to_lowercase()
                 );

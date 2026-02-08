@@ -10,7 +10,7 @@ impl From<u32> for Rules {
     }
 }
 #[allow(dead_code)]
-pub static RULES_SIZE: u32 = 30;
+pub static RULES_SIZE: u32 = 31;
 #[allow(clippy::upper_case_acronyms)] // Again due to generation -> Might solve eventually
 #[derive(PartialEq, Eq, Hash, FromPrimitive, Clone, Copy, Debug, Ord, PartialOrd)]
 
@@ -23,6 +23,7 @@ pub enum Rules {
     Grammar,
     Hex,
     HexVal,
+    Hooked_Call,
     Inline,
     Integer,
     LHS,

@@ -4,7 +4,37 @@
 use crate::*;
 use std::cell::RefCell;
 #[allow(dead_code)]
-pub fn expr<T: Context + 'static>(
+pub fn expr<T: Context>(
+    user_state: &RefCell<UserState>,
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
+    let closure_1 = _var_name_indirect_left_recursion(
+        user_state,
+        &involved_set,
+        Rules::Addition,
+        context,
+        addition,
+    );
+    let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
+    let closure_2 = _var_name_indirect_left_recursion(
+        user_state,
+        &involved_set,
+        Rules::Subtraction,
+        context,
+        subtraction,
+    );
+    let closure_3 = _ordered_choice(&closure_1, &closure_2);
+    let closure_4 = _var_name(user_state, Rules::Integer, context, integer);
+    let closure_5 = _ordered_choice(&closure_3, &closure_4);
+    closure_5(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn addition<T: Context>(
+    user_state: &RefCell<UserState>,
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -12,47 +42,33 @@ pub fn expr<T: Context + 'static>(
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
     let closure_1 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Addition, context, addition);
-    let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_2 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Subtraction, context, subtraction);
-    let closure_3 = _ordered_choice(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Integer, context, integer);
-    let closure_5 = _ordered_choice(&closure_3, &closure_4);
-    closure_5(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn addition<T: Context + 'static>(
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     let closure_2 = _terminal(b'+');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Integer, context, integer);
+    let closure_4 = _var_name(user_state, Rules::Integer, context, integer);
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn subtraction<T: Context + 'static>(
+pub fn subtraction<T: Context>(
+    user_state: &RefCell<UserState>,
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = _var_name(Rules::Integer, context, integer);
+    let closure_4 = _var_name(user_state, Rules::Integer, context, integer);
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn onenine<T: Context + 'static>(
+pub fn onenine<T: Context>(
+    user_state: &RefCell<UserState>,
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -62,7 +78,8 @@ pub fn onenine<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn digit<T: Context + 'static>(
+pub fn digit<T: Context>(
+    user_state: &RefCell<UserState>,
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -72,29 +89,33 @@ pub fn digit<T: Context + 'static>(
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn integer<T: Context + 'static>(
+pub fn integer<T: Context>(
+    user_state: &RefCell<UserState>,
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     let closure_1 = move |parent: Key, source: &Source, position: u32| {
-        onenine(parent, context, source, position)
+        onenine(user_state, parent, context, source, position)
     };
-    let closure_2 =
-        move |parent: Key, source: &Source, position: u32| digit(parent, context, source, position);
+    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+        digit(user_state, parent, context, source, position)
+    };
     let closure_3 = _zero_or_more(&closure_2);
     let closure_4 = _sequence(&closure_1, &closure_3);
     closure_4(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn grammar<T: Context + 'static>(
+pub fn grammar<T: Context>(
+    user_state: &RefCell<UserState>,
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     closure_1(parent, source, position)
 }
