@@ -23,7 +23,8 @@ pub fn unique_line_matcher<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    //  Trivial context sensitive grammar, any lower case line will be matched but only once.
+    // Trivial context sensitive grammar, any lower case line will be matched but only once.
+
     let closure_1 = move |parent: Key, source: &Source, position: u32| {
         alphabet_lower(user_state, parent, context, source, position)
     };

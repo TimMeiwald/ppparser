@@ -22,7 +22,8 @@ pub fn expr<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    //  Should match 0-0-0-0-0-0-0-0 etc
+    // Should match 0-0-0-0-0-0-0-0 etc
+
     let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
     let closure_1 =
         _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);

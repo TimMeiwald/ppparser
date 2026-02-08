@@ -296,10 +296,17 @@ impl GeneratedCode<'_> {
                 end = Some(tree.get_node(*key).end_position);
             };
         }
-
-        "\t// ".to_string()
-            + &source
-                [(start.expect("Must have start") as usize)..(end.expect("Must have end") as usize)]
+        let input_str = &source
+            [(start.expect("Must have start") as usize)..(end.expect("Must have end") as usize)];
+        let input_strs = input_str.split("\n");
+        let mut response_str: String = "".to_string();
+        for input in input_strs {
+            let input = input.trim();
+            response_str += "\t// ";
+            response_str += input;
+            response_str += "\n";
+        }
+        response_str
     }
 
     fn rhs(

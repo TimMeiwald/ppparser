@@ -11,7 +11,8 @@ pub fn rr<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    //  rr ::= "1" <rr> / "1"
+    // rr ::= "1" <rr> / "1"
+
     let closure_1 = _terminal(b'1');
     let closure_2 = _var_name(user_state, Rules::Rr, context, rr);
     let closure_3 = _sequence(&closure_1, &closure_2);
@@ -28,7 +29,8 @@ pub fn lr<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    //  lr ::= <lr> "1" / "1"
+    // lr ::= <lr> "1" / "1"
+
     let involved_set: Vec<Rules> = [Rules::Lr].to_vec();
     let closure_1 =
         _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Lr, context, lr);
@@ -48,6 +50,7 @@ pub fn grammar<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     // We do not use grammar for this benchmark but we need one for the generation to work.
+
     let closure_1 = _var_name(user_state, Rules::Rr, context, rr);
     closure_1(parent, source, position)
 }
