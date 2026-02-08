@@ -14,9 +14,11 @@ pub fn shared(
     let source = Source::new(&string);
     let result: (bool, u32);
     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
-    let user_state: RefCell<UserState> = RefCell::new(UserState::default());    {
+    let user_state: RefCell<UserState> = RefCell::new(UserState::default());
+    {
         let involved_set: Vec<Rules> = [Rules::S_char_sequence].to_vec();
-        let executor = _var_name_indirect_left_recursion(&user_state, &involved_set, rule, &context, func);
+        let executor =
+            _var_name_indirect_left_recursion(&user_state, &involved_set, rule, &context, func);
         result = executor(Key(0), &source, 0);
     }
     println!("Result: {:?}", result);

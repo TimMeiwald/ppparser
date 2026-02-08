@@ -1,4 +1,6 @@
-use c_parser::{_var_name, BasicContext, Context, Key, RULES_SIZE, Rules, Source, UserState, grammar};
+use c_parser::{
+    _var_name, BasicContext, Context, Key, RULES_SIZE, Rules, Source, UserState, grammar,
+};
 use std::cell::RefCell;
 use std::fs;
 use test_grammar_proc_macro::test_grammar_files_in_dir;

@@ -35,3 +35,46 @@ fn test_3() {
     );
     assert_eq!(result, (true, src.len() as u32));
 }
+
+#[test]
+fn test_4() {
+    let src = "int main(int x, void y){}";
+    let result = shared(
+        src,
+        function_definition::<BasicContext>,
+        Rules::Function_definition,
+    );
+    assert_eq!(result, (true, src.len() as u32));
+}
+
+#[test]
+fn test_5() {
+    let src = "int main(int x, void y, myOwnCustomStruct z){}";
+    let result = shared(
+        src,
+        function_definition::<BasicContext>,
+        Rules::Function_definition,
+    );
+    assert_eq!(result, (true, src.len() as u32));
+}
+
+#[test]
+fn test_6() {
+    let src = "struct customStruct main(int x, void y, myOwnCustomStruct z){}";
+    let result = shared(
+        src,
+        function_definition::<BasicContext>,
+        Rules::Function_definition,
+    );
+    assert_eq!(result, (true, src.len() as u32));
+}
+#[test]
+fn test_7() {
+    let src = "some_typedefed_type main(int x, void y, myOwnCustomStruct z){}";
+    let result = shared(
+        src,
+        function_definition::<BasicContext>,
+        Rules::Function_definition,
+    );
+    assert_eq!(result, (true, src.len() as u32));
+}
