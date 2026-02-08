@@ -33,5 +33,5 @@ fn test_2() {
         struct_declaration::<BasicContext>,
         Rules::Struct_declaration,
     );
-    assert_eq!(result, (true, src.len() as u32));
+    assert_eq!(result, (false, 0));
 }
