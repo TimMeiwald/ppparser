@@ -9,8 +9,14 @@ use std::collections::HashSet;
 // If you do not need this at all you can just leave it. The compiler will optimise it out anyway as it does nothing by default
 // and isn't used anywhere by default either.
 pub struct UserState(pub HashSet<String>);
+impl Default for UserState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl UserState {
     pub fn new() -> Self {
-        UserState { 0: HashSet::new() }
+        UserState(HashSet::new())
     }
 }

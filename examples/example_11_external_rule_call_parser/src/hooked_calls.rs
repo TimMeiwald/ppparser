@@ -8,10 +8,10 @@ use crate::{BasicContext, Context, Key, Source, user_state::UserState};
 
 pub fn unique_line_cache<T: Context>(
     user_state: &RefCell<UserState>,
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
+    _parent: Key,
+    _context: &RefCell<T>,
+    _source: &Source,
+    _position: u32,
     func: &impl Fn(Key, &Source, u32) -> (bool, u32),
 ) -> impl Fn(Key, &Source, u32) -> (bool, u32) {
     move |parent: Key, source: &Source, position: u32| {
