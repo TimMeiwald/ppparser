@@ -1,11 +1,11 @@
-use c_parser::{_var_name, BasicContext, Context, Key, RULES_SIZE, Rules, Source, grammar};
+use c_parser::{_var_name, BasicContext, Context, Key, RULES_SIZE, Rules, Source, UserState, grammar};
 use std::cell::RefCell;
 use std::fs;
 use test_grammar_proc_macro::test_grammar_files_in_dir;
 
-pub fn shared<'a>(
+pub fn shared(
     input: &str,
-    func: for<'c> fn(Key, &RefCell<BasicContext>, &Source<'c>, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<BasicContext>, &Source, u32) -> (bool, u32),
     rule: Rules,
 ) -> (bool, u32) {
     let string = input.to_string();
@@ -14,8 +14,9 @@ pub fn shared<'a>(
     let position: u32 = 0;
     let result: (bool, u32);
     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+    let user_state: RefCell<UserState> = RefCell::new(UserState::default());
     {
-        let executor = _var_name(rule, &context, func);
+        let executor = _var_name(&user_state, rule, &context, func);
         result = executor(Key(0), &source, position);
     }
     println!("Result: {:?}", result);

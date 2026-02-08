@@ -5,9 +5,9 @@ use std::cell::RefCell;
 use c_parser::*;
 use c_parser::{BasicContext, Rules, identifier};
 
-pub fn shared<'a>(
+pub fn shared(
     input: &str,
-    func: for<'c> fn(Key, &RefCell<BasicContext>, &Source<'c>, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<BasicContext>, &Source, u32) -> (bool, u32),
     rule: Rules,
 ) -> (bool, u32) {
     let string = input.to_string();
@@ -15,9 +15,9 @@ pub fn shared<'a>(
     let source = Source::new(&string);
     let result: (bool, u32);
     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
-    {
+    let user_state: RefCell<UserState> = RefCell::new(UserState::default());    {
         let involved_set: Vec<Rules> = [Rules::Identifier].to_vec();
-        let executor = _var_name_indirect_left_recursion(&involved_set, rule, &context, func);
+        let executor = _var_name_indirect_left_recursion(&user_state, &involved_set, rule, &context, func);
         result = executor(Key(0), &source, 0);
     }
     println!("Result: {:?}", result);
