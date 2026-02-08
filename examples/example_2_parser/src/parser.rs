@@ -4,7 +4,8 @@
 use crate::*;
 use std::cell::RefCell;
 #[allow(dead_code)]
-pub fn a<T: Context + 'static>(
+pub fn a<T: Context>(
+    user_state: &RefCell<UserState>,
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -20,7 +21,8 @@ pub fn a<T: Context + 'static>(
     closure_6(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn b<T: Context + 'static>(
+pub fn b<T: Context>(
+    user_state: &RefCell<UserState>,
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
@@ -36,7 +38,8 @@ pub fn b<T: Context + 'static>(
     closure_6(parent, source, position)
 }
 #[allow(dead_code)]
-pub fn grammar<T: Context + 'static>(
+pub fn grammar<T: Context>(
+    user_state: &RefCell<UserState>,
     parent: Key,
     context: &RefCell<T>,
     source: &Source,
