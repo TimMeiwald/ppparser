@@ -16,6 +16,7 @@ fn memoized_behaviour<T: Context>(
     (is_true, end_position)
 }
 
+#[allow(clippy::type_complexity)]
 fn default_behaviour<T: Context>(
     user_state: &RefCell<UserState>,
     source: &Source,
@@ -36,6 +37,7 @@ fn default_behaviour<T: Context>(
     f
 }
 
+#[allow(clippy::type_complexity)]
 pub fn _var_name<'a, T: Context>(
     user_state: &'a RefCell<UserState>,
     rule: Rules,
@@ -47,6 +49,7 @@ pub fn _var_name<'a, T: Context>(
     }
 }
 
+#[allow(clippy::type_complexity)]
 pub fn _var_name_kernel<T: Context>(
     user_state: &RefCell<UserState>,
     rule: Rules,
