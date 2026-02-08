@@ -109,23 +109,24 @@ An example is the following. The following rules are triggered using the Grammar
 
 
 <Subexpression> = <Left_Bracket>,<RHS>,<Right_Bracket>;
+<Hooked_Call> = <Var_Name>, <Left_Bracket>,<RHS>,<Right_Bracket>; # Allows for handling context senstive grammars by calling out to handwritten code. # 
 <Epsilon> = <QuotationMark>, <QuotationMark>;
 <StringTerminal> = (<Apostrophe>, !<Apostrophe>, (<ASCII>, (!<Apostrophe>,<ASCII>)+), <Apostrophe>)/<Hex>/<Integer>; #Multibyte matches essentially#
 
 <Terminal> = (<QuotationMark>,<ASCII>,<QuotationMark>)/(<QuotationMark>,'\',('n'/'r'/'t'),<QuotationMark>)/<Epsilon>;
-<Nucleus> = (<OrderedChoiceMatchRange>/<Subexpression>/<Terminal>/<StringTerminal>/<Var_Name_Ref>), <Whitespace>;
+<Nucleus> = (<OrderedChoiceMatchRange>/<Hooked_Call>/<Subexpression>/<Terminal>/<StringTerminal>/<Var_Name_Ref>), <Whitespace>;
 <Atom> = (<And_Predicate>/<Not_Predicate>/<One_Or_More>/<Zero_Or_More>/<Optional>/<Nucleus>), <Whitespace>;
 
 <And_Predicate> = <Ampersand>, <Nucleus>;
 <Not_Predicate> = <Exclamation_Mark>, <Nucleus>;
 <Sequence> = <Atom>, <Whitespace>, <Comma>, <Whitespace>, <Atom>, (<Comma>, <Whitespace>, <Atom>)*;
-<Ordered_Choice> = <Atom>, <Whitespace>,<Backslash>, <Whitespace>,<Atom>, (<Backslash>, <Whitespace>, <Atom>)*;
+<Ordered_Choice> = <Atom>, <Whitespace>,<Backslash>, <Whitespace>,<Atom>, (<Whitespace>, <Backslash>, <Whitespace>, <Atom>)*;
 <One_Or_More> = <Nucleus>, <Whitespace>, <Plus>;
 <Zero_Or_More> = <Nucleus>, <Whitespace>, <Star>;
 <Optional> = <Nucleus>, <Whitespace>, <Question_Mark>;
 
 <Whitespace> Inline = (' '/'\n'/'\r'/'\t')*;
-<RHS> = <Sequence>/<Ordered_Choice>/<Atom>;
+<RHS> = <Whitespace>, (<Sequence>/<Ordered_Choice>/<Atom>);
 <LHS> = <Var_Name_Decl>, (<Whitespace>, <Semantic_Instructions>, <Whitespace>)?;
 <Rule> = <LHS>, <Whitespace>, <Assignment>, <Whitespace>, <RHS>, <Whitespace>, <End_Rule>, <Whitespace>, <Comment>*;
 <Grammar> = <Rule>+, <Whitespace>?;
