@@ -23,7 +23,8 @@ pub fn intermediate<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Expr, Rules::Intermediate].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     closure_1(parent, source, position)
 }
 #[allow(dead_code)]
@@ -37,6 +38,7 @@ pub fn expr<T: Context>(
     //  Should match 0-0-0-0-0-0-0-0 etc
     let involved_set: Vec<Rules> = [Rules::Expr, Rules::Intermediate].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
+        user_state,
         &involved_set,
         Rules::Intermediate,
         context,
@@ -60,6 +62,7 @@ pub fn grammar<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Expr, Rules::Intermediate].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     closure_1(parent, source, position)
 }

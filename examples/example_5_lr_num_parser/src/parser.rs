@@ -24,7 +24,8 @@ pub fn expr<T: Context>(
 ) -> (bool, u32) {
     //  Should match 0-0-0-0-0-0-0-0 etc
     let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(user_state, Rules::Num, context, num);
@@ -43,6 +44,7 @@ pub fn grammar<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Expr].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     closure_1(parent, source, position)
 }

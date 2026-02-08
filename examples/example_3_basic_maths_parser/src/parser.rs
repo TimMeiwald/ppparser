@@ -131,11 +131,13 @@ pub fn addition<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     let closure_2 = _terminal(b'+');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let involved_set: Vec<Rules> = [Rules::Division, Rules::Multiplication, Rules::Term].to_vec();
-    let closure_4 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
+    let closure_4 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Term, context, term);
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
@@ -148,11 +150,13 @@ pub fn subtraction<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     let closure_2 = _terminal(b'-');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let involved_set: Vec<Rules> = [Rules::Division, Rules::Multiplication, Rules::Term].to_vec();
-    let closure_4 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
+    let closure_4 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Term, context, term);
     let closure_5 = _sequence(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
@@ -165,7 +169,8 @@ pub fn multiplication<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Division, Rules::Multiplication, Rules::Term].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Term, context, term);
     let closure_2 = _terminal(b'*');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(user_state, Rules::Factor, context, factor);
@@ -181,7 +186,8 @@ pub fn division<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Division, Rules::Multiplication, Rules::Term].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Term, context, term);
     let closure_2 = _terminal(b'/');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _var_name(user_state, Rules::Factor, context, factor);
@@ -198,7 +204,8 @@ pub fn parentheses<T: Context>(
 ) -> (bool, u32) {
     let closure_1 = _terminal(b'(');
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_2 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_2 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _terminal(b')');
     let closure_5 = _sequence(&closure_3, &closure_4);
@@ -213,14 +220,25 @@ pub fn expr<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_1 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Addition, context, addition);
+    let closure_1 = _var_name_indirect_left_recursion(
+        user_state,
+        &involved_set,
+        Rules::Addition,
+        context,
+        addition,
+    );
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_2 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Subtraction, context, subtraction);
+    let closure_2 = _var_name_indirect_left_recursion(
+        user_state,
+        &involved_set,
+        Rules::Subtraction,
+        context,
+        subtraction,
+    );
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
     let involved_set: Vec<Rules> = [Rules::Division, Rules::Multiplication, Rules::Term].to_vec();
-    let closure_4 = _var_name_indirect_left_recursion(&involved_set, Rules::Term, context, term);
+    let closure_4 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Term, context, term);
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
     closure_5(parent, source, position)
 }
@@ -234,14 +252,20 @@ pub fn term<T: Context>(
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Division, Rules::Multiplication, Rules::Term].to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
+        user_state,
         &involved_set,
         Rules::Multiplication,
         context,
         multiplication,
     );
     let involved_set: Vec<Rules> = [Rules::Division, Rules::Multiplication, Rules::Term].to_vec();
-    let closure_2 =
-        _var_name_indirect_left_recursion(&involved_set, Rules::Division, context, division);
+    let closure_2 = _var_name_indirect_left_recursion(
+        user_state,
+        &involved_set,
+        Rules::Division,
+        context,
+        division,
+    );
     let closure_3 = _ordered_choice(&closure_1, &closure_2);
     let closure_4 = _var_name(user_state, Rules::Factor, context, factor);
     let closure_5 = _ordered_choice(&closure_3, &closure_4);
@@ -269,6 +293,7 @@ pub fn grammar<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Expr, context, expr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
     closure_1(parent, source, position)
 }

@@ -30,7 +30,8 @@ pub fn lr<T: Context>(
 ) -> (bool, u32) {
     //  lr ::= <lr> "1" / "1"
     let involved_set: Vec<Rules> = [Rules::Lr].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::Lr, context, lr);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Lr, context, lr);
     let closure_2 = _terminal(b'1');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _subexpression(&closure_3);

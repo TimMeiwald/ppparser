@@ -12,7 +12,8 @@ pub fn a<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::A, Rules::B].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::B, context, b);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::B, context, b);
     let closure_2 = _terminal(b'a');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _subexpression(&closure_3);
@@ -29,7 +30,8 @@ pub fn b<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::A, Rules::B].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::A, context, a);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::A, context, a);
     let closure_2 = _terminal(b'b');
     let closure_3 = _sequence(&closure_1, &closure_2);
     let closure_4 = _subexpression(&closure_3);
@@ -46,6 +48,7 @@ pub fn grammar<T: Context>(
     position: u32,
 ) -> (bool, u32) {
     let involved_set: Vec<Rules> = [Rules::A, Rules::B].to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(&involved_set, Rules::A, context, a);
+    let closure_1 =
+        _var_name_indirect_left_recursion(user_state, &involved_set, Rules::A, context, a);
     closure_1(parent, source, position)
 }

@@ -74,6 +74,7 @@ pub fn _var_name_kernel<T: Context>(
     }
 }
 
+#[allow(clippy::type_complexity)]
 pub fn _var_name_indirect_left_recursion<'a, T: Context>(
     user_state: &'a RefCell<UserState>,
     involved_set: &'a Vec<Rules>,
@@ -104,6 +105,7 @@ fn convert_vec_to_btree_set(involved_set: &Vec<Rules>) -> BTreeSet<Rules> {
 }
 
 #[allow(clippy::too_many_arguments)]
+#[allow(clippy::type_complexity)]
 pub fn _var_name_kernel_growth_function<T: Context>(
     user_state: &RefCell<UserState>,
     involved_set: &Vec<Rules>,
@@ -198,6 +200,8 @@ pub fn should_go_into_growth_function<T: Context>(
     }
 }
 
+#[allow(clippy::type_complexity)]
+#[allow(clippy::too_many_arguments)]
 pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
     user_state: &RefCell<UserState>,
     involved_set: &Vec<Rules>,

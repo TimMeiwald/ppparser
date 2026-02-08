@@ -11,10 +11,16 @@ mod tests {
         let position: u32 = 0;
         let result: (bool, u32);
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let user_state: RefCell<UserState> = RefCell::new(UserState);
         {
             let involved_set: Vec<Rules> = [Rules::Fact].to_vec();
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Fact, &context, fact);
+            let executor = _var_name_indirect_left_recursion(
+                &user_state,
+                &involved_set,
+                Rules::Fact,
+                &context,
+                fact,
+            );
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -99,11 +105,17 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let user_state: RefCell<UserState> = RefCell::new(UserState);
         let result: (bool, u32);
         {
             let involved_set: Vec<Rules> = [Rules::Term].to_vec();
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Term, &context, term);
+            let executor = _var_name_indirect_left_recursion(
+                &user_state,
+                &involved_set,
+                Rules::Term,
+                &context,
+                term,
+            );
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");

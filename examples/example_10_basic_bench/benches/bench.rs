@@ -1,7 +1,7 @@
 use criterion::Throughput;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use example_10_basic_bench_parser::{
-    lr, rr, BasicContext, BasicPublisher, Context, Key, Rules, Source, _var_name,
+    lr, rr, BasicContext, BasicPublisher, Context, Key, Rules, Source, UserState, _var_name,
     _var_name_indirect_left_recursion, RULES_SIZE,
 };
 use std::cell::RefCell;
@@ -20,10 +20,12 @@ fn parse_lr(source: &str) -> (bool, u32, BasicPublisher) {
     let source = Source::new(source);
     let position: u32 = 0;
     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+    let user_state = RefCell::new(UserState {});
     let result: (bool, u32);
     {
         let involved_set: Vec<Rules> = [Rules::Lr].to_vec();
-        let executor = _var_name_indirect_left_recursion(&involved_set, Rules::Lr, &context, lr);
+        let executor =
+            _var_name_indirect_left_recursion(&user_state, &involved_set, Rules::Lr, &context, lr);
         result = executor(Key(0), &source, position);
     }
     let gen_code = context.into_inner().get_publisher().clear_false();
@@ -35,9 +37,10 @@ fn parse_rr(source: &str) -> (bool, u32, BasicPublisher) {
     let source = Source::new(source);
     let position: u32 = 0;
     let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+    let user_state = RefCell::new(UserState {});
     let result: (bool, u32);
     {
-        let executor = _var_name(Rules::Rr, &context, rr);
+        let executor = _var_name(&user_state, Rules::Rr, &context, rr);
         result = executor(Key(0), &source, position);
     }
     let gen_code = context.into_inner().get_publisher().clear_false();

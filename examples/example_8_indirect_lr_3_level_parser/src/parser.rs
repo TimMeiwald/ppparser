@@ -40,6 +40,7 @@ pub fn test_indirect_three_level_a<T: Context>(
     ]
     .to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
+        user_state,
         &involved_set,
         Rules::Test_indirect_three_level_B,
         context,
@@ -69,6 +70,7 @@ pub fn test_indirect_three_level_b<T: Context>(
     ]
     .to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
+        user_state,
         &involved_set,
         Rules::Test_indirect_three_level_C,
         context,
@@ -91,6 +93,7 @@ pub fn test_indirect_three_level_c<T: Context>(
     ]
     .to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
+        user_state,
         &involved_set,
         Rules::Test_indirect_three_level_A,
         context,
@@ -113,6 +116,7 @@ pub fn grammar<T: Context>(
     ]
     .to_vec();
     let closure_1 = _var_name_indirect_left_recursion(
+        user_state,
         &involved_set,
         Rules::Test_indirect_three_level_A,
         context,

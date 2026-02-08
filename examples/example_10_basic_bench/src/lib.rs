@@ -10,9 +10,10 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let user_state: RefCell<UserState> = RefCell::new(UserState);
         let result: (bool, u32);
         {
-            let executor = _var_name(Rules::Rr, &context, rr);
+            let executor = _var_name(&user_state, Rules::Rr, &context, rr);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -29,9 +30,10 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let user_state: RefCell<UserState> = RefCell::new(UserState);
         let result: (bool, u32);
         {
-            let executor = _var_name(Rules::Rr, &context, rr);
+            let executor = _var_name(&user_state, Rules::Rr, &context, rr);
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -47,11 +49,17 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let user_state: RefCell<UserState> = RefCell::new(UserState);
         let result: (bool, u32);
         {
             let involved_set: Vec<Rules> = [Rules::Lr].to_vec();
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Lr, &context, lr);
+            let executor = _var_name_indirect_left_recursion(
+                &user_state,
+                &involved_set,
+                Rules::Lr,
+                &context,
+                lr,
+            );
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
@@ -67,11 +75,17 @@ mod tests {
         let source = Source::new(&string);
         let position: u32 = 0;
         let context = RefCell::new(BasicContext::new(src_len as usize, RULES_SIZE as usize));
+        let user_state: RefCell<UserState> = RefCell::new(UserState);
         let result: (bool, u32);
         {
             let involved_set: Vec<Rules> = [Rules::Lr].to_vec();
-            let executor =
-                _var_name_indirect_left_recursion(&involved_set, Rules::Lr, &context, lr);
+            let executor = _var_name_indirect_left_recursion(
+                &user_state,
+                &involved_set,
+                Rules::Lr,
+                &context,
+                lr,
+            );
             result = executor(Key(0), &source, position);
         }
         println!("Result: {result:?}");
