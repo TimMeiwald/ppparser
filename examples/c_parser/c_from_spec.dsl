@@ -381,12 +381,12 @@
 <declarator> = <ws>, <pointer>?, <direct_declarator>, <ws>;
 
 <direct_declarator> = 		('(', <ws>, <declarator>, <ws>, ')')
-							/ (<direct_declarator>, '[', <type_qualifier_list>?, <assignment_expression>?, ']')
-							/ (<direct_declarator>, '[', "static", <type_qualifier_list>?, <assignment_expression>, ']')
-							/ (<direct_declarator>, '[', <type_qualifier_list>, "static", <assignment_expression>, ']')
-							/ (<direct_declarator>, '[', <type_qualifier_list>?, '*', ']')
-							/ (<direct_declarator>, '(', <parameter_type_list>, ')')
-							/ (<direct_declarator>, '(', <identifier_list>?, ')')
+							/ (<direct_declarator>, <ws>, '[', <type_qualifier_list>?, <assignment_expression>?, ']')
+							/ (<direct_declarator>, <ws>, '[', "static", <type_qualifier_list>?, <assignment_expression>, ']')
+							/ (<direct_declarator>, <ws>, '[', <type_qualifier_list>, "static", <assignment_expression>, ']')
+							/ (<direct_declarator>, <ws>, '[', <type_qualifier_list>?, '*', ']')
+							/ (<direct_declarator>, <ws>, '(', <parameter_type_list>, ')')
+							/ (<direct_declarator>, <ws>, '(', <identifier_list>?, ')')
 							/<identifier>;
 
 <pointer> = ('*', <type_qualifier_list>?)

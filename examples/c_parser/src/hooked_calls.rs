@@ -24,8 +24,22 @@ pub fn is_typedef<T: Context>(
         println!("Before typedef_name");
         let result = func(parent, source, position);
         if result.0 {
-            let typedef_name = source.get_string(position, result.1).expect("If result is true it should have content");
+            let typedef_name = source
+                .get_string(position, result.1)
+                .expect("If result is true it should have content");
             println!("Typedef name: {typedef_name:?}");
+            let contains_typedef_name: bool;
+            {
+                contains_typedef_name = user_state.borrow().typedef_names.contains(typedef_name);
+            }
+            println!("CONTAINES TYPEDEF NAME: {contains_typedef_name:?}");
+            if contains_typedef_name {
+                println!("CONTAINS TYPEDEF NAME");
+                return result;
+            } else {
+                println!("DOES NOT CONTAIN TYPEDEF NAME");
+                return (false, position);
+            }
         }
         println!("After typedef_name: {result:?}");
         result
@@ -44,7 +58,6 @@ pub fn declared_new_typedef<T: Context>(
     // Then it means we may be declaring a new typedef
     // If that is true then we successfully declared a typedef and we store it in UserState
     move |parent: Key, source: &Source, position: u32| {
-
         println!("Before declared_new_typedef");
         let result = func(parent, source, position);
         {
