@@ -114,6 +114,10 @@ pub fn grammar<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
+    // This is a
+    // Multi line comment
+    // So we can check output is correct
+
     let involved_set: Vec<Rules> = [Rules::Addition, Rules::Expr, Rules::Subtraction].to_vec();
     let closure_1 =
         _var_name_indirect_left_recursion(user_state, &involved_set, Rules::Expr, context, expr);
