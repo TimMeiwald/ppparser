@@ -2,6 +2,7 @@ use num::range;
 
 use crate::Key;
 use crate::Rules;
+use crate::publisher_trait::Publisher;
 // Tree needs to be able to swap existing structures into other locations
 // E.g Rule A may fail but calls subrule B where B succeeds
 // Then Rule C may try on same start location and also need subrule B
@@ -17,6 +18,16 @@ impl PartialEq for BasicPublisher {
     fn eq(&self, other: &Self) -> bool {
         self.partial_eq_kernel(other, Key(0), Key(0))
     }
+}
+impl Publisher for BasicPublisher{
+    fn get_node(&self, index: Key) -> &Node {
+        &self.nodes[usize::from(index)]
+    }
+
+    fn get_mut_node(&mut self, index: Key) -> &mut Node {
+        &mut self.nodes[usize::from(index)]
+    }
+
 }
 
 impl BasicPublisher {
@@ -175,13 +186,6 @@ impl BasicPublisher {
 }
 
 impl BasicPublisher {
-    pub fn get_node(&self, index: Key) -> &Node {
-        &self.nodes[usize::from(index)]
-    }
-
-    fn get_mut_node(&mut self, index: Key) -> &mut Node {
-        &mut self.nodes[usize::from(index)]
-    }
 
     fn clear_false_kernel(&self, new_tree: &mut BasicPublisher, parent_index: Key, index: Key) {
         let node = self.get_node(index);

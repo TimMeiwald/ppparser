@@ -1,6 +1,7 @@
 use parser::BasicPublisher;
 use parser::{Key, Rules};
 use std::{collections::HashMap, panic};
+use parser::publisher_trait::Publisher;
 pub struct SymbolTable<'a> {
     names: Vec<String>,
     source: &'a String,

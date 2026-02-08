@@ -1,6 +1,7 @@
 use super::binary_wo::{BinaryTreeWO, Reference};
 use crate::{cycle_detector::LeftRecursionDetector, symbol_table::SymbolTable};
-use ::parser::*;
+use parser::publisher_trait::Publisher;
+use parser::{BasicPublisher, Key, Rules};
 use indoc::indoc;
 use std::panic::panic_any;
 
@@ -1047,7 +1048,7 @@ mod tests {
     use std::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
-
+    use parser::{BasicContext, RULES_SIZE, Source, grammar, Context, UserState};
     #[test]
     fn test_5() {
         let string = "<Rule>='A'/'B'/'C'/'D';   #   Ein Kommentar   #  ".to_string();
