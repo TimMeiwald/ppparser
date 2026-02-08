@@ -1,0 +1,4 @@
+union myUnion
+{
+    int x;
+};
