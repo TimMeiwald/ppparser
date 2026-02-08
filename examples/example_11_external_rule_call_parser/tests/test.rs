@@ -38,7 +38,7 @@ mod tests {
         // Because whilst the third line is a valid string it then get's rewritten as a failure
         // because it already exists in the cache(the hashset in user_state that the hooked_call in hooked_call.rs manipulates.)
         // Both hooked_call.rs and user_state.rs do not get regenerated if it already exists. If you wish to regenerate thems simply delete then
-        // and rerun the generator. 
+        // and rerun the generator.
         let string = "hello world\nhello there\nhello world\n".to_string();
         let src_len = string.len() as u32;
         let source = Source::new(&string);

@@ -19,7 +19,13 @@ fn memoized_behaviour<T: Context>(
 fn default_behaviour<T: Context>(
     user_state: &RefCell<UserState>,
     source: &Source,
-    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    #[allow(clippy::type_complexity)] func: fn(
+        &RefCell<UserState>,
+        Key,
+        &RefCell<T>,
+        &Source,
+        u32,
+    ) -> (bool, u32),
     context: &RefCell<T>,
     rule: Rules,
     parent: Key,
@@ -40,7 +46,13 @@ pub fn _var_name<'a, T: Context>(
     user_state: &'a RefCell<UserState>,
     rule: Rules,
     context: &'a RefCell<T>,
-    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    #[allow(clippy::type_complexity)] func: fn(
+        &RefCell<UserState>,
+        Key,
+        &RefCell<T>,
+        &Source,
+        u32,
+    ) -> (bool, u32),
 ) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'a {
     move |parent: Key, source: &Source, position: u32| {
         _var_name_kernel(user_state, rule, context, parent, source, position, func)
@@ -54,7 +66,13 @@ pub fn _var_name_kernel<T: Context>(
     parent: Key,
     source: &Source,
     position: u32,
-    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    #[allow(clippy::type_complexity)] func: fn(
+        &RefCell<UserState>,
+        Key,
+        &RefCell<T>,
+        &Source,
+        u32,
+    ) -> (bool, u32),
 ) -> (bool, u32) {
     let memo = context.borrow().check(rule, position);
     match memo {
