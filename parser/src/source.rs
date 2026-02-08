@@ -40,7 +40,7 @@ impl<'a> Source<'a> {
     }
     pub fn get_string(&self, start_position: u32, end_position: u32) -> Option<&str> {
         if start_position > self.source_len || end_position > self.source_len {
-            return None;
+            None
         } else {
             Some(&self.source[(start_position as usize)..(end_position as usize)])
         }
