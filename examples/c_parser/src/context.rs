@@ -4,6 +4,7 @@ use crate::{
     Rules,
     cache::{DirectLeftRecursionCache, Head, IndirectLeftRecursionCache},
     publisher::{DirectLeftRecursionPublisher, IndirectLeftRecursionPublisher},
+    publisher_trait::Publisher,
 };
 use std::collections::BTreeSet;
 
@@ -13,6 +14,7 @@ pub trait Context
 where
     Self::C: core::fmt::Debug, // Cache
     Self::P: core::fmt::Debug,
+    Self::P: Publisher,
 {
     // Associated types so I can tie specific Cache/Publisher pairs together since they can be mutually exclusive
     // I.e NOOP Cache prohibits IndirectLeftRecursionPublisher since you need a cache to do indirect left recursion.
@@ -52,6 +54,7 @@ where
     fn remove_from_eval_set(&mut self, head_index: (Rules, u32), rule: Rules);
     fn reinitialize_eval_set(&mut self, rule: Rules, start_position: u32);
     fn get_publisher(self) -> Self::P;
+    fn borrow_publisher(&self) -> &Self::P;
     fn print_node(&self, node: Key);
     fn get_current_active_lr_position(&self) -> Option<(Rules, u32)>;
     fn set_current_active_lr_position(&mut self, position: Option<(Rules, u32)>);
@@ -159,6 +162,9 @@ impl Context for BasicContext {
 
     fn get_publisher(self) -> Self::P {
         self.publisher
+    }
+    fn borrow_publisher(&self) -> &Self::P {
+        &self.publisher
     }
 }
 
