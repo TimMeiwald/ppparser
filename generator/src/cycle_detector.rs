@@ -1,6 +1,6 @@
 use crate::{BasicPublisher, Key, Node, Rules};
-use std::collections::{HashMap, HashSet};
 use parser::publisher_trait::Publisher;
+use std::collections::{HashMap, HashSet};
 
 pub struct LeftRecursionDetector {
     rule_call_tree: RuleCallTree,

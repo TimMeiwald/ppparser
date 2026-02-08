@@ -25,7 +25,6 @@ pub fn is_typedef<T: Context>(
     }
 }
 
-
 pub fn declared_new_typedef<T: Context>(
     user_state: &RefCell<UserState>,
     parent: Key,
@@ -38,11 +37,11 @@ pub fn declared_new_typedef<T: Context>(
     // Then it means we may be declaring a new typedef
     // If that is true then we successfully declared a typedef and we store it in UserState
     move |parent: Key, source: &Source, position: u32| {
-        let publisher: <T as Context>::P = context.get_mut().get_publisher().;
-        let node = publisher
-        for child_key in node.get_children() {
-        let child = publisher.get_node(*child_key);
-    }
+        // let publisher: <T as Context>::P = context.get_mut().get_publisher();
+        // let node = publisher
+        // for child_key in node.get_children() {
+        // let child = publisher.get_node(*child_key);
+
         let result = func(parent, source, position);
         result
     }

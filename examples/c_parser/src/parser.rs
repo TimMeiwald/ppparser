@@ -1,7 +1,7 @@
 #![allow(non_camel_case_types)] // Generated Code kinda annoying to deal with so w/e
 #![allow(unused_variables)] // Generated Code also, since everything passes stuff
 #![allow(unused_imports)] // Generated Code also, since everything passes stuff
-use crate::hooked_calls::is_typedef;
+use crate::hooked_calls::{declared_new_typedef, is_typedef};
 use crate::*;
 use std::cell::RefCell;
 #[allow(dead_code)]
@@ -3810,7 +3810,10 @@ pub fn declaration_specifiers<T: Context>(
         ws(user_state, parent, context, source, position)
     };
     let closure_44 = _sequence(&closure_42, &closure_43);
-    closure_44(parent, source, position)
+    let closure_45 = _subexpression(&closure_44);
+    let closure_46 =
+        declared_new_typedef(user_state, parent, context, source, position, &closure_45);
+    closure_46(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn attribute_seq<T: Context>(

@@ -1,8 +1,8 @@
 use super::binary_wo::{BinaryTreeWO, Reference};
 use crate::{cycle_detector::LeftRecursionDetector, symbol_table::SymbolTable};
+use indoc::indoc;
 use parser::publisher_trait::Publisher;
 use parser::{BasicPublisher, Key, Rules};
-use indoc::indoc;
 use std::panic::panic_any;
 
 pub struct GeneratedCode<'a> {
@@ -1045,10 +1045,10 @@ mod tests {
     use super::*;
     use crate::count_lines;
 
+    use parser::{grammar, BasicContext, Context, Source, UserState, RULES_SIZE};
     use std::cell::RefCell;
     use std::env;
     use std::fs::{canonicalize, read_to_string};
-    use parser::{BasicContext, RULES_SIZE, Source, grammar, Context, UserState};
     #[test]
     fn test_5() {
         let string = "<Rule>='A'/'B'/'C'/'D';   #   Ein Kommentar   #  ".to_string();
