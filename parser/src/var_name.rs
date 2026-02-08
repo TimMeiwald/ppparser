@@ -79,7 +79,7 @@ pub fn _var_name_indirect_left_recursion<'a, T: Context>(
     involved_set: &'a Vec<Rules>,
     rule: Rules,
     context: &'a RefCell<T>,
-    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32) ,
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'a {
     move |parent: Key, source: &Source, position: u32| {
         _var_name_kernel_indirect_left_recursion(

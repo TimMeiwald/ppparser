@@ -75,13 +75,15 @@ pub fn _var_name_kernel<T: Context>(
 }
 
 pub fn _var_name_indirect_left_recursion<'a, T: Context>(
+    user_state: &'a RefCell<UserState>,
     involved_set: &'a Vec<Rules>,
     rule: Rules,
     context: &'a RefCell<T>,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> impl Fn(Key, &Source, u32) -> (bool, u32) + 'a {
     move |parent: Key, source: &Source, position: u32| {
         _var_name_kernel_indirect_left_recursion(
+            user_state,
             involved_set,
             rule,
             context,
@@ -103,13 +105,14 @@ fn convert_vec_to_btree_set(involved_set: &Vec<Rules>) -> BTreeSet<Rules> {
 
 #[allow(clippy::too_many_arguments)]
 pub fn _var_name_kernel_growth_function<T: Context>(
+    user_state: &RefCell<UserState>,
     involved_set: &Vec<Rules>,
     rule: Rules,
     context: &RefCell<T>,
     parent: Key,
     source: &Source,
     position: u32,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
     last_lr_position: Option<(Rules, u32)>,
 ) -> (bool, u32) {
     // If head is none, return what is stored in the memo table.
@@ -131,7 +134,7 @@ pub fn _var_name_kernel_growth_function<T: Context>(
             .set_head(position, rule, involved_btree);
         loop {
             context.borrow_mut().reinitialize_eval_set(rule, position);
-            result = func(current_key, context, source, position);
+            result = func(user_state, current_key, context, source, position);
             let memo_result = context.borrow_mut().check(rule, position);
             match memo_result {
                 None => {}
@@ -196,17 +199,19 @@ pub fn should_go_into_growth_function<T: Context>(
 }
 
 pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
+    user_state: &RefCell<UserState>,
     involved_set: &Vec<Rules>,
     rule: Rules,
     context: &RefCell<T>,
     parent: Key,
     source: &Source,
     position: u32,
-    func: fn(Key, &RefCell<T>, &Source, u32) -> (bool, u32),
+    func: fn(&RefCell<UserState>, Key, &RefCell<T>, &Source, u32) -> (bool, u32),
 ) -> (bool, u32) {
     let should = should_go_into_growth_function(rule, context, position);
     if should.0 {
         _var_name_kernel_growth_function(
+            user_state,
             involved_set,
             rule,
             context,
@@ -229,7 +234,7 @@ pub fn _var_name_kernel_indirect_left_recursion<T: Context>(
             context
                 .borrow_mut()
                 .remove_from_eval_set(active_lr_position, rule);
-            let result = func(current_key, context, source, position);
+            let result = func(user_state, current_key, context, source, position);
             context
                 .borrow_mut()
                 .update_publisher_entry(current_key, result.0, position, result.1);
