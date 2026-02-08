@@ -269,6 +269,7 @@ impl RuleCallTree {
                 | Rules::RHS
                 | Rules::Nucleus
                 | Rules::Subexpression
+                | Rules::Hooked_Call
                 | Rules::Optional
                 | Rules::Zero_Or_More
                 | Rules::One_Or_More
