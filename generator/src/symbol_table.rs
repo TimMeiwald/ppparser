@@ -135,7 +135,6 @@ mod tests {
     use std::env;
     use std::fs::{canonicalize, read_to_string};
 
-    struct NoopState;
 
     #[test]
     fn test() {

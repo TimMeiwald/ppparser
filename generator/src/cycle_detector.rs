@@ -436,7 +436,6 @@ mod tests {
     use std::fs::{canonicalize, read_to_string};
     use std::io::stdout;
     use std::io::Write;
-    struct NoopState;
     #[test]
     fn test_var_name_no_lr() {
         let string = r##"<Var_Name> Inline = (<Alphabet_Lower>/<Alphabet_Upper>),(<Alphabet_Lower>/<Alphabet_Upper>/'_')*;
