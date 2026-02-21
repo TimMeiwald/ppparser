@@ -101,7 +101,6 @@ fn test_9() {
     assert_eq!(result, (true, 3));
 }
 
-
 #[test]
 fn test_10() {
     let src = "int main (int x, void y){}";
@@ -132,7 +131,10 @@ fn test_12() {
     let src = "int main (int x, void y, whatever z){}";
     let user_state = RefCell::new(UserState::new());
     {
-        user_state.borrow_mut().typedef_names.insert("whatever".to_string());
+        user_state
+            .borrow_mut()
+            .typedef_names
+            .insert("whatever".to_string());
     }
     let result = shared_custom_user_state(
         &user_state,

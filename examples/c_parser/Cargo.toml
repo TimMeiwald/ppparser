@@ -2,6 +2,9 @@
 name = "c_parser"
 version = "0.1.0"
 edition = "2024"
+# We include the test example files since otherwise the macro doesn't recompile when adding files
+# or modifying the test files which is annoying.
+include = ["src/**/*", "LICENSE", "README.md"]
 
 [dependencies]
 clap = { version = "4.5.53", features = ["derive"] }

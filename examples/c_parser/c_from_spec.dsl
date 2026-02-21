@@ -7,7 +7,7 @@
 <comment> = "//", (!'\n', <ascii>)*;
 
 <keyword> = "one"/ "of"/ "auto"/ "break"/ "case"/ "char"/ "const"/ "continue"/ "default"/ "do"/ "double"/ "else"/ "enum"/ "extern"/ "float"/ "for"/ "goto"/ "if"/ "inline"/ "int"/ "long"/ "register"/ "restrict"/ "return"/ "short"/ "signed"/ "sizeof"/ "static"/ "struct"/ "switch"/ "typedef"/ "union"/ "unsigned"/ "void"/ "volatile"/ "while"/ "_Alignas"/ "_Alignof"/ "_Atomic"/ "_Bool"/ "_Complex"/ "_Generic"/ " _Imaginary"/ "_Noreturn"/ "_Static_assert"/ "_Thread_local";
-<identifier> = <identifier_nondigit>, (<identifier_nondigit>/<digit>)*;
+<identifier> = !<keyword>, <identifier_nondigit>, (<identifier_nondigit>/<digit>)*;
 #<identifier> =  (<identifier>, <identifier_nondigit>)
                 /(<identifier>, <digit>)
                 /<identifier_nondigit>;#
@@ -277,11 +277,13 @@
 <declaration> = (<ws>, <declaration_specifiers>, <ws>, <attribute_seq>?, <ws>, <init_declarator_list>?, <ws>, ';')
 	/ (<ws>, <static_assert_declaration>, <ws>);
 
-<declaration_specifiers> = declared_new_typedef(<ws>,  ((<storage_class_specifier>, <ws>, <declaration_specifiers>?)
-                                / (<type_specifier>, <ws>, <declaration_specifiers>?)
-                                / (<type_qualifier>, <ws>, <declaration_specifiers>?)
-                                / (<function_specifier>, <ws>, <declaration_specifiers>?)
-                                / (<alignment_specifier>, <ws>, <declaration_specifiers>?)), <ws>);
+<declaration_specifiers> = <ws>, (
+									(<storage_class_specifier>, <ws>, <declaration_specifiers>?)
+									/ (<type_specifier>, <ws>, <declaration_specifiers>?)
+									/ (<type_qualifier>, <ws>, <declaration_specifiers>?)
+									/ (<function_specifier>, <ws>, <declaration_specifiers>?)
+									/ (<alignment_specifier>, <ws>, <declaration_specifiers>?)
+								 ), <ws>;
 
 <attribute_seq> = <attribute>
 	/ (<attribute>, <attribute_seq>?);
@@ -304,7 +306,7 @@
 	/ "register"
 	/ "static"
 	/ "_Thread_local"
-	/ "typedef"
+	/ declared_new_typedef("typedef")
 	/ ("__declspec", '(', <extended_decl_modifier_seq>, ')');
 
 <extended_decl_modifier_seq> = <extended_decl_modifier>
@@ -347,9 +349,11 @@
 <struct_declaration> =  (<ws>, <specifier_qualifier_list>, <ws>, <struct_declarator_list>?, <ws>, ';')
 	                    /(<ws>, <static_assert_declaration>, <ws>);
                         
-<specifier_qualifier_list> = (<ws>, <type_specifier>, <ws>, <specifier_qualifier_list>?, <ws>)
-	/ (<ws>, <type_qualifier>, <ws>, <specifier_qualifier_list>?, <ws>)
-	/ (<ws>, <alignment_specifier>, <ws>, <specifier_qualifier_list>?, <ws>);
+<specifier_qualifier_list> = 	<ws>, (
+									(<type_specifier>, <ws>, <specifier_qualifier_list>?)
+									/ (<type_qualifier>, <ws>, <specifier_qualifier_list>?)
+									/ (<alignment_specifier>, <ws>, <specifier_qualifier_list>?) 
+								), <ws>;
 
 <struct_declarator_list> =  (<struct_declarator_list>, <ws>, ',', <ws>, <struct_declarator>, <ws>)
                             /(<ws>, <struct_declarator>, <ws>);
@@ -357,13 +361,14 @@
 <struct_declarator> =   (<declarator>?, ':', <constant_expression>)
                         /<declarator>;
 
-<enum_specifier> = (<ws>, "enum", <ws>, <identifier>?, <ws>, '{', <ws>, <enumerator_list>, <ws>, '}', <ws>)
-	/ (<ws>, "enum", <ws>, <identifier>?, <ws>, '{', <ws>, <enumerator_list>, <ws>, ',', <ws>, '}', <ws>)
-	/ (<ws>, "enum", <ws>, <identifier>, <ws>);
+<enum_specifier> = <ws>, "enum", <ws>,
+					(
+						  (<identifier>?, <ws>, '{', <ws>, <enumerator>+, <ws>, (',', <ws>)?, '}')
+						/  <identifier>
+					)
+					,<ws>;
 
-<enumerator_list> = <ws>, (<enumerator>, <ws>)*;
-
-<enumerator> = <ws>, (<enumeration_constant>/(<enumeration_constant>, <ws>, '=', <ws>, <constant_expression>)), <ws>;
+<enumerator> = <ws>, ((<enumeration_constant>, <ws>, '=', <ws>, <constant_expression>)/<enumeration_constant>), <ws>;
 
 <atomic_type_specifier> = <ws>, "_Atomic", <ws>, '(', <ws>, <type_name>, <ws>, ')', <ws>;
 
@@ -481,5 +486,6 @@
 
 <function_definition> = <ws>, <declaration_specifiers>?, <ws>, <declarator>, <ws>, <declaration_list>?, <ws>, <compound_statement>, <ws>;
 
-<Grammar> = <ws>, <translation_unit>, <ws>;
+
+<Grammar> = <enum_specifier>;#<Grammar> = <ws>, <translation_unit>, <ws>;#
 

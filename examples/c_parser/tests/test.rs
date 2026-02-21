@@ -23,8 +23,8 @@ pub fn shared(
     }
     println!("Result: {:?}", result);
     //context.borrow().print_cache();
-    context.borrow().print_publisher();
-    context.borrow().print_node(Key(0));
+    // context.borrow().print_publisher();
+    // context.borrow().print_node(Key(0));
     let publisher = context.into_inner().get_publisher().clear_false();
     publisher.print(Key(0), Some(true));
     result
@@ -48,7 +48,7 @@ pub fn shared_custom_user_state(
     }
     println!("Result: {:?}", result);
     //context.borrow().print_cache();
-    context.borrow().print_publisher();
+    // context.borrow().print_publisher();
     context.borrow().print_node(Key(0));
     let publisher = context.into_inner().get_publisher().clear_false();
     publisher.print(Key(0), Some(true));

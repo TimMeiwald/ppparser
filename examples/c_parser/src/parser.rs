@@ -245,18 +245,21 @@ pub fn identifier<T: Context>(
     // /(<identifier>, <digit>)
     // /<identifier_nondigit>;
 
-    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+    let closure_1 = _var_name(user_state, Rules::Keyword, context, keyword);
+    let closure_2 = _not_predicate(&closure_1);
+    let closure_3 = move |parent: Key, source: &Source, position: u32| {
         identifier_nondigit(user_state, parent, context, source, position)
     };
-    let closure_2 = move |parent: Key, source: &Source, position: u32| {
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = move |parent: Key, source: &Source, position: u32| {
         identifier_nondigit(user_state, parent, context, source, position)
     };
-    let closure_3 = _var_name(user_state, Rules::Digit, context, digit);
-    let closure_4 = _ordered_choice(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _zero_or_more(&closure_5);
-    let closure_7 = _sequence(&closure_1, &closure_6);
-    closure_7(parent, source, position)
+    let closure_6 = _var_name(user_state, Rules::Digit, context, digit);
+    let closure_7 = _ordered_choice(&closure_5, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 = _zero_or_more(&closure_8);
+    let closure_10 = _sequence(&closure_4, &closure_9);
+    closure_10(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn identifier_nondigit<T: Context>(
@@ -3810,10 +3813,7 @@ pub fn declaration_specifiers<T: Context>(
         ws(user_state, parent, context, source, position)
     };
     let closure_44 = _sequence(&closure_42, &closure_43);
-    let closure_45 = _subexpression(&closure_44);
-    let closure_46 =
-        declared_new_typedef(user_state, parent, context, source, position, &closure_45);
-    closure_46(parent, source, position)
+    closure_44(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn attribute_seq<T: Context>(
@@ -3966,22 +3966,25 @@ pub fn storage_class_specifier<T: Context>(
     let closure_8 = _string_terminal_opt_ascii(b"_Thread_local");
     let closure_9 = _ordered_choice(&closure_7, &closure_8);
     let closure_10 = _string_terminal_opt_ascii(b"typedef");
-    let closure_11 = _ordered_choice(&closure_9, &closure_10);
-    let closure_12 = _string_terminal_opt_ascii(b"__declspec");
-    let closure_13 = _terminal(b'(');
-    let closure_14 = _sequence(&closure_12, &closure_13);
-    let closure_15 = _var_name(
+    let closure_11 = _subexpression(&closure_10);
+    let closure_12 =
+        declared_new_typedef(user_state, parent, context, source, position, &closure_11);
+    let closure_13 = _ordered_choice(&closure_9, &closure_12);
+    let closure_14 = _string_terminal_opt_ascii(b"__declspec");
+    let closure_15 = _terminal(b'(');
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 = _var_name(
         user_state,
         Rules::Extended_decl_modifier_seq,
         context,
         extended_decl_modifier_seq,
     );
-    let closure_16 = _sequence(&closure_14, &closure_15);
-    let closure_17 = _terminal(b')');
     let closure_18 = _sequence(&closure_16, &closure_17);
-    let closure_19 = _subexpression(&closure_18);
-    let closure_20 = _ordered_choice(&closure_11, &closure_19);
-    closure_20(parent, source, position)
+    let closure_19 = _terminal(b')');
+    let closure_20 = _sequence(&closure_18, &closure_19);
+    let closure_21 = _subexpression(&closure_20);
+    let closure_22 = _ordered_choice(&closure_13, &closure_21);
+    closure_22(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn extended_decl_modifier_seq<T: Context>(
@@ -4289,76 +4292,61 @@ pub fn specifier_qualifier_list<T: Context>(
         ws(user_state, parent, context, source, position)
     };
     let closure_2 = _var_name(user_state, Rules::Type_specifier, context, type_specifier);
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+    let closure_3 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _var_name(
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = _var_name(
         user_state,
         Rules::Specifier_qualifier_list,
         context,
         specifier_qualifier_list,
     );
-    let closure_7 = _optional(&closure_6);
-    let closure_8 = _sequence(&closure_5, &closure_7);
-    let closure_9 = move |parent: Key, source: &Source, position: u32| {
+    let closure_6 = _optional(&closure_5);
+    let closure_7 = _sequence(&closure_4, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 = _var_name(user_state, Rules::Type_qualifier, context, type_qualifier);
+    let closure_10 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_10 = _sequence(&closure_8, &closure_9);
-    let closure_11 = _subexpression(&closure_10);
-    let closure_12 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_13 = _var_name(user_state, Rules::Type_qualifier, context, type_qualifier);
-    let closure_14 = _sequence(&closure_12, &closure_13);
-    let closure_15 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = _var_name(
+        user_state,
+        Rules::Specifier_qualifier_list,
+        context,
+        specifier_qualifier_list,
+    );
+    let closure_13 = _optional(&closure_12);
+    let closure_14 = _sequence(&closure_11, &closure_13);
+    let closure_15 = _subexpression(&closure_14);
+    let closure_16 = _ordered_choice(&closure_8, &closure_15);
     let closure_17 = _var_name(
-        user_state,
-        Rules::Specifier_qualifier_list,
-        context,
-        specifier_qualifier_list,
-    );
-    let closure_18 = _optional(&closure_17);
-    let closure_19 = _sequence(&closure_16, &closure_18);
-    let closure_20 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_21 = _sequence(&closure_19, &closure_20);
-    let closure_22 = _subexpression(&closure_21);
-    let closure_23 = _ordered_choice(&closure_11, &closure_22);
-    let closure_24 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_25 = _var_name(
         user_state,
         Rules::Alignment_specifier,
         context,
         alignment_specifier,
     );
-    let closure_26 = _sequence(&closure_24, &closure_25);
-    let closure_27 = move |parent: Key, source: &Source, position: u32| {
+    let closure_18 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_28 = _sequence(&closure_26, &closure_27);
-    let closure_29 = _var_name(
+    let closure_19 = _sequence(&closure_17, &closure_18);
+    let closure_20 = _var_name(
         user_state,
         Rules::Specifier_qualifier_list,
         context,
         specifier_qualifier_list,
     );
-    let closure_30 = _optional(&closure_29);
-    let closure_31 = _sequence(&closure_28, &closure_30);
-    let closure_32 = move |parent: Key, source: &Source, position: u32| {
+    let closure_21 = _optional(&closure_20);
+    let closure_22 = _sequence(&closure_19, &closure_21);
+    let closure_23 = _subexpression(&closure_22);
+    let closure_24 = _ordered_choice(&closure_16, &closure_23);
+    let closure_25 = _subexpression(&closure_24);
+    let closure_26 = _sequence(&closure_1, &closure_25);
+    let closure_27 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_33 = _sequence(&closure_31, &closure_32);
-    let closure_34 = _subexpression(&closure_33);
-    let closure_35 = _ordered_choice(&closure_23, &closure_34);
-    closure_35(parent, source, position)
+    let closure_28 = _sequence(&closure_26, &closure_27);
+    closure_28(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn struct_declarator_list<T: Context>(
@@ -4478,111 +4466,43 @@ pub fn enum_specifier<T: Context>(
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _var_name(user_state, Rules::Identifier, context, identifier);
     let closure_7 = _optional(&closure_6);
-    let closure_8 = _sequence(&closure_5, &closure_7);
-    let closure_9 = move |parent: Key, source: &Source, position: u32| {
+    let closure_8 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_10 = _sequence(&closure_8, &closure_9);
-    let closure_11 = _terminal(b'{');
-    let closure_12 = _sequence(&closure_10, &closure_11);
-    let closure_13 = move |parent: Key, source: &Source, position: u32| {
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _terminal(b'{');
+    let closure_11 = _sequence(&closure_9, &closure_10);
+    let closure_12 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_14 = _sequence(&closure_12, &closure_13);
-    let closure_15 = _var_name(user_state, Rules::Enumerator_list, context, enumerator_list);
-    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    let closure_14 = _var_name(user_state, Rules::Enumerator, context, enumerator);
+    let closure_15 = _one_or_more(&closure_14);
+    let closure_16 = _sequence(&closure_13, &closure_15);
     let closure_17 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
     let closure_18 = _sequence(&closure_16, &closure_17);
-    let closure_19 = _terminal(b'}');
-    let closure_20 = _sequence(&closure_18, &closure_19);
-    let closure_21 = move |parent: Key, source: &Source, position: u32| {
+    let closure_19 = _terminal(b',');
+    let closure_20 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_22 = _sequence(&closure_20, &closure_21);
-    let closure_23 = _subexpression(&closure_22);
-    let closure_24 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_25 = _string_terminal_opt_ascii(b"enum");
+    let closure_21 = _sequence(&closure_19, &closure_20);
+    let closure_22 = _subexpression(&closure_21);
+    let closure_23 = _optional(&closure_22);
+    let closure_24 = _sequence(&closure_18, &closure_23);
+    let closure_25 = _terminal(b'}');
     let closure_26 = _sequence(&closure_24, &closure_25);
-    let closure_27 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_28 = _sequence(&closure_26, &closure_27);
-    let closure_29 = _var_name(user_state, Rules::Identifier, context, identifier);
-    let closure_30 = _optional(&closure_29);
-    let closure_31 = _sequence(&closure_28, &closure_30);
+    let closure_27 = _subexpression(&closure_26);
+    let closure_28 = _var_name(user_state, Rules::Identifier, context, identifier);
+    let closure_29 = _ordered_choice(&closure_27, &closure_28);
+    let closure_30 = _subexpression(&closure_29);
+    let closure_31 = _sequence(&closure_5, &closure_30);
     let closure_32 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
     let closure_33 = _sequence(&closure_31, &closure_32);
-    let closure_34 = _terminal(b'{');
-    let closure_35 = _sequence(&closure_33, &closure_34);
-    let closure_36 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_37 = _sequence(&closure_35, &closure_36);
-    let closure_38 = _var_name(user_state, Rules::Enumerator_list, context, enumerator_list);
-    let closure_39 = _sequence(&closure_37, &closure_38);
-    let closure_40 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_41 = _sequence(&closure_39, &closure_40);
-    let closure_42 = _terminal(b',');
-    let closure_43 = _sequence(&closure_41, &closure_42);
-    let closure_44 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_45 = _sequence(&closure_43, &closure_44);
-    let closure_46 = _terminal(b'}');
-    let closure_47 = _sequence(&closure_45, &closure_46);
-    let closure_48 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_49 = _sequence(&closure_47, &closure_48);
-    let closure_50 = _subexpression(&closure_49);
-    let closure_51 = _ordered_choice(&closure_23, &closure_50);
-    let closure_52 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_53 = _string_terminal_opt_ascii(b"enum");
-    let closure_54 = _sequence(&closure_52, &closure_53);
-    let closure_55 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_56 = _sequence(&closure_54, &closure_55);
-    let closure_57 = _var_name(user_state, Rules::Identifier, context, identifier);
-    let closure_58 = _sequence(&closure_56, &closure_57);
-    let closure_59 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_60 = _sequence(&closure_58, &closure_59);
-    let closure_61 = _subexpression(&closure_60);
-    let closure_62 = _ordered_choice(&closure_51, &closure_61);
-    closure_62(parent, source, position)
-}
-#[allow(dead_code)]
-pub fn enumerator_list<T: Context>(
-    user_state: &RefCell<UserState>,
-    parent: Key,
-    context: &RefCell<T>,
-    source: &Source,
-    position: u32,
-) -> (bool, u32) {
-    let closure_1 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_2 = _var_name(user_state, Rules::Enumerator, context, enumerator);
-    let closure_3 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_4 = _sequence(&closure_2, &closure_3);
-    let closure_5 = _subexpression(&closure_4);
-    let closure_6 = _zero_or_more(&closure_5);
-    let closure_7 = _sequence(&closure_1, &closure_6);
-    closure_7(parent, source, position)
+    closure_33(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn enumerator<T: Context>(
@@ -4601,22 +4521,16 @@ pub fn enumerator<T: Context>(
         context,
         enumeration_constant,
     );
-    let closure_3 = _var_name(
-        user_state,
-        Rules::Enumeration_constant,
-        context,
-        enumeration_constant,
-    );
-    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+    let closure_3 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _terminal(b'=');
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = move |parent: Key, source: &Source, position: u32| {
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = _terminal(b'=');
+    let closure_6 = _sequence(&closure_4, &closure_5);
+    let closure_7 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_8 = _sequence(&closure_6, &closure_7);
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
@@ -4635,16 +4549,22 @@ pub fn enumerator<T: Context>(
         Rules::Unary_expression,
     ]
     .to_vec();
-    let closure_10 = _var_name_indirect_left_recursion(
+    let closure_9 = _var_name_indirect_left_recursion(
         user_state,
         &involved_set,
         Rules::Constant_expression,
         context,
         constant_expression,
     );
-    let closure_11 = _sequence(&closure_9, &closure_10);
-    let closure_12 = _subexpression(&closure_11);
-    let closure_13 = _ordered_choice(&closure_2, &closure_12);
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _subexpression(&closure_10);
+    let closure_12 = _var_name(
+        user_state,
+        Rules::Enumeration_constant,
+        context,
+        enumeration_constant,
+    );
+    let closure_13 = _ordered_choice(&closure_11, &closure_12);
     let closure_14 = _subexpression(&closure_13);
     let closure_15 = _sequence(&closure_1, &closure_14);
     let closure_16 = move |parent: Key, source: &Source, position: u32| {
@@ -6677,21 +6597,8 @@ pub fn grammar<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let involved_set: Vec<Rules> = [Rules::Translation_unit].to_vec();
-    let closure_2 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Translation_unit,
-        context,
-        translation_unit,
-    );
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = move |parent: Key, source: &Source, position: u32| {
-        ws(user_state, parent, context, source, position)
-    };
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    closure_5(parent, source, position)
+    // <Grammar> = <ws>, <translation_unit>, <ws>;
+
+    let closure_1 = _var_name(user_state, Rules::Enum_specifier, context, enum_specifier);
+    closure_1(parent, source, position)
 }
