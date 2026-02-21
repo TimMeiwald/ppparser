@@ -56,3 +56,17 @@ fn test_5() {
     );
     assert_eq!(result, (true, src.len() as u32));
 }
+
+#[test]
+fn test_6() {
+    let src = "struct MyStruct{
+    int x;
+    float y;
+    }";
+    let result = shared(
+        src,
+        struct_or_union_specifier::<BasicContext>,
+        Rules::Struct_or_union_specifier,
+    );
+    assert_eq!(result, (true, src.len() as u32));
+}

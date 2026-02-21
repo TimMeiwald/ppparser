@@ -1692,32 +1692,7 @@ pub fn primary_expression<T: Context>(
         ws(user_state, parent, context, source, position)
     };
     let closure_9 = _sequence(&closure_7, &closure_8);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_10 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_10 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_11 = _sequence(&closure_9, &closure_10);
     let closure_12 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
@@ -1920,32 +1895,7 @@ pub fn postfix_expression<T: Context>(
     );
     let closure_3 = _terminal(b'[');
     let closure_4 = _sequence(&closure_2, &closure_3);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_5 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_5 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_6 = _sequence(&closure_4, &closure_5);
     let closure_7 = _terminal(b']');
     let closure_8 = _sequence(&closure_6, &closure_7);
@@ -3354,32 +3304,7 @@ pub fn conditional_expression<T: Context>(
     );
     let closure_3 = _terminal(b'?');
     let closure_4 = _sequence(&closure_2, &closure_3);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_5 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_5 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_6 = _sequence(&closure_4, &closure_5);
     let closure_7 = _terminal(b':');
     let closure_8 = _sequence(&closure_6, &closure_7);
@@ -3528,6 +3453,9 @@ pub fn expression<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        ws(user_state, parent, context, source, position)
+    };
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
@@ -3536,32 +3464,6 @@ pub fn expression<T: Context>(
         Rules::Conditional_expression,
         Rules::Equality_expression,
         Rules::Exclusive_OR_expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Assignment_expression,
-        context,
-        assignment_expression,
-    );
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
         Rules::Inclusive_OR_expression,
         Rules::Logical_AND_expression,
         Rules::Logical_OR_expression,
@@ -3575,12 +3477,13 @@ pub fn expression<T: Context>(
     let closure_2 = _var_name_indirect_left_recursion(
         user_state,
         &involved_set,
-        Rules::Expression,
+        Rules::Assignment_expression,
         context,
-        expression,
+        assignment_expression,
     );
-    let closure_3 = _terminal(b',');
-    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_3 = _var_name(user_state, Rules::Expression, context, expression);
+    let closure_4 = _terminal(b',');
+    let closure_5 = _sequence(&closure_3, &closure_4);
     let involved_set: Vec<Rules> = [
         Rules::AND_expression,
         Rules::Additive_expression,
@@ -3599,17 +3502,23 @@ pub fn expression<T: Context>(
         Rules::Unary_expression,
     ]
     .to_vec();
-    let closure_5 = _var_name_indirect_left_recursion(
+    let closure_6 = _var_name_indirect_left_recursion(
         user_state,
         &involved_set,
         Rules::Assignment_expression,
         context,
         assignment_expression,
     );
-    let closure_6 = _sequence(&closure_4, &closure_5);
-    let closure_7 = _subexpression(&closure_6);
-    let closure_8 = _ordered_choice(&closure_1, &closure_7);
-    closure_8(parent, source, position)
+    let closure_7 = _sequence(&closure_5, &closure_6);
+    let closure_8 = _subexpression(&closure_7);
+    let closure_9 = _ordered_choice(&closure_2, &closure_8);
+    let closure_10 = _subexpression(&closure_9);
+    let closure_11 = _sequence(&closure_1, &closure_10);
+    let closure_12 = move |parent: Key, source: &Source, position: u32| {
+        ws(user_state, parent, context, source, position)
+    };
+    let closure_13 = _sequence(&closure_11, &closure_12);
+    closure_13(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn constant_expression<T: Context>(
@@ -4476,33 +4385,48 @@ pub fn enum_specifier<T: Context>(
         ws(user_state, parent, context, source, position)
     };
     let closure_13 = _sequence(&closure_11, &closure_12);
-    let closure_14 = _var_name(user_state, Rules::Enumerator, context, enumerator);
-    let closure_15 = _one_or_more(&closure_14);
-    let closure_16 = _sequence(&closure_13, &closure_15);
-    let closure_17 = move |parent: Key, source: &Source, position: u32| {
+    let closure_14 = _var_name(user_state, Rules::Enumerator_list, context, enumerator_list);
+    let closure_15 = _sequence(&closure_13, &closure_14);
+    let closure_16 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_18 = _sequence(&closure_16, &closure_17);
-    let closure_19 = _terminal(b',');
-    let closure_20 = move |parent: Key, source: &Source, position: u32| {
+    let closure_17 = _sequence(&closure_15, &closure_16);
+    let closure_18 = _terminal(b'}');
+    let closure_19 = _sequence(&closure_17, &closure_18);
+    let closure_20 = _subexpression(&closure_19);
+    let closure_21 = _var_name(user_state, Rules::Identifier, context, identifier);
+    let closure_22 = _ordered_choice(&closure_20, &closure_21);
+    let closure_23 = _subexpression(&closure_22);
+    let closure_24 = _sequence(&closure_5, &closure_23);
+    let closure_25 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_21 = _sequence(&closure_19, &closure_20);
-    let closure_22 = _subexpression(&closure_21);
-    let closure_23 = _optional(&closure_22);
-    let closure_24 = _sequence(&closure_18, &closure_23);
-    let closure_25 = _terminal(b'}');
     let closure_26 = _sequence(&closure_24, &closure_25);
-    let closure_27 = _subexpression(&closure_26);
-    let closure_28 = _var_name(user_state, Rules::Identifier, context, identifier);
-    let closure_29 = _ordered_choice(&closure_27, &closure_28);
-    let closure_30 = _subexpression(&closure_29);
-    let closure_31 = _sequence(&closure_5, &closure_30);
-    let closure_32 = move |parent: Key, source: &Source, position: u32| {
+    closure_26(parent, source, position)
+}
+#[allow(dead_code)]
+pub fn enumerator_list<T: Context>(
+    user_state: &RefCell<UserState>,
+    parent: Key,
+    context: &RefCell<T>,
+    source: &Source,
+    position: u32,
+) -> (bool, u32) {
+    let closure_1 = _var_name(user_state, Rules::Enumerator, context, enumerator);
+    let closure_2 = _terminal(b',');
+    let closure_3 = _var_name(user_state, Rules::Enumerator, context, enumerator);
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = _subexpression(&closure_4);
+    let closure_6 = _zero_or_more(&closure_5);
+    let closure_7 = _sequence(&closure_1, &closure_6);
+    let closure_8 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_33 = _sequence(&closure_31, &closure_32);
-    closure_33(parent, source, position)
+    let closure_9 = _sequence(&closure_7, &closure_8);
+    let closure_10 = _terminal(b',');
+    let closure_11 = _optional(&closure_10);
+    let closure_12 = _sequence(&closure_9, &closure_11);
+    closure_12(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn enumerator<T: Context>(
@@ -5849,32 +5773,7 @@ pub fn jump_statement<T: Context>(
     let closure_16 = _subexpression(&closure_15);
     let closure_17 = _ordered_choice(&closure_12, &closure_16);
     let closure_18 = _string_terminal_opt_ascii(b"return");
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_19 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_19 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_20 = _optional(&closure_19);
     let closure_21 = _sequence(&closure_18, &closure_20);
     let closure_22 = _terminal(b';');
@@ -5998,32 +5897,7 @@ pub fn expression_statement<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_1 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_1 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_2 = _optional(&closure_1);
     let closure_3 = _terminal(b';');
     let closure_4 = _sequence(&closure_2, &closure_3);
@@ -6040,32 +5914,7 @@ pub fn iteration_statement<T: Context>(
     let closure_1 = _string_terminal_opt_ascii(b"while");
     let closure_2 = _terminal(b'(');
     let closure_3 = _sequence(&closure_1, &closure_2);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_4 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_4 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _terminal(b')');
     let closure_7 = _sequence(&closure_5, &closure_6);
@@ -6079,32 +5928,7 @@ pub fn iteration_statement<T: Context>(
     let closure_15 = _sequence(&closure_13, &closure_14);
     let closure_16 = _terminal(b'(');
     let closure_17 = _sequence(&closure_15, &closure_16);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_18 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_18 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_19 = _sequence(&closure_17, &closure_18);
     let closure_20 = _terminal(b')');
     let closure_21 = _sequence(&closure_19, &closure_20);
@@ -6115,92 +5939,17 @@ pub fn iteration_statement<T: Context>(
     let closure_26 = _string_terminal_opt_ascii(b"for");
     let closure_27 = _terminal(b'(');
     let closure_28 = _sequence(&closure_26, &closure_27);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_29 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_29 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_30 = _optional(&closure_29);
     let closure_31 = _sequence(&closure_28, &closure_30);
     let closure_32 = _terminal(b';');
     let closure_33 = _sequence(&closure_31, &closure_32);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_34 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_34 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_35 = _optional(&closure_34);
     let closure_36 = _sequence(&closure_33, &closure_35);
     let closure_37 = _terminal(b';');
     let closure_38 = _sequence(&closure_36, &closure_37);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_39 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_39 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_40 = _optional(&closure_39);
     let closure_41 = _sequence(&closure_38, &closure_40);
     let closure_42 = _terminal(b')');
@@ -6219,118 +5968,64 @@ pub fn selection_statement<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    let closure_1 = _string_terminal_opt_ascii(b"if");
-    let closure_2 = _terminal(b'(');
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_4 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    let closure_6 = _terminal(b')');
-    let closure_7 = _sequence(&closure_5, &closure_6);
-    let closure_8 = _var_name(user_state, Rules::Statement, context, statement);
-    let closure_9 = _sequence(&closure_7, &closure_8);
-    let closure_10 = _subexpression(&closure_9);
-    let closure_11 = _string_terminal_opt_ascii(b"if");
-    let closure_12 = _terminal(b'(');
-    let closure_13 = _sequence(&closure_11, &closure_12);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_14 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
-    let closure_15 = _sequence(&closure_13, &closure_14);
-    let closure_16 = _terminal(b')');
-    let closure_17 = _sequence(&closure_15, &closure_16);
-    let closure_18 = _var_name(user_state, Rules::Statement, context, statement);
-    let closure_19 = _sequence(&closure_17, &closure_18);
-    let closure_20 = _string_terminal_opt_ascii(b"else");
-    let closure_21 = _sequence(&closure_19, &closure_20);
-    let closure_22 = _var_name(user_state, Rules::Statement, context, statement);
-    let closure_23 = _sequence(&closure_21, &closure_22);
-    let closure_24 = _subexpression(&closure_23);
-    let closure_25 = _ordered_choice(&closure_10, &closure_24);
-    let closure_26 = _string_terminal_opt_ascii(b"switch");
-    let closure_27 = _terminal(b'(');
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        ws(user_state, parent, context, source, position)
+    };
+    let closure_2 = _string_terminal_opt_ascii(b"if");
+    let closure_3 = move |parent: Key, source: &Source, position: u32| {
+        ws(user_state, parent, context, source, position)
+    };
+    let closure_4 = _sequence(&closure_2, &closure_3);
+    let closure_5 = _terminal(b'(');
+    let closure_6 = _sequence(&closure_4, &closure_5);
+    let closure_7 = _var_name(user_state, Rules::Expression, context, expression);
+    let closure_8 = _sequence(&closure_6, &closure_7);
+    let closure_9 = _terminal(b')');
+    let closure_10 = _sequence(&closure_8, &closure_9);
+    let closure_11 = _var_name(user_state, Rules::Statement, context, statement);
+    let closure_12 = _sequence(&closure_10, &closure_11);
+    let closure_13 = _subexpression(&closure_12);
+    let closure_14 = _string_terminal_opt_ascii(b"if");
+    let closure_15 = move |parent: Key, source: &Source, position: u32| {
+        ws(user_state, parent, context, source, position)
+    };
+    let closure_16 = _sequence(&closure_14, &closure_15);
+    let closure_17 = _terminal(b'(');
+    let closure_18 = _sequence(&closure_16, &closure_17);
+    let closure_19 = _var_name(user_state, Rules::Expression, context, expression);
+    let closure_20 = _sequence(&closure_18, &closure_19);
+    let closure_21 = _terminal(b')');
+    let closure_22 = _sequence(&closure_20, &closure_21);
+    let closure_23 = _var_name(user_state, Rules::Statement, context, statement);
+    let closure_24 = _sequence(&closure_22, &closure_23);
+    let closure_25 = _string_terminal_opt_ascii(b"else");
+    let closure_26 = _sequence(&closure_24, &closure_25);
+    let closure_27 = _var_name(user_state, Rules::Statement, context, statement);
     let closure_28 = _sequence(&closure_26, &closure_27);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_29 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
-    let closure_30 = _sequence(&closure_28, &closure_29);
-    let closure_31 = _terminal(b')');
-    let closure_32 = _sequence(&closure_30, &closure_31);
-    let closure_33 = _var_name(user_state, Rules::Statement, context, statement);
-    let closure_34 = _sequence(&closure_32, &closure_33);
-    let closure_35 = _subexpression(&closure_34);
-    let closure_36 = _ordered_choice(&closure_25, &closure_35);
-    closure_36(parent, source, position)
+    let closure_29 = _subexpression(&closure_28);
+    let closure_30 = _ordered_choice(&closure_13, &closure_29);
+    let closure_31 = _string_terminal_opt_ascii(b"switch");
+    let closure_32 = move |parent: Key, source: &Source, position: u32| {
+        ws(user_state, parent, context, source, position)
+    };
+    let closure_33 = _sequence(&closure_31, &closure_32);
+    let closure_34 = _terminal(b'(');
+    let closure_35 = _sequence(&closure_33, &closure_34);
+    let closure_36 = _var_name(user_state, Rules::Expression, context, expression);
+    let closure_37 = _sequence(&closure_35, &closure_36);
+    let closure_38 = _terminal(b')');
+    let closure_39 = _sequence(&closure_37, &closure_38);
+    let closure_40 = _var_name(user_state, Rules::Statement, context, statement);
+    let closure_41 = _sequence(&closure_39, &closure_40);
+    let closure_42 = _subexpression(&closure_41);
+    let closure_43 = _ordered_choice(&closure_30, &closure_42);
+    let closure_44 = _subexpression(&closure_43);
+    let closure_45 = _sequence(&closure_1, &closure_44);
+    let closure_46 = move |parent: Key, source: &Source, position: u32| {
+        ws(user_state, parent, context, source, position)
+    };
+    let closure_47 = _sequence(&closure_45, &closure_46);
+    closure_47(parent, source, position)
 }
 #[allow(dead_code)]
 pub fn labeled_statement<T: Context>(
@@ -6408,32 +6103,7 @@ pub fn try_except_statement<T: Context>(
     let closure_5 = _sequence(&closure_3, &closure_4);
     let closure_6 = _terminal(b'(');
     let closure_7 = _sequence(&closure_5, &closure_6);
-    let involved_set: Vec<Rules> = [
-        Rules::AND_expression,
-        Rules::Additive_expression,
-        Rules::Assignment_expression,
-        Rules::Cast_expression,
-        Rules::Conditional_expression,
-        Rules::Equality_expression,
-        Rules::Exclusive_OR_expression,
-        Rules::Expression,
-        Rules::Inclusive_OR_expression,
-        Rules::Logical_AND_expression,
-        Rules::Logical_OR_expression,
-        Rules::Multiplicative_expression,
-        Rules::Postfix_expression,
-        Rules::Relational_expression,
-        Rules::Shift_expression,
-        Rules::Unary_expression,
-    ]
-    .to_vec();
-    let closure_8 = _var_name_indirect_left_recursion(
-        user_state,
-        &involved_set,
-        Rules::Expression,
-        context,
-        expression,
-    );
+    let closure_8 = _var_name(user_state, Rules::Expression, context, expression);
     let closure_9 = _sequence(&closure_7, &closure_8);
     let closure_10 = _terminal(b')');
     let closure_11 = _sequence(&closure_9, &closure_10);
@@ -6608,10 +6278,11 @@ pub fn grammar<T: Context>(
         context,
         translation_unit,
     );
-    let closure_3 = _sequence(&closure_1, &closure_2);
-    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+    let closure_3 = _zero_or_more(&closure_2);
+    let closure_4 = _sequence(&closure_1, &closure_3);
+    let closure_5 = move |parent: Key, source: &Source, position: u32| {
         ws(user_state, parent, context, source, position)
     };
-    let closure_5 = _sequence(&closure_3, &closure_4);
-    closure_5(parent, source, position)
+    let closure_6 = _sequence(&closure_4, &closure_5);
+    closure_6(parent, source, position)
 }

@@ -269,8 +269,7 @@
 	/ "^="
 	/ "|=";
 
-<expression> = <assignment_expression>
-	/ (<expression>, ',', <assignment_expression>);
+<expression> = <assignment_expression>/(<expression>, ',', <assignment_expression>);
 
 <constant_expression> = <conditional_expression>;
 
@@ -363,11 +362,11 @@
 
 <enum_specifier> = <ws>, "enum", <ws>,
 					(
-						  (<identifier>?, <ws>, '{', <ws>, <enumerator>+, <ws>, (',', <ws>)?, '}')
+						  (<identifier>?, <ws>, '{', <ws>, <enumerator_list>, <ws>, '}')
 						/  <identifier>
 					)
 					,<ws>;
-
+<enumerator_list> = <enumerator>, (',', <enumerator>)*, <ws>, ','?;
 <enumerator> = <ws>, ((<enumeration_constant>, <ws>, '=', <ws>, <constant_expression>)/<enumeration_constant>), <ws>;
 
 <atomic_type_specifier> = <ws>, "_Atomic", <ws>, '(', <ws>, <type_name>, <ws>, ')', <ws>;
@@ -441,14 +440,16 @@
 
 <static_assert_declaration> = "_Static_assert", '(', <constant_expression>, ',', <string_literal>, ')', ';';
 
-<statement> = <ws>, (<labeled_statement>
-	/ <compound_statement>
-	/ <expression_statement>
-	/ <selection_statement>
-	/ <iteration_statement>
-	/ <jump_statement>
-	/ <try_except_statement>
-	/ <try_finally_statement>), <ws>;
+<statement> = <ws>, (
+		<labeled_statement>
+		/ <compound_statement>
+		/ <expression_statement>
+		/ <selection_statement>
+		/ <iteration_statement>
+		/ <jump_statement>
+		/ <try_except_statement>
+		/ <try_finally_statement>
+	), <ws>;
 
 <jump_statement> = <ws>, (("goto", <identifier>, ';')
 	/ ("continue", ';')
@@ -468,9 +469,11 @@
 	/ ("do", <statement>, "while", '(', <expression>, ')', ';')
 	/ ("for", '(', <expression>?, ';', <expression>?, ';', <expression>?, ')', <statement>);
 
-<selection_statement> = ("if", '(', <expression>, ')', <statement>)
-	/ ("if", '(', <expression>, ')', <statement>, "else", <statement>)
-	/ ("switch", '(', <expression>, ')', <statement>);
+<selection_statement> = <ws>, (
+						("if", <ws>, '(', <expression>, ')', <statement>)
+						/ ("if", <ws>, '(', <expression>, ')', <statement>, "else", <statement>)
+						/ ("switch", <ws>, '(', <expression>, ')', <statement>)
+						), <ws>;
 
 <labeled_statement> = (<identifier>, ':', <statement>)
 	/ ("case", <constant_expression>, ':', <statement>)
@@ -487,5 +490,5 @@
 <function_definition> = <ws>, <declaration_specifiers>?, <ws>, <declarator>, <ws>, <declaration_list>?, <ws>, <compound_statement>, <ws>;
 
 
-<Grammar> = <ws>, <translation_unit>, <ws>;
+<Grammar> = <ws>, <translation_unit>*, <ws>;
 
