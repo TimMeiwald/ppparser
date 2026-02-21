@@ -487,5 +487,5 @@
 <function_definition> = <ws>, <declaration_specifiers>?, <ws>, <declarator>, <ws>, <declaration_list>?, <ws>, <compound_statement>, <ws>;
 
 
-<Grammar> = <enum_specifier>;#<Grammar> = <ws>, <translation_unit>, <ws>;#
+<Grammar> = <ws>, <translation_unit>, <ws>;
 
