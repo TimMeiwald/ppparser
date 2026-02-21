@@ -6597,8 +6597,21 @@ pub fn grammar<T: Context>(
     source: &Source,
     position: u32,
 ) -> (bool, u32) {
-    // <Grammar> = <ws>, <translation_unit>, <ws>;
-
-    let closure_1 = _var_name(user_state, Rules::Enum_specifier, context, enum_specifier);
-    closure_1(parent, source, position)
+    let closure_1 = move |parent: Key, source: &Source, position: u32| {
+        ws(user_state, parent, context, source, position)
+    };
+    let involved_set: Vec<Rules> = [Rules::Translation_unit].to_vec();
+    let closure_2 = _var_name_indirect_left_recursion(
+        user_state,
+        &involved_set,
+        Rules::Translation_unit,
+        context,
+        translation_unit,
+    );
+    let closure_3 = _sequence(&closure_1, &closure_2);
+    let closure_4 = move |parent: Key, source: &Source, position: u32| {
+        ws(user_state, parent, context, source, position)
+    };
+    let closure_5 = _sequence(&closure_3, &closure_4);
+    closure_5(parent, source, position)
 }
