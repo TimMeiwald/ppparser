@@ -12,7 +12,7 @@ fn memoized_behaviour<T: Context>(
     end_position: u32,
     memoized_key: Key,
 ) -> (bool, u32) {
-    context.borrow_mut().connec(parent, memoized_key);
+    context.borrow_mut().connect(parent, memoized_key);
     (is_true, end_position)
 }
 

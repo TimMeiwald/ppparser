@@ -1,0 +1,464 @@
+use crate::{BasicPublisher, Key, Node, Rules};
+use parser::publisher_trait::Publisher;
+use std::collections::{HashMap, HashSet};
+#[derive(Debug)]
+struct Rule {
+    root_key: Key,
+    rhs_key: Key,
+    name: String,
+    rules_referenced_by_rule: HashSet<String>,
+}
+impl Rule {
+    fn new(key: Key, tree: &BasicPublisher, source: &String) -> Rule {
+        let root_node = tree.get_node(key);
+        assert_eq!(root_node.rule, Rules::Rule);
+        let rule_name = Rule::get_rules_name(root_node, tree, source);
+        let rhs_key = Rule::get_rule_rhs_index(root_node);
+        let mut referenced_rules: HashSet<String> = HashSet::new();
+        Rule::get_rules_referenced_by_rule(tree, source, root_node, &mut referenced_rules);
+        Rule {
+            root_key: key,
+            rhs_key,
+            name: rule_name,
+            rules_referenced_by_rule: referenced_rules,
+        }
+    }
+    fn get_rules_name(node: &Node, tree: &BasicPublisher, source: &str) -> String {
+        debug_assert_eq!(node.rule, Rules::Rule);
+
+        let lhs = node.get_children()[0];
+        let lhs = tree.get_node(lhs);
+        debug_assert_eq!(lhs.rule, Rules::LHS);
+
+        let var_name_decl = lhs.get_children()[0];
+        let var_name_decl = tree.get_node(var_name_decl);
+        debug_assert_eq!(var_name_decl.rule, Rules::Var_Name_Decl);
+        let s = var_name_decl.get_string(source);
+        s[1..s.len() - 1].to_string()
+    }
+    fn get_rule_rhs_index(node: &Node) -> Key {
+        // We get the index of rhs for the rule not the name because this is the actual graph
+        // the LHS and the rule node are just syntax for setting up the grammar.
+        debug_assert_eq!(node.rule, Rules::Rule);
+        let rhs = node.get_children()[1];
+        rhs
+    }
+    fn get_rules_referenced_by_rule<'a>(
+        tree: &BasicPublisher,
+        source: &String,
+        node: &Node,
+        referenced_rules: &'a mut HashSet<String>,
+    ) -> &'a mut HashSet<String> {
+        let node_children = node.get_children();
+        for child in node_children {
+            let child_node = tree.get_node(*child);
+            if child_node.rule == Rules::Var_Name_Ref {
+                // The Key for Rule references.
+                referenced_rules.insert(Self::get_rule_ref_name(source, child_node));
+            }
+            Self::get_rules_referenced_by_rule(tree, source, child_node, referenced_rules);
+        }
+        referenced_rules
+    }
+    fn get_rule_ref_name(source: &str, node: &Node) -> String {
+        debug_assert_eq!(node.rule, Rules::Var_Name_Ref);
+        let s = node.get_string(source);
+        s[1..s.len() - 1].to_string()
+    }
+}
+
+#[derive(Debug)]
+pub struct RulesMap {
+    rules: HashMap<String, Rule>,
+}
+impl RulesMap {
+    pub fn new(key: Key, tree: &BasicPublisher, source: &String) -> Self {
+        let rules_vec = Expression::get_rules_in_expression(key, tree, source);
+        let mut rules_map: HashMap<String, Rule> = HashMap::with_capacity(rules_vec.len());
+        // Check no duplicates
+        for rule in rules_vec {
+            let rule_name = rule.name.clone();
+            let response = rules_map.insert(rule.name.clone(), rule);
+            if response.is_none() {
+                continue;
+            } else {
+                panic!(
+                    "Duplicate rule:\nFirst Rule: \n{:?}\nSecond Rule: \n{:?}",
+                    response,
+                    rules_map.get(&rule_name)
+                )
+            }
+        }
+        // Check every referenced rule in a rule exists in the entire map.
+        for (rule_name, rule) in &rules_map {
+            for referenced_rule in &rule.rules_referenced_by_rule {
+                assert!(
+                    !rules_map.get(referenced_rule).is_none(),
+                    "Rule: {rule_name:?} references {referenced_rule:?} which does not exist!."
+                )
+            }
+        }
+        RulesMap { rules: rules_map }
+    }
+
+    pub fn get_rule<S: AsRef<str>>(&self, name: S) -> Option<&Rule> {
+        self.rules.get(name.as_ref())
+    }
+    pub fn len(&self) -> usize {
+        self.rules.len()
+    }
+
+    pub fn does_expression_always_returns_true(
+        &self,
+        key: Key,
+        tree: &BasicPublisher,
+        source: &String,
+    ) -> bool {
+        let mut set_of_keys_already_checked: HashMap<Key, Option<bool>> = HashMap::new(); // Since cycles are allowed to prevent stack overflow.
+        self._does_expression_always_returns_true(
+            key,
+            tree,
+            source,
+            &mut set_of_keys_already_checked,
+        )
+    }
+
+    fn _does_expression_always_returns_true(
+        &self,
+        key: Key,
+        tree: &BasicPublisher,
+        source: &String,
+        set_of_keys_already_checked: &mut HashMap<Key, Option<bool>>, // Since cycles are allowed to prevent stack overflow.
+    ) -> bool {
+        if set_of_keys_already_checked.contains_key(&key) {
+            let cached_result = *set_of_keys_already_checked
+                .get(&key)
+                .expect("Literally just checked it exists.");
+            match cached_result {
+                Some(value) => return value,
+                None => set_of_keys_already_checked.insert(key, Some(false)), // First None causes bypass, Second will return false.
+            };
+        };
+
+        let node = tree.get_node(key);
+        let node_children = node.get_children();
+        if node_children.len() == 0 {
+            // Zero or more and optional or any expressions containing them
+            // will always have more than 1 child.
+            // No children means a terminal so always false.
+            if node.rule == Rules::Var_Name_Ref {
+                let referenced_rule_name = Rule::get_rule_ref_name(source, node);
+
+                let rule_rhs_key = self
+                    .get_rule(&referenced_rule_name)
+                    .expect("Should have been checked on construction")
+                    .rhs_key;
+                // Set this to false first so it's not infinitely recursing.
+                if !set_of_keys_already_checked.contains_key(&key) {
+                    set_of_keys_already_checked.insert(key, None);
+                }
+                let result = self._does_expression_always_returns_true(
+                    rule_rhs_key,
+                    tree,
+                    source,
+                    set_of_keys_already_checked,
+                );
+                // Now we override the result with the real value.
+                set_of_keys_already_checked.insert(key, Some(result));
+                return result;
+            }
+            set_of_keys_already_checked.insert(key, Some(false));
+            return false;
+        } else if node_children.len() == 1 {
+            let child = node_children[0];
+            let child_node = tree.get_node(child);
+            if child_node.rule == Rules::Zero_Or_More || child_node.rule == Rules::Optional {
+                set_of_keys_already_checked.insert(key, Some(true));
+                return true;
+            } else {
+                let result = self._does_expression_always_returns_true(
+                    child,
+                    tree,
+                    source,
+                    set_of_keys_already_checked,
+                );
+                set_of_keys_already_checked.insert(key, Some(result));
+                return result;
+            }
+        } else {
+            if node.rule == Rules::StringTerminal {
+                set_of_keys_already_checked.insert(key, Some(false));
+                return false;
+            }
+            // If all results are true then we return true.
+            let mut result: bool = true;
+            for child in node_children {
+                result = self._does_expression_always_returns_true(
+                    *child,
+                    tree,
+                    source,
+                    set_of_keys_already_checked,
+                );
+                if result == false {
+                    // If one sequence option doesn't always return true the whole rule doesn't.
+                    break;
+                }
+            }
+            set_of_keys_already_checked.insert(key, Some(result));
+            result
+            // // If there is more than 1 child then it's either ordered choice or sequence which require special handling.
+            // if node.rule == Rules::Sequence || node.rule == Rules::Ordered_Choice {
+            //     println!(
+            //         "NODE RULE MULTICHILDREN: {:?}, Num Children: {:?}",
+            //         node.rule,
+            //         node.get_children().len()
+            //     );
+            //     // If all results are true then we return true.
+            //     let mut result: bool = true;
+            //     for child in node_children {
+            //         result = self._does_expression_always_returns_true(
+            //             *child,
+            //             tree,
+            //             source,
+            //             set_of_rules_already_checked,
+            //         );
+            //         if result == false {
+            //             // If one sequence option doesn't always return true the whole rule doesn't.
+            //             break;
+            //         }
+            //         println!("RESULT {:?}", result)
+            //     }
+            //     result
+            // } else {
+            //     let string_where_failed =
+            //         &source[(node.start_position as usize)..(node.end_position as usize)];
+            //     panic!("I made a mistake. {:?}\n{string_where_failed}", node.rule);
+            // }
+        }
+    }
+}
+
+struct Expression {}
+impl Expression {
+    fn get_rules_in_expression(key: Key, tree: &BasicPublisher, source: &String) -> Vec<Rule> {
+        let rule_keys = Expression::find_rule_keys_in_expression(key, tree, source);
+        rule_keys
+            .iter()
+            .map(|key| Rule::new(*key, tree, source))
+            .collect()
+    }
+
+    fn find_rule_keys_in_expression(key: Key, tree: &BasicPublisher, source: &String) -> Vec<Key> {
+        let mut return_vec: Vec<Key> = Vec::new();
+        Expression::_find_rule_keys_in_expression(key, tree, source, &mut return_vec);
+        return_vec
+    }
+    fn _find_rule_keys_in_expression(
+        key: Key,
+        tree: &BasicPublisher,
+        source: &String,
+        return_vec: &mut Vec<Key>,
+    ) {
+        let node = tree.get_node(key);
+        for child in node.get_children() {
+            let child_node = tree.get_node(*child);
+            match child_node.rule {
+                Rules::Rule => {
+                    return_vec.push(*child);
+                }
+                _ => {
+                    Expression::_find_rule_keys_in_expression(*child, tree, source, return_vec);
+                }
+            }
+        }
+    }
+}
+
+mod test {
+    use super::*;
+    use crate::count_lines;
+
+    use ::parser::*;
+    use std::cell::RefCell;
+
+    use std::fs::{canonicalize, read_to_string};
+    use std::io::stdout;
+    use std::io::Write;
+
+    fn shared(source: &str) -> ((bool, u32), BasicPublisher) {
+        let src_len = source.len();
+        let source = Source::new(&source);
+        let position = 0;
+        let context = BasicContext::new(src_len as usize, RULES_SIZE as usize);
+        let context: RefCell<BasicContext> = context.into();
+        let user_state = RefCell::new(UserState::new());
+        let result = grammar(&user_state, Key(0), &context, &source, position);
+        let tree = context.into_inner();
+        let tree = tree.get_publisher().clear_false();
+        (result, tree)
+    }
+
+    #[test]
+    fn test_get_rules_in_expression() {
+        let string = r##"<Num> = [0x30..0x39];
+        <test_LR_num> = <Num>;
+        <test_indirect_three_level_A> = (<test_indirect_three_level_B>, '-', <test_LR_num>) / <test_LR_num>;
+<test_indirect_three_level_B> = <test_indirect_three_level_C>;
+<test_indirect_three_level_C> = <test_indirect_three_level_A>;"##;
+
+        let (result, publisher) = shared(string);
+        let result = Expression::get_rules_in_expression(Key(0), &publisher, &string.to_string());
+        println!("{result:#?}")
+    }
+
+    #[test]
+    fn test_get_rules_in_expression2() {
+        let string = r##"<Num> = <ws>, (<thing_one>/<thing_two>), <ws>;
+                                <ws> = ' '*;"##;
+
+        let (result, publisher) = shared(string);
+        println!("{result:?}");
+        assert!(result.0);
+        let result = Expression::get_rules_in_expression(Key(0), &publisher, &string.to_string());
+        println!("{result:#?}")
+    }
+
+    #[test]
+    #[should_panic] // Two ws so it should panic.
+    fn test_rules_map() {
+        let string = r##"
+                                <ws> = ' '*;
+                                <ws> = ' '*;"##;
+
+        let (result, publisher) = shared(string);
+        println!("{result:?}");
+        assert!(result.0);
+        let result = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{result:#?}")
+    }
+
+    #[test]
+    #[should_panic] // No thing one or thing two rule so it panics
+    fn test_rules_map2() {
+        let string = r##"<Num> = <ws>, (<thing_one>/<thing_two>), <ws>;
+                                <ws> = ' '*;"##;
+
+        let (result, publisher) = shared(string);
+        println!("{result:?}");
+        assert!(result.0);
+        let result = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{result:#?}");
+    }
+    #[test]
+    fn test_rules_map3() {
+        let string = r##"<Num> = <ws>, (<thing_one>/<thing_two>), <ws>;
+                                <ws> = ' '*;
+                                <thing_one> = 'a';
+                                <thing_two> = 'b';
+                                "##;
+
+        let (result, publisher) = shared(string);
+        println!("{result:?}");
+        assert!(result.0);
+        let result = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{result:#?}");
+        assert!(result.len() == 4);
+    }
+
+    #[test]
+    fn test_rules_expression_always_returns_true() {
+        let string = r##"<Num> = <ws>, (<thing_one>/<thing_two>), <ws>;
+                                <ws> = ' '*;
+                                <indirect_ws> = <ws>;
+                                <thing_one> = 'a';
+                                <thing_two> = 'b';
+                                "##;
+
+        let (result, publisher) = shared(string);
+        println!("{result:?}");
+        assert!(result.0);
+        let rules_map = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{rules_map:#?}");
+        assert!(rules_map.len() == 5);
+
+        let rhs_key = rules_map.get_rule("ws").unwrap().rhs_key;
+        let result =
+            rules_map.does_expression_always_returns_true(rhs_key, &publisher, &string.to_string());
+        assert_eq!(
+            true, result,
+            "ws is zero or more whitespace so it always returns true because of zero or more."
+        );
+
+        let rhs_key = rules_map.get_rule("thing_one").unwrap().rhs_key;
+        let result =
+            rules_map.does_expression_always_returns_true(rhs_key, &publisher, &string.to_string());
+        assert_eq!(
+            false, result,
+            "thing_one is terminal so should return false"
+        );
+
+        let rhs_key = rules_map.get_rule("indirect_ws").unwrap().rhs_key;
+        let result =
+            rules_map.does_expression_always_returns_true(rhs_key, &publisher, &string.to_string());
+        assert_eq!(
+            true, result,
+            "Only calls <ws> so indirectly always returns true so should be true"
+        );
+
+        let rhs_key = rules_map.get_rule("Num").unwrap().rhs_key;
+        let result =
+            rules_map.does_expression_always_returns_true(rhs_key, &publisher, &string.to_string());
+        assert_eq!(false, result, "Num is basically thing_one or thing_two but ignoring whitespace before and after so should be false.")
+    }
+
+    #[test]
+    fn test_rules_expression_always_returns_true_c_parser() {
+        let path = "../examples/c_parser/c_from_spec.dsl";
+        let pathbuf = canonicalize(path).expect("If it's moved change the string above");
+        let string = read_to_string(pathbuf).expect("If it's moved change the string above");
+
+        let (result, publisher) = shared(&string);
+        println!("{result:?}");
+        assert!(result.0);
+        let rules_map = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{rules_map:#?}");
+        rules_map.does_expression_always_returns_true(Key(0), &publisher, &string);
+    }
+    #[test]
+    fn test_rules_expression_always_returns_true_c_parser2() {
+        let string = r##"<ws_kernel> Inline = (' '/'\t'/'\r'/'\n'); # Some whitespace are never relevant # 
+            <ws> Inline = <ws_kernel>*;
+            <expression> = <ws>,(<assignment_expression>/(<expression>, ',', <assignment_expression>)), <ws>;
+            <assignment_expression> = "ah";
+"##;
+        let (result, publisher) = shared(&string);
+        println!("{result:?}");
+        assert!(result.0);
+        let rules_map = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{rules_map:#?}");
+
+        let result = rules_map.does_expression_always_returns_true(
+            rules_map.get_rule("ws").unwrap().rhs_key,
+            &publisher,
+            &string.to_string(),
+        );
+        println!("Does expression always return true: {result:?}");
+        assert_eq!(result, true);
+
+        let result = rules_map.does_expression_always_returns_true(
+            rules_map.get_rule("ws_kernel").unwrap().rhs_key,
+            &publisher,
+            &string.to_string(),
+        );
+        println!("Does expression always return true: {result:?}");
+        assert_eq!(result, false);
+
+        let result = rules_map.does_expression_always_returns_true(
+            rules_map.get_rule("expression").unwrap().rhs_key,
+            &publisher,
+            &string.to_string(),
+        );
+        println!("Does expression always return true: {result:?}");
+        assert_eq!(result, false)
+    }
+}

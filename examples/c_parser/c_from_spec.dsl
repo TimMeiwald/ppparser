@@ -269,7 +269,7 @@
 	/ "^="
 	/ "|=";
 
-<expression> = <assignment_expression>/(<expression>, ',', <assignment_expression>);
+<expression> = <ws>,(<assignment_expression>/(<expression>, ',', <assignment_expression>)), <ws>;
 
 <constant_expression> = <conditional_expression>;
 
@@ -491,4 +491,3 @@
 
 
 <Grammar> = <ws>, <translation_unit>*, <ws>;
-

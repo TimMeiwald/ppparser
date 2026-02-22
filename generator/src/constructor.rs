@@ -970,12 +970,9 @@ impl GeneratedCode<'_> {
         let var_name: String = source
             [((node.start_position + 1) as usize)..((node.end_position - 1) as usize)]
             .to_string();
-        println!("{var_name:#?}");
-
         let is_left_recursive = left_recursive_rules
             .get_left_recursion_rules()
             .get(&var_name);
-        println!("IS_ LEFT RECUSRIVE = {is_left_recursive:?}");
         if is_left_recursive.is_some() {
             let contents = var_name.to_string();
             let involved_set = left_recursive_rules

@@ -1,4 +1,4 @@
-use crate::{BasicPublisher, Key, Node, Rules};
+use crate::{expression::RulesMap, BasicPublisher, Key, Node, Rules};
 use parser::publisher_trait::Publisher;
 use std::collections::{HashMap, HashSet};
 
@@ -22,9 +22,11 @@ enum LeftRecursive {
 }
 
 struct RuleCallTree {
+    rules_map: RulesMap,
     rules_keys: HashMap<String, Key>,
     rules_rhs_keys: HashMap<String, Key>,
     rules_referenced_by_rule: HashMap<String, HashSet<String>>,
+    rule_always_returns_true: HashMap<String, bool>,
     is_rule_left_recursive: HashMap<String, LeftRecursive>,
     rules_left_most_rule_refs: HashMap<String, HashSet<String>>,
     involved_sets: HashMap<String, HashSet<String>>,
@@ -33,16 +35,17 @@ impl RuleCallTree {
     fn new(tree: &BasicPublisher, source: &String) -> Self {
         let node = tree.get_node(Key(0)); // 0 is root node
         let mut rc_tree = RuleCallTree {
+            rules_map: RulesMap::new(Key(0), tree, source),
             rules_keys: HashMap::new(),
             rules_rhs_keys: HashMap::new(),
             rules_referenced_by_rule: HashMap::new(),
+            rule_always_returns_true: HashMap::new(),
             is_rule_left_recursive: HashMap::new(),
             rules_left_most_rule_refs: HashMap::new(),
             involved_sets: HashMap::new(),
         };
         rc_tree.walk_node_children(tree, source, node);
-        // println!("Rules -> Keys: {:#?}", rc_tree.rules_keys);
-        // println!("Rules -> RHS Keys: {:#?}", rc_tree.rules_rhs_keys);
+
         println!(
             "Rules -> Referenced Rules: {:#?}",
             rc_tree.rules_referenced_by_rule
@@ -78,7 +81,10 @@ impl RuleCallTree {
         // By making a tree to see how behaviour loops.
         // E.g sub_expr only calls expr_addsub which can call sub_expr so that's clearly a loop.
         // Each involved set can include the calling rule(I think)
-
+        println!(
+            "Rules that always return True: \n{:#?}",
+            rc_tree.rule_always_returns_true
+        );
         rc_tree
     }
     fn involved_rule_count(&mut self) -> usize {
@@ -203,7 +209,7 @@ impl RuleCallTree {
             debug_assert!(node.rule == Rules::RHS);
             let mut left_most_rules: HashSet<String> = HashSet::new();
             println!("Rule Name: {:?}", rule_name.clone());
-            Self::get_left_most_called_rules_of_rule(
+            self.get_left_most_called_rules_of_rule(
                 rule_name.clone(),
                 node,
                 tree,
@@ -215,7 +221,47 @@ impl RuleCallTree {
         }
     }
 
+    fn expression_always_returns_true(
+        &mut self,
+        node: &Node,
+        tree: &BasicPublisher,
+        source: &String,
+    ) -> bool {
+        // Detects if a expression always returns true e.g Optional or Zero Or More
+        // Or wraps those e.g Subexpression wrapping Zero or More
+        // Or is a sequence of Zero or more's or optionals etc.
+
+        let node_children = node.get_children();
+        // Anything wrapped inside zero or more or optional should have returned true already
+        // So by default this isn't one of those and should return false.
+        if node_children.len() == 0 {
+            return false;
+        }
+
+        if node_children.len() == 1 {
+            let child_node = tree.get_node(node_children[0]);
+            if child_node.rule == Rules::Zero_Or_More || child_node.rule == Rules::Optional {
+                return true;
+            } else {
+                return self.expression_always_returns_true(child_node, tree, source);
+            }
+        }
+
+        // True if every expression always returns true, false otherwise.
+        let mut expression_always_returns_true: bool = true;
+        for child in node_children {
+            let child_node = tree.get_node(*child);
+            expression_always_returns_true =
+                self.expression_always_returns_true(child_node, tree, source);
+            if !expression_always_returns_true {
+                break;
+            }
+        }
+        expression_always_returns_true
+    }
+
     fn get_left_most_called_rules_of_rule(
+        &self,
         rule_name: String,
         node: &Node,
         tree: &BasicPublisher,
@@ -243,7 +289,7 @@ impl RuleCallTree {
                     for child_key in children {
                         let child = tree.get_node(*child_key);
                         // println!("Child: {:?} {:?}", child.rule, child_key);
-                        Self::get_left_most_called_rules_of_rule(
+                        self.get_left_most_called_rules_of_rule(
                             rule_name.clone(),
                             child,
                             tree,
@@ -259,24 +305,25 @@ impl RuleCallTree {
                     // As they always return True which means LR algo cannot work with them
                     // Therefore the first true left recursive element is the first 
                     // element that is not Zero or More or Optional
-                    for child in node_children {
-                        let child_node = tree.get_node(*child);
-                        match child_node.rule {
-                            Rules::Optional | Rules::Zero_Or_More => {
-                                // Do nothing
-                            }
-                            _ => {
-                                break
-                            }
+                    // We must also ignore any rules that are themselves always going to return true
+                    // e.g because they are zero or more. 
+                    println!("SEQUENCE NODE: {:?}", child_node.rule);
+                    let mut first_non_always_true_node: Key = node_children[0];
+                    for c in child_node.get_children(){
+                        println!("SEQUENCE CHILD NODE: {:?}", tree.get_node(*c).rule);
+                        if !self.rules_map.does_expression_always_returns_true(*c, tree, source){
+                            first_non_always_true_node = *c;
+                            break;
                         }
                     }
-                    if tree.get_node(*child).rule == Rules::Optional || tree.get_node(*child).rule == Rules::Zero_Or_More{
-                        // Means last child is also still optional or zero or more so we return early
+                    // If last node also returns true we early return(happens if there are no false values returned in above)
+                    if self.rules_map.does_expression_always_returns_true(first_non_always_true_node, tree, source){
                         return;
                     }
                     // If it gets here the first child not a optional or zero or more exists and we check that for LR. 
+                    println!("SEQUENCE CHILD NODE RULE: {:?}", tree.get_node(*child).rule);
                     let child = tree.get_node(*child);
-                    Self::get_left_most_called_rules_of_rule(
+                    self.get_left_most_called_rules_of_rule(
                         rule_name.clone(),
                         child,
                         tree,
@@ -295,7 +342,7 @@ impl RuleCallTree {
                 | Rules::One_Or_More
                 | Rules::And_Predicate
                 | Rules::Not_Predicate => {
-                    Self::get_left_most_called_rules_of_rule(
+                    self.get_left_most_called_rules_of_rule(
                         rule_name.clone(),
                         child_node,
                         tree,
@@ -439,7 +486,12 @@ impl RuleCallTree {
                     &mut rules_referenced_by_rule,
                 );
                 self.rules_referenced_by_rule
-                    .insert(rule_name, rules_referenced_by_rule);
+                    .insert(rule_name.clone(), rules_referenced_by_rule);
+                let rhs_node = tree.get_node(rules_rhs_index);
+                let rule_always_returns_true =
+                    self.expression_always_returns_true(rhs_node, tree, source);
+                self.rule_always_returns_true
+                    .insert(rule_name, rule_always_returns_true);
             }
             self.walk_node_children(tree, source, child_node);
         }
