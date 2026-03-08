@@ -52,6 +52,12 @@ impl RuleCallTree {
                 "Rule: {:?}, Cycle Detected: {:?}",
                 rule_name, cycle_detected
             );
+            // A cycle does not imply LR but no cycle implies definitely no LR.
+            if !cycle_detected {
+                rc_tree
+                    .is_rule_left_recursive
+                    .insert(rule_name.to_string(), LeftRecursive::False);
+            }
         }
 
         rc_tree.walk_node_children(tree, source, node);
