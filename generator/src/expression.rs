@@ -123,6 +123,159 @@ impl RulesMap {
         self.rules.len()
     }
 
+    pub fn get_cycle_detected_map(
+        &self,
+        tree: &BasicPublisher,
+        source: &String,
+    ) -> HashMap<String, bool> {
+        let mut cycle_detected = HashMap::new();
+        for (rule_name, rule) in self {
+            cycle_detected.insert(
+                rule_name.clone(),
+                self.cycle_detector(rule.get_rhs_key(), tree, source),
+            );
+        }
+        return cycle_detected;
+    }
+
+    pub fn get_always_returns_true_map(
+        &self,
+        tree: &BasicPublisher,
+        source: &String,
+    ) -> HashMap<String, bool> {
+        let mut always_returns_true = HashMap::new();
+        for (rule_name, rule) in self {
+            always_returns_true.insert(
+                rule_name.clone(),
+                self.does_expression_always_returns_true(rule.get_rhs_key(), tree, source),
+            );
+        }
+        return always_returns_true;
+    }
+
+    pub fn detect_left_recursion(
+        &self,
+        key: Key,
+        tree: &BasicPublisher,
+        source: &String,
+        cycle_detected_rules: &HashMap<String, bool>,
+        always_returns_true: &HashMap<String, bool>,
+    ) -> bool {
+        let mut set_of_keys_already_checked: HashMap<(u32, Key), bool> = HashMap::new();
+        self._detect_left_recursion(
+            key,
+            tree,
+            source,
+            &mut set_of_keys_already_checked,
+            cycle_detected_rules,
+            always_returns_true,
+        )
+    }
+
+    fn _detect_left_recursion(
+        &self,
+        key: Key,
+        tree: &BasicPublisher,
+        source: &String,
+        set_of_keys_already_checked: &mut HashMap<(u32, Key), bool>,
+        cycle_detected_rules: &HashMap<String, bool>,
+        always_returns_true: &HashMap<String, bool>,
+    ) -> bool {
+        let node = tree.get_node(key);
+        let node_children = node.get_children();
+        if node_children.len() == 0 {
+            // If there are no children then it's a terminal.
+            return false;
+        } else if node_children.len() == 1 {
+            let new_key: Key;
+            if node.rule == Rules::Var_Name_Ref {
+                // If it's a rule name reference we jump to that rule.
+                let referenced_rule_name = Rule::get_rule_ref_name(source, node);
+                if !cycle_detected_rules
+                    .get(&referenced_rule_name)
+                    .expect("Should exist.")
+                {
+                    // If there is no cycle then it's definitely not LR and we can return.
+                    return false;
+                }
+                if *always_returns_true
+                    .get(&referenced_rule_name)
+                    .expect("Should exist")
+                {
+                    // If it always returns true then we ignore it. As it cannot be handled
+                    // with left recursion(not by this rule anyway.)
+                    return false;
+                }
+                new_key = self
+                    .get_rule(&referenced_rule_name)
+                    .expect("Should have been checked on construction")
+                    .rhs_key;
+                if set_of_keys_already_checked.contains_key(&(node.start_position, new_key)) {
+                    // If key already exists then we've already hit this rule once. Making it some form of cycle.
+                    return true;
+                }
+                // Key does not exist so we insert it. The _cycle detector does not use the root node of the rule
+                // but it's RHS node so it won't immediately trigger.
+                set_of_keys_already_checked.insert((node.start_position, new_key), true);
+            } else {
+                // Otherwise we recurse into the child.
+                new_key = node_children[0];
+            }
+            return self._detect_left_recursion(
+                new_key,
+                tree,
+                source,
+                set_of_keys_already_checked,
+                cycle_detected_rules,
+                always_returns_true,
+            );
+        } else {
+            /*
+            If there are multiple children it's a sequence or an ordered choice.
+            For Sequence we need to select the first non terminal that doesn't alway's return True to check.
+            For Ordered Choice we need to check all options.
+            */
+            match node.rule {
+                Rules::Sequence => {
+                    for child in node_children {
+                        // Almost certainly a perf issue. Might need to add caching of some sort.
+                        // We check each expression since a rule can be wrapped in e.g zero or more etc.
+                        if self.does_expression_always_returns_true(*child, tree, source) {
+                            continue;
+                        } else {
+                            return self._detect_left_recursion(
+                                *child,
+                                tree,
+                                source,
+                                set_of_keys_already_checked,
+                                cycle_detected_rules,
+                                always_returns_true,
+                            );
+                        }
+                    }
+                    return false;
+                }
+                Rules::Ordered_Choice => {
+                    // We explore every path that could lead to LR.
+                    for child in node_children {
+                        if !self.does_expression_always_returns_true(*child, tree, source) {
+                            self._detect_left_recursion(
+                                *child,
+                                tree,
+                                source,
+                                set_of_keys_already_checked,
+                                cycle_detected_rules,
+                                always_returns_true,
+                            );
+                        }
+                    }
+                    return false;
+                }
+                _ => panic!("Node Rule: {:?} not yet supported", node.rule),
+            }
+        }
+    }
+
     pub fn cycle_detector(&self, key: Key, tree: &BasicPublisher, source: &String) -> bool {
         /*
         This solely attempts to determine if a given rule has any cycles at all
@@ -587,5 +740,58 @@ mod test {
         assert!(rules_map.cycle_detector(key, &publisher, &string.to_string()));
         let key = rules_map.get_rule("lr").unwrap().get_rhs_key();
         assert!(rules_map.cycle_detector(key, &publisher, &string.to_string()));
+    }
+
+    #[test]
+    fn test_left_recursion_detection1() {
+        // rr is right recursive
+        // lr is left recursive
+        // Both should be detected as recursive.
+        let string = r##"<rr> = ('1', <rr>)/'1'; # rr ::= "1" <rr> / "1" #
+                                <lr> = (<lr>, '1')/'1'; # lr ::= <lr> "1" / "1" #
+                                <ws> = ' '*;
+                                "##;
+
+        let (result, publisher) = shared(string);
+        let string = &string.to_string();
+        println!("{result:?}");
+        assert!(result.0);
+        let rules_map = RulesMap::new(Key(0), &publisher, string);
+        println!("{rules_map:#?}");
+        let cycles_detected = rules_map.get_cycle_detected_map(&publisher, string);
+        let always_true = rules_map.get_always_returns_true_map(&publisher, string);
+
+        let key = rules_map.get_rule("rr").unwrap().get_rhs_key();
+        let rr = rules_map.detect_left_recursion(
+            key,
+            &publisher,
+            string,
+            &cycles_detected,
+            &always_true,
+        );
+        assert!(!rr);
+        println!("Rule: rr, LR Detected: {rr}");
+
+        let key = rules_map.get_rule("lr").unwrap().get_rhs_key();
+        let lr = rules_map.detect_left_recursion(
+            key,
+            &publisher,
+            string,
+            &cycles_detected,
+            &always_true,
+        );
+        println!("Rule: lr, LR Detected: {lr}");
+        assert!(lr);
+
+        let key = rules_map.get_rule("ws").unwrap().get_rhs_key();
+        let ws = rules_map.detect_left_recursion(
+            key,
+            &publisher,
+            string,
+            &cycles_detected,
+            &always_true,
+        );
+        println!("Rule: ws, LR Detected: {ws}");
+        assert!(!ws)
     }
 }
