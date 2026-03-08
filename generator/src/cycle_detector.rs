@@ -44,6 +44,13 @@ impl RuleCallTree {
             rules_left_most_rule_refs: HashMap::new(),
             involved_sets: HashMap::new(),
         };
+        for (rule_name, rule) in &rc_tree.rules_map{
+            let cycle_detected = rc_tree.rules_map.cycle_detector(rule.get_rhs_key(), tree, source);
+            println!("Rule: {:?}, Cycle Detected: {:?}", rule_name, cycle_detected);
+        }
+
+
+
         rc_tree.walk_node_children(tree, source, node);
 
         println!(

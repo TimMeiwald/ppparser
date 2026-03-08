@@ -23,10 +23,10 @@ impl Rule {
             rules_referenced_by_rule: referenced_rules,
         }
     }
-    fn get_rhs_key(&self) -> Key {
+    pub fn get_rhs_key(&self) -> Key {
         self.rhs_key
     }
-    fn get_root_key(&self) -> Key {
+    pub fn get_root_key(&self) -> Key {
         self.rhs_key
     }
 
@@ -78,6 +78,15 @@ impl Rule {
 pub struct RulesMap {
     rules: HashMap<String, Rule>,
 }
+impl<'a> IntoIterator for &'a RulesMap{
+    type IntoIter = std::collections::hash_map::Iter<'a, String, Rule>;
+    type Item = (&'a String, &'a Rule);
+    fn into_iter(self) -> Self::IntoIter {
+        self.rules.iter()
+    }
+
+}   
+
 impl RulesMap {
     pub fn new(key: Key, tree: &BasicPublisher, source: &String) -> Self {
         let rules_vec = Expression::get_rules_in_expression(key, tree, source);
