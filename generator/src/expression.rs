@@ -78,14 +78,13 @@ impl Rule {
 pub struct RulesMap {
     rules: HashMap<String, Rule>,
 }
-impl<'a> IntoIterator for &'a RulesMap{
+impl<'a> IntoIterator for &'a RulesMap {
     type IntoIter = std::collections::hash_map::Iter<'a, String, Rule>;
     type Item = (&'a String, &'a Rule);
     fn into_iter(self) -> Self::IntoIter {
         self.rules.iter()
     }
-
-}   
+}
 
 impl RulesMap {
     pub fn new(key: Key, tree: &BasicPublisher, source: &String) -> Self {
@@ -142,7 +141,13 @@ impl RulesMap {
         self._cycle_detector(key, tree, source, &mut set_of_keys_already_checked)
     }
 
-    fn _cycle_detector(&self, key: Key, tree: &BasicPublisher, source: &String, set_of_keys_already_checked: &mut HashMap<(u32, Key), bool>) -> bool {
+    fn _cycle_detector(
+        &self,
+        key: Key,
+        tree: &BasicPublisher,
+        source: &String,
+        set_of_keys_already_checked: &mut HashMap<(u32, Key), bool>,
+    ) -> bool {
         let node = tree.get_node(key);
         let node_children = node.get_children();
 
@@ -153,11 +158,11 @@ impl RulesMap {
                 .get_rule(&referenced_rule_name)
                 .expect("Should have been checked on construction")
                 .rhs_key;
-            if set_of_keys_already_checked.contains_key(&(node.start_position, rule_rhs_key)){
+            if set_of_keys_already_checked.contains_key(&(node.start_position, rule_rhs_key)) {
                 // If key already exists then we've already hit this rule once. Making it some form of cycle.
-                return true
+                return true;
             }
-            // Key does not exist so we insert it. The _cycle detector does not use the root node of the rule 
+            // Key does not exist so we insert it. The _cycle detector does not use the root node of the rule
             // but it's RHS node so it won't immediately trigger.
             set_of_keys_already_checked.insert((node.start_position, rule_rhs_key), true);
             self._cycle_detector(rule_rhs_key, tree, source, set_of_keys_already_checked)
