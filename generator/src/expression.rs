@@ -2,7 +2,7 @@ use crate::{BasicPublisher, Key, Node, Rules};
 use parser::publisher_trait::Publisher;
 use std::collections::{HashMap, HashSet};
 #[derive(Debug)]
-struct Rule {
+pub struct Rule {
     root_key: Key,
     rhs_key: Key,
     name: String,
@@ -23,6 +23,13 @@ impl Rule {
             rules_referenced_by_rule: referenced_rules,
         }
     }
+    fn get_rhs_key(&self) -> Key {
+        self.rhs_key
+    }
+    fn get_root_key(&self) -> Key {
+        self.rhs_key
+    }
+
     fn get_rules_name(node: &Node, tree: &BasicPublisher, source: &str) -> String {
         debug_assert_eq!(node.rule, Rules::Rule);
 
@@ -108,6 +115,59 @@ impl RulesMap {
         self.rules.len()
     }
 
+    pub fn cycle_detector(&self, key: Key, tree: &BasicPublisher, source: &String) -> bool {
+        /*
+        This solely attempts to determine if a given rule has any cycles at all
+        Whilst it may be more efficient to get e.g Left Recursive rules directly
+        This helps to validate that logic functions correctly. This also only happens
+        at generation time of the parser so it's not a big problem.
+
+        We also do this per rule, which again is less efficient but easier to test. Definitely
+        has potential for optimization at some point.
+        */
+
+        // We track start_position and also whether it's been hit so we don't
+        // trigger cycle detection just because a rule get's called multiple times in the same function.
+        // E.g <some_rule> = <ws>, <ws>; should not trigger cycle detection unless <ws> somehow leads back to <some_rule>
+        let mut set_of_keys_already_checked: HashMap<(u32, Key), bool> = HashMap::new();
+        self._cycle_detector(key, tree, source, &mut set_of_keys_already_checked)
+    }
+
+    fn _cycle_detector(&self, key: Key, tree: &BasicPublisher, source: &String, set_of_keys_already_checked: &mut HashMap<(u32, Key), bool>) -> bool {
+        let node = tree.get_node(key);
+        let node_children = node.get_children();
+
+        if node.rule == Rules::Var_Name_Ref {
+            // Rule call
+            let referenced_rule_name = Rule::get_rule_ref_name(source, node);
+            let rule_rhs_key = self
+                .get_rule(&referenced_rule_name)
+                .expect("Should have been checked on construction")
+                .rhs_key;
+            if set_of_keys_already_checked.contains_key(&(node.start_position, rule_rhs_key)){
+                // If key already exists then we've already hit this rule once. Making it some form of cycle.
+                return true
+            }
+            // Key does not exist so we insert it. The _cycle detector does not use the root node of the rule 
+            // but it's RHS node so it won't immediately trigger.
+            set_of_keys_already_checked.insert((node.start_position, rule_rhs_key), true);
+            self._cycle_detector(rule_rhs_key, tree, source, set_of_keys_already_checked)
+        } else if node_children.len() == 0 {
+            return false; // Terminal node
+        } else {
+            // Multiple child nodes, iterate over them.
+            let mut result = false;
+            for child in node_children {
+                result = self._cycle_detector(*child, tree, source, set_of_keys_already_checked);
+                if result {
+                    // If a cycle is detected we break.
+                    break;
+                }
+            }
+            result
+        }
+    }
+
     pub fn does_expression_always_returns_true(
         &self,
         key: Key,
@@ -148,7 +208,6 @@ impl RulesMap {
             // No children means a terminal so always false.
             if node.rule == Rules::Var_Name_Ref {
                 let referenced_rule_name = Rule::get_rule_ref_name(source, node);
-
                 let rule_rhs_key = self
                     .get_rule(&referenced_rule_name)
                     .expect("Should have been checked on construction")
@@ -206,34 +265,6 @@ impl RulesMap {
             }
             set_of_keys_already_checked.insert(key, Some(result));
             result
-            // // If there is more than 1 child then it's either ordered choice or sequence which require special handling.
-            // if node.rule == Rules::Sequence || node.rule == Rules::Ordered_Choice {
-            //     println!(
-            //         "NODE RULE MULTICHILDREN: {:?}, Num Children: {:?}",
-            //         node.rule,
-            //         node.get_children().len()
-            //     );
-            //     // If all results are true then we return true.
-            //     let mut result: bool = true;
-            //     for child in node_children {
-            //         result = self._does_expression_always_returns_true(
-            //             *child,
-            //             tree,
-            //             source,
-            //             set_of_rules_already_checked,
-            //         );
-            //         if result == false {
-            //             // If one sequence option doesn't always return true the whole rule doesn't.
-            //             break;
-            //         }
-            //         println!("RESULT {:?}", result)
-            //     }
-            //     result
-            // } else {
-            //     let string_where_failed =
-            //         &source[(node.start_position as usize)..(node.end_position as usize)];
-            //     panic!("I made a mistake. {:?}\n{string_where_failed}", node.rule);
-            // }
         }
     }
 }
@@ -460,5 +491,87 @@ mod test {
         );
         println!("Does expression always return true: {result:?}");
         assert_eq!(result, false)
+    }
+
+    #[test]
+    fn test_no_cycles() {
+        let string = r##"<Num> = <ws>;
+                                <ws> = ' '*;"##;
+
+        let (result, publisher) = shared(string);
+        println!("{result:?}");
+        assert!(result.0);
+        let rules_map = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{rules_map:#?}");
+        let num = rules_map.get_rule("Num").unwrap().get_rhs_key();
+        assert!(!rules_map.cycle_detector(num, &publisher, &string.to_string()));
+        let ws = rules_map.get_rule("ws").unwrap().get_rhs_key();
+        assert!(!rules_map.cycle_detector(ws, &publisher, &string.to_string()));
+    }
+
+    #[test]
+    fn test_no_cycles2() {
+        let string = r##"<Num> = <ws>, (<thing_one>/<thing_two>), <ws>;
+                                <ws> = ' '*;
+                                <indirect_ws> = <ws>;
+                                <thing_one> = 'a';
+                                <thing_two> = 'b';
+                                "##;
+        let (result, publisher) = shared(string);
+        println!("{result:?}");
+        assert!(result.0);
+        let rules_map = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{rules_map:#?}");
+
+        let key = rules_map.get_rule("Num").unwrap().get_rhs_key();
+        assert!(!rules_map.cycle_detector(key, &publisher, &string.to_string()));
+        let key = rules_map.get_rule("ws").unwrap().get_rhs_key();
+        assert!(!rules_map.cycle_detector(key, &publisher, &string.to_string()));
+        let key = rules_map.get_rule("thing_one").unwrap().get_rhs_key();
+        assert!(!rules_map.cycle_detector(key, &publisher, &string.to_string()));
+        let key = rules_map.get_rule("thing_two").unwrap().get_rhs_key();
+        assert!(!rules_map.cycle_detector(key, &publisher, &string.to_string()));
+        let key = rules_map.get_rule("indirect_ws").unwrap().get_rhs_key();
+        assert!(!rules_map.cycle_detector(key, &publisher, &string.to_string()));
+    }
+
+    #[test]
+    fn test_recursive_cycle() {
+        // rr is right recursive
+        // lr is left recursive
+        // Both should be detected as recursive.
+        let string = r##"<rr> = ('1', <rr>)/'1'; # rr ::= "1" <rr> / "1" #
+                                <lr> = (<lr>, '1')/'1'; # lr ::= <lr> "1" / "1" #
+                                "##;
+        let (result, publisher) = shared(string);
+        println!("{result:?}");
+        assert!(result.0);
+        let rules_map = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{rules_map:#?}");
+
+        let key = rules_map.get_rule("rr").unwrap().get_rhs_key();
+        assert!(rules_map.cycle_detector(key, &publisher, &string.to_string()));
+        let key = rules_map.get_rule("lr").unwrap().get_rhs_key();
+        assert!(rules_map.cycle_detector(key, &publisher, &string.to_string()));
+    }
+
+    #[test]
+    fn test_recursive_cycle2() {
+        // rr is right recursive
+        // lr is left recursive
+        // Both should be detected as recursive.
+        let string = r##"<rr> = <rr>, <rr>;
+                                <lr> = <lr>, <lr>;
+                                "##;
+        let (result, publisher) = shared(string);
+        println!("{result:?}");
+        assert!(result.0);
+        let rules_map = RulesMap::new(Key(0), &publisher, &string.to_string());
+        println!("{rules_map:#?}");
+
+        let key = rules_map.get_rule("rr").unwrap().get_rhs_key();
+        assert!(rules_map.cycle_detector(key, &publisher, &string.to_string()));
+        let key = rules_map.get_rule("lr").unwrap().get_rhs_key();
+        assert!(rules_map.cycle_detector(key, &publisher, &string.to_string()));
     }
 }
