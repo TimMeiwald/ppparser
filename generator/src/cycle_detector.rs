@@ -58,6 +58,13 @@ impl RuleCallTree {
                     .is_rule_left_recursive
                     .insert(rule_name.to_string(), LeftRecursive::False);
             }
+
+            let rule_always_returns_true = rc_tree.rules_map.does_expression_always_returns_true(rule.get_rhs_key(), tree, source);
+            println!(
+                "Rule: {:?}, Always Returns True: {:?}",
+                rule_name, rule_always_returns_true
+            );
+            rc_tree.rule_always_returns_true.insert(rule_name.to_string(), rule_always_returns_true);
         }
 
         rc_tree.walk_node_children(tree, source, node);
@@ -504,10 +511,6 @@ impl RuleCallTree {
                 self.rules_referenced_by_rule
                     .insert(rule_name.clone(), rules_referenced_by_rule);
                 let rhs_node = tree.get_node(rules_rhs_index);
-                let rule_always_returns_true =
-                    self.expression_always_returns_true(rhs_node, tree, source);
-                self.rule_always_returns_true
-                    .insert(rule_name, rule_always_returns_true);
             }
             self.walk_node_children(tree, source, child_node);
         }
