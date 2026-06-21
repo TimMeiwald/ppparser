@@ -283,6 +283,10 @@ impl RulesMap {
                             _ => true,
                         }
                     }
+                    Rules::OrderedChoiceMatchRange => {
+                        // Effectively a terminal since it only ever involves terminals
+                        return false
+                    }
                     _ => {
                         panic!("Did not expect rule: {:?}", node.rule)
                     }
@@ -1045,5 +1049,56 @@ mod test {
         );
         println!("Rule: ws, LR Detected: {ws}");
         assert!(!ws)
+    }
+
+    #[test]
+    fn test_left_recursion_detection_indirect_1() {
+        // rr is right recursive
+        // lr is left recursive
+        // Both should be detected as recursive.
+        let string = r##"<num> = [0x30..0x39];
+                               <test_LR_num> = <num>;
+                               <test_indirect_three_level_A> = (<test_indirect_three_level_B>, '-', <test_LR_num>) / <test_LR_num>;
+                               <test_indirect_three_level_B> = <test_indirect_three_level_C>;
+                               <test_indirect_three_level_C> = <test_indirect_three_level_A>;
+                               <Grammar> = <test_indirect_three_level_A>;
+                                "##;
+
+        let (result, publisher) = shared(string);
+        let string = &string.to_string();
+        println!("{result:?}");
+        assert!(result.0);
+        let rules_map = RulesMap::new(Key(0), &publisher, string);
+        println!("{rules_map:#?}");
+        let cycles_detected = rules_map.get_cycle_detected_map(&publisher, string);
+        let always_true = rules_map.get_always_returns_true_map(&publisher, string);
+        println!("Cycles Detected: {cycles_detected:#?}");
+        println!("Always True: {always_true:#?}");
+
+        let is_lr = ["test_indirect_three_level_A", "test_indirect_three_level_B", "test_indirect_three_level_C"];
+        for rule in is_lr {
+            let key = rules_map.get_rule(rule).unwrap().get_rhs_key();
+            let is_lr = rules_map.detect_left_recursion(
+                key,
+                &publisher,
+                string,
+                &cycles_detected,
+                &always_true,
+            );
+            assert!(is_lr)
+        }
+
+        let not_lr = ["num", "test_LR_num"];
+        for rule in not_lr {
+            let key = rules_map.get_rule(rule).unwrap().get_rhs_key();
+            let is_lr = rules_map.detect_left_recursion(
+                key,
+                &publisher,
+                string,
+                &cycles_detected,
+                &always_true,
+            );
+            assert!(!is_lr)
+        }
     }
 }
